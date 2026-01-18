@@ -1,0 +1,110 @@
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from "lucide-react";
+import Container from "./ui/Container";
+
+const Footer = () => {
+  return (
+    <footer className="bg-secondary text-white pt-16 pb-8 border-t border-gray-800">
+      <Container>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+          {/* Brand Column */}
+          <div className="space-y-6">
+            <div className="relative w-48 h-12">
+                {/* Using logo again, but maybe needs a white version or filter */}
+                 <Image
+                  src="/logo.png"
+                  alt="Elite Steel Concepts"
+                  fill
+                  className="object-contain object-left" 
+                />
+            </div>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Custom Food Trucks, Trailers & Mobile Kitchens Built to Perform. 
+              Based in Manassas, VA, serving the DMV and nationwide.
+            </p>
+            <div className="flex space-x-4">
+              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
+                <Twitter className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">Explore</h3>
+            <ul className="space-y-3">
+              {["Home", "About Us", "Process", "Portfolio", "Testimonials", "Blog"].map((item) => (
+                <li key={item}>
+                  <Link href={`/${item.toLowerCase().replace(" ", "-")}`} className="text-gray-400 hover:text-white transition-colors text-sm">
+                    {item === "Home" ? "Home" : item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">Services</h3>
+             <ul className="space-y-3">
+              {[
+                "Custom Food Trucks",
+                "Custom Food Trailers",
+                "Repairs & Upgrades",
+                "Design & Consultation",
+                "Fleet Expansion"
+              ].map((item) => (
+                <li key={item}>
+                  <Link href="/services" className="text-gray-400 hover:text-white transition-colors text-sm">
+                    {item}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div>
+            <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">Contact Us</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <MapPin className="w-5 h-5 text-primary mr-3 mt-0.5 shrink-0" />
+                <span className="text-gray-400 text-sm">123 Fabrication Way,<br/>Manassas, VA 20110</span>
+              </li>
+              <li className="flex items-center">
+                <Phone className="w-5 h-5 text-primary mr-3 shrink-0" />
+                <span className="text-gray-400 text-sm">(555) 123-4567</span>
+              </li>
+              <li className="flex items-center">
+                <Mail className="w-5 h-5 text-primary mr-3 shrink-0" />
+                <span className="text-gray-400 text-sm">info@elitesteelconcepts.com</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center bg-secondary">
+          <p className="text-gray-500 text-xs mb-4 md:mb-0">
+            &copy; {new Date().getFullYear()} Elite Steel Concepts. All rights reserved.
+          </p>
+          <div className="flex space-x-6">
+            <Link href="/privacy" className="text-gray-500 hover:text-white text-xs">Privacy Policy</Link>
+            <Link href="/terms" className="text-gray-500 hover:text-white text-xs">Terms of Service</Link>
+            <Link href="/sitemap" className="text-gray-500 hover:text-white text-xs">Sitemap</Link>
+          </div>
+        </div>
+      </Container>
+    </footer>
+  );
+};
+
+export default Footer;
