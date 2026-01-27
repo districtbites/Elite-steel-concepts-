@@ -3,8 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from "lucide-react";
 import Container from "./ui/Container";
+import { GlobalSettings } from "@/lib/db";
 
-const Footer = () => {
+interface FooterProps {
+  settings: GlobalSettings;
+}
+
+const Footer = ({ settings }: FooterProps) => {
   return (
     <footer className="bg-secondary text-white pt-16 pb-8 border-t border-gray-800">
       <Container>
@@ -12,7 +17,6 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="space-y-6">
             <div className="relative w-48 h-12">
-                {/* Using logo again, but maybe needs a white version or filter */}
                  <Image
                   src="/logo.png"
                   alt="Elite Steel Concepts"
@@ -25,15 +29,21 @@ const Footer = () => {
               Based in Manassas, VA, serving the DMV and nationwide.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-primary transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
+              {settings.facebook && (
+                <a href={settings.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
+                  <Facebook className="w-5 h-5" />
+                </a>
+              )}
+              {settings.instagram && (
+                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
+                  <Instagram className="w-5 h-5" />
+                </a>
+              )}
+              {settings.twitter && (
+                <a href={settings.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
+                  <Twitter className="w-5 h-5" />
+                </a>
+              )}
             </div>
           </div>
 
@@ -77,15 +87,15 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <MapPin className="w-5 h-5 text-primary mr-3 mt-0.5 shrink-0" />
-                <span className="text-gray-400 text-sm">123 Fabrication Way,<br/>Manassas, VA 20110</span>
+                <span className="text-gray-400 text-sm whitespace-pre-line">{settings.address}</span>
               </li>
               <li className="flex items-center">
                 <Phone className="w-5 h-5 text-primary mr-3 shrink-0" />
-                <span className="text-gray-400 text-sm">(555) 123-4567</span>
+                <span className="text-gray-400 text-sm">{settings.phone}</span>
               </li>
               <li className="flex items-center">
                 <Mail className="w-5 h-5 text-primary mr-3 shrink-0" />
-                <span className="text-gray-400 text-sm">info@elitesteelconcepts.com</span>
+                <span className="text-gray-400 text-sm">{settings.email}</span>
               </li>
             </ul>
           </div>

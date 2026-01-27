@@ -1,0 +1,144 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "title": "5 Essential Maintenance Tips for Your Food Truck Generator",
+      "excerpt": "Your generator is the heart of your mobile kitchen. Learn the critical maintenance steps to prevent downtime and costly repairs.",
+      "category": "Maintenance",
+      "date": "Jan 15, 2024",
+      "readTime": "5 Min Read",
+      "image": "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "slug": "generator-maintenance-tips",
+      "status": "Published",
+      "content": "Full content would go here..."
+    },
+    {
+      "id": "2",
+      "title": "Navigating Health Codes in the DMV Area: A Beginner's Guide",
+      "excerpt": "Understanding local health department regulations in DC, Maryland, and Virginia is crucial before you build.",
+      "category": "Regulation",
+      "date": "Jan 08, 2024",
+      "readTime": "8 Min Read",
+      "image": "https://images.pexels.com/photos/887751/pexels-photo-887751.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "slug": "dmv-health-codes-guide",
+      "status": "Published",
+      "content": "Full content would go here..."
+    },
+    {
+      "id": "3",
+      "title": "Truck vs. Trailer: Making the Right Choice for Your Business",
+      "excerpt": "Should you invest in a fully mobile food truck or a spacious concession trailer? We compare the pros, cons, and ROI of each option.",
+      "category": "Advice",
+      "date": "Dec 20, 2023",
+      "readTime": "6 Min Read",
+      "image": "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "slug": "truck-vs-trailer-comparison",
+      "status": "Published",
+      "content": "Full content would go here..."
+    }
+  ],
+  "quotes": [],
+  "contacts": [],
+  "settings": {
+    "email": "esteelconcepts@gmail.com",
+    "phone": "(571) 555-5555",
+    "address": "1234 Fabrication Way, Manassas, VA 20110",
+    "instagram": "https://instagram.com",
+    "facebook": "https://facebook.com",
+    "twitter": "https://twitter.com"
+  },
+  "seo": {
+    "siteTitle": "Elite Steel Concepts | Custom Food Trucks & Mobile Kitchen Fabrication",
+    "description": "Elite Steel Concepts builds premium custom food trucks, trailers, and mobile kitchens in Manassas, VA.",
+    "keywords": "food truck builder, concession trailer, mobile kitchen, custom fabrication, dmv food trucks",
+    "ogImage": "https://elitesteelconcepts.com/og-image.jpg",
+    "twitterHandle": "@elitesteel",
+    "robotsTxt": "User-agent: *\nAllow: /",
+    "canonicalUrl": "https://elitesteelconcepts.com"
+  },
+  "testimonials": [
+    {
+      "id": "1",
+      "clientName": "Marcus Johnson",
+      "role": "Owner",
+      "company": "Smoke & Grill",
+      "content": "Elite Steel Concepts completely transformed my business. The custom food truck they built isn't just a kitchen; it's a billboard on wheels. The attention to detail is unmatched.",
+      "rating": 5,
+      "date": "Jan 10, 2024"
+    },
+    {
+      "id": "2",
+      "clientName": "Sarah Chen",
+      "role": "Founder",
+      "company": "Dim Sum Express",
+      "content": "From the initial design to the final handover, the team was professional and transparent. The layout they suggested improved our workflow speed by 30%. Highly recommended!",
+      "rating": 5,
+      "date": "Dec 05, 2023"
+    },
+    {
+      "id": "3",
+      "clientName": "David Miller",
+      "role": "Proprietor",
+      "company": "The Taco Stand",
+      "content": "I've worked with other builders before, but the quality here is on another level. Heavy-duty construction that feels like it will last decades. Worth every penny.",
+      "rating": 5,
+      "date": "Nov 20, 2023"
+    }
+  ],
+  "projects": [
+      {
+          "id": "1",
+          "title": "The Taco Stand",
+          "category": "Food Truck",
+          "image": "https://images.pexels.com/photos/2228559/pexels-photo-2228559.jpeg?auto=compress&cs=tinysrgb&w=800",
+          "description": "A vibrant and fully equipped taco truck built on a 18ft step van chassis. Includes a complete hot line, prep area, and custom exterior branding.",
+          "client": "David Miller",
+          "completionDate": "Nov 2023"
+      },
+      {
+          "id": "2",
+          "title": "Dim Sum Express",
+          "category": "Concession Trailer",
+          "image": "https://images.pexels.com/photos/5696001/pexels-photo-5696001.jpeg?auto=compress&cs=tinysrgb&w=800",
+          "description": "A high-volume concession trailer designed for efficient dumpling and steam bun production. Features custom steamers and rapid-serve windows.",
+          "client": "Sarah Chen",
+          "completionDate": "Dec 2023"
+      },
+      {
+          "id": "3",
+          "title": "Smoke & Grill",
+          "category": "Food Truck",
+          "image": "https://images.pexels.com/photos/5920772/pexels-photo-5920772.jpeg?auto=compress&cs=tinysrgb&w=800",
+          "description": "A heavy-duty BBQ truck with an on-board smoker and reinforced chassis. Built to handle the weight of serious equipment.",
+          "client": "Marcus Johnson",
+          "completionDate": "Jan 2024"
+      },
+      {
+          "id": "4",
+          "title": "Urban Coffee Co",
+          "category": "Coffee Cart",
+          "image": "https://images.pexels.com/photos/1307698/pexels-photo-1307698.jpeg?auto=compress&cs=tinysrgb&w=800",
+          "description": "A sleek, modern mobile coffee unit designed for corporate events and city corners. Features a high-capacity espresso machine and cold brew tap system.",
+          "client": "Urban Coffee LLC",
+          "completionDate": "Feb 2024"
+      },
+      {
+          "id": "5",
+          "title": "Gelato Joy",
+          "category": "Concession Trailer",
+          "image": "https://images.pexels.com/photos/5060892/pexels-photo-5060892.jpeg?auto=compress&cs=tinysrgb&w=800",
+          "description": "A colorful and inviting gelato trailer with custom dipping cabinets and a glass service window for maximum product visibility.",
+          "client": "Joy Foods",
+          "completionDate": "Aug 2023"
+      },
+      {
+          "id": "6",
+          "title": "Burger Baron",
+          "category": "Food Truck",
+          "image": "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg?auto=compress&cs=tinysrgb&w=800",
+          "description": "A classic burger truck layout optimized for speed. Includes dual flat-top grills and a high-capacity fry station.",
+          "client": "Burger Baron Inc",
+          "completionDate": "Oct 2023"
+      }
+  ]
+}

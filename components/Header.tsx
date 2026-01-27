@@ -6,8 +6,13 @@ import Image from "next/image";
 import { Menu, X, Phone } from "lucide-react";
 import Container from "./ui/Container";
 import Button from "./ui/Button";
+import { GlobalSettings } from "@/lib/db";
 
-const Header = () => {
+interface HeaderProps {
+  settings: GlobalSettings;
+}
+
+const Header = ({ settings }: HeaderProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -105,7 +110,7 @@ const Header = () => {
           </Button>
           
           <div className="mt-8 flex flex-col items-center text-gray-500">
-             <span className="flex items-center mb-2"><Phone className="w-5 h-5 mr-2" /> (555) 123-4567</span>
+             <span className="flex items-center mb-2"><Phone className="w-5 h-5 mr-2" /> {settings.phone}</span>
              <span className="text-sm">Manassas, VA</span>
           </div>
         </div>
