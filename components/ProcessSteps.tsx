@@ -33,10 +33,11 @@ const steps = [
 
 const ProcessSteps = () => {
   return (
-    <Section id="our-process" className="bg-white">
+    <Section id="our-process" className="bg-gray-50">
       <Container>
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-secondary mb-4">
+          <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">How It Works</span>
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-secondary mb-4">
             Our Process
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto"></div>

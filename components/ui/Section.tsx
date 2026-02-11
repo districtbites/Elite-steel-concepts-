@@ -5,6 +5,7 @@ interface SectionProps {
   children: React.ReactNode;
   className?: string;
   light?: boolean;
+  dark?: boolean;
 }
 
 const Section: React.FC<SectionProps> = ({
@@ -12,10 +13,11 @@ const Section: React.FC<SectionProps> = ({
   children,
   className = "",
   light = false,
+  dark = false,
 }) => {
-  const bgClass = light ? "bg-light" : "bg-white";
+  const bgClass = dark ? "bg-secondary text-white" : light ? "bg-light" : "bg-white";
   return (
-    <section id={id} className={`py-16 md:py-24 ${bgClass} ${className}`}>
+    <section id={id} className={`py-20 md:py-28 ${bgClass} ${className}`}>
       {children}
     </section>
   );

@@ -15,7 +15,6 @@ export async function saveSettings(formData: FormData) {
 
     await updateSettings(updates);
     revalidatePath("/admin/settings");
-    return { success: true };
 }
 
 export async function saveSEO(formData: FormData) {
@@ -31,5 +30,4 @@ export async function saveSEO(formData: FormData) {
 
     await updateSEO(updates);
     revalidatePath("/admin/seo");
-    return { success: true };
 }

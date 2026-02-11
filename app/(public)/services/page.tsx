@@ -1,6 +1,7 @@
 import React from "react";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
+import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,35 +10,30 @@ import { Truck, Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X } from "
 export default function ServicesPage() {
   return (
     <>
-      {/* Page Header */}
-      <div className="bg-secondary pt-32 pb-16 md:pt-40 md:pb-24">
-        <Container className="text-center">
-          <h1 className="text-4xl md:text-6xl font-black uppercase text-white mb-4 tracking-tight">
-            Our Services
-          </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-             We specialize in high-end mobile kitchen fabrication. Whether you need a ground-up build or a complex renovation, we have the expertise to deliver.
-          </p>
-        </Container>
-      </div>
+      <PageHeader
+        title="Our Services"
+        subtitle="We specialize in high-end mobile kitchen fabrication. Whether you need a ground-up build or a complex renovation, we have the expertise to deliver."
+      />
 
       {/* Primary Services - Split Layouts */}
       <Section className="bg-white">
         <Container>
            {/* Food Trucks */}
            <div className="flex flex-col lg:flex-row items-center gap-12 mb-24">
-              <div className="w-full lg:w-1/2 relative aspect-video rounded-lg overflow-hidden shadow-2xl">
+              <div className="w-full lg:w-1/2 relative aspect-video rounded-xl overflow-hidden shadow-2xl hover-lift">
                  <Image 
-                   src="https://images.unsplash.com/photo-1565123409695-7b5ef63a48b9?q=80&w=800&auto=format&fit=crop" 
-                   alt="Custom Food Truck Build"
-                   fill
-                   className="object-cover"
+                    src="https://images.unsplash.com/photo-1565123409695-7b5ef63a48b9?q=80&w=800&auto=format&fit=crop" 
+                    alt="Custom Food Truck Build"
+                    fill
+                    className="object-cover"
                  />
               </div>
               <div className="w-full lg:w-1/2">
                  <div className="flex items-center mb-4">
-                    <Truck className="text-primary w-8 h-8 mr-3" />
-                    <h2 className="text-3xl font-black uppercase text-secondary">Custom Food Trucks</h2>
+                    <div className="bg-primary/10 p-3 rounded-full mr-4">
+                      <Truck className="text-primary w-7 h-7" />
+                    </div>
+                    <h2 className="text-3xl font-black uppercase text-secondary tracking-tight">Custom Food Trucks</h2>
                  </div>
                  <p className="text-gray-600 text-lg leading-relaxed mb-6">
                     The ultimate mobile billboard. Our custom food trucks are engineered for performance and designed to turn heads. Built on reliable step-van chassis, they offer maximum mobility for hitting multiple locations in a single day.
@@ -45,32 +41,32 @@ export default function ServicesPage() {
                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
                     {["Step Van Conversions", "New & Used Chassis Sourcing", "Generator Installation", "Full Graphic Wraps"].map((item, i) => (
                        <li key={i} className="flex items-center text-gray-700 font-medium">
-                          <Check size={18} className="text-primary mr-2" /> {item}
+                          <Check size={18} className="text-primary mr-2 shrink-0" /> {item}
                        </li>
                     ))}
                  </ul>
-                 <Link href="/services/custom-food-trucks">
-                    <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
-                       Explore Food Trucks
-                    </Button>
-                 </Link>
+                 <Button href="/services/custom-food-trucks" variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
+                    Explore Food Trucks
+                 </Button>
               </div>
            </div>
 
            {/* Concession Trailers */}
            <div className="flex flex-col lg:flex-row-reverse items-center gap-12">
-              <div className="w-full lg:w-1/2 relative aspect-video rounded-lg overflow-hidden shadow-2xl">
+              <div className="w-full lg:w-1/2 relative aspect-video rounded-xl overflow-hidden shadow-2xl hover-lift">
                  <Image 
-                   src="https://images.unsplash.com/photo-1596792342371-d41c4849206c?q=80&w=800&auto=format&fit=crop" 
-                   alt="Custom Concession Trailer"
-                   fill
-                   className="object-cover"
+                    src="https://images.unsplash.com/photo-1596792342371-d41c4849206c?q=80&w=800&auto=format&fit=crop" 
+                    alt="Custom Concession Trailer"
+                    fill
+                    className="object-cover"
                  />
               </div>
               <div className="w-full lg:w-1/2">
                  <div className="flex items-center mb-4">
-                    <Box className="text-primary w-8 h-8 mr-3" />
-                    <h2 className="text-3xl font-black uppercase text-secondary">Concession Trailers</h2>
+                    <div className="bg-primary/10 p-3 rounded-full mr-4">
+                      <Box className="text-primary w-7 h-7" />
+                    </div>
+                    <h2 className="text-3xl font-black uppercase text-secondary tracking-tight">Concession Trailers</h2>
                  </div>
                  <p className="text-gray-600 text-lg leading-relaxed mb-6">
                     Maximize your kitchen space and lower your overhead. Trailers are perfect for semi-permanent locations, festivals, and high-volume events where you need more room to operate.
@@ -78,32 +74,31 @@ export default function ServicesPage() {
                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
                     {["Custom Sizes (10' - 30')", "Porch & Smoker Builds", "Lower Maintenance Costs", "Detachable Towing"].map((item, i) => (
                        <li key={i} className="flex items-center text-gray-700 font-medium">
-                          <Check size={18} className="text-primary mr-2" /> {item}
+                          <Check size={18} className="text-primary mr-2 shrink-0" /> {item}
                        </li>
                     ))}
                  </ul>
-                 <Link href="/services/custom-food-trailers">
-                    <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
-                       Explore Trailers
-                    </Button>
-                 </Link>
+                 <Button href="/services/custom-food-trailers" variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
+                    Explore Trailers
+                 </Button>
               </div>
            </div>
         </Container>
       </Section>
 
       {/* Comparison Section */}
-      <Section className="bg-gray-50 border-y border-gray-200">
+      <Section className="bg-gray-50 border-y border-gray-100">
          <Container>
             <div className="text-center mb-16">
-               <h2 className="text-3xl font-black uppercase text-secondary mb-4">Truck vs. Trailer</h2>
+               <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Compare</span>
+               <h2 className="text-3xl md:text-5xl font-black uppercase text-secondary mb-4 tracking-tight">Truck vs. Trailer</h2>
                <p className="text-gray-500 max-w-2xl mx-auto">Not sure which one is right for you? Compare the key differences to make an informed decision.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
                {/* Truck Card */}
-               <div className="bg-white p-8 rounded-lg shadow-lg border-t-4 border-secondary">
-                  <h3 className="text-2xl font-bold uppercase text-secondary mb-6 text-center">Food Truck</h3>
+               <div className="bg-white p-8 rounded-xl shadow-lg border-t-4 border-secondary hover-lift">
+                  <h3 className="text-2xl font-black uppercase text-secondary mb-6 text-center tracking-tight">Food Truck</h3>
                   <div className="space-y-4">
                      <div className="flex items-start">
                         <Check className="text-green-500 mr-3 shrink-0" />
@@ -125,8 +120,8 @@ export default function ServicesPage() {
                </div>
 
                {/* Trailer Card */}
-               <div className="bg-white p-8 rounded-lg shadow-lg border-t-4 border-primary">
-                  <h3 className="text-2xl font-bold uppercase text-secondary mb-6 text-center">Concession Trailer</h3>
+               <div className="bg-white p-8 rounded-xl shadow-lg border-t-4 border-primary hover-lift">
+                  <h3 className="text-2xl font-black uppercase text-secondary mb-6 text-center tracking-tight">Concession Trailer</h3>
                   <div className="space-y-4">
                      <div className="flex items-start">
                         <Check className="text-green-500 mr-3 shrink-0" />
@@ -154,35 +149,36 @@ export default function ServicesPage() {
       <Section className="bg-white">
          <Container>
             <div className="text-center mb-16">
-               <h2 className="text-3xl font-black uppercase text-secondary mb-4">Support Services</h2>
+               <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Additional Offerings</span>
+               <h2 className="text-3xl md:text-5xl font-black uppercase text-secondary mb-4 tracking-tight">Support Services</h2>
                <div className="w-24 h-1 bg-primary mx-auto"></div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-               <div className="p-6 border border-gray-100 rounded-lg hover:shadow-lg transition-shadow bg-gray-50 text-center">
-                  <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-primary shadow-sm">
+               <div className="p-8 border border-gray-100 rounded-xl hover:shadow-xl hover-lift transition-all bg-gray-50 text-center group">
+                  <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-primary shadow-sm group-hover:shadow-md transition-shadow">
                      <PenTool size={32} />
                   </div>
-                  <h3 className="text-xl font-bold uppercase text-secondary mb-3">Kitchen Design</h3>
-                  <p className="text-gray-500 text-sm">
+                  <h3 className="text-xl font-black uppercase text-secondary mb-3 tracking-tight">Kitchen Design</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">
                      Expert workflow analysis and 2D floor plans to maximize efficiency in your small space.
                   </p>
                </div>
-               <div className="p-6 border border-gray-100 rounded-lg hover:shadow-lg transition-shadow bg-gray-50 text-center">
-                  <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-primary shadow-sm">
+               <div className="p-8 border border-gray-100 rounded-xl hover:shadow-xl hover-lift transition-all bg-gray-50 text-center group">
+                  <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-primary shadow-sm group-hover:shadow-md transition-shadow">
                      <Wrench size={32} />
                   </div>
-                  <h3 className="text-xl font-bold uppercase text-secondary mb-3">Repairs & Upgrades</h3>
-                  <p className="text-gray-500 text-sm">
+                  <h3 className="text-xl font-black uppercase text-secondary mb-3 tracking-tight">Repairs & Upgrades</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">
                      From hood system fixes to generator service, we keep your existing fleet running.
                   </p>
                </div>
-               <div className="p-6 border border-gray-100 rounded-lg hover:shadow-lg transition-shadow bg-gray-50 text-center">
-                  <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-primary shadow-sm">
+               <div className="p-8 border border-gray-100 rounded-xl hover:shadow-xl hover-lift transition-all bg-gray-50 text-center group">
+                  <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-primary shadow-sm group-hover:shadow-md transition-shadow">
                      <ShieldCheck size={32} />
                   </div>
-                  <h3 className="text-xl font-bold uppercase text-secondary mb-3">Code Compliance</h3>
-                  <p className="text-gray-500 text-sm">
+                  <h3 className="text-xl font-black uppercase text-secondary mb-3 tracking-tight">Code Compliance</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">
                      We ensure all builds meet local health and fire safety codes for your specific county.
                   </p>
                </div>

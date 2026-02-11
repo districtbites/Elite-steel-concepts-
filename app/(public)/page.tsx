@@ -6,20 +6,21 @@ import ServiceSelection from "@/components/ServiceSelection";
 import SizeSelection from "@/components/SizeSelection";
 import Testimonials from "@/components/Testimonials";
 import HomeBlogSection from "@/components/HomeBlogSection";
+import CTASection from "@/components/ui/CTASection";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <Section id="intro" className="py-20 md:py-32 bg-white">
+      <Section id="intro" className="bg-white">
          <Container className="text-center max-w-5xl">
-            <h2 className="text-4xl md:text-6xl font-black text-secondary mb-10 leading-tight font-serif">
+            <h2 className="text-4xl md:text-6xl font-black text-secondary mb-10 leading-tight uppercase tracking-tight">
                Building Custom Food Trucks & <br className="hidden md:block"/>
                Concession Trailers For <br className="hidden md:block"/>
                Entrepreneurs Since 2012
             </h2>
             <p className="mx-auto text-lg md:text-xl text-gray-500 leading-relaxed font-light">
-               If you’re looking to get started on launching your very own mobile food truck, contact <strong className="text-secondary font-bold">Elite Steel Concepts</strong> today! Though we’re located in the Metro DC area, our services are nationwide. We provide opportunity for entrepreneurs to visualize and design their ideal mobile kitchen and make their dream a reality. We’re skilled in the fabrication, assembly and creation of beautiful mobile kitchens, food trucks and concession trailers. Our ultimate goal is to roll out a beautiful mobile food business in record time to allow you to spread happiness with your menu! All our trucks and trailers are built specifically to your needs and goals.
+               If you're looking to get started on launching your very own mobile food truck, contact <strong className="text-secondary font-bold">Elite Steel Concepts</strong> today! Though we're located in the Metro DC area, our services are nationwide. We provide opportunity for entrepreneurs to visualize and design their ideal mobile kitchen and make their dream a reality. We're skilled in the fabrication, assembly and creation of beautiful mobile kitchens, food trucks and concession trailers. Our ultimate goal is to roll out a beautiful mobile food business in record time to allow you to spread happiness with your menu! All our trucks and trailers are built specifically to your needs and goals.
             </p>
          </Container>
       </Section>
@@ -28,6 +29,12 @@ export default function Home() {
       <SizeSelection />
       <Testimonials />
       <HomeBlogSection />
+      <CTASection
+        title="Ready to Start Your Build?"
+        subtitle="Tell us about your vision and let's create the perfect mobile kitchen for your business."
+        buttonText="Get a Free Quote"
+        buttonHref="/quote"
+      />
     </>
   );
 }

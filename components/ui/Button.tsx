@@ -7,6 +7,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: "sm" | "md" | "lg";
   href?: string;
   icon?: boolean;
+  pill?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -16,10 +17,11 @@ const Button: React.FC<ButtonProps> = ({
   className = "",
   href,
   icon = false,
+  pill = false,
   ...props
 }) => {
   const baseStyles =
-    "inline-flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded-sm";
+    `inline-flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ${pill ? 'rounded-full' : 'rounded-sm'}`;
 
   const variants = {
     primary:

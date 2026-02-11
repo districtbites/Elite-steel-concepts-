@@ -9,20 +9,21 @@ import { ArrowLeft, Calendar, User, Truck } from "lucide-react";
 import Link from "next/link";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default async function ProjectDetailsPage({ params }: PageProps) {
-  const project = await getProjectById(params.id);
+  const { id } = await params;
+  const project = await getProjectById(id);
 
   if (!project) {
     return notFound();
   }
 
   return (
-    <div className="pt-24">
+    <>
       {/* Hero / Image */}
       <div className="relative h-[50vh] md:h-[60vh] bg-gray-900">
         <Image 
@@ -33,14 +34,14 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
             priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-        <Container className="relative h-full flex flex-col justify-end pb-16">
+        <Container className="relative h-full flex flex-col justify-end pb-16 pt-32">
             <Link href="/portfolio" className="inline-flex items-center text-white/70 hover:text-primary transition-colors mb-6 text-sm font-bold uppercase tracking-wider">
                 <ArrowLeft size={16} className="mr-2" /> Back to Portfolio
             </Link>
             <span className="bg-primary text-secondary text-xs font-bold uppercase tracking-widest px-3 py-1 rounded w-fit mb-4">
                 {project.category}
             </span>
-            <h1 className="text-4xl md:text-6xl font-black uppercase text-white mb-2">{project.title}</h1>
+            <h1 className="text-4xl md:text-6xl font-black uppercase text-white mb-2 tracking-tight">{project.title}</h1>
         </Container>
       </div>
 
@@ -49,24 +50,16 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                 {/* Main Content */}
                 <div className="lg:col-span-8">
-                    <h2 className="text-2xl font-bold uppercase text-secondary mb-6">Project Overview</h2>
+                    <h2 className="text-2xl font-black uppercase text-secondary mb-6 tracking-tight">Project Overview</h2>
                     <p className="text-lg text-gray-600 leading-loose whitespace-pre-wrap">
                         {project.description}
                     </p>
-                    
-                    {/* Placeholder for more images if the DB supported generic image arrays */}
-                    {/* 
-                    <div className="grid grid-cols-2 gap-4 mt-8">
-                        <div className="aspect-video bg-gray-100 rounded"></div>
-                        <div className="aspect-video bg-gray-100 rounded"></div>
-                    </div> 
-                    */}
                 </div>
 
                 {/* Sidebar Details */}
                 <div className="lg:col-span-4 space-y-8">
-                    <div className="bg-gray-50 border border-gray-100 p-8 rounded-lg">
-                        <h3 className="text-xl font-bold uppercase text-secondary mb-6 border-b border-gray-200 pb-2">Project Specs</h3>
+                    <div className="bg-gray-50 border border-gray-100 p-8 rounded-xl">
+                        <h3 className="text-xl font-black uppercase text-secondary mb-6 border-b border-gray-200 pb-2 tracking-tight">Project Specs</h3>
                         
                         <div className="space-y-6">
                             <div className="flex items-start">
@@ -104,6 +97,6 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
             </div>
         </Container>
       </Section>
-    </div>
+    </>
   );
 }

@@ -37,8 +37,39 @@
       "content": "Full content would go here..."
     }
   ],
-  "quotes": [],
-  "contacts": [],
+  "quotes": [
+    {
+      "name": "test",
+      "email": "test@test.com",
+      "phone": "090078601",
+      "company": "Telephone Business",
+      "projectType": "Container",
+      "sourcing": "Have Vehicle",
+      "budget": "30k-50k",
+      "timeline": "ASAP",
+      "menuType": "BBQ",
+      "message": "we need the best food truck , Thanks ",
+      "dimensions": null,
+      "equipment": null,
+      "brandingNeeds": null,
+      "powerRequirements": null,
+      "services": [],
+      "id": "1770831760713",
+      "date": "Feb 11, 2026",
+      "status": "New"
+    }
+  ],
+  "contacts": [
+    {
+      "name": "test ",
+      "email": "test@test.com",
+      "phone": "3139131131313",
+      "message": "this is the test form fill ",
+      "id": "1770831337116",
+      "date": "Feb 11, 2026",
+      "status": "New"
+    }
+  ],
   "settings": {
     "email": "esteelconcepts@gmail.com",
     "phone": "(571) 555-5555",
@@ -71,9 +102,10 @@
       "clientName": "Sarah Chen",
       "role": "Founder",
       "company": "Dim Sum Express",
-      "content": "From the initial design to the final handover, the team was professional and transparent. The layout they suggested improved our workflow speed by 30%. Highly recommended!",
+      "content": "From the initial design to the final handover, the team was professional and transparent. The layout they suggested improved our workflow speed by 30%. Highly thy!",
       "rating": 5,
-      "date": "Dec 05, 2023"
+      "date": "Dec 05, 2023",
+      "image": null
     },
     {
       "id": "3",
@@ -86,59 +118,59 @@
     }
   ],
   "projects": [
-      {
-          "id": "1",
-          "title": "The Taco Stand",
-          "category": "Food Truck",
-          "image": "https://images.pexels.com/photos/2228559/pexels-photo-2228559.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "description": "A vibrant and fully equipped taco truck built on a 18ft step van chassis. Includes a complete hot line, prep area, and custom exterior branding.",
-          "client": "David Miller",
-          "completionDate": "Nov 2023"
-      },
-      {
-          "id": "2",
-          "title": "Dim Sum Express",
-          "category": "Concession Trailer",
-          "image": "https://images.pexels.com/photos/5696001/pexels-photo-5696001.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "description": "A high-volume concession trailer designed for efficient dumpling and steam bun production. Features custom steamers and rapid-serve windows.",
-          "client": "Sarah Chen",
-          "completionDate": "Dec 2023"
-      },
-      {
-          "id": "3",
-          "title": "Smoke & Grill",
-          "category": "Food Truck",
-          "image": "https://images.pexels.com/photos/5920772/pexels-photo-5920772.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "description": "A heavy-duty BBQ truck with an on-board smoker and reinforced chassis. Built to handle the weight of serious equipment.",
-          "client": "Marcus Johnson",
-          "completionDate": "Jan 2024"
-      },
-      {
-          "id": "4",
-          "title": "Urban Coffee Co",
-          "category": "Coffee Cart",
-          "image": "https://images.pexels.com/photos/1307698/pexels-photo-1307698.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "description": "A sleek, modern mobile coffee unit designed for corporate events and city corners. Features a high-capacity espresso machine and cold brew tap system.",
-          "client": "Urban Coffee LLC",
-          "completionDate": "Feb 2024"
-      },
-      {
-          "id": "5",
-          "title": "Gelato Joy",
-          "category": "Concession Trailer",
-          "image": "https://images.pexels.com/photos/5060892/pexels-photo-5060892.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "description": "A colorful and inviting gelato trailer with custom dipping cabinets and a glass service window for maximum product visibility.",
-          "client": "Joy Foods",
-          "completionDate": "Aug 2023"
-      },
-      {
-          "id": "6",
-          "title": "Burger Baron",
-          "category": "Food Truck",
-          "image": "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg?auto=compress&cs=tinysrgb&w=800",
-          "description": "A classic burger truck layout optimized for speed. Includes dual flat-top grills and a high-capacity fry station.",
-          "client": "Burger Baron Inc",
-          "completionDate": "Oct 2023"
-      }
+    {
+      "id": "1",
+      "title": "The Taco Stand",
+      "category": "Food Truck",
+      "image": "https://images.pexels.com/photos/2228559/pexels-photo-2228559.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "description": "A vibrant and fully equipped taco truck built on a 18ft step van chassis. Includes a complete hot line, prep area, and custom exterior branding.",
+      "client": "David Miller",
+      "completionDate": "Nov 2023"
+    },
+    {
+      "id": "2",
+      "title": "Dim Sum Express",
+      "category": "Concession Trailer",
+      "image": "https://images.pexels.com/photos/5696001/pexels-photo-5696001.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "description": "A high-volume concession trailer designed for efficient dumpling and steam bun production. Features custom steamers and rapid-serve windows.",
+      "client": "Sarah Chen",
+      "completionDate": "Dec 2023"
+    },
+    {
+      "id": "3",
+      "title": "Smoke & Grill",
+      "category": "Food Truck",
+      "image": "https://images.pexels.com/photos/5920772/pexels-photo-5920772.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "description": "A heavy-duty BBQ truck with an on-board smoker and reinforced chassis. Built to handle the weight of serious equipment.",
+      "client": "Marcus Johnson",
+      "completionDate": "Jan 2024"
+    },
+    {
+      "id": "4",
+      "title": "Urban Coffee Co",
+      "category": "Coffee Cart",
+      "image": "https://images.pexels.com/photos/1307698/pexels-photo-1307698.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "description": "A sleek, modern mobile coffee unit designed for corporate events and city corners. Features a high-capacity espresso machine and cold brew tap system.",
+      "client": "Urban Coffee LLC",
+      "completionDate": "Feb 2024"
+    },
+    {
+      "id": "5",
+      "title": "Gelato Joy",
+      "category": "Concession Trailer",
+      "image": "https://images.pexels.com/photos/5060892/pexels-photo-5060892.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "description": "A colorful and inviting gelato trailer with custom dipping cabinets and a glass service window for maximum product visibility.",
+      "client": "Joy Foods",
+      "completionDate": "Aug 2023"
+    },
+    {
+      "id": "6",
+      "title": "Burger Baron",
+      "category": "Food Truck",
+      "image": "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "description": "A classic burger truck layout optimized for speed. Includes dual flat-top grills and a high-capacity fry station.",
+      "client": "Burger Baron Inc",
+      "completionDate": "Oct 2023"
+    }
   ]
 }

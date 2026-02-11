@@ -1,8 +1,8 @@
 import React from "react";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
-import Button from "@/components/ui/Button";
-import Link from "next/link";
+import PageHeader from "@/components/ui/PageHeader";
+import CTASection from "@/components/ui/CTASection";
 import { FileText, Phone, PenTool, CheckSquare, Hammer, ArrowRight } from "lucide-react";
 
 export default function ProcessPage() {
@@ -37,7 +37,7 @@ export default function ProcessPage() {
       details: [
         "Custom floor plan creation",
         "Workflow optimization analysis",
-        " Electrical and plumbing layout planning"
+        "Electrical and plumbing layout planning"
       ]
     },
     {
@@ -66,17 +66,10 @@ export default function ProcessPage() {
 
   return (
     <>
-      {/* Header */}
-      <div className="bg-secondary pt-32 pb-16 md:pt-40 md:pb-24">
-        <Container className="text-center">
-          <h1 className="text-4xl md:text-6xl font-black uppercase text-white mb-4 tracking-tight">
-            Our Build Process
-          </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-             From concept to keys in hand, we have a proven system to deliver high-quality mobile kitchens on time and on budget.
-          </p>
-        </Container>
-      </div>
+      <PageHeader
+        title="Our Build Process"
+        subtitle="From concept to keys in hand, we have a proven system to deliver high-quality mobile kitchens on time and on budget."
+      />
 
       {/* Steps Breakdown */}
       <Section className="bg-white">
@@ -93,14 +86,14 @@ export default function ProcessPage() {
                       <div className="bg-primary/10 p-6 rounded-full inline-block mb-6 text-primary relative z-10">
                         <step.icon size={48} strokeWidth={1.5} />
                       </div>
-                      <h3 className="text-3xl font-bold uppercase text-secondary mb-2 relative z-10">
+                      <h3 className="text-3xl font-black uppercase text-secondary mb-2 relative z-10 tracking-tight">
                         {step.title}
                       </h3>
                       <div className="w-12 h-1 bg-primary mb-4 md:mr-auto mx-auto md:mx-0"></div>
                    </div>
 
                    {/* Content Side */}
-                   <div className="w-full md:w-2/3 bg-gray-50 p-8 rounded-lg border border-gray-100 hover:border-primary/30 transition-colors duration-300">
+                   <div className="w-full md:w-2/3 bg-gray-50 p-8 rounded-xl border border-gray-100 hover:border-primary/30 transition-colors duration-300">
                       <p className="text-gray-600 text-lg leading-relaxed mb-8">
                         {step.description}
                       </p>
@@ -110,7 +103,7 @@ export default function ProcessPage() {
                       <ul className="space-y-3">
                         {step.details.map((detail, i) => (
                           <li key={i} className="flex items-center text-secondary font-medium">
-                            <ArrowRight size={16} className="text-primary mr-3" />
+                            <ArrowRight size={16} className="text-primary mr-3 shrink-0" />
                             {detail}
                           </li>
                         ))}
@@ -122,22 +115,12 @@ export default function ProcessPage() {
         </Container>
       </Section>
 
-      {/* CTA Section */}
-      <Section className="bg-secondary py-24 text-center">
-        <Container>
-           <h2 className="text-3xl md:text-5xl font-black uppercase text-white mb-6">
-             Ready to Start Your Journey?
-           </h2>
-           <p className="text-gray-400 max-w-2xl mx-auto text-lg mb-10">
-              The first step is the easiest. Tell us about your project and let's see if we're a good fit.
-           </p>
-           <Link href="/quote">
-             <Button size="lg" className="bg-primary hover:bg-white hover:text-secondary text-white border-2 border-primary">
-               Start A Quote Request
-             </Button>
-           </Link>
-        </Container>
-      </Section>
+      <CTASection
+        title="Ready to Start Your Journey?"
+        subtitle="The first step is the easiest. Tell us about your project and let's see if we're a good fit."
+        buttonText="Start A Quote Request"
+        buttonHref="/quote"
+      />
     </>
   );
 }

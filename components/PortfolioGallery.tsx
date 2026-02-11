@@ -22,12 +22,12 @@ const PortfolioGallery = ({ initialProjects }: PortfolioGalleryProps) => {
   return (
     <div className="space-y-12">
       {/* Filters */}
-      <div className="flex flex-wrap justify-center gap-4">
+      <div className="scroll-x-mobile flex flex-nowrap md:flex-wrap md:justify-center gap-3 pb-2">
         {categories.map((category) => (
           <button
             key={category}
             onClick={() => setActiveFilter(category)}
-            className={`px-6 py-2 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300 border ${
+            className={`px-6 py-2.5 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300 border whitespace-nowrap shrink-0 ${
               activeFilter === category
                 ? "bg-secondary text-white border-secondary shadow-lg scale-105"
                 : "bg-white text-gray-500 border-gray-200 hover:border-primary hover:text-primary"

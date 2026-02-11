@@ -1,44 +1,71 @@
 import React from "react";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
-import Button from "@/components/ui/Button";
+import PageHeader from "@/components/ui/PageHeader";
+import CTASection from "@/components/ui/CTASection";
+import { Check } from "lucide-react";
 
 export default function FleetExpansionPage() {
   return (
-    <div className="pt-24">
+    <>
+      <PageHeader
+        title="Fleet Expansion"
+        subtitle="Scaling your mobile food empire? We offer standardized build processes for multi-unit operators and franchises."
+      />
+
       <Section className="bg-white">
         <Container>
-           <h1 className="text-5xl md:text-6xl font-black uppercase text-secondary mb-8">Fleet Expansion</h1>
-           <p className="text-xl text-gray-600 max-w-3xl mb-12 leading-relaxed">
-             Scaling your mobile food empire? We offer standardized build processes for multi-unit operators and franchises. Ensure consistency across your entire fleet with our scalable manufacturing solutions.
-           </p>
-           
-           <div className="bg-gray-50 border border-gray-100 rounded-lg p-10 mb-12 flex flex-col md:flex-row items-center gap-10">
-               <div className="flex-1">
-                   <h3 className="text-3xl font-bold uppercase text-secondary mb-4">Consistent Quality at Scale</h3>
-                   <p className="text-gray-600 mb-6">
-                       Whether you need 5 trucks or 50, we deliver identical build quality, equipment layouts, and branding. Streamline your operations with a standardized fleet.
-                   </p>
-                   <ul className="space-y-2 font-bold text-secondary">
-                       <li>✓ Volume Pricing Available</li>
-                       <li>✓ Dedicated Project Management</li>
-                       <li>✓ Rapid Deployment Schedules</li>
-                   </ul>
-               </div>
-               <div className="flex-1 bg-white p-8 rounded border border-gray-200 shadow-sm w-full">
-                   <h4 className="font-bold text-secondary uppercase mb-4 text-center">Perfect For</h4>
-                   <ul className="space-y-4 text-gray-600">
-                       <li className="flex items-center"><span className="w-2 h-2 bg-primary rounded-full mr-3"></span> Restaurant Chains going Mobile</li>
-                       <li className="flex items-center"><span className="w-2 h-2 bg-primary rounded-full mr-3"></span> Corporate Promotional Vehicles</li>
-                       <li className="flex items-center"><span className="w-2 h-2 bg-primary rounded-full mr-3"></span> Franchise Operations</li>
-                       <li className="flex items-center"><span className="w-2 h-2 bg-primary rounded-full mr-3"></span> University & Campus Dining</li>
-                   </ul>
-               </div>
-           </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div>
+              <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Scale With Confidence</span>
+              <h2 className="text-3xl md:text-4xl font-black uppercase text-secondary mb-6 tracking-tight">
+                Consistent Quality at Scale
+              </h2>
+              <p className="text-gray-600 text-lg leading-relaxed mb-8">
+                Whether you need 5 trucks or 50, we deliver identical build quality, equipment layouts, and branding. Streamline your operations with a standardized fleet.
+              </p>
+              <ul className="space-y-4 mb-8">
+                {[
+                  "Volume Pricing Available",
+                  "Dedicated Project Management",
+                  "Rapid Deployment Schedules",
+                  "Consistent Build Standards",
+                  "Fleet Maintenance Packages",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center text-gray-700 font-bold">
+                    <Check size={18} className="text-primary mr-3 shrink-0" /> {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-           <Button href="/contact">Discuss Fleet Options</Button>
+            <div className="bg-gray-50 p-8 md:p-10 rounded-xl border border-gray-100">
+              <h3 className="font-black text-secondary uppercase mb-6 text-xl text-center tracking-tight">Perfect For</h3>
+              <ul className="space-y-5">
+                {[
+                  "Restaurant Chains going Mobile",
+                  "Corporate Promotional Vehicles",
+                  "Franchise Operations",
+                  "University & Campus Dining",
+                  "Catering Companies Scaling Up",
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center text-gray-600 font-medium">
+                    <span className="w-2.5 h-2.5 bg-primary rounded-full mr-4 shrink-0"></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </Container>
       </Section>
-    </div>
+
+      <CTASection
+        title="Discuss Fleet Options"
+        subtitle="Let's discuss your multi-unit needs. We offer dedicated project management for fleet builds."
+        buttonText="Contact Us"
+        buttonHref="/contact"
+      />
+    </>
   );
 }

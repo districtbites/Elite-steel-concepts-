@@ -12,11 +12,12 @@ const Testimonials = async () => {
   if (recentTestimonials.length === 0) return null;
 
   return (
-    <Section className="bg-gray-50 text-secondary py-24 border-t border-gray-200">
+    <Section className="bg-white text-secondary border-t border-gray-100">
       <Container>
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-secondary mb-6">
+          <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Testimonials</span>
+          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-secondary mb-6">
             Client Success
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
@@ -33,7 +34,7 @@ const Testimonials = async () => {
           {recentTestimonials.map((testimonial) => (
             <div 
               key={testimonial.id} 
-              className="bg-white border border-gray-100 shadow-sm p-8 rounded-lg relative hover:shadow-md hover:border-primary/30 transition-all duration-300 group"
+              className="bg-white border border-gray-100 shadow-sm p-8 rounded-lg relative hover:shadow-lg hover:border-primary/30 hover-lift transition-all duration-300 group"
             >
               {/* Quote Icon */}
               <div className="absolute top-6 right-6 text-black/5 group-hover:text-primary/10 transition-colors duration-300">

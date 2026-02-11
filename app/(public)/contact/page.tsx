@@ -1,6 +1,7 @@
 import React from "react";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
+import PageHeader from "@/components/ui/PageHeader";
 import ContactForm from "@/components/ContactForm";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { getSettings } from "@/lib/db";
@@ -10,17 +11,10 @@ export default async function ContactPage() {
 
   return (
     <>
-      {/* Page Header */}
-      <div className="bg-secondary pt-32 pb-16 md:pt-40 md:pb-24">
-        <Container className="text-center">
-          <h1 className="text-4xl md:text-6xl font-black uppercase text-white mb-4 tracking-tight">
-            Get In Touch
-          </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-             Ready to start your build? Contact us today for a consultation or quote.
-          </p>
-        </Container>
-      </div>
+      <PageHeader
+        title="Get In Touch"
+        subtitle="Ready to start your build? Contact us today for a consultation or quote."
+      />
 
       <Section className="bg-white">
         <Container>
@@ -28,7 +22,7 @@ export default async function ContactPage() {
             {/* Contact Info Sidebar (4 Cols) */}
             <div className="lg:col-span-4 space-y-8">
               <div>
-                <h3 className="text-2xl font-bold uppercase text-secondary mb-6 border-l-4 border-primary pl-4">
+                <h3 className="text-2xl font-black uppercase text-secondary mb-6 border-l-4 border-primary pl-4 tracking-tight">
                   Contact Info
                 </h3>
                 <p className="text-gray-600 mb-8 leading-relaxed">
@@ -90,8 +84,8 @@ export default async function ContactPage() {
 
             {/* Contact Form Main (8 Cols) */}
             <div className="lg:col-span-8">
-               <div className="bg-white p-6 md:p-10 border border-gray-100 shadow-xl rounded-lg">
-                  <h3 className="text-2xl font-bold uppercase text-secondary mb-2">
+               <div className="bg-white p-6 md:p-10 border border-gray-100 shadow-xl rounded-xl">
+                  <h3 className="text-2xl font-black uppercase text-secondary mb-2 tracking-tight">
                     Send us a Message
                   </h3>
                   <p className="text-gray-500 mb-8">

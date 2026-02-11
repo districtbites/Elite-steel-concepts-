@@ -36,13 +36,13 @@ const sizes = [
 
 const SizeSelection = () => {
   return (
-    <Section className="bg-white text-secondary py-24">
+    <Section className="bg-gray-50 text-secondary">
       <Container>
         <div className="text-center mb-20">
-          <p className="text-primary uppercase tracking-widest text-sm mb-4 font-bold">
+          <span className="text-primary uppercase tracking-widest text-sm mb-4 font-bold block">
             Not Sure How Much Space You Will Need?
-          </p>
-          <h2 className="text-6xl md:text-7xl font-sans font-black uppercase italic mb-6 text-secondary tracking-tighter">
+          </span>
+          <h2 className="text-5xl md:text-7xl font-sans font-black uppercase italic mb-6 text-secondary tracking-tighter">
             Size Matters
           </h2>
           <p className="text-gray-500 max-w-2xl mx-auto text-lg">
@@ -50,20 +50,16 @@ const SizeSelection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-t border-gray-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {sizes.map((item, index) => (
             <div 
               key={index} 
-              className={`flex flex-col border-gray-200 ${
-                index !== sizes.length - 1 ? "lg:border-r" : ""
-              } ${
-                index % 2 !== 1 ? "md:border-r lg:border-r-0" : ""
-              } border-b lg:border-b-0`}
+              className="flex flex-col rounded-xl overflow-hidden hover-lift shadow-sm hover:shadow-xl transition-all duration-300"
             >
               {/* Image & Letter Section - White Background */}
               <div className="relative w-full aspect-square bg-white flex items-center justify-center overflow-hidden">
                 {/* Background Large Letter */}
-                <span className="absolute inset-0 flex items-center justify-center text-[12rem] font-black text-primary/10 select-none pointer-events-none">
+                <span className="absolute inset-0 flex items-center justify-center text-[10rem] font-black text-primary/10 select-none pointer-events-none">
                   {item.letter}
                 </span>
                 
