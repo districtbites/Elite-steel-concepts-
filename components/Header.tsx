@@ -31,6 +31,7 @@ const Header = ({ settings }: HeaderProps) => {
 
   const navLinks = [
     { name: "Home", href: "/" },
+    { name: "About Us", href: "/about" },
     { name: "Services", href: "/services" },
     { name: "Process", href: "/process" },
     { name: "Portfolio", href: "/portfolio" },

@@ -8,13 +8,28 @@ const montserrat = Montserrat({
   weight: ["300", "400", "500", "600", "700", "800"], 
 });
 
-export const metadata: Metadata = {
-  title: "Elite Steel Concepts | Custom Food Trucks & Mobile Kitchen Fabrication",
-  description: "Elite Steel Concepts builds premium custom food trucks, trailers, and mobile kitchens in Manassas, VA. Serving the DMV and nationwide. Request a quote today.",
-  icons: {
-    icon: "/logo.png",
-  }
-};
+import { getSEO } from "@/lib/db";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSEO();
+  return {
+    title: seo.siteTitle,
+    description: seo.description,
+    keywords: seo.keywords,
+    icons: {
+      icon: "/logo.png",
+    },
+    openGraph: {
+      images: [seo.ogImage],
+    },
+    twitter: {
+      site: seo.twitterHandle,
+    },
+    alternates: {
+      canonical: seo.canonicalUrl,
+    }
+  };
+}
 
 export default function RootLayout({
   children,

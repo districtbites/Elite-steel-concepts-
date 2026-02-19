@@ -59,6 +59,12 @@ export interface GlobalSettings {
     twitter: string;
 }
 
+export interface PageSEO {
+    title: string;
+    description: string;
+    keywords: string;
+}
+
 export interface SEOSettings {
     siteTitle: string;
     description: string;
@@ -67,6 +73,9 @@ export interface SEOSettings {
     twitterHandle: string;
     robotsTxt: string;
     canonicalUrl: string;
+    pages: {
+        [key: string]: PageSEO;
+    };
 }
 
 export interface Testimonial {
@@ -83,6 +92,7 @@ export interface Testimonial {
 export interface Project {
     id: string;
     title: string;
+    slug: string;
     category: string;
     image: string;
     description: string;
@@ -116,7 +126,17 @@ const DEFAULT_SEO: SEOSettings = {
     ogImage: "",
     twitterHandle: "",
     robotsTxt: "User-agent: *\nAllow: /",
-    canonicalUrl: "https://elitesteelconcepts.com"
+    canonicalUrl: "https://elitesteelconcepts.com",
+    pages: {
+        "home": { title: "Elite Steel Concepts | Custom Food Trucks & Mobile Kitchen Fabrication", description: "Elite Steel Concepts designs & builds custom food trucks and trailers in Manassas, VA. Premium mobile kitchens crafted for performance. Get a free quote today!", keywords: "" },
+        "about": { title: "About Us | Master Craftsmanship in Mobile Kitchens", description: "Learn about the Elite Steel Concepts story and our commitment to building premium custom food trucks.", keywords: "" },
+        "services": { title: "Our Services | Custom Food Truck & Trailer Fabrication", description: "Expert mobile kitchen fabrication services including food trucks, concession trailers, and kitchen design.", keywords: "" },
+        "portfolio": { title: "Project Portfolio | Our Recent Custom Builds", description: "Browse our gallery of recent custom food trucks and concession trailers built for entrepreneurs nationwide.", keywords: "" },
+        "process": { title: "Our Build Process | From Concept to Keys", description: "Learn how we transform your dream into a high-performance mobile kitchen through our proven fabrication process.", keywords: "" },
+        "blog": { title: "News & Insights | Elite Steel Concepts Blog", description: "Stay updated with the latest industry trends, maintenance tips, and success stories.", keywords: "" },
+        "contact": { title: "Contact Us | Get a Quote for Your Custom Build", description: "Ready to start your mobile food business? Contact us today for a consultation or quote.", keywords: "" },
+        "quote": { title: "Request a Free Quote | Custom Mobile Kitchen Pricing", description: "Tell us about your vision and get an accurate estimate for your custom food truck or trailer.", keywords: "" }
+    }
 };
 
 // Helper to read DB
@@ -288,6 +308,11 @@ export async function getProjects(): Promise<Project[]> {
 export async function getProjectById(id: string): Promise<Project | undefined> {
     const db = await readDb();
     return db.projects?.find((p) => p.id === id);
+}
+
+export async function getProjectBySlug(slug: string): Promise<Project | undefined> {
+    const db = await readDb();
+    return db.projects?.find((p) => p.slug === slug);
 }
 
 export async function createProject(project: Omit<Project, 'id'>): Promise<Project> {

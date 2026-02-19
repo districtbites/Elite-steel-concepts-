@@ -5,6 +5,20 @@ import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import { FileText, Phone, PenTool, CheckSquare, Hammer, ArrowRight } from "lucide-react";
 
+import { getSEO } from "@/lib/db";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSEO();
+  const pageSeo = seo.pages?.["process"];
+  
+  return {
+    title: pageSeo?.title || seo.siteTitle,
+    description: pageSeo?.description || seo.description,
+    keywords: pageSeo?.keywords || seo.keywords,
+  };
+}
+
 export default function ProcessPage() {
   const steps = [
     {

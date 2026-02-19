@@ -7,6 +7,20 @@ import Link from "next/link";
 import Image from "next/image";
 import { Truck, Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X } from "lucide-react";
 
+import { getSEO } from "@/lib/db";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSEO();
+  const pageSeo = seo.pages?.["services"];
+  
+  return {
+    title: pageSeo?.title || seo.siteTitle,
+    description: pageSeo?.description || seo.description,
+    keywords: pageSeo?.keywords || seo.keywords,
+  };
+}
+
 export default function ServicesPage() {
   return (
     <>

@@ -1,5 +1,5 @@
 import React from "react";
-import { getProjectById } from "@/lib/db";
+import { getProjectBySlug } from "@/lib/db";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import Button from "@/components/ui/Button";
@@ -10,13 +10,13 @@ import Link from "next/link";
 
 interface PageProps {
   params: Promise<{
-    id: string;
+    slug: string;
   }>;
 }
 
 export default async function ProjectDetailsPage({ params }: PageProps) {
-  const { id } = await params;
-  const project = await getProjectById(id);
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
 
   if (!project) {
     return notFound();

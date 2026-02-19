@@ -39,6 +39,26 @@
   ],
   "quotes": [
     {
+      "name": "Raheel",
+      "email": "raheel@seo.com",
+      "phone": "090078601",
+      "company": "Billion ki Rani",
+      "projectType": "Trailer",
+      "sourcing": "Have Vehicle",
+      "budget": "80k-120k",
+      "timeline": "ASAP",
+      "menuType": "Smoked BBQ",
+      "message": "This is addtional Form. ",
+      "dimensions": null,
+      "equipment": null,
+      "brandingNeeds": null,
+      "powerRequirements": null,
+      "services": [],
+      "id": "1771530793860",
+      "date": "Feb 20, 2026",
+      "status": "New"
+    },
+    {
       "name": "test",
       "email": "test@test.com",
       "phone": "090078601",
@@ -72,20 +92,62 @@
   ],
   "settings": {
     "email": "esteelconcepts@gmail.com",
-    "phone": "(571) 555-5555",
-    "address": "1234 Fabrication Way, Manassas, VA 20110",
-    "instagram": "https://instagram.com",
-    "facebook": "https://facebook.com",
+    "phone": "(571) 651-0337",
+    "address": "8303 Rugby Rd, Manassas VA",
+    "instagram": "https://www.instagram.com/elitesteelconcepts/",
+    "facebook": "https://www.facebook.com/EliteSteelConcepts",
     "twitter": "https://twitter.com"
   },
   "seo": {
     "siteTitle": "Elite Steel Concepts | Custom Food Trucks & Mobile Kitchen Fabrication",
-    "description": "Elite Steel Concepts builds premium custom food trucks, trailers, and mobile kitchens in Manassas, VA.",
-    "keywords": "food truck builder, concession trailer, mobile kitchen, custom fabrication, dmv food trucks",
+    "description": null,
+    "keywords": "custom food trucks in DMV, buy food truck in Virginia, food truck manufacturer in Manassas VA, custom concession trailers in Virginia, mobile kitchen fabrication services, premium food truck builders DMV area",
     "ogImage": "https://elitesteelconcepts.com/og-image.jpg",
     "twitterHandle": "@elitesteel",
-    "robotsTxt": "User-agent: *\nAllow: /",
-    "canonicalUrl": "https://elitesteelconcepts.com"
+    "robotsTxt": "User-agent: *\r\nAllow: /",
+    "canonicalUrl": "https://elitesteelconcepts.com",
+    "pages": {
+      "home": {
+        "title": "Home page | Elite Steel Concepts",
+        "description": "",
+        "keywords": ""
+      },
+      "about": {
+        "title": "",
+        "description": "",
+        "keywords": ""
+      },
+      "services": {
+        "title": "",
+        "description": "",
+        "keywords": ""
+      },
+      "portfolio": {
+        "title": "",
+        "description": "",
+        "keywords": ""
+      },
+      "process": {
+        "title": "",
+        "description": "",
+        "keywords": ""
+      },
+      "blog": {
+        "title": "",
+        "description": "",
+        "keywords": ""
+      },
+      "contact": {
+        "title": "",
+        "description": "",
+        "keywords": ""
+      },
+      "quote": {
+        "title": "",
+        "description": "",
+        "keywords": ""
+      }
+    }
   },
   "testimonials": [
     {
@@ -121,6 +183,7 @@
     {
       "id": "1",
       "title": "The Taco Stand",
+      "slug": "the-taco-stand",
       "category": "Food Truck",
       "image": "https://images.pexels.com/photos/2228559/pexels-photo-2228559.jpeg?auto=compress&cs=tinysrgb&w=800",
       "description": "A vibrant and fully equipped taco truck built on a 18ft step van chassis. Includes a complete hot line, prep area, and custom exterior branding.",
@@ -130,6 +193,7 @@
     {
       "id": "2",
       "title": "Dim Sum Express",
+      "slug": "dim-sum-express",
       "category": "Concession Trailer",
       "image": "https://images.pexels.com/photos/5696001/pexels-photo-5696001.jpeg?auto=compress&cs=tinysrgb&w=800",
       "description": "A high-volume concession trailer designed for efficient dumpling and steam bun production. Features custom steamers and rapid-serve windows.",
@@ -139,6 +203,7 @@
     {
       "id": "3",
       "title": "Smoke & Grill",
+      "slug": "smoke-and-grill",
       "category": "Food Truck",
       "image": "https://images.pexels.com/photos/5920772/pexels-photo-5920772.jpeg?auto=compress&cs=tinysrgb&w=800",
       "description": "A heavy-duty BBQ truck with an on-board smoker and reinforced chassis. Built to handle the weight of serious equipment.",
@@ -148,6 +213,7 @@
     {
       "id": "4",
       "title": "Urban Coffee Co",
+      "slug": "urban-coffee-co",
       "category": "Coffee Cart",
       "image": "https://images.pexels.com/photos/1307698/pexels-photo-1307698.jpeg?auto=compress&cs=tinysrgb&w=800",
       "description": "A sleek, modern mobile coffee unit designed for corporate events and city corners. Features a high-capacity espresso machine and cold brew tap system.",
@@ -157,6 +223,7 @@
     {
       "id": "5",
       "title": "Gelato Joy",
+      "slug": "gelato-joy",
       "category": "Concession Trailer",
       "image": "https://images.pexels.com/photos/5060892/pexels-photo-5060892.jpeg?auto=compress&cs=tinysrgb&w=800",
       "description": "A colorful and inviting gelato trailer with custom dipping cabinets and a glass service window for maximum product visibility.",
@@ -166,6 +233,7 @@
     {
       "id": "6",
       "title": "Burger Baron",
+      "slug": "burger-baron",
       "category": "Food Truck",
       "image": "https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg?auto=compress&cs=tinysrgb&w=800",
       "description": "A classic burger truck layout optimized for speed. Includes dual flat-top grills and a high-capacity fry station.",

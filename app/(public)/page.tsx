@@ -8,6 +8,20 @@ import Testimonials from "@/components/Testimonials";
 import HomeBlogSection from "@/components/HomeBlogSection";
 import CTASection from "@/components/ui/CTASection";
 
+import { getSEO } from "@/lib/db";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSEO();
+  const pageSeo = seo.pages?.["home"];
+  
+  return {
+    title: pageSeo?.title || seo.siteTitle,
+    description: pageSeo?.description || seo.description,
+    keywords: pageSeo?.keywords || seo.keywords,
+  };
+}
+
 export default function Home() {
   return (
     <>

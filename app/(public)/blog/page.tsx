@@ -5,6 +5,20 @@ import PageHeader from "@/components/ui/PageHeader";
 import BlogCard from "@/components/BlogCard";
 import { getPosts } from "@/lib/db";
 
+import { getSEO } from "@/lib/db";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSEO();
+  const pageSeo = seo.pages?.["blog"];
+  
+  return {
+    title: pageSeo?.title || seo.siteTitle,
+    description: pageSeo?.description || seo.description,
+    keywords: pageSeo?.keywords || seo.keywords,
+  };
+}
+
 export default async function BlogPage() {
   const blogPosts = await getPosts();
   const publishedPosts = blogPosts.filter(p => p.status === "Published");

@@ -27,8 +27,7 @@ const Footer = ({ settings }: FooterProps) => {
                 />
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Custom Food Trucks, Trailers & Mobile Kitchens Built to Perform. 
-              Based in Manassas, VA, serving the DMV and nationwide.
+              Elite Steel Concepts designs & builds custom food trucks and trailers in Manassas, VA. Premium mobile kitchens crafted for performance. Get a free quote today!
             </p>
             <div className="flex space-x-4">
               {settings.facebook && (
@@ -53,10 +52,17 @@ const Footer = ({ settings }: FooterProps) => {
           <div>
             <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">Explore</h3>
             <ul className="space-y-3">
-              {["Home", "About Us", "Process", "Portfolio", "Testimonials", "Blog"].map((item) => (
-                <li key={item}>
-                  <Link href={`/${item.toLowerCase().replace(" ", "-")}`} className="text-gray-400 hover:text-white transition-colors text-sm">
-                    {item === "Home" ? "Home" : item}
+              {[
+                { name: "Home", href: "/" },
+                { name: "About Us", href: "/about" },
+                { name: "Process", href: "/process" },
+                { name: "Portfolio", href: "/portfolio" },
+                { name: "Testimonials", href: "/testimonials" },
+                { name: "Blog", href: "/blog" }
+              ].map((item) => (
+                <li key={item.name}>
+                  <Link href={item.href} className="text-gray-400 hover:text-white transition-colors text-sm">
+                    {item.name}
                   </Link>
                 </li>
               ))}
@@ -106,12 +112,12 @@ const Footer = ({ settings }: FooterProps) => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center bg-secondary">
           <p className="text-gray-500 text-xs mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} Elite Steel Concepts. All rights reserved.
+            &copy; {new Date().getFullYear()} <a href="https://www.facebook.com/EliteSteelConcepts" className="text-white hover:text-primary transition-colors">Elite Steel Concepts</a> All rights reserved. Created by <a href="http://districtbites.com/" className="text-white hover:text-primary transition-colors">District Bites</a>
           </p>
           <div className="flex space-x-6">
             <Link href="/privacy" className="text-gray-500 hover:text-white text-xs">Privacy Policy</Link>
             <Link href="/terms" className="text-gray-500 hover:text-white text-xs">Terms of Service</Link>
-            <Link href="/sitemap" className="text-gray-500 hover:text-white text-xs">Sitemap</Link>
+            <Link href="/sitemap.xml" className="text-gray-500 hover:text-white text-xs">Sitemap</Link>
           </div>
         </div>
       </Container>

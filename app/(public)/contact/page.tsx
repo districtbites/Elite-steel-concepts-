@@ -6,6 +6,20 @@ import ContactForm from "@/components/ContactForm";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { getSettings } from "@/lib/db";
 
+import { getSEO } from "@/lib/db";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSEO();
+  const pageSeo = seo.pages?.["contact"];
+  
+  return {
+    title: pageSeo?.title || seo.siteTitle,
+    description: pageSeo?.description || seo.description,
+    keywords: pageSeo?.keywords || seo.keywords,
+  };
+}
+
 export default async function ContactPage() {
   const settings = await getSettings();
 

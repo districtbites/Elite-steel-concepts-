@@ -23,14 +23,24 @@ export default function ProjectManager({ initialProjects }: ProjectManagerProps)
 
   const handleAddSubmit = async (formData: FormData) => {
       setLoading(true);
-      await addProject(formData);
+      const result = await addProject(formData);
+      if (result?.error) {
+          alert(result.error);
+          setLoading(false);
+          return;
+      }
       setLoading(false);
       setIsAdding(false);
   };
 
   const handleEditSubmit = async (formData: FormData) => {
       setLoading(true);
-      await editProject(formData);
+      const result = await editProject(formData);
+      if (result?.error) {
+          alert(result.error);
+          setLoading(false);
+          return;
+      }
       setLoading(false);
       setEditingId(null);
   };
@@ -46,7 +56,14 @@ export default function ProjectManager({ initialProjects }: ProjectManagerProps)
 
        {/* Add Form */}
        {isAdding && (
-           <form action={handleAddSubmit} className="bg-gray-50 p-6 rounded-lg border border-gray-200 animate-fadeIn">
+           <form 
+               onSubmit={async (e) => {
+                   e.preventDefault();
+                   const formData = new FormData(e.currentTarget);
+                   await handleAddSubmit(formData);
+               }} 
+               className="bg-gray-50 p-6 rounded-lg border border-gray-200 animate-fadeIn"
+           >
                <h3 className="text-lg font-bold mb-4">New Project</h3>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                    <input name="title" placeholder="Project Title*" required className="p-3 border rounded" />
@@ -58,7 +75,10 @@ export default function ProjectManager({ initialProjects }: ProjectManagerProps)
                    </select>
                    <input name="client" placeholder="Client Name" className="p-3 border rounded" />
                    <input name="completionDate" placeholder="Completion Date (e.g. Jan 2024)" className="p-3 border rounded" />
-                   <input name="image" placeholder="Image URL*" required className="p-3 border rounded md:col-span-2" />
+                   <div className="md:col-span-2">
+                       <label className="block text-sm font-bold text-gray-700 mb-1">Project Image (WebP only)*</label>
+                       <input type="file" name="image" accept="image/webp" required className="w-full p-2 border rounded bg-white" />
+                   </div>
                </div>
                <textarea name="description" placeholder="Project Description*" required rows={4} className="w-full p-3 border rounded mb-4" />
                <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save Project"}</Button>
@@ -70,8 +90,16 @@ export default function ProjectManager({ initialProjects }: ProjectManagerProps)
            {initialProjects.map((p) => (
                <div key={p.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col h-full group">
                    {editingId === p.id ? (
-                       <form action={handleEditSubmit} className="p-4 space-y-4 flex-grow flex flex-col">
+                       <form 
+                           onSubmit={async (e) => {
+                               e.preventDefault();
+                               const formData = new FormData(e.currentTarget);
+                               await handleEditSubmit(formData);
+                           }} 
+                           className="p-4 space-y-4 flex-grow flex flex-col"
+                       >
                             <input type="hidden" name="id" value={p.id} />
+                            <input type="hidden" name="existingImage" value={p.image} />
                             <input name="title" defaultValue={p.title} required className="p-2 border rounded w-full" />
                             <select name="category" defaultValue={p.category} className="p-2 border rounded w-full">
                                <option value="Food Truck">Food Truck</option>
@@ -79,7 +107,10 @@ export default function ProjectManager({ initialProjects }: ProjectManagerProps)
                                <option value="Mobile Bar">Mobile Bar</option>
                                <option value="Support Vehicle">Support Vehicle</option>
                             </select>
-                            <input name="image" defaultValue={p.image} className="p-2 border rounded w-full" placeholder="Image URL" />
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Change Image (WebP only)</label>
+                                <input type="file" name="image" accept="image/webp" className="p-2 border rounded w-full bg-white text-sm" />
+                            </div>
                             <input name="client" defaultValue={p.client} className="p-2 border rounded w-full" placeholder="Client" />
                             <textarea name="description" defaultValue={p.description} required rows={3} className="w-full p-2 border rounded flex-grow" />
                             <div className="flex gap-2 pt-2 mt-auto">
