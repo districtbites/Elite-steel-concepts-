@@ -1,6 +1,6 @@
 "use server";
 
-import { createQuote } from "@/lib/db";
+import { createQuote, Quote } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
 export async function submitQuoteForm(formData: FormData) {
@@ -49,4 +49,18 @@ export async function submitQuoteForm(formData: FormData) {
     revalidatePath("/admin/quotes");
 
     return { success: true };
+}
+
+export async function updateQuoteStatus(id: string, status: Quote["status"]) {
+    const { updateQuote } = await import("@/lib/db");
+    await updateQuote(id, { status });
+    revalidatePath("/admin");
+    revalidatePath("/admin/quotes");
+}
+
+export async function removeQuote(id: string) {
+    const { deleteQuote } = await import("@/lib/db");
+    await deleteQuote(id);
+    revalidatePath("/admin");
+    revalidatePath("/admin/quotes");
 }

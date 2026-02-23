@@ -5,7 +5,11 @@ import Container from "./ui/Container";
 import Section from "./ui/Section";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
-const ServiceSelection = () => {
+interface ServiceSelectionProps {
+  imageAlts?: { [key: string]: string };
+}
+
+const ServiceSelection = ({ imageAlts }: ServiceSelectionProps) => {
   return (
     <Section className="bg-white py-24">
       <Container>
@@ -26,7 +30,7 @@ const ServiceSelection = () => {
           <Link href="/services/custom-food-trucks" className="group relative block h-[500px] md:h-[600px] w-full overflow-hidden rounded-2xl">
              <Image 
                 src="https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200" 
-                alt="Custom Food Truck"
+                alt={imageAlts?.["truck-platform"] || "Custom Food Truck"}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
              />
@@ -57,7 +61,7 @@ const ServiceSelection = () => {
           <Link href="/services/custom-food-trailers" className="group relative block h-[500px] md:h-[600px] w-full overflow-hidden rounded-2xl">
              <Image 
                 src="https://images.pexels.com/photos/5696001/pexels-photo-5696001.jpeg?auto=compress&cs=tinysrgb&w=1200" 
-                alt="Custom Food Trailer"
+                alt={imageAlts?.["trailer-platform"] || "Custom Food Trailer"}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
              />

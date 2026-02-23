@@ -4,6 +4,19 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import { Check } from "lucide-react";
+import { getSEO, getPageSEO } from "@/lib/db";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSEO();
+  const pageSeo = await getPageSEO("fleet-expansion");
+  
+  return {
+    title: pageSeo?.title || `Fleet Expansion | ${seo.siteTitle}`,
+    description: pageSeo?.description || seo.description,
+    keywords: pageSeo?.keywords || seo.keywords,
+  };
+}
 
 export default function FleetExpansionPage() {
   return (

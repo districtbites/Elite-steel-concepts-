@@ -49,7 +49,7 @@ const PortfolioGallery = ({ initialProjects }: PortfolioGalleryProps) => {
             {/* Image Container */}
             <div className="relative aspect-[4/3] overflow-hidden">
                <Image 
-                 src={project.image} 
+                 src={project.image} unoptimized 
                  alt={project.title}
                  fill
                  className="object-cover transition-transform duration-700 group-hover:scale-110"

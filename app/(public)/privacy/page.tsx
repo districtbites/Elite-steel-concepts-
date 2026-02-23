@@ -2,8 +2,25 @@ import React from "react";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
+import { getPageSEO, getSEO, getSettings } from "@/lib/db";
+import type { Metadata } from "next";
 
-export default function PrivacyPage() {
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getSEO();
+  const pageSeo = await getPageSEO("privacy");
+  
+  return {
+    title: pageSeo?.title || `Privacy Policy | ${seo.siteTitle}`,
+    description: pageSeo?.description || seo.description,
+    keywords: pageSeo?.keywords || seo.keywords,
+  };
+}
+
+export default async function PrivacyPage() {
+  const pageSeo = await getPageSEO("privacy");
+  const settings = await getSettings();
+  const sections = pageSeo.sections || {};
+
   const lastUpdated = new Date().toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
@@ -13,88 +30,92 @@ export default function PrivacyPage() {
   return (
     <>
       <PageHeader
-        title="Privacy Policy"
-        subtitle="How we collect, use, and protect your information at Elite Steel Concepts."
+        title={sections.header?.title || "Privacy Protocol"}
+        subtitle={sections.header?.subtitle || "How we collect, use, and protect your information at Elite Steel Concepts."}
       />
 
       <Section className="bg-white">
         <Container className="max-w-4xl">
           <div className="prose prose-lg max-w-none text-gray-600">
-            <p className="text-sm text-gray-400 mb-8 font-bold uppercase tracking-widest">
-              Last Updated: {lastUpdated}
-            </p>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-12 pb-6 border-b border-gray-100">
+               <p className="text-[10px] text-gray-400 font-extrabold uppercase tracking-[0.3em]">
+                  Document Revision: {lastUpdated}
+               </p>
+               <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-secondary">Active Compliance</span>
+               </div>
+            </div>
 
-            <section className="mb-10">
-              <h2 className="text-2xl font-black text-secondary uppercase mb-4 tracking-tight">1. Introduction</h2>
-              <p>
-                At Elite Steel Concepts ("we," "our," or "us"), we respect your privacy and are committed to protecting the personal data you share with us. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website at <a href="https://elitesteelconcepts.com" className="text-primary font-bold hover:underline">elitesteelconcepts.com</a>.
-              </p>
+            <section className="mb-12">
+               <h2 className="text-3xl font-black text-secondary uppercase mb-6 tracking-tighter flex items-center gap-4">
+                  <span className="w-8 h-8 bg-primary text-secondary flex items-center justify-center rounded-lg text-sm">01</span>
+                  {sections.content?.title || "Information Governance"}
+               </h2>
+               <p className="text-lg leading-relaxed font-light">
+                  {sections.content?.content || (
+                    <>At <strong className="text-secondary font-bold">Elite Steel Concepts</strong>, we respect your privacy and are committed to protecting the personal data you share with us. This Privacy Policy explains how we collect, use, and safeguard your information when you visit our website.</>
+                  )}
+               </p>
             </section>
 
-            <section className="mb-10">
-              <h2 className="text-2xl font-black text-secondary uppercase mb-4 tracking-tight">2. Information We Collect</h2>
-              <p>We collect information that you provide directly to us when you:</p>
-              <ul className="list-disc pl-6 space-y-2 mt-4">
-                <li>Fill out a contact form or request a quote</li>
-                <li>Communicate with us via email or phone</li>
-                <li>Subscribe to our newsletter or blog updates</li>
-              </ul>
-              <p className="mt-4">
-                This information may include your name, email address, phone number, company name, and details about your food truck project.
-              </p>
+            <section className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
+               <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100">
+                  <h3 className="text-sm font-black uppercase text-secondary mb-6 tracking-widest flex items-center gap-2">
+                     <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                     Collection Vectors
+                  </h3>
+                  <ul className="space-y-4">
+                     {["In-bound Quote Requests", "Project Consultation Forms", "Email Communications", "Analytics & Pixels"].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3 text-sm font-bold text-gray-500">
+                           <div className="w-1 h-1 rounded-full bg-gray-300"></div> {item}
+                        </li>
+                     ))}
+                  </ul>
+               </div>
+               <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100">
+                  <h3 className="text-sm font-black uppercase text-secondary mb-6 tracking-widest flex items-center gap-2">
+                     <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                     Utilization
+                  </h3>
+                  <ul className="space-y-4">
+                     {["Accuracy in Fabrication Quotes", "Workflow Customization", "Safety & Compliance Notifications", "Security Auditing"].map((item, i) => (
+                        <li key={i} className="flex items-center gap-3 text-sm font-bold text-gray-500">
+                           <div className="w-1 h-1 rounded-full bg-gray-300"></div> {item}
+                        </li>
+                     ))}
+                  </ul>
+               </div>
             </section>
 
-            <section className="mb-10">
-              <h2 className="text-2xl font-black text-secondary uppercase mb-4 tracking-tight">3. How We Use Your Information</h2>
-              <p>We use the information we collect to:</p>
-              <ul className="list-disc pl-6 space-y-2 mt-4">
-                <li>Provide accurate quotes for custom fabrication</li>
-                <li>Respond to your inquiries and provide customer support</li>
-                <li>Send you updates about your project or our services</li>
-                <li>Improve our website and marketing efforts</li>
-                <li>Comply with legal obligations</li>
-              </ul>
+            <section className="mb-16 space-y-10">
+               <div>
+                  <h2 className="text-xl font-black text-secondary uppercase mb-4 tracking-tight">Data Sovereignty</h2>
+                  <p className="font-light">We do not sell, trade, or otherwise transfer your personal information to outside parties. This does not include trusted partners who assist in operating our environment, provided they maintain strict confidentiality.</p>
+               </div>
+               <div>
+                  <h2 className="text-xl font-black text-secondary uppercase mb-4 tracking-tight">Technical Safeguards</h2>
+                  <p className="font-light">We implement multi-layered security protocols to maintain the safety of your information. While we strive for 100% protection, digital transmission carries inherent risks we mitigate through regular audits.</p>
+               </div>
             </section>
 
-            <section className="mb-10">
-              <h2 className="text-2xl font-black text-secondary uppercase mb-4 tracking-tight">4. Information Sharing</h2>
-              <p>
-                We do not sell, trade, or otherwise transfer your personal information to outside parties. This does not include trusted third parties who assist us in operating our website or conducting our business, so long as those parties agree to keep this information confidential.
-              </p>
-            </section>
-
-            <section className="mb-10">
-              <h2 className="text-2xl font-black text-secondary uppercase mb-4 tracking-tight">5. Data Security</h2>
-              <p>
-                We implement a variety of security measures to maintain the safety of your personal information. However, no method of transmission over the Internet is 100% secure. While we strive to use commercially acceptable means to protect your personal information, we cannot guarantee its absolute security.
-              </p>
-            </section>
-
-            <section className="mb-10">
-              <h2 className="text-2xl font-black text-secondary uppercase mb-4 tracking-tight">6. Cookies</h2>
-              <p>
-                We may use cookies to understand and save your preferences for future visits and compile aggregate data about site traffic and site interaction so that we can offer better site experiences and tools in the future.
-              </p>
-            </section>
-
-            <section className="mb-10">
-              <h2 className="text-2xl font-black text-secondary uppercase mb-4 tracking-tight">7. Your Rights</h2>
-              <p>
-                You have the right to access, correct, or delete your personal information. If you would like to exercise these rights, please contact us at the email provided below.
-              </p>
-            </section>
-
-            <section className="mb-10">
-              <h2 className="text-2xl font-black text-secondary uppercase mb-4 tracking-tight">8. Contact Us</h2>
-              <p>
-                If there are any questions regarding this privacy policy, you may contact us using the information below:
-              </p>
-              <div className="mt-6 p-6 bg-gray-50 border-l-4 border-primary rounded-r-md">
-                <p className="font-bold text-secondary">Elite Steel Concepts</p>
-                <p>8303 Rugby Rd, Manassas VA</p>
-                <p>Email: esteelconcepts@gmail.com</p>
-                <p>Phone: (571) 651-0337</p>
-              </div>
+            <section className="bg-secondary rounded-[2.5rem] p-10 text-white relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-3xl -mr-16 -mt-16"></div>
+               <h2 className="text-xl font-black uppercase mb-8 tracking-tighter relative z-10 text-primary">Master Contact Interface</h2>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+                  <div className="space-y-1">
+                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Corporate Entity</p>
+                     <p className="font-bold text-lg">Elite Steel Concepts</p>
+                  </div>
+                  <div className="space-y-1">
+                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Global Email</p>
+                     <p className="font-bold text-lg">{settings.email}</p>
+                  </div>
+                  <div className="space-y-1 md:col-span-2">
+                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Physical Headquarters</p>
+                     <p className="font-bold">{settings.address}</p>
+                  </div>
+               </div>
             </section>
           </div>
         </Container>

@@ -9,10 +9,12 @@ const montserrat = Montserrat({
 });
 
 import { getSEO } from "@/lib/db";
+import Analytics from "@/components/Analytics";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
   return {
+    metadataBase: new URL(seo.canonicalUrl || 'https://www.esteelconcepts.com'),
     title: seo.siteTitle,
     description: seo.description,
     keywords: seo.keywords,
@@ -41,6 +43,7 @@ export default function RootLayout({
       <body
         className={`${montserrat.variable} antialiased font-sans text-foreground bg-background flex flex-col min-h-screen`}
       >
+        <Analytics />
         {children}
       </body>
     </html>

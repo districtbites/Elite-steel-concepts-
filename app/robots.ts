@@ -3,7 +3,7 @@ import { getSEO } from '@/lib/db'
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
     const seo = await getSEO()
-    const baseUrl = seo.canonicalUrl || 'https://elitesteelconcepts.com'
+    const baseUrl = seo.canonicalUrl || 'https://www.esteelconcepts.com'
 
     return {
         rules: {

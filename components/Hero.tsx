@@ -1,17 +1,26 @@
 import React from "react";
+import Image from "next/image";
 import Container from "./ui/Container";
 import Button from "./ui/Button";
+import { PageSection } from "@/lib/db";
 
-const Hero = () => {
+interface HeroProps {
+  imageAlts?: { [key: string]: string };
+  content?: PageSection;
+}
+
+const Hero = ({ imageAlts, content }: HeroProps) => {
   return (
     <section className="relative min-h-screen flex items-start justify-center bg-secondary pb-20">
       {/* Background Image / Overlay */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30 z-10" />
-        {/* Placeholder for actual background image */}
-        <div 
-            className="w-full h-full bg-cover bg-center bg-no-repeat opacity-60 transform scale-105 animate-slow-zoom"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1565123409695-7b5ef63a48b9?q=80&w=1920&auto=format&fit=crop')" }} // Food truck/kitchen vibe placeholder
+        <Image 
+            src="https://images.unsplash.com/photo-1565123409695-7b5ef63a48b9?q=80&w=1920&auto=format&fit=crop"
+            alt={imageAlts?.hero || "Elite Steel Concepts Custom Food Truck Construction"}
+            fill
+            priority
+            className="object-cover opacity-60 transform scale-105 animate-slow-zoom"
         />
       </div>
 
@@ -25,23 +34,40 @@ const Hero = () => {
 
           {/* Headline */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight uppercase tracking-tight">
-            Custom Food Trucks, <br className="hidden md:block"/>
-            Trailers & Mobile Kitchens <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">
-              Built to Perform
-            </span>
+            {content?.title ? (
+                <>
+                    {content.title.split('<br/>').map((part, i) => (
+                        <React.Fragment key={i}>
+                            {part}
+                            {i < content.title!.split('<br/>').length - 1 && <br className="hidden md:block"/>}
+                        </React.Fragment>
+                    ))}
+                </>
+            ) : (
+                <>
+                    Custom Food Trucks, <br className="hidden md:block"/>
+                    Trailers & Mobile Kitchens <br className="hidden md:block"/>
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">
+                      Built to Perform
+                    </span>
+                </>
+            )}
           </h1>
 
           {/* Subheadline */}
-          <p className="text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed md:mr-auto">
-            Design. Fabrication. Ready to Serve. <br className="hidden md:inline"/> 
-            We turn your culinary vision into a high-performance mobile business.
-          </p>
+          <div className="text-lg md:text-xl text-gray-300 max-w-2xl leading-relaxed md:mr-auto whitespace-pre-line">
+            {content?.content || (
+                <>
+                    Design. Fabrication. Ready to Serve. <br className="hidden md:inline"/> 
+                    We turn your culinary vision into a high-performance mobile business.
+                </>
+            )}
+          </div>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 pt-4">
             <Button href="/quote" variant="primary" size="lg" icon className="w-full sm:w-auto shadow-2xl shadow-primary/20">
-              Request a Quote
+              {content?.ctaText || "Request a Quote"}
             </Button>
             <Button href="/portfolio" variant="outline" size="lg" className="w-full sm:w-auto text-white border-white hover:bg-white hover:text-secondary">
               View Portfolio

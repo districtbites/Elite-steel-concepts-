@@ -25,3 +25,17 @@ export async function submitContactForm(formData: FormData) {
 
     return { success: true };
 }
+
+export async function updateContactStatus(id: string, status: "New" | "Read") {
+    const { updateContact } = await import("@/lib/db");
+    await updateContact(id, { status });
+    revalidatePath("/admin");
+    revalidatePath("/admin/contacts");
+}
+
+export async function removeContact(id: string) {
+    const { deleteContact } = await import("@/lib/db");
+    await deleteContact(id);
+    revalidatePath("/admin");
+    revalidatePath("/admin/contacts");
+}

@@ -1,12 +1,14 @@
 import React from "react";
+export const dynamic = 'force-dynamic';
 import { getSEO } from "@/lib/db";
 import { Monitor } from "lucide-react";
 import SEOManagerForm from "@/components/admin/SEOManagerForm";
 
 export default async function AdminSEOPage() {
   const seo = await getSEO();
+  const { getPageSEO } = await import("@/lib/db");
 
-  const pages = [
+  const pagesList = [
     { id: "home", name: "Home Page" },
     { id: "about", name: "About Us" },
     { id: "services", name: "Services" },
@@ -15,7 +17,19 @@ export default async function AdminSEOPage() {
     { id: "blog", name: "Blog List" },
     { id: "contact", name: "Contact Us" },
     { id: "quote", name: "Quote Request" },
+    { id: "testimonials", name: "Testimonials" },
   ];
+
+  // Pre-populate with effective data (DB + Defaults)
+  const populatedPages: { [key: string]: any } = {};
+  for (const page of pagesList) {
+    populatedPages[page.id] = await getPageSEO(page.id);
+  }
+
+  const enrichedSeo = {
+    ...seo,
+    pages: populatedPages
+  };
 
   return (
     <div className="max-w-6xl pb-20">
@@ -32,7 +46,7 @@ export default async function AdminSEOPage() {
        </div>
 
        {/* Render the Client-side Form */}
-       <SEOManagerForm seo={seo} pages={pages} />
+       <SEOManagerForm seo={enrichedSeo} pages={pagesList} />
     </div>
   );
 }

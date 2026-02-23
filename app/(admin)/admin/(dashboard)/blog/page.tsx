@@ -51,7 +51,9 @@ export default async function AdminBlogPage() {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500">{post.date}</td>
                 <td className="px-6 py-4 text-right space-x-2 flex justify-end">
-                   <button className="text-gray-400 hover:text-blue-500 transition-colors"><Edit size={18} /></button>
+                   <Link href={`/admin/blog/edit/${post.id}`} className="text-gray-400 hover:text-blue-500 transition-colors pt-1">
+                      <Edit size={18} />
+                   </Link>
                    <form action={deleteBlogPost.bind(null, post.id)}>
                       <button type="submit" className="text-gray-400 hover:text-red-500 transition-colors pt-1"><Trash2 size={18} /></button>
                    </form>

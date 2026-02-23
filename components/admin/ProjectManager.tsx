@@ -1,158 +1,250 @@
 "use client";
 
 import React, { useState } from "react";
-import Button from "@/components/ui/Button";
-import { addProject, editProject, removeProject } from "@/app/actions/projects";
-import { Project } from "@/lib/db";
-import { Trash2, Edit2, Plus, X, Save, Image as ImageIcon } from "lucide-react";
+import { 
+    Trash2, 
+    Edit2, 
+    Plus, 
+    Search, 
+    Filter, 
+    Star, 
+    Calendar, 
+    MapPin, 
+    Truck, 
+    ExternalLink,
+    Grid,
+    List,
+    Layout
+} from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { Project } from "@/lib/db";
+import { removeProject } from "@/app/actions/projects";
 
 interface ProjectManagerProps {
-  initialProjects: Project[];
+    initialProjects: Project[];
 }
 
-export default function ProjectManager({ initialProjects }: ProjectManagerProps) {
-  const [isAdding, setIsAdding] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+const ProjectManager = ({ initialProjects }: ProjectManagerProps) => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filterCategory, setFilterCategory] = useState("All");
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
-  const handleDelete = async (id: string) => {
-      if (!confirm("Are you sure you want to delete this project?")) return;
-      await removeProject(id);
-  };
+    const filteredProjects = initialProjects.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                             p.client?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = filterCategory === "All" || p.category === filterCategory;
+        return matchesSearch && matchesCategory;
+    });
 
-  const handleAddSubmit = async (formData: FormData) => {
-      setLoading(true);
-      const result = await addProject(formData);
-      if (result?.error) {
-          alert(result.error);
-          setLoading(false);
-          return;
-      }
-      setLoading(false);
-      setIsAdding(false);
-  };
+    const handleDelete = async (id: string) => {
+        if (window.confirm("Are you sure you want to decommission this project from the portfolio?")) {
+            await removeProject(id);
+        }
+    };
 
-  const handleEditSubmit = async (formData: FormData) => {
-      setLoading(true);
-      const result = await editProject(formData);
-      if (result?.error) {
-          alert(result.error);
-          setLoading(false);
-          return;
-      }
-      setLoading(false);
-      setEditingId(null);
-  };
+    const categories = Array.from(new Set(initialProjects.map(p => p.category)));
 
-  return (
-    <div className="space-y-8">
-       <div className="flex justify-between items-center">
-           <h2 className="text-xl font-bold uppercase text-secondary">All Projects ({initialProjects.length})</h2>
-           <Button onClick={() => setIsAdding(!isAdding)} className="flex items-center">
-               {isAdding ? <><X size={18} className="mr-2"/> Cancel</> : <><Plus size={18} className="mr-2"/> Add Project</>}
-           </Button>
-       </div>
+    return (
+        <div className="space-y-8">
+            {/* Control Hub */}
+            <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col lg:flex-row gap-6 items-center justify-between">
+                <div className="flex flex-col md:flex-row gap-4 w-full lg:w-auto">
+                    <div className="relative w-full md:w-80">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                        <input 
+                            type="text" 
+                            placeholder="Search builds or clients..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full bg-gray-50 border-0 pl-12 pr-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-xs"
+                        />
+                    </div>
+                    <div className="flex items-center gap-2 bg-gray-50 px-4 rounded-xl border border-transparent focus-within:border-primary/20">
+                        <Filter size={14} className="text-gray-400" />
+                        <select 
+                            value={filterCategory}
+                            onChange={(e) => setFilterCategory(e.target.value)}
+                            className="bg-transparent border-0 py-3 text-[10px] font-black uppercase tracking-widest outline-none text-secondary"
+                        >
+                            <option value="All">All Categories</option>
+                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                    </div>
+                </div>
 
-       {/* Add Form */}
-       {isAdding && (
-           <form 
-               onSubmit={async (e) => {
-                   e.preventDefault();
-                   const formData = new FormData(e.currentTarget);
-                   await handleAddSubmit(formData);
-               }} 
-               className="bg-gray-50 p-6 rounded-lg border border-gray-200 animate-fadeIn"
-           >
-               <h3 className="text-lg font-bold mb-4">New Project</h3>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                   <input name="title" placeholder="Project Title*" required className="p-3 border rounded" />
-                   <select name="category" className="p-3 border rounded">
-                       <option value="Food Truck">Food Truck</option>
-                       <option value="Concession Trailer">Concession Trailer</option>
-                       <option value="Mobile Bar">Mobile Bar</option>
-                       <option value="Support Vehicle">Support Vehicle</option>
-                   </select>
-                   <input name="client" placeholder="Client Name" className="p-3 border rounded" />
-                   <input name="completionDate" placeholder="Completion Date (e.g. Jan 2024)" className="p-3 border rounded" />
-                   <div className="md:col-span-2">
-                       <label className="block text-sm font-bold text-gray-700 mb-1">Project Image (WebP only)*</label>
-                       <input type="file" name="image" accept="image/webp" required className="w-full p-2 border rounded bg-white" />
-                   </div>
-               </div>
-               <textarea name="description" placeholder="Project Description*" required rows={4} className="w-full p-3 border rounded mb-4" />
-               <Button type="submit" disabled={loading}>{loading ? "Saving..." : "Save Project"}</Button>
-           </form>
-       )}
+                <div className="flex items-center gap-4 w-full lg:w-auto justify-between lg:justify-end">
+                    <div className="flex bg-gray-50 p-1 rounded-xl border border-gray-100">
+                        <button 
+                            onClick={() => setViewMode('grid')}
+                            className={`p-2 rounded-lg transition-all ${viewMode === 'grid' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400 hover:text-secondary'}`}
+                        >
+                            <Grid size={18} />
+                        </button>
+                        <button 
+                            onClick={() => setViewMode('list')}
+                            className={`p-2 rounded-lg transition-all ${viewMode === 'list' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400 hover:text-secondary'}`}
+                        >
+                            <List size={18} />
+                        </button>
+                    </div>
+                    <Link href="/admin/portfolio/new" className="flex items-center gap-2 bg-secondary text-primary px-6 py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-primary hover:text-secondary transition-all shadow-lg">
+                        <Plus size={16} /> New Build
+                    </Link>
+                </div>
+            </div>
 
-       {/* List */}
-       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-           {initialProjects.map((p) => (
-               <div key={p.id} className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden flex flex-col h-full group">
-                   {editingId === p.id ? (
-                       <form 
-                           onSubmit={async (e) => {
-                               e.preventDefault();
-                               const formData = new FormData(e.currentTarget);
-                               await handleEditSubmit(formData);
-                           }} 
-                           className="p-4 space-y-4 flex-grow flex flex-col"
-                       >
-                            <input type="hidden" name="id" value={p.id} />
-                            <input type="hidden" name="existingImage" value={p.image} />
-                            <input name="title" defaultValue={p.title} required className="p-2 border rounded w-full" />
-                            <select name="category" defaultValue={p.category} className="p-2 border rounded w-full">
-                               <option value="Food Truck">Food Truck</option>
-                               <option value="Concession Trailer">Concession Trailer</option>
-                               <option value="Mobile Bar">Mobile Bar</option>
-                               <option value="Support Vehicle">Support Vehicle</option>
-                            </select>
-                            <div>
-                                <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Change Image (WebP only)</label>
-                                <input type="file" name="image" accept="image/webp" className="p-2 border rounded w-full bg-white text-sm" />
+            {/* Content Display */}
+            {viewMode === 'grid' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    {filteredProjects.map((p) => (
+                        <div key={p.id} className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col group hover:shadow-xl transition-all duration-500">
+                            <div className="relative h-64 overflow-hidden">
+                                <Image 
+                                    src={p.image} 
+                                    alt={p.title} 
+                                    fill 
+                                    className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                    unoptimized
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-secondary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                
+                                {/* Overlay Actions */}
+                                <div className="absolute top-4 right-4 flex gap-2 translate-y-[-20px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                                    <Link href={`/admin/portfolio/edit/${p.id}`} className="p-3 bg-white/90 text-secondary rounded-xl hover:bg-primary hover:text-secondary transition-all">
+                                        <Edit2 size={16} />
+                                    </Link>
+                                    <button onClick={() => handleDelete(p.id)} className="p-3 bg-red-500/90 text-white rounded-xl hover:bg-red-600 transition-all">
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
+
+                                {/* Status Badges */}
+                                <div className="absolute bottom-4 left-4 flex gap-2">
+                                    <span className="bg-primary text-secondary text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-lg shadow-lg">
+                                        {p.category}
+                                    </span>
+                                    {p.featured && (
+                                        <span className="bg-secondary text-primary text-[8px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-lg border border-primary/30 flex items-center gap-1 shadow-lg">
+                                            <Star size={8} fill="currentColor" /> Featured
+                                        </span>
+                                    )}
+                                </div>
                             </div>
-                            <input name="client" defaultValue={p.client} className="p-2 border rounded w-full" placeholder="Client" />
-                            <textarea name="description" defaultValue={p.description} required rows={3} className="w-full p-2 border rounded flex-grow" />
-                            <div className="flex gap-2 pt-2 mt-auto">
-                                <Button type="submit" size="sm" disabled={loading} className="w-full"><Save size={16} className="mr-1"/> Save</Button>
-                                <button type="button" onClick={() => setEditingId(null)} className="px-4 text-sm text-gray-500 hover:text-gray-700">Cancel</button>
+
+                            <div className="p-8 space-y-4 flex-grow flex flex-col">
+                                <div>
+                                    <h3 className="text-xl font-black uppercase text-secondary tracking-tighter leading-tight group-hover:text-primary transition-colors">
+                                        {p.title}
+                                    </h3>
+                                    {p.tagline && <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">{p.tagline}</p>}
+                                </div>
+                                
+                                <div className="flex flex-wrap gap-4 pt-2 border-t border-gray-50 text-[10px] font-black uppercase tracking-widest text-gray-400">
+                                    <div className="flex items-center gap-1.5"><Calendar size={12} className="text-primary"/> {p.completionDate || 'N/A'}</div>
+                                    <div className="flex items-center gap-1.5"><MapPin size={12} className="text-primary"/> {p.location || 'N/A'}</div>
+                                </div>
+
+                                <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed flex-grow italic">
+                                    "{p.description}"
+                                </p>
+
+                                <div className="pt-4 flex justify-between items-center">
+                                    <div className="flex -space-x-2">
+                                        {p.gallery?.slice(0, 3).map((g, i) => (
+                                            <div key={i} className="w-8 h-8 rounded-lg border-2 border-white overflow-hidden relative bg-gray-100 shadow-sm">
+                                                <Image src={g} alt="Gallery" fill className="object-cover" unoptimized />
+                                            </div>
+                                        ))}
+                                        {p.gallery && p.gallery.length > 3 && (
+                                            <div className="w-8 h-8 rounded-lg border-2 border-white bg-gray-50 flex items-center justify-center text-[8px] font-black text-secondary">
+                                                +{p.gallery.length - 3}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <Link href={`/portfolio/${p.slug}`} target="_blank" className="text-primary hover:text-secondary transition-colors">
+                                        <ExternalLink size={18} />
+                                    </Link>
+                                </div>
                             </div>
-                       </form>
-                   ) : (
-                       <>
-                           <div className="relative h-48 w-full bg-gray-100">
-                               {p.image ? (
-                                   <Image src={p.image} alt={p.title} fill className="object-cover" />
-                               ) : (
-                                   <div className="flex items-center justify-center h-full text-gray-300"><ImageIcon size={32}/></div>
-                               )}
-                               
-                               <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 p-1 rounded shadow-sm">
-                                   <button onClick={() => setEditingId(p.id)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"><Edit2 size={16} /></button>
-                                   <button onClick={() => handleDelete(p.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded"><Trash2 size={16} /></button>
-                               </div>
-                               <span className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded uppercase font-bold">{p.category}</span>
-                           </div>
-                           
-                           <div className="p-5 flex-grow flex flex-col">
-                               <h3 className="font-bold text-secondary text-lg mb-1">{p.title}</h3>
-                               <p className="text-xs text-gray-500 mb-3 font-medium uppercase tracking-wider">
-                                   {p.client} • {p.completionDate}
-                               </p>
-                               <p className="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">
-                                   {p.description}
-                               </p>
-                           </div>
-                       </>
-                   )}
-               </div>
-           ))}
-           {initialProjects.length === 0 && (
-               <div className="col-span-full text-center py-20 text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-300">
-                   No projects yet. Add your first build!
-               </div>
-           )}
-       </div>
-    </div>
-  );
-}
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-50/50 border-b border-gray-100">
+                            <tr>
+                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Build Profile</th>
+                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Architecture</th>
+                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Deployment</th>
+                                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50">
+                            {filteredProjects.map((p) => (
+                                <tr key={p.id} className="group hover:bg-gray-50/30 transition-all">
+                                    <td className="px-8 py-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-16 h-12 rounded-xl overflow-hidden relative bg-gray-100 shadow-sm">
+                                                <Image src={p.image} alt={p.title} fill className="object-cover" unoptimized />
+                                            </div>
+                                            <div>
+                                                <div className="font-black text-secondary uppercase tracking-tight flex items-center gap-2">
+                                                    {p.title}
+                                                    {p.featured && <Star size={10} fill="#facc15" className="text-yellow-400" />}
+                                                </div>
+                                                <div className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{p.client}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-8 py-6">
+                                        <span className="px-3 py-1 bg-secondary text-primary text-[8px] font-black uppercase tracking-widest rounded-lg">
+                                            {p.category}
+                                        </span>
+                                    </td>
+                                    <td className="px-8 py-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                                        {p.completionDate || 'N/A'} • {p.location || 'N/A'}
+                                    </td>
+                                    <td className="px-8 py-6 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            <Link 
+                                                href={`/admin/portfolio/edit/${p.id}`}
+                                                className="p-2.5 bg-gray-50 text-secondary rounded-xl hover:bg-secondary hover:text-white transition-all shadow-sm group-hover:shadow-md"
+                                            >
+                                                <Edit2 size={16} />
+                                            </Link>
+                                            <button 
+                                                onClick={() => handleDelete(p.id)}
+                                                className="p-2.5 bg-gray-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm group-hover:shadow-md"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {filteredProjects.length === 0 && (
+                <div className="p-20 text-center space-y-6 bg-white rounded-[3rem] border border-dashed border-gray-200">
+                    <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-200">
+                        <Layout size={40} />
+                    </div>
+                    <div className="space-y-2">
+                        <p className="text-secondary font-black uppercase tracking-widest text-sm">No Build Data Detected</p>
+                        <p className="text-gray-400 text-xs font-medium">Clear your filters or initialize your first build entry.</p>
+                    </div>
+                    <Link href="/admin/portfolio/new" className="inline-flex items-center gap-2 bg-secondary text-primary px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-all shadow-xl">
+                        <Plus size={18} /> Add First Build
+                    </Link>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default ProjectManager;

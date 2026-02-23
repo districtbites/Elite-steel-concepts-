@@ -5,12 +5,12 @@ import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import Image from "next/image";
 import { Check, Shield, Award, Users, Target, Zap } from "lucide-react";
-import { getSEO } from "@/lib/db";
+import { getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
-  const pageSeo = seo.pages?.["about"]; // I'll add this to DB later
+  const pageSeo = await getPageSEO("about");
   
   return {
     title: pageSeo?.title || `About Us | ${seo.siteTitle}`,
@@ -19,7 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const pageSeo = await getPageSEO("about");
+  const alts = pageSeo.imageAlts || {};
+  const sections = pageSeo.sections || {};
+  
   const values = [
     {
       title: "Precision Engineering",
@@ -40,9 +44,15 @@ export default function AboutPage() {
 
   return (
     <>
+      {pageSeo.structuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: pageSeo.structuredData }}
+        />
+      )}
       <PageHeader
-        title="Our Story"
-        subtitle="Crafting the heart of mobile commerce since 2012. We are more than fabricators; we are your partners in entrepreneurship."
+        title={sections.header?.title || "Our Story"}
+        subtitle={sections.header?.subtitle || "Crafting the heart of mobile commerce since 2012. We are more than fabricators; we are your partners in entrepreneurship."}
       />
 
       {/* Intro Section */}
@@ -52,19 +62,23 @@ export default function AboutPage() {
             <div className="w-full lg:w-1/2 relative aspect-square rounded-2xl overflow-hidden shadow-2xl">
               <Image 
                 src="https://images.unsplash.com/photo-1590402444816-a118f0951307?q=80&w=800&auto=format&fit=crop"
-                alt="Elite Steel Concepts Workshop"
+                alt={alts["about-hero"] || "Elite Steel Concepts Workshop"}
                 fill
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-secondary/10" />
             </div>
             <div className="w-full lg:w-1/2 space-y-8">
-              <span className="text-primary font-bold tracking-widest uppercase text-sm block">Since 2012</span>
+              <span className="text-primary font-bold tracking-widest uppercase text-sm block">{sections.story?.subtitle || "Since 2012"}</span>
               <h2 className="text-4xl md:text-5xl font-black uppercase text-secondary tracking-tight leading-tight">
-                Empowering the Next Generation of <span className="text-primary">Food Pioneers</span>
+                {sections.story?.title || (
+                    <>Empowering the Next Generation of <span className="text-primary">Food Pioneers</span></>
+                )}
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed font-light">
-                 At <strong className="text-secondary font-bold">Elite Steel Concepts</strong>, we believe that every great chef deserves a kitchen that works as hard as they do. Founded on the principles of integrity and master craftsmanship, we have helped hundreds of entrepreneurs transition from dreamers to business owners.
+                 {sections.story?.content || (
+                    <>At <strong className="text-secondary font-bold">Elite Steel Concepts</strong>, we believe that every great chef deserves a kitchen that works as hard as they do. Founded on the principles of integrity and master craftsmanship, we have helped hundreds of entrepreneurs transition from dreamers to business owners.</>
+                 )}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                  <div className="flex items-start gap-3">
@@ -140,10 +154,12 @@ export default function AboutPage() {
       </Section>
 
       <CTASection
-        title="Ready to Start Your Journey?"
-        subtitle="Let's build a business that moves with you. Get your custom quote started today."
-        buttonText="Get Free Quote"
+        title={sections.cta?.title || "Ready to Start Your Journey?"}
+        subtitle={sections.cta?.subtitle || "Let's build a business that moves with you. Get your custom quote started today."}
+        buttonText={sections.cta?.ctaText || "Get Free Quote"}
         buttonHref="/quote"
+        secondaryButtonText="Read Client Reviews"
+        secondaryButtonHref="/testimonials"
       />
     </>
   );

@@ -27,7 +27,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
       {/* Hero / Image */}
       <div className="relative h-[50vh] md:h-[60vh] bg-gray-900">
         <Image 
-            src={project.image} 
+            src={project.image} unoptimized 
             alt={project.title} 
             fill 
             className="object-cover opacity-80"

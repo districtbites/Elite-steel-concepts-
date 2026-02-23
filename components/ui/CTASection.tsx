@@ -7,6 +7,8 @@ interface CTASectionProps {
   subtitle?: string;
   buttonText?: string;
   buttonHref?: string;
+  secondaryButtonText?: string;
+  secondaryButtonHref?: string;
 }
 
 const CTASection: React.FC<CTASectionProps> = ({
@@ -14,6 +16,8 @@ const CTASection: React.FC<CTASectionProps> = ({
   subtitle,
   buttonText = "Request a Quote",
   buttonHref = "/quote",
+  secondaryButtonText,
+  secondaryButtonHref,
 }) => {
   return (
     <section className="relative bg-secondary py-20 md:py-28 overflow-hidden">
@@ -31,9 +35,16 @@ const CTASection: React.FC<CTASectionProps> = ({
             {subtitle}
           </p>
         )}
-        <Button href={buttonHref} variant="primary" size="lg" icon className="shadow-2xl shadow-primary/20">
-          {buttonText}
-        </Button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button href={buttonHref} variant="primary" size="lg" icon className="shadow-2xl shadow-primary/20 min-w-[200px]">
+                {buttonText}
+            </Button>
+            {secondaryButtonText && secondaryButtonHref && (
+                <Button href={secondaryButtonHref} variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-secondary min-w-[200px]">
+                    {secondaryButtonText}
+                </Button>
+            )}
+        </div>
       </Container>
     </section>
   );

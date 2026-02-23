@@ -3,14 +3,17 @@
     {
       "id": "1",
       "title": "5 Essential Maintenance Tips for Your Food Truck Generator",
-      "excerpt": "Your generator is the heart of your mobile kitchen. Learn the critical maintenance steps to prevent downtime and costly repairs.",
+      "excerpt": "\r\nHello Elite Steel Concepts,\r\nWe’ve updated settings that manage personalization and activity history on Play. You’ll have dedicated controls for per...",
       "category": "Maintenance",
       "date": "Jan 15, 2024",
       "readTime": "5 Min Read",
       "image": "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800",
       "slug": "generator-maintenance-tips",
       "status": "Published",
-      "content": "Full content would go here..."
+      "content": "\r\nHello Elite Steel Concepts,\r\nWe’ve updated settings that manage personalization and activity history on Play. You’ll have dedicated controls for personalization on Play and for saving activity in your Google Account’s Play History, and these settings will be easily accessible in the Google Play menu.\r\nIn the past, personalization and history on Play were managed by Web & App Activity (WAA) settings in your Google Account. Going forward, WAA will no longer control Play personalization and Play History. Instead, you’ll be able to manage those settings directly on Play, and you’ll see this change in your account in the next few days. Learn more about Play personalization and Play History\r\nWhen the transition happens for your account, your Play settings will be based on the most recent choice you made in WAA, so your experience will stay the same. If you have WAA turned on during the transition, which is happening over the next few days, then your Play personalization and Play History settings will be on, and if WAA is off, then Play personalization and Play History will be off. As before, you’ll be able to choose how long your activity is saved in your Play History and if you want to delete it from Play History manually or automatically.\r\n",
+      "subtitle": "",
+      "tags": [],
+      "imageAlt": ""
     },
     {
       "id": "2",
@@ -56,7 +59,7 @@
       "services": [],
       "id": "1771530793860",
       "date": "Feb 20, 2026",
-      "status": "New"
+      "status": "Closed"
     },
     {
       "name": "test",
@@ -76,10 +79,19 @@
       "services": [],
       "id": "1770831760713",
       "date": "Feb 11, 2026",
-      "status": "New"
+      "status": "Closed"
     }
   ],
   "contacts": [
+    {
+      "name": "Hanzala",
+      "email": "hanzala@districtbites.com",
+      "phone": "090078601",
+      "message": "This is the test contact form submission for checking that if it is working fine, Thanks ",
+      "id": "1771863873654",
+      "date": "Feb 23, 2026",
+      "status": "Read"
+    },
     {
       "name": "test ",
       "email": "test@test.com",
@@ -87,7 +99,7 @@
       "message": "this is the test form fill ",
       "id": "1770831337116",
       "date": "Feb 11, 2026",
-      "status": "New"
+      "status": "Read"
     }
   ],
   "settings": {
@@ -100,52 +112,76 @@
   },
   "seo": {
     "siteTitle": "Elite Steel Concepts | Custom Food Trucks & Mobile Kitchen Fabrication",
-    "description": null,
+    "description": "",
     "keywords": "custom food trucks in DMV, buy food truck in Virginia, food truck manufacturer in Manassas VA, custom concession trailers in Virginia, mobile kitchen fabrication services, premium food truck builders DMV area",
-    "ogImage": "https://elitesteelconcepts.com/og-image.jpg",
+    "ogImage": "https://www.esteelconcepts.com/og-image.jpg",
     "twitterHandle": "@elitesteel",
     "robotsTxt": "User-agent: *\r\nAllow: /",
-    "canonicalUrl": "https://elitesteelconcepts.com",
+    "canonicalUrl": "https://www.esteelconcepts.com",
     "pages": {
-      "home": {
-        "title": "Home page | Elite Steel Concepts",
+      "services": {
+        "title": "Services page | Elite Steel Concepts",
         "description": "",
-        "keywords": ""
+        "keywords": "",
+        "imageAlts": {}
       },
       "about": {
-        "title": "",
-        "description": "",
-        "keywords": ""
+        "title": "About Us | Elite Steel Concepts",
+        "description": "Learn about the Elite Steel Concepts story and our commitment to building premium custom food trucks.",
+        "keywords": "",
+        "imageAlts": {
+          "about-hero": "Our Fabrication Workshop"
+        }
       },
-      "services": {
-        "title": "",
+      "home": {
+        "title": "Home Page | Elite Steel Concetps",
         "description": "",
-        "keywords": ""
+        "keywords": "",
+        "imageAlts": {},
+        "sections": {
+          "hero": {
+            "title": "Custom Food Trucks, Trailers & Mobile Kitchens Built to Perform",
+            "content": "Design. Fabrication. Ready to Serve. We turn your culinary vision into a high-performance mobile business.",
+            "ctaText": "Request a Quote",
+            "subtitle": ""
+          },
+          "intro": {
+            "title": "Building Custom Food Trucks & Concession Trailers For Entrepreneurs Since 2012",
+            "content": "If you're looking to get started on launching your very own mobile food truck, contact Elite Steel Concepts today! Though we're located in the Metro DC area, our services are nationwide. We provide opportunity for entrepreneurs to visualize and design their ideal mobile kitchen and make their dream a reality. We're skilled in the fabrication, assembly and creation of beautiful mobile kitchens, food trucks and concession trailers. Our ultimate goal is to roll out a beautiful mobile food business in record time to allow you to spread happiness with your menu! All our trucks and trailers are built specifically to your needs and goals."
+          },
+          "cta": {
+            "title": "Ready to Start Your Build?",
+            "subtitle": "Tell us about your vision and let's create the perfect mobile kitchen for your business.",
+            "ctaText": "Get a Free Quote"
+          }
+        },
+        "structuredData": ""
       },
       "portfolio": {
-        "title": "",
+        "title": "Portfolio Page | Elite Steel Concetps",
         "description": "",
-        "keywords": ""
+        "keywords": "",
+        "imageAlts": {},
+        "sections": {
+          "header": {
+            "title": "Elite Showcase",
+            "subtitle": "Browse our recent custom builds."
+          }
+        },
+        "structuredData": ""
       },
-      "process": {
-        "title": "",
+      "testimonials": {
+        "title": "Testimonials page | ESC",
         "description": "",
-        "keywords": ""
-      },
-      "blog": {
-        "title": "",
-        "description": "",
-        "keywords": ""
-      },
-      "contact": {
-        "title": "",
-        "description": "",
-        "keywords": ""
-      },
-      "quote": {
-        "title": "",
-        "description": "",
-        "keywords": ""
+        "keywords": "",
+        "imageAlts": {},
+        "sections": {
+          "header": {
+            "title": "Client Success Stories",
+            "subtitle": "Hear from the entrepreneurs we've helped launch."
+          }
+        },
+        "structuredData": ""
       }
     }
   },
@@ -240,5 +276,43 @@
       "client": "Burger Baron Inc",
       "completionDate": "Oct 2023"
     }
-  ]
+  ],
+  "faqs": [
+    {
+      "id": "1",
+      "question": "How long does a custom food truck build take?",
+      "answer": "A typical ground-up build takes between 8 to 12 weeks, depending on the complexity of the design and equipment lead times. We prioritize quality fabrication to ensure your kitchen is built to last.",
+      "category": "Process",
+      "order": 1
+    },
+    {
+      "id": "2",
+      "question": "Do you help with health department permits?",
+      "answer": "Yes! Every single build we produce is designed to meet or exceed local health and fire safety codes. We provide the necessary blueprints and documentation you'll need for your inspection.",
+      "category": "Compliance",
+      "order": 2
+    },
+    {
+      "id": "3",
+      "question": "What kind of warranty do you offer?",
+      "answer": "We provide a 1-year structural warranty on the fabrication of the kitchen. Individual appliances and generators are covered by their respective manufacturer warranties, which we help you register.",
+      "category": "General",
+      "order": 3
+    },
+    {
+      "id": "4",
+      "question": "Can I provide my own truck for conversion?",
+      "answer": "Absolutely. We can convert your existing step van or trailer as long as it meets our minimum safety and structural requirements for a commercial kitchen installation.",
+      "category": "Service",
+      "order": 4
+    }
+  ],
+  "newsletters": [
+    {
+      "id": "1771621343389",
+      "email": "test@test.com",
+      "date": "Feb 21, 2026"
+    }
+  ],
+  "assets": []
 }

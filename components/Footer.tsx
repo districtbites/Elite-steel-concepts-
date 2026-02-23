@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Instagram, Twitter, MapPin, Phone, Mail } from "lucide-react";
+import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, Youtube, Linkedin } from "lucide-react";
 import Container from "./ui/Container";
 import { GlobalSettings } from "@/lib/db";
 
@@ -20,10 +20,10 @@ const Footer = ({ settings }: FooterProps) => {
           <div className="space-y-6">
             <div className="relative w-48 h-12">
                  <Image
-                  src="/logo.png"
+                  src={settings.logoUrl || "/logo.png"}
                   alt="Elite Steel Concepts"
                   fill
-                  className="object-contain object-left" 
+                  className="object-contain object-left grayscale brightness-200" 
                 />
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
@@ -43,6 +43,16 @@ const Footer = ({ settings }: FooterProps) => {
               {settings.twitter && (
                 <a href={settings.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
                   <Twitter className="w-5 h-5" />
+                </a>
+              )}
+              {settings.linkedin && (
+                <a href={settings.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
+                  <Linkedin className="w-5 h-5" />
+                </a>
+              )}
+              {settings.youtube && (
+                <a href={settings.youtube} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
+                  <Youtube className="w-5 h-5" />
                 </a>
               )}
             </div>
