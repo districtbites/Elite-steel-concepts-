@@ -47,7 +47,7 @@ export async function createBlogPost(formData: FormData) {
 
     const tags = tagsStr ? tagsStr.split(",").map(t => t.trim()) : [];
 
-    let imageUrl = "https://images.unsplash.com/photo-1565123409695-7b5ef63a48b9?q=80&w=800&auto=format&fit=crop";
+    let imageUrl = "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800";
 
     if (imageFile && imageFile.size > 0) {
         imageUrl = await saveBlogImage(imageFile);

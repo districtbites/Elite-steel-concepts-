@@ -1,30 +1,110 @@
 "use client";
 
-import React, { useState } from "react";
-import { 
-  Save, 
-  Search, 
-  Share2, 
-  Globe, 
-  FileText, 
-  Image as ImageIcon, 
-  Plus, 
-  Trash2, 
-  ShieldCheck, 
-  Zap, 
-  BarChart4,
+import React, { useState, useMemo } from "react";
+import {
+  Save,
+  Search,
+  Globe,
+  FileText,
+  Image as ImageIcon,
+  Plus,
+  Trash2,
+  ShieldCheck,
+  Zap,
   Layout,
   Code2,
   AlertCircle,
-  Hash
+  Hash,
+  Eye,
+  ChevronDown,
+  ChevronRight,
+  CheckCircle2,
+  XCircle,
+  ExternalLink,
+  Copy,
+  RotateCcw,
+  Sparkles,
+  Settings2,
+  Layers,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import Toast from "@/components/ui/Toast";
 import { SEOSettings } from "@/lib/db";
 
 interface SEOManagerFormProps {
   seo: SEOSettings;
-  pages: { id: string, name: string }[];
+  pages: { id: string; name: string }[];
 }
+
+// ─── Reusable: Field Label ───
+const FieldLabel = ({
+  label,
+  count,
+  max,
+  hint,
+}: {
+  label: string;
+  count?: number;
+  max?: number;
+  hint?: string;
+}) => (
+  <div className="flex items-center justify-between mb-2">
+    <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500">
+      {label}
+    </label>
+    <div className="flex items-center gap-3">
+      {hint && (
+        <span className="text-[10px] text-gray-400 font-medium">{hint}</span>
+      )}
+      {count !== undefined && max !== undefined && (
+        <span
+          className={`text-[10px] font-bold tabular-nums ${count > max ? "text-red-500" : count > max * 0.8 ? "text-amber-500" : "text-gray-400"}`}
+        >
+          {count}/{max}
+        </span>
+      )}
+    </div>
+  </div>
+);
+
+// ─── SERP Preview Component ───
+const SERPPreview = ({
+  title,
+  description,
+  path,
+  canonical,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  canonical: string;
+}) => {
+  const baseUrl = canonical || "https://elitesteelconcepts.com";
+  const displayUrl = `${baseUrl}${path === "/" ? "" : `/${path}`}`;
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <div className="flex items-center gap-2 mb-3">
+        <Eye size={14} className="text-gray-400" />
+        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+          Google SERP Preview
+        </span>
+      </div>
+      <div className="space-y-1">
+        <div className="text-[13px] text-green-700 font-medium truncate">
+          {displayUrl}
+        </div>
+        <h3 className="text-lg text-blue-700 font-medium leading-snug line-clamp-1 hover:underline cursor-pointer">
+          {title || "Page Title — Elite Steel Concepts"}
+        </h3>
+        <p className="text-[13px] text-gray-600 line-clamp-2 leading-relaxed">
+          {description ||
+            "Add a meta description to control how this page appears in search results..."}
+        </p>
+      </div>
+    </div>
+  );
+};
 
 const SEOManagerForm = ({ seo, pages }: SEOManagerFormProps) => {
   const [loading, setLoading] = useState(false);
@@ -32,123 +112,170 @@ const SEOManagerForm = ({ seo, pages }: SEOManagerFormProps) => {
   const [toastMsg, setToastMsg] = useState("");
   const [activeTab, setActiveTab] = useState(pages[0].id);
   const [activeSubTab, setActiveSubTab] = useState<"meta" | "content" | "tech">("meta");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<{ [key: string]: boolean }>({});
 
-  // Dynamic Data states
-  const [imageAltsState, setImageAltsState] = useState<{ [key: string]: { [key: string]: string } }>(() => {
+  // ─── State Management ───
+  const [imageAltsState, setImageAltsState] = useState<{
+    [key: string]: { [key: string]: string };
+  }>(() => {
     const initial: { [key: string]: { [key: string]: string } } = {};
-    pages.forEach(p => { initial[p.id] = seo.pages?.[p.id]?.imageAlts || {}; });
-    return initial;
-  });
-
-  const [sectionsState, setSectionsState] = useState<{ [key: string]: { [key: string]: any } }>(() => {
-    const initial: { [key: string]: { [key: string]: any } } = {};
-    pages.forEach(p => { initial[p.id] = seo.pages?.[p.id]?.sections || {}; });
-    return initial;
-  });
-
-  const [structuredDataState, setStructuredDataState] = useState<{ [key: string]: string }>(() => {
-    const initial: { [key: string]: string } = {};
-    pages.forEach(p => { initial[p.id] = seo.pages?.[p.id]?.structuredData || ""; });
-    return initial;
-  });
-
-  const [metaState, setMetaState] = useState<{ [key: string]: { title: string, description: string, keywords: string } }>(() => {
-    const initial: { [key: string]: { title: string, description: string, keywords: string } } = {};
-    pages.forEach(p => { 
-        const pData = seo.pages?.[p.id] || {};
-        initial[p.id] = {
-            title: pData.title || "",
-            description: pData.description || "",
-            keywords: pData.keywords || ""
-        };
+    pages.forEach((p) => {
+      initial[p.id] = seo.pages?.[p.id]?.imageAlts || {};
     });
     return initial;
   });
 
-  // Alt Handlers
+  const [sectionsState, setSectionsState] = useState<{
+    [key: string]: { [key: string]: any };
+  }>(() => {
+    const initial: { [key: string]: { [key: string]: any } } = {};
+    pages.forEach((p) => {
+      initial[p.id] = seo.pages?.[p.id]?.sections || {};
+    });
+    return initial;
+  });
+
+  const [structuredDataState, setStructuredDataState] = useState<{
+    [key: string]: string;
+  }>(() => {
+    const initial: { [key: string]: string } = {};
+    pages.forEach((p) => {
+      initial[p.id] = seo.pages?.[p.id]?.structuredData || "";
+    });
+    return initial;
+  });
+
+  const [metaState, setMetaState] = useState<{
+    [key: string]: { title: string; description: string; keywords: string };
+  }>(() => {
+    const initial: {
+      [key: string]: { title: string; description: string; keywords: string };
+    } = {};
+    pages.forEach((p) => {
+      const pData = seo.pages?.[p.id] || {};
+      initial[p.id] = {
+        title: pData.title || "",
+        description: pData.description || "",
+        keywords: pData.keywords || "",
+      };
+    });
+    return initial;
+  });
+
+  // ─── Alt Handlers ───
   const [newAltKeys, setNewAltKeys] = useState<{ [key: string]: string }>({});
 
   const handleAddAlt = (pageId: string) => {
     const key = newAltKeys[pageId];
     if (!key) return;
-    setImageAltsState(prev => ({
-        ...prev,
-        [pageId]: { ...prev[pageId], [key]: "" }
+    setImageAltsState((prev) => ({
+      ...prev,
+      [pageId]: { ...prev[pageId], [key]: "" },
     }));
-    setNewAltKeys(prev => ({ ...prev, [pageId]: "" }));
+    setNewAltKeys((prev) => ({ ...prev, [pageId]: "" }));
   };
 
   const handleRemoveAlt = (pageId: string, altKey: string) => {
-    setImageAltsState(prev => {
-        const newState = { ...prev };
-        const newPageAlts = { ...newState[pageId] };
-        delete newPageAlts[altKey];
-        newState[pageId] = newPageAlts;
-        return newState;
+    setImageAltsState((prev) => {
+      const newState = { ...prev };
+      const newPageAlts = { ...newState[pageId] };
+      delete newPageAlts[altKey];
+      newState[pageId] = newPageAlts;
+      return newState;
     });
   };
 
-  const handleAltChange = (pageId: string, altKey: string, value: string) => {
-    setImageAltsState(prev => ({
-        ...prev,
-        [pageId]: { ...prev[pageId], [altKey]: value }
+  const handleAltChange = (
+    pageId: string,
+    altKey: string,
+    value: string
+  ) => {
+    setImageAltsState((prev) => ({
+      ...prev,
+      [pageId]: { ...prev[pageId], [altKey]: value },
     }));
   };
 
-  // Section Handlers
-  const [newSectionKeys, setNewSectionKeys] = useState<{ [key: string]: string }>({});
+  // ─── Section Handlers ───
+  const [newSectionKeys, setNewSectionKeys] = useState<{
+    [key: string]: string;
+  }>({});
 
   const handleAddSection = (pageId: string) => {
     const key = newSectionKeys[pageId];
     if (!key) return;
-    setSectionsState(prev => ({
-        ...prev,
-        [pageId]: { ...prev[pageId], [key]: { title: "", subtitle: "", content: "", ctaText: "" } }
+    setSectionsState((prev) => ({
+      ...prev,
+      [pageId]: {
+        ...prev[pageId],
+        [key]: { title: "", subtitle: "", content: "", ctaText: "" },
+      },
     }));
-    setNewSectionKeys(prev => ({ ...prev, [pageId]: "" }));
+    setNewSectionKeys((prev) => ({ ...prev, [pageId]: "" }));
+    setExpandedSections((prev) => ({ ...prev, [`${pageId}_${key}`]: true }));
   };
 
   const handleRemoveSection = (pageId: string, sectionKey: string) => {
-    if (!confirm(`Delete section '${sectionKey}'? This will remove its content override.`)) return;
-    setSectionsState(prev => {
-        const newState = { ...prev };
-        const newPageSections = { ...newState[pageId] };
-        delete newPageSections[sectionKey];
-        newState[pageId] = newPageSections;
-        return newState;
+    if (
+      !confirm(
+        `Delete section '${sectionKey}'? This will remove its content override.`
+      )
+    )
+      return;
+    setSectionsState((prev) => {
+      const newState = { ...prev };
+      const newPageSections = { ...newState[pageId] };
+      delete newPageSections[sectionKey];
+      newState[pageId] = newPageSections;
+      return newState;
     });
   };
 
-  const handleSectionFieldChange = (pageId: string, sectionKey: string, field: string, value: string) => {
-    setSectionsState(prev => ({
-        ...prev,
-        [pageId]: {
-            ...prev[pageId],
-            [sectionKey]: { 
-                ...prev[pageId][sectionKey],
-                [field]: value 
-            }
-        }
+  const handleSectionFieldChange = (
+    pageId: string,
+    sectionKey: string,
+    field: string,
+    value: string
+  ) => {
+    setSectionsState((prev) => ({
+      ...prev,
+      [pageId]: {
+        ...prev[pageId],
+        [sectionKey]: {
+          ...prev[pageId][sectionKey],
+          [field]: value,
+        },
+      },
     }));
   };
 
   const handleStructuredDataChange = (pageId: string, value: string) => {
-    setStructuredDataState(prev => ({
-        ...prev,
-        [pageId]: value
+    setStructuredDataState((prev) => ({
+      ...prev,
+      [pageId]: value,
     }));
   };
 
-  const handleMetaFieldChange = (pageId: string, field: "title" | "description" | "keywords", value: string) => {
-    setMetaState(prev => ({
-        ...prev,
-        [pageId]: {
-            ...prev[pageId],
-            [field]: value
-        }
+  const handleMetaFieldChange = (
+    pageId: string,
+    field: "title" | "description" | "keywords",
+    value: string
+  ) => {
+    setMetaState((prev) => ({
+      ...prev,
+      [pageId]: {
+        ...prev[pageId],
+        [field]: value,
+      },
     }));
   };
 
+  const toggleSectionExpand = (key: string) => {
+    setExpandedSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // ─── Submit Handlers ───
   const handleGlobalSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -162,33 +289,41 @@ const SEOManagerForm = ({ seo, pages }: SEOManagerFormProps) => {
     setLoading(false);
   };
 
-  const handlePageSubmit = async (pageId: string, e: React.FormEvent<HTMLFormElement>) => {
+  const handlePageSubmit = async (
+    pageId: string,
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
     e.preventDefault();
     setLoading(true);
     const formData = new FormData(e.currentTarget);
-    
-    // Add dynamic alts
+
     const alts = imageAltsState[pageId] || {};
     Object.entries(alts).forEach(([key, val]) => {
-        formData.append(`page_${pageId}_alt_${key}`, val);
+      formData.append(`page_${pageId}_alt_${key}`, val);
     });
 
-    // Add dynamic sections
     const sections = sectionsState[pageId] || {};
     Object.entries(sections).forEach(([secKey, secData]) => {
-        Object.entries(secData).forEach(([field, val]) => {
-            formData.append(`page_${pageId}_section_${secKey}_${field}`, val as string);
-        });
+      Object.entries(secData).forEach(([field, val]) => {
+        formData.append(
+          `page_${pageId}_section_${secKey}_${field}`,
+          val as string
+        );
+      });
     });
 
-    // Add metadata from state
-    const meta = metaState[pageId] || { title: "", description: "", keywords: "" };
+    const meta = metaState[pageId] || {
+      title: "",
+      description: "",
+      keywords: "",
+    };
     formData.append(`page_${pageId}_title`, meta.title);
     formData.append(`page_${pageId}_description`, meta.description);
     formData.append(`page_${pageId}_keywords`, meta.keywords);
-
-    // Add structured data
-    formData.append(`page_${pageId}_structuredData`, structuredDataState[pageId] || "");
+    formData.append(
+      `page_${pageId}_structuredData`,
+      structuredDataState[pageId] || ""
+    );
 
     const { savePageSEO } = await import("@/app/actions/settings");
     const result = await savePageSEO(pageId, formData);
@@ -199,385 +334,800 @@ const SEOManagerForm = ({ seo, pages }: SEOManagerFormProps) => {
     setLoading(false);
   };
 
-  // Simulated Health Score
-  const score = React.useMemo(() => {
-    let s = 75;
-    if (seo.siteTitle) s += 5;
-    if (seo.ogImage) s += 5;
+  // ─── Computed ───
+  const score = useMemo(() => {
+    let s = 50;
+    if (seo.siteTitle) s += 10;
+    if (seo.description) s += 10;
+    if (seo.keywords) s += 5;
+    if (seo.ogImage) s += 10;
     if (seo.canonicalUrl) s += 10;
     if (seo.robotsTxt) s += 5;
+    // Check page completeness
+    const activeMeta = metaState[activeTab];
+    if (activeMeta?.title) s += 5;
+    if (activeMeta?.description) s += 5;
     return Math.min(s, 100);
-  }, [seo]);
+  }, [seo, metaState, activeTab]);
+
+  const getPageStatus = (pageId: string) => {
+    const meta = metaState[pageId];
+    if (meta?.title && meta?.description) return "complete";
+    if (meta?.title || meta?.description) return "partial";
+    return "empty";
+  };
+
+  const activePage = pages.find((p) => p.id === activeTab);
 
   return (
     <>
       {showToast && (
-        <Toast 
-          message={toastMsg} 
-          onClose={() => setShowToast(false)} 
-        />
+        <Toast message={toastMsg} onClose={() => setShowToast(false)} />
       )}
 
-      <div className="space-y-10 pb-24">
-          {/* Advanced Header / Dashboard */}
-          <div className="bg-secondary rounded-3xl p-10 text-white shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 blur-[100px] -mr-48 -mt-48 rounded-full group-hover:bg-primary/30 transition-all duration-1000"></div>
-            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
-                <div className="space-y-4">
-                   <div className="flex items-center gap-3 bg-white/5 w-fit px-4 py-1.5 rounded-full border border-white/10">
-                      <Zap size={14} className="text-primary" />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-primary">Intelligence Console v2.0</span>
-                   </div>
-                   <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter flex items-center">
-                     <ShieldCheck className="mr-5 text-primary" size={48} /> SEO & Content Master
-                   </h1>
-                   <p className="text-gray-400 max-w-xl text-md font-light leading-relaxed">
-                     Deploy technical metadata, structured schema, and manage on-page content verticals from a single high-performance engine.
-                   </p>
+      <div className="space-y-8 pb-24">
+        {/* ═══════ TOP DASHBOARD BAR ═══════ */}
+        <div className="bg-secondary rounded-3xl p-8 md:p-10 text-white shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-primary/20 blur-[100px] -mr-40 -mt-40 rounded-full"></div>
+          <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 bg-white/5 w-fit px-4 py-1.5 rounded-full border border-white/10">
+                <Zap size={12} className="text-primary" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                  SEO Control Center v3.0
+                </span>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tighter flex items-center gap-4">
+                <ShieldCheck className="text-primary" size={36} />
+                SEO & Content Master
+              </h1>
+              <p className="text-gray-400 max-w-lg text-sm font-light leading-relaxed">
+                Manage metadata, page content, structured data, and image
+                accessibility across your entire site from one console.
+              </p>
+            </div>
+
+            <div className="flex gap-6 items-center bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-md">
+              <div className="text-center">
+                <div className="text-[10px] font-black uppercase text-gray-400 mb-1 tracking-widest">
+                  Health
                 </div>
-                
-                <div className="flex gap-10 items-center bg-white/5 p-8 rounded-[2.5rem] border border-white/10 backdrop-blur-md">
-                    <div className="text-center">
-                        <div className="text-[10px] font-black uppercase text-gray-400 mb-2 tracking-widest">Visibility Health</div>
-                        <div className={`text-5xl font-black ${score > 90 ? 'text-green-400' : 'text-primary'}`}>
-                            {score}%
-                        </div>
-                    </div>
-                    <div className="h-16 w-px bg-white/10"></div>
-                    <div className="space-y-3">
-                       <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                          <span className="text-[10px] font-black uppercase tracking-widest">Index Status: Active</span>
-                       </div>
-                       <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 rounded-full bg-primary"></div>
-                          <span className="text-[10px] font-black uppercase tracking-widest">Sitemap: Synchronized</span>
-                       </div>
-                    </div>
+                <div
+                  className={`text-4xl font-black ${score > 90 ? "text-green-400" : score > 70 ? "text-primary" : "text-amber-400"}`}
+                >
+                  {score}%
                 </div>
+              </div>
+              <div className="h-12 w-px bg-white/10"></div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-300">
+                    {pages.filter((p) => getPageStatus(p.id) === "complete").length}/{pages.length} Pages Optimized
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-300">
+                    Live Sync Active
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ═══════ MAIN 3-PANEL LAYOUT ═══════ */}
+        <div className="flex gap-6 min-h-[900px]">
+          {/* ────── LEFT SIDEBAR: Pages + Global ────── */}
+          <div
+            className={`transition-all duration-300 shrink-0 ${sidebarCollapsed ? "w-16" : "w-72"}`}
+          >
+            <div className="sticky top-4 space-y-6">
+              {/* Collapse Toggle */}
+              <button
+                type="button"
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                className="w-full flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-secondary transition-colors py-2"
+              >
+                {sidebarCollapsed ? (
+                  <PanelLeftOpen size={16} />
+                ) : (
+                  <>
+                    <PanelLeftClose size={16} /> Collapse
+                  </>
+                )}
+              </button>
+
+              {/* Page Navigator */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                {!sidebarCollapsed && (
+                  <div className="p-4 border-b border-gray-50">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
+                      <Layers size={12} className="text-primary" />
+                      Page Routes
+                    </h3>
+                  </div>
+                )}
+                <div className="p-2 space-y-1">
+                  {pages.map((page) => {
+                    const status = getPageStatus(page.id);
+                    const isActive = activeTab === page.id;
+                    return (
+                      <button
+                        key={page.id}
+                        type="button"
+                        onClick={() => {
+                          setActiveTab(page.id);
+                          setActiveSubTab("meta");
+                        }}
+                        className={`w-full flex items-center gap-3 rounded-xl transition-all text-left ${
+                          isActive
+                            ? "bg-secondary text-white shadow-lg"
+                            : "hover:bg-gray-50 text-gray-600"
+                        } ${sidebarCollapsed ? "p-3 justify-center" : "px-4 py-3"}`}
+                        title={page.name}
+                      >
+                        <div
+                          className={`w-2 h-2 rounded-full shrink-0 ${
+                            status === "complete"
+                              ? "bg-green-500"
+                              : status === "partial"
+                                ? "bg-amber-400"
+                                : isActive
+                                  ? "bg-white/30"
+                                  : "bg-gray-200"
+                          }`}
+                        />
+                        {!sidebarCollapsed && (
+                          <>
+                            <span className="text-xs font-bold truncate flex-1">
+                              {page.name}
+                            </span>
+                            <span
+                              className={`text-[9px] font-mono ${isActive ? "text-white/40" : "text-gray-300"}`}
+                            >
+                              /{page.id === "home" ? "" : page.id}
+                            </span>
+                          </>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Global SEO Form */}
+              {!sidebarCollapsed && (
+                <form
+                  onSubmit={handleGlobalSubmit}
+                  className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+                >
+                  <div className="p-4 border-b border-gray-50">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-2">
+                      <Globe size={12} className="text-primary" />
+                      Global Config
+                    </h3>
+                  </div>
+                  <div className="p-4 space-y-4">
+                    <div>
+                      <FieldLabel label="Site Title" />
+                      <input
+                        type="text"
+                        name="siteTitle"
+                        defaultValue={seo.siteTitle}
+                        className="w-full bg-gray-50 border border-gray-100 p-3 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all text-sm font-bold text-secondary"
+                      />
+                    </div>
+                    <div>
+                      <FieldLabel label="Meta Description" />
+                      <textarea
+                        rows={3}
+                        name="description"
+                        defaultValue={seo.description}
+                        className="w-full bg-gray-50 border border-gray-100 p-3 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all text-xs font-medium resize-none leading-relaxed"
+                      />
+                    </div>
+                    <div>
+                      <FieldLabel label="Keywords" />
+                      <textarea
+                        rows={2}
+                        name="keywords"
+                        defaultValue={seo.keywords}
+                        className="w-full bg-gray-50 border border-gray-100 p-3 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all text-xs font-medium resize-none"
+                      />
+                    </div>
+                    <div>
+                      <FieldLabel label="Canonical URL" />
+                      <input
+                        type="text"
+                        name="canonicalUrl"
+                        defaultValue={seo.canonicalUrl}
+                        className="w-full bg-gray-50 border border-gray-100 p-3 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all text-xs font-bold"
+                      />
+                    </div>
+                    <div>
+                      <FieldLabel label="OG Image URL" />
+                      <input
+                        type="text"
+                        name="ogImage"
+                        defaultValue={seo.ogImage}
+                        className="w-full bg-gray-50 border border-gray-100 p-3 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all text-xs font-bold"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-secondary text-white p-3.5 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-primary hover:text-secondary transition-all flex items-center justify-center gap-3 shadow-lg disabled:opacity-50"
+                    >
+                      <Save
+                        size={14}
+                        className={loading ? "animate-spin" : ""}
+                      />
+                      {loading ? "Syncing..." : "Save Global"}
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            
-            {/* Left Sidebar: Technical & Global */}
-            <form onSubmit={handleGlobalSubmit} className="lg:col-span-1 space-y-8">
-                {/* Global Master Config */}
-                <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all">
-                    <h2 className="text-xs font-black uppercase text-secondary mb-8 flex items-center tracking-widest">
-                        <Globe size={18} className="mr-4 text-primary" /> Global Master
-                    </h2>
-                    <div className="space-y-8">
-                      <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Master Site Title</label>
-                          <input type="text" name="siteTitle" defaultValue={seo.siteTitle} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl outline-none focus:border-primary transition-all text-sm font-bold text-secondary" />
-                      </div>
-                      <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Global Meta Description</label>
-                          <textarea rows={4} name="description" defaultValue={seo.description} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl outline-none focus:border-primary transition-all text-sm font-medium resize-none leading-relaxed" />
-                      </div>
-                      <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Master Keywords</label>
-                          <textarea rows={3} name="keywords" defaultValue={seo.keywords} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl outline-none focus:border-primary transition-all text-sm font-medium resize-none" />
-                      </div>
-                    </div>
-                </div>
+          {/* ────── CENTER PANEL: Page Editor ────── */}
+          <div className="flex-1 min-w-0">
+            {pages.map((page) => {
+              if (activeTab !== page.id) return null;
 
-                {/* Technical & Social */}
-                <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all">
-                    <h2 className="text-xs font-black uppercase text-secondary mb-8 flex items-center tracking-widest">
-                        <Code2 size={18} className="mr-4 text-primary" /> Tech & Social
-                    </h2>
-                    <div className="space-y-8">
-                      <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Canonical Origin</label>
-                          <input type="text" name="canonicalUrl" defaultValue={seo.canonicalUrl} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl outline-none focus:border-primary transition-all text-sm font-bold" />
-                      </div>
-                      <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-2">Social Preview Image</label>
-                          <input type="text" name="ogImage" defaultValue={seo.ogImage} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-2xl outline-none focus:border-primary transition-all text-sm font-bold" />
-                      </div>
-                    </div>
-                </div>
-
-                <button 
-                    type="submit" 
-                    disabled={loading}
-                    className="w-full bg-secondary text-white p-6 rounded-[2rem] font-black uppercase text-[11px] tracking-[0.3em] shadow-2xl hover:bg-primary hover:text-secondary transition-all flex items-center justify-center gap-4 group"
+              return (
+                <form
+                  key={page.id}
+                  onSubmit={(e) => handlePageSubmit(page.id, e)}
+                  className="space-y-6"
                 >
-                    <Save size={18} className={loading ? 'animate-spin' : 'group-hover:scale-110'} />
-                    {loading ? "Syncing..." : "Sync Master Config"}
-                </button>
-            </form>
+                  {/* Page Header Bar */}
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-secondary text-primary rounded-2xl flex items-center justify-center font-black text-lg">
+                          {page.name.charAt(0)}
+                        </div>
+                        <div>
+                          <h2 className="text-2xl font-black uppercase text-secondary tracking-tight">
+                            {page.name}
+                          </h2>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-[10px] text-gray-400 font-mono bg-gray-50 px-2 py-0.5 rounded">
+                              /{page.id === "home" ? "" : page.id}
+                            </span>
+                            {getPageStatus(page.id) === "complete" ? (
+                              <span className="flex items-center gap-1 text-[10px] font-bold text-green-600">
+                                <CheckCircle2 size={10} /> Optimized
+                              </span>
+                            ) : getPageStatus(page.id) === "partial" ? (
+                              <span className="flex items-center gap-1 text-[10px] font-bold text-amber-500">
+                                <AlertCircle size={10} /> Partial
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1 text-[10px] font-bold text-gray-400">
+                                <XCircle size={10} /> Needs Setup
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
 
-            {/* Right Column: Interactive Page Tabs */}
-            <div className="lg:col-span-3">
-                <div className="bg-white rounded-[3rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col h-full min-h-[800px]">
-                    {/* Tab Navigation */}
-                    <div className="bg-gray-50/80 p-3 border-b border-gray-100 flex overflow-x-auto no-scrollbar gap-2">
-                        {pages.map((page) => (
-                            <button
-                                key={page.id}
-                                type="button"
-                                onClick={() => setActiveTab(page.id)}
-                                className={`px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap shrink-0 ${
-                                    activeTab === page.id 
-                                    ? "bg-white text-secondary shadow-md ring-1 ring-gray-100" 
-                                    : "text-gray-400 hover:text-secondary hover:bg-white/50"
-                                }`}
-                            >
-                                {page.name}
-                            </button>
+                      {/* Tab Switcher */}
+                      <div className="flex bg-gray-100 p-1 rounded-xl">
+                        {[
+                          { key: "meta", label: "Meta & SEO", icon: Search },
+                          { key: "content", label: "Content", icon: Layout },
+                          { key: "tech", label: "Schema", icon: Code2 },
+                        ].map((tab) => (
+                          <button
+                            key={tab.key}
+                            type="button"
+                            onClick={() =>
+                              setActiveSubTab(
+                                tab.key as "meta" | "content" | "tech"
+                              )
+                            }
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${
+                              activeSubTab === tab.key
+                                ? "bg-white text-secondary shadow-sm"
+                                : "text-gray-400 hover:text-secondary"
+                            }`}
+                          >
+                            <tab.icon size={14} />
+                            <span className="hidden sm:inline">{tab.label}</span>
+                          </button>
                         ))}
+                      </div>
                     </div>
+                  </div>
 
-                    {/* Active Tab Content */}
-                    <div className="p-10 flex-grow flex flex-col">
-                        {pages.map((page) => {
-                            const pageData = seo.pages?.[page.id] || { title: "", description: "", keywords: "" };
-                            const isActive = activeTab === page.id;
+                  {/* ═══ META & SEO TAB ═══ */}
+                  {activeSubTab === "meta" && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                      {/* SERP Preview */}
+                      <SERPPreview
+                        title={
+                          metaState[page.id]?.title || `${page.name} | Elite Steel Concepts`
+                        }
+                        description={
+                          metaState[page.id]?.description || seo.description
+                        }
+                        path={page.id === "home" ? "/" : page.id}
+                        canonical={seo.canonicalUrl}
+                      />
 
-                            if (!isActive) return null;
+                      {/* Meta Fields */}
+                      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-6">
+                        <div className="flex items-center gap-3 pb-4 border-b border-gray-50">
+                          <div className="p-2 bg-blue-50 rounded-xl text-blue-600">
+                            <FileText size={18} />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-black uppercase text-secondary tracking-wider">
+                              Page Metadata
+                            </h3>
+                            <p className="text-[10px] text-gray-400 font-medium">
+                              Controls how this page appears in search engines
+                            </p>
+                          </div>
+                        </div>
+
+                        <div>
+                          <FieldLabel
+                            label="Custom Page Title"
+                            count={metaState[page.id]?.title?.length || 0}
+                            max={60}
+                            hint="Ideal: 50-60 chars"
+                          />
+                          <input
+                            type="text"
+                            value={metaState[page.id]?.title || ""}
+                            onChange={(e) =>
+                              handleMetaFieldChange(
+                                page.id,
+                                "title",
+                                e.target.value
+                              )
+                            }
+                            placeholder={`${page.name} | Elite Steel Concepts`}
+                            className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-bold text-secondary text-base"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          <div>
+                            <FieldLabel
+                              label="Meta Description"
+                              count={
+                                metaState[page.id]?.description?.length || 0
+                              }
+                              max={160}
+                              hint="Ideal: 150-160 chars"
+                            />
+                            <textarea
+                              rows={5}
+                              value={metaState[page.id]?.description || ""}
+                              onChange={(e) =>
+                                handleMetaFieldChange(
+                                  page.id,
+                                  "description",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Write a compelling description for search results..."
+                              className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all text-sm font-medium leading-relaxed resize-none"
+                            />
+                          </div>
+
+                          <div>
+                            <FieldLabel
+                              label="Strategic Keywords"
+                              hint="Comma-separated"
+                            />
+                            <textarea
+                              rows={5}
+                              value={metaState[page.id]?.keywords || ""}
+                              onChange={(e) =>
+                                handleMetaFieldChange(
+                                  page.id,
+                                  "keywords",
+                                  e.target.value
+                                )
+                              }
+                              placeholder="food truck builder, custom food trailer, mobile kitchen..."
+                              className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all text-sm font-medium resize-none leading-relaxed"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Image Alts */}
+                      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                        <div className="flex items-center justify-between pb-4 border-b border-gray-50 mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-purple-50 rounded-xl text-purple-600">
+                              <ImageIcon size={18} />
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-black uppercase text-secondary tracking-wider">
+                                Image Alt Texts
+                              </h3>
+                              <p className="text-[10px] text-gray-400 font-medium">
+                                Accessibility & SEO for images on this page
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="text"
+                              placeholder="Image ID (e.g. hero-bg)"
+                              value={newAltKeys[page.id] || ""}
+                              onChange={(e) =>
+                                setNewAltKeys((prev) => ({
+                                  ...prev,
+                                  [page.id]: e.target.value,
+                                }))
+                              }
+                              className="bg-gray-50 border border-gray-100 px-3 py-2 rounded-lg text-xs font-bold text-secondary outline-none focus:border-primary w-[140px]"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleAddAlt(page.id)}
+                              className="bg-secondary text-white px-4 py-2 rounded-lg text-[10px] font-bold uppercase hover:bg-primary hover:text-secondary transition-all flex items-center gap-1.5"
+                            >
+                              <Plus size={12} /> Add
+                            </button>
+                          </div>
+                        </div>
+
+                        {Object.keys(imageAltsState[page.id] || {}).length ===
+                        0 ? (
+                          <div className="text-center py-8 text-gray-300">
+                            <ImageIcon
+                              size={32}
+                              className="mx-auto mb-2 opacity-50"
+                            />
+                            <p className="text-xs font-bold uppercase tracking-wider">
+                              No image alts defined
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {Object.entries(
+                              imageAltsState[page.id] || {}
+                            ).map(([altKey, altValue]) => (
+                              <div
+                                key={altKey}
+                                className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl group"
+                              >
+                                <span className="text-[9px] font-black uppercase tracking-wider text-primary bg-primary/10 px-2 py-1 rounded shrink-0">
+                                  {altKey}
+                                </span>
+                                <input
+                                  type="text"
+                                  value={altValue}
+                                  onChange={(e) =>
+                                    handleAltChange(
+                                      page.id,
+                                      altKey,
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Describe image..."
+                                  className="flex-1 bg-white border border-gray-100 p-2 rounded-lg outline-none focus:border-primary text-xs font-medium"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleRemoveAlt(page.id, altKey)
+                                  }
+                                  className="text-gray-300 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                                >
+                                  <Trash2 size={14} />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ═══ CONTENT TAB ═══ */}
+                  {activeSubTab === "content" && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                      {/* Add Section Bar */}
+                      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-emerald-50 rounded-xl text-emerald-600">
+                              <Layout size={18} />
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-black uppercase text-secondary tracking-wider">
+                                Page Content Sections
+                              </h3>
+                              <p className="text-[10px] text-gray-400 font-medium">
+                                {Object.keys(sectionsState[page.id] || {}).length} sections defined
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <input
+                              type="text"
+                              placeholder="Section key (e.g. hero, intro)"
+                              value={newSectionKeys[page.id] || ""}
+                              onChange={(e) =>
+                                setNewSectionKeys((prev) => ({
+                                  ...prev,
+                                  [page.id]: e.target.value,
+                                }))
+                              }
+                              className="bg-gray-50 border border-gray-100 px-4 py-2.5 rounded-xl text-xs font-bold text-secondary outline-none focus:border-primary flex-1 sm:w-[180px]"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleAddSection(page.id)}
+                              className="bg-primary text-secondary px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-secondary hover:text-white transition-all flex items-center gap-2 whitespace-nowrap shadow-md"
+                            >
+                              <Plus size={14} /> New Section
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section Cards */}
+                      {Object.keys(sectionsState[page.id] || {}).length ===
+                      0 ? (
+                        <div className="bg-white rounded-2xl border-2 border-dashed border-gray-100 p-16 text-center">
+                          <Layout
+                            size={48}
+                            className="mx-auto text-gray-200 mb-4"
+                          />
+                          <p className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">
+                            No sections defined yet
+                          </p>
+                          <p className="text-xs text-gray-300">
+                            Use the &quot;New Section&quot; button above to add
+                            editable content areas
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {Object.entries(
+                            sectionsState[page.id] || {}
+                          ).map(([secKey, secData]) => {
+                            const expandKey = `${page.id}_${secKey}`;
+                            const isExpanded =
+                              expandedSections[expandKey] !== false; // default open
 
                             return (
-                                <form 
-                                    key={page.id} 
-                                    onSubmit={(e) => handlePageSubmit(page.id, e)}
-                                    className="animate-fadeIn flex flex-col h-full space-y-10"
+                              <div
+                                key={secKey}
+                                className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden transition-all hover:shadow-md"
+                              >
+                                {/* Section Header - Clickable */}
+                                <div
+                                  role="button"
+                                  tabIndex={0}
+                                  onClick={() =>
+                                    toggleSectionExpand(expandKey)
+                                  }
+                                  onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                      e.preventDefault();
+                                      toggleSectionExpand(expandKey);
+                                    }
+                                  }}
+                                  className="w-full flex items-center justify-between p-5 hover:bg-gray-50/50 transition-colors text-left cursor-pointer select-none"
                                 >
-                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-100 pb-8">
-                                        <div>
-                                            <h3 className="text-3xl font-black uppercase text-secondary tracking-tighter">{page.name} Control</h3>
-                                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em] mt-2 flex items-center gap-2">
-                                               <Hash size={12} className="text-primary" /> Route ID: /{page.id === 'home' ? '' : page.id}
-                                            </p>
-                                        </div>
-                                        
-                                        {/* Internal optimization sub-tabs */}
-                                        <div className="flex bg-gray-100 p-1.5 rounded-2xl border border-gray-200">
-                                           <button 
-                                              type="button"
-                                              onClick={() => setActiveSubTab("meta")}
-                                              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${activeSubTab === 'meta' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400 hover:text-secondary'}`}
-                                           >
-                                              <FileText size={14} /> Meta
-                                           </button>
-                                           <button 
-                                              type="button"
-                                              onClick={() => setActiveSubTab("content")}
-                                              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${activeSubTab === 'content' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400 hover:text-secondary'}`}
-                                           >
-                                              <Layout size={14} /> Content
-                                           </button>
-                                           <button 
-                                              type="button"
-                                              onClick={() => setActiveSubTab("tech")}
-                                              className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${activeSubTab === 'tech' ? 'bg-white text-secondary shadow-sm' : 'text-gray-400 hover:text-secondary'}`}
-                                           >
-                                              <Code2 size={14} /> Technical
-                                           </button>
-                                        </div>
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-9 h-9 bg-secondary text-primary rounded-xl flex items-center justify-center font-black text-xs">
+                                      {secKey.charAt(0).toUpperCase()}
                                     </div>
-
-                                    {/* Sub-Tab Content Area */}
-                                    <div className="flex-grow">
-                                        {activeSubTab === "meta" && (
-                                          <div className="space-y-10 animate-in fade-in duration-500">
-                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                                <div className="md:col-span-2 space-y-3">
-                                                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 flex justify-between ml-2">
-                                                      <span>Custom Page Title</span>
-                                                      <span className={`${(metaState[page.id]?.title?.length || 0) > 60 ? 'text-red-500' : 'text-gray-400'}`}>
-                                                            {metaState[page.id]?.title?.length || 0}/60
-                                                      </span>
-                                                   </label>
-                                                   <input 
-                                                      type="text" 
-                                                      value={metaState[page.id]?.title || ""} 
-                                                      onChange={(e) => handleMetaFieldChange(page.id, "title", e.target.value)}
-                                                      className="w-full bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:border-primary transition-all font-bold text-secondary text-lg" 
-                                                   />
-                                                </div>
-                                                <div className="space-y-3">
-                                                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 flex justify-between ml-2">
-                                                      <span>Meta Description</span>
-                                                      <span className={`${(metaState[page.id]?.description?.length || 0) > 160 ? 'text-red-500' : 'text-gray-400'}`}>
-                                                            {metaState[page.id]?.description?.length || 0}/160
-                                                      </span>
-                                                   </label>
-                                                   <textarea 
-                                                      rows={6} 
-                                                      value={metaState[page.id]?.description || ""} 
-                                                      onChange={(e) => handleMetaFieldChange(page.id, "description", e.target.value)}
-                                                      className="w-full bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:border-primary transition-all text-sm font-medium leading-relaxed resize-none" 
-                                                   />
-                                                </div>
-                                                <div className="space-y-3">
-                                                   <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-2">Strategic Keywords</label>
-                                                   <textarea 
-                                                      rows={6} 
-                                                      value={metaState[page.id]?.keywords || ""} 
-                                                      onChange={(e) => handleMetaFieldChange(page.id, "keywords", e.target.value)}
-                                                      className="w-full bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:border-primary transition-all text-sm font-medium resize-none leading-relaxed" 
-                                                   />
-                                                </div>
-                                             </div>
-
-                                             <div className="bg-gray-50/50 rounded-[2rem] p-8 border border-gray-100">
-                                                <div className="flex items-center justify-between mb-8">
-                                                      <div className="flex items-center gap-4">
-                                                         <div className="p-3 bg-white rounded-2xl shadow-sm text-primary">
-                                                            <ImageIcon size={20} />
-                                                         </div>
-                                                         <div>
-                                                            <h4 className="text-sm font-black uppercase tracking-widest text-secondary">Asset Accessibility</h4>
-                                                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Image Alt text overrides</p>
-                                                         </div>
-                                                      </div>
-                                                       <div className="flex items-center gap-2">
-                                                          <input 
-                                                              type="text" 
-                                                              placeholder="Alt ID (e.g. hero-bg)" 
-                                                              value={newAltKeys[page.id] || ""}
-                                                              onChange={(e) => setNewAltKeys(prev => ({ ...prev, [page.id]: e.target.value }))}
-                                                              className="bg-white border border-gray-100 px-4 py-2 rounded-xl text-[10px] font-bold text-secondary outline-none focus:border-primary w-[150px]"
-                                                          />
-                                                          <button type="button" onClick={() => handleAddAlt(page.id)} className="text-[10px] font-black uppercase bg-secondary text-white px-6 py-2.5 rounded-xl hover:bg-primary hover:text-secondary transition-all flex items-center gap-2 shadow-xl whitespace-nowrap">
-                                                             <Plus size={14} /> Add
-                                                          </button>
-                                                       </div>
-                                                </div>
-
-                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                                   {Object.entries(imageAltsState[page.id] || {}).map(([altKey, altValue]) => (
-                                                      <div key={altKey} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 group">
-                                                         <div className="flex justify-between items-center mb-4">
-                                                            <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider flex items-center">
-                                                               <AlertCircle size={12} className="mr-2 text-primary" /> ID: {altKey}
-                                                            </span>
-                                                            <button type="button" onClick={() => handleRemoveAlt(page.id, altKey)} className="text-gray-300 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"><Trash2 size={14} /></button>
-                                                         </div>
-                                                         <input type="text" value={altValue} onChange={(e) => handleAltChange(page.id, altKey, e.target.value)} placeholder="Describe visual asset..." className="w-full bg-gray-50 border-0 p-3 rounded-xl outline-none focus:ring-2 focus:ring-primary/20 text-xs font-bold text-secondary" />
-                                                      </div>
-                                                   ))}
-                                                </div>
-                                             </div>
-                                          </div>
-                                       )}
-
-                                       {activeSubTab === "content" && (
-                                          <div className="space-y-10 animate-in fade-in duration-500">
-                                             <div className="flex flex-col md:flex-row items-center justify-between bg-primary/10 border border-primary/20 p-6 rounded-3xl gap-6">
-                                                 <div className="flex items-center gap-4">
-                                                    <Layout className="text-primary" size={24} />
-                                                    <div>
-                                                       <p className="text-xs font-black uppercase text-secondary tracking-widest">Page Content Architecture</p>
-                                                       <p className="text-[10px] text-gray-500 font-medium">Manage on-page text sections dynamically.</p>
-                                                    </div>
-                                                 </div>
-                                                 <div className="flex items-center gap-2 w-full md:w-auto">
-                                                    <input 
-                                                        type="text" 
-                                                        placeholder="Section Key (e.g. hero, intro)" 
-                                                        value={newSectionKeys[page.id] || ""}
-                                                        onChange={(e) => setNewSectionKeys(prev => ({ ...prev, [page.id]: e.target.value }))}
-                                                        className="bg-white border border-primary/20 px-4 py-3 rounded-xl text-xs font-bold text-secondary outline-none focus:border-primary w-full md:w-[200px]"
-                                                    />
-                                                    <button 
-                                                        type="button" 
-                                                        onClick={() => handleAddSection(page.id)} 
-                                                        className="bg-secondary text-white px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-secondary transition-all shadow-xl whitespace-nowrap"
-                                                    >
-                                                       Add Section
-                                                    </button>
-                                                 </div>
-                                              </div>
-
-                                             <div className="grid grid-cols-1 gap-8">
-                                                {Object.entries(sectionsState[page.id] || {}).map(([secKey, secData]) => (
-                                                   <div key={secKey} className="bg-white border border-gray-100 rounded-[2.5rem] p-8 shadow-sm hover:shadow-lg transition-all space-y-6 relative group">
-                                                      <button type="button" onClick={() => handleRemoveSection(page.id, secKey)} className="absolute top-8 right-8 text-gray-300 hover:text-red-500 transition-all">
-                                                         <Trash2 size={18} />
-                                                      </button>
-
-                                                      <div className="flex items-center gap-3 mb-4">
-                                                         <div className="w-8 h-8 bg-secondary text-primary rounded-xl flex items-center justify-center font-black text-xs">{secKey.charAt(0).toUpperCase()}</div>
-                                                         <h4 className="text-lg font-black uppercase text-secondary tracking-tighter">Section: {secKey}</h4>
-                                                      </div>
-
-                                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                         <div className="space-y-2">
-                                                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-2">Heading</label>
-                                                            <input type="text" value={secData.title || ""} onChange={(e) => handleSectionFieldChange(page.id, secKey, "title", e.target.value)} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:border-primary text-sm font-bold" />
-                                                         </div>
-                                                         <div className="space-y-2">
-                                                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-2">Subheading / Lead</label>
-                                                            <input type="text" value={secData.subtitle || ""} onChange={(e) => handleSectionFieldChange(page.id, secKey, "subtitle", e.target.value)} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:border-primary text-sm font-bold" />
-                                                         </div>
-                                                         <div className="md:col-span-2 space-y-2">
-                                                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 ml-2">Body Content (Markdown Supported)</label>
-                                                            <textarea rows={4} value={secData.content || ""} onChange={(e) => handleSectionFieldChange(page.id, secKey, "content", e.target.value)} className="w-full bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:border-primary text-sm font-medium leading-relaxed resize-none" />
-                                                         </div>
-                                                         <div className="space-y-2">
-                                                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-2">CTA Action Text</label>
-                                                            <input type="text" value={secData.ctaText || ""} onChange={(e) => handleSectionFieldChange(page.id, secKey, "ctaText", e.target.value)} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:border-primary text-sm font-bold" />
-                                                         </div>
-                                                      </div>
-                                                   </div>
-                                                ))}
-                                                {Object.keys(sectionsState[page.id] || {}).length === 0 && (
-                                                   <div className="border-2 border-dashed border-gray-100 rounded-[3rem] p-24 text-center space-y-4">
-                                                      <Layout className="mx-auto text-gray-200" size={64} />
-                                                      <p className="text-xs font-black uppercase text-gray-400 tracking-widest leading-relaxed">No dynamic sections defined.<br/>Use 'Define New Section' to begin CMS population.</p>
-                                                   </div>
-                                                )}
-                                             </div>
-                                          </div>
-                                       )}
-
-                                       {activeSubTab === "tech" && (
-                                          <div className="space-y-10 animate-in fade-in duration-500">
-                                             <div className="bg-secondary rounded-[2.5rem] p-10 text-white space-y-6 shadow-2xl">
-                                                <div className="flex items-center gap-4">
-                                                   <Code2 size={24} className="text-primary" />
-                                                   <div>
-                                                      <h4 className="text-lg font-black uppercase tracking-tighter font-mono">Structured Data (LD+JSON)</h4>
-                                                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Deploy schema markup for Enhanced rich snippets.</p>
-                                                   </div>
-                                                </div>
-                                                <textarea 
-                                                   rows={12} 
-                                                   value={structuredDataState[page.id] || ""} 
-                                                   onChange={(e) => handleStructuredDataChange(page.id, e.target.value)}
-                                                   placeholder='{ "@context": "https://schema.org", "@type": "Service", "name": "..." }'
-                                                   className="w-full bg-black/30 border border-white/10 p-6 rounded-2xl outline-none focus:border-primary font-mono text-xs text-primary placeholder:text-gray-700 resize-none transition-all"
-                                                />
-                                                <div className="flex items-center gap-2 text-primary">
-                                                   <AlertCircle size={14} />
-                                                   <span className="text-[9px] font-black uppercase tracking-widest">Always validate JSON structure at search.google.com/test/rich-results</span>
-                                                </div>
-                                             </div>
-                                          </div>
-                                       )}
+                                    <div>
+                                      <h4 className="text-sm font-black uppercase text-secondary tracking-tight">
+                                        {secKey}
+                                      </h4>
+                                      <span className="text-[10px] text-gray-400 font-medium">
+                                        {secData.title
+                                          ? `"${secData.title.substring(0, 40)}${secData.title.length > 40 ? "..." : ""}"`
+                                          : "Empty section"}
+                                      </span>
                                     </div>
+                                  </div>
+                                  <div className="flex items-center gap-3">
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemoveSection(
+                                          page.id,
+                                          secKey
+                                        );
+                                      }}
+                                      className="text-gray-300 hover:text-red-500 transition-all p-1"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                    {isExpanded ? (
+                                      <ChevronDown
+                                        size={16}
+                                        className="text-gray-400"
+                                      />
+                                    ) : (
+                                      <ChevronRight
+                                        size={16}
+                                        className="text-gray-400"
+                                      />
+                                    )}
+                                  </div>
+                                </div>
 
-                                    <div className="flex justify-end pt-10 border-t border-gray-100 mt-auto">
-                                        <button 
-                                            type="submit" 
-                                            disabled={loading}
-                                            className="bg-primary text-secondary px-10 py-5 rounded-2xl shadow-xl hover:scale-105 active:scale-95 disabled:opacity-70 disabled:scale-100 transition-all font-black uppercase tracking-[0.2em] flex items-center group ring-8 ring-primary/5"
-                                        >
-                                            <Save size={20} className={`mr-3 ${loading ? 'animate-spin' : 'group-hover:scale-110'}`} /> 
-                                            {loading ? "Deploying..." : `Commit ${page.name} Update`}
-                                        </button>
+                                {/* Section Fields - Expandable */}
+                                {isExpanded && (
+                                  <div className="px-5 pb-5 border-t border-gray-50 pt-4 space-y-4 animate-in fade-in duration-200">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <div>
+                                        <FieldLabel label="Heading / Title" />
+                                        <input
+                                          type="text"
+                                          value={secData.title || ""}
+                                          onChange={(e) =>
+                                            handleSectionFieldChange(
+                                              page.id,
+                                              secKey,
+                                              "title",
+                                              e.target.value
+                                            )
+                                          }
+                                          placeholder="Section heading..."
+                                          className="w-full bg-gray-50 border border-gray-100 p-3.5 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm font-bold text-secondary"
+                                        />
+                                      </div>
+                                      <div>
+                                        <FieldLabel label="Subheading / Lead" />
+                                        <input
+                                          type="text"
+                                          value={secData.subtitle || ""}
+                                          onChange={(e) =>
+                                            handleSectionFieldChange(
+                                              page.id,
+                                              secKey,
+                                              "subtitle",
+                                              e.target.value
+                                            )
+                                          }
+                                          placeholder="Subtitle or label..."
+                                          className="w-full bg-gray-50 border border-gray-100 p-3.5 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm font-medium"
+                                        />
+                                      </div>
                                     </div>
-                                </form>
+                                    <div>
+                                      <FieldLabel label="Body Content" hint="One item per line for bullet lists" />
+                                      <textarea
+                                        rows={4}
+                                        value={secData.content || ""}
+                                        onChange={(e) =>
+                                          handleSectionFieldChange(
+                                            page.id,
+                                            secKey,
+                                            "content",
+                                            e.target.value
+                                          )
+                                        }
+                                        placeholder="Main section content..."
+                                        className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm font-medium leading-relaxed resize-none"
+                                      />
+                                    </div>
+                                    <div className="w-full md:w-1/2">
+                                      <FieldLabel label="CTA Button Text" />
+                                      <input
+                                        type="text"
+                                        value={secData.ctaText || ""}
+                                        onChange={(e) =>
+                                          handleSectionFieldChange(
+                                            page.id,
+                                            secKey,
+                                            "ctaText",
+                                            e.target.value
+                                          )
+                                        }
+                                        placeholder="Button label..."
+                                        className="w-full bg-gray-50 border border-gray-100 p-3.5 rounded-xl outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 text-sm font-bold"
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             );
-                        })}
+                          })}
+                        </div>
+                      )}
                     </div>
-                </div>
-            </div>
+                  )}
+
+                  {/* ═══ SCHEMA / TECHNICAL TAB ═══ */}
+                  {activeSubTab === "tech" && (
+                    <div className="space-y-6 animate-in fade-in duration-300">
+                      <div className="bg-secondary rounded-2xl p-6 md:p-8 text-white shadow-xl">
+                        <div className="flex items-center justify-between mb-6">
+                          <div className="flex items-center gap-4">
+                            <div className="p-2 bg-white/10 rounded-xl">
+                              <Code2 size={20} className="text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="text-base font-black uppercase tracking-tight">
+                                Structured Data (JSON-LD)
+                              </h3>
+                              <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">
+                                Rich snippets for enhanced SERP visibility
+                              </p>
+                            </div>
+                          </div>
+                          <a
+                            href="https://search.google.com/test/rich-results"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:text-white transition-colors"
+                          >
+                            <ExternalLink size={12} />
+                            Validate
+                          </a>
+                        </div>
+                        <textarea
+                          rows={14}
+                          value={structuredDataState[page.id] || ""}
+                          onChange={(e) =>
+                            handleStructuredDataChange(
+                              page.id,
+                              e.target.value
+                            )
+                          }
+                          placeholder={`{\n  "@context": "https://schema.org",\n  "@type": "LocalBusiness",\n  "name": "Elite Steel Concepts",\n  "description": "Custom food truck & trailer fabrication"\n}`}
+                          className="w-full bg-black/30 border border-white/10 p-5 rounded-xl outline-none focus:border-primary font-mono text-xs text-primary placeholder:text-gray-700 resize-none transition-all leading-relaxed"
+                        />
+                        <div className="mt-4 flex items-center gap-2 text-primary/70">
+                          <AlertCircle size={12} />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">
+                            Validate JSON at Google Rich Results Test before
+                            deploying
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ═══ SAVE BUTTON ═══ */}
+                  <div className="flex items-center justify-between bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <div className="flex items-center gap-3">
+                      <Sparkles size={16} className="text-primary" />
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                        Changes deploy instantly to the live site
+                      </span>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="bg-primary text-secondary px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100 transition-all font-black uppercase tracking-widest text-[11px] flex items-center gap-3"
+                    >
+                      <Save
+                        size={16}
+                        className={loading ? "animate-spin" : ""}
+                      />
+                      {loading
+                        ? "Deploying..."
+                        : `Save ${page.name}`}
+                    </button>
+                  </div>
+                </form>
+              );
+            })}
           </div>
+        </div>
       </div>
     </>
   );

@@ -40,27 +40,27 @@ export default async function CustomFoodTrailersPage() {
   const trailerFaqs = faqs.filter(f => f.category === "Fabrication" || f.category === "Process").slice(0, 5);
 
   // Dynamic Assets
-  const trailerHero = await getMediaAsset("custom-food-trailers", "hero", "https://images.unsplash.com/photo-1493770348161-369560ae357d?q=80&w=1200&auto=format&fit=crop");
-  const trailerDetail = await getMediaAsset("custom-food-trailers", "fabrication_detail", "https://images.unsplash.com/photo-1590402444816-a118f0951307?q=80&w=1200&auto=format&fit=crop");
+  const trailerHero = await getMediaAsset("custom-food-trailers", "hero", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200");
+  const trailerDetail = await getMediaAsset("custom-food-trailers", "fabrication_detail", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1200");
 
   const trailerPlatforms = [
     { 
       size: "10-14ft Pod", 
       ideal: "Specialty Coffee, Juices, Desserts", 
       advantage: "The ultimate solution for high-margin, low-footprint business models.",
-      image: "https://images.unsplash.com/photo-1579847188804-dcba9e5ac30e?q=80&w=800&auto=format&fit=crop"
+      image: "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     { 
       size: "18-24ft Workhorse", 
       ideal: "Full Commercial Kitchens, BBQ Porches", 
       advantage: "Maximum interior volume for multi-chef lines and heavy equipment.",
-      image: "https://images.unsplash.com/photo-1594930384824-0226e6ad864a?q=80&w=800&auto=format&fit=crop"
+      image: "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     { 
       size: "26ft+ Event Titan", 
       ideal: "Catering operations, Festival high-volume", 
       advantage: "Dual-axle stability for mobile kitchens that never quit.",
-      image: "https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?q=80&w=800&auto=format&fit=crop"
+      image: "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800"
     }
   ];
 
@@ -287,7 +287,7 @@ export default async function CustomFoodTrailersPage() {
            <div className="relative rounded-[4rem] overflow-hidden bg-secondary text-white p-12 md:p-24 shadow-2xl">
               <div className="absolute inset-0">
                  <Image 
-                   src="https://images.unsplash.com/photo-1555126634-323283e090fa?q=80&w=1200&auto=format&fit=crop" 
+                   src="https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1200" 
                    alt="Elite Steel Team" 
                    fill 
                    className="object-cover opacity-10"

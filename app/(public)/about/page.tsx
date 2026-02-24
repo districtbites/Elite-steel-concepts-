@@ -5,8 +5,11 @@ import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import Image from "next/image";
 import { Check, Shield, Award, Users, Target, Zap } from "lucide-react";
-import { getPageSEO, getSEO } from "@/lib/db";
+import { getPageSEO, getSEO, getMediaAsset } from "@/lib/db";
 import type { Metadata } from "next";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -20,7 +23,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const pageSeo = await getPageSEO("about");
+  const [pageSeo, aboutHero] = await Promise.all([
+    getPageSEO("about"),
+    getMediaAsset("about", "hero", "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=800"),
+  ]);
   const alts = pageSeo.imageAlts || {};
   const sections = pageSeo.sections || {};
   
@@ -61,8 +67,8 @@ export default async function AboutPage() {
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="w-full lg:w-1/2 relative aspect-square rounded-2xl overflow-hidden shadow-2xl">
               <Image 
-                src="https://images.unsplash.com/photo-1590402444816-a118f0951307?q=80&w=800&auto=format&fit=crop"
-                alt={alts["about-hero"] || "Elite Steel Concepts Workshop"}
+                src={aboutHero.url}
+                alt={aboutHero.alt || alts["about-hero"] || "Elite Steel Concepts Workshop"}
                 fill
                 className="object-cover"
               />

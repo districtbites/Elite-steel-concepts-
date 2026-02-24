@@ -40,27 +40,27 @@ export default async function CustomFoodTrucksPage() {
   const truckFaqs = faqs.filter(f => f.category === "Fabrication" || f.category === "Process").slice(0, 5);
 
   // Dynamic Assets from Media Manager
-  const philosophyHero = await getMediaAsset("custom-food-trucks", "philosophy_hero", "https://images.unsplash.com/photo-1555126634-323283e090fa?q=80&w=1200&auto=format&fit=crop");
-  const coreInterior = await getMediaAsset("custom-food-trucks", "core_interior", "https://images.unsplash.com/photo-1590402444816-a118f0951307?q=80&w=1200&auto=format&fit=crop");
+  const philosophyHero = await getMediaAsset("custom-food-trucks", "philosophy_hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1200");
+  const coreInterior = await getMediaAsset("custom-food-trucks", "core_interior", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=1200");
 
   const platforms = [
     { 
       size: "14-16ft Compact", 
       ideal: "Coffee, Pastries, Ice Cream", 
       advantage: "Maximum agility for city tight-spots.",
-      image: "https://images.unsplash.com/photo-1565123409695-7b5ef63a2efb?q=80&w=800&auto=format&fit=crop"
+      image: "https://images.pexels.com/photos/887751/pexels-photo-887751.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     { 
       size: "18-20ft Standard", 
       ideal: "Burgers, Tacos, Fried Chicken", 
       advantage: "The perfect balance of space and mobility.",
-      image: "https://images.unsplash.com/photo-1594930384824-0226e6ad864a?q=80&w=800&auto=format&fit=crop"
+      image: "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=800"
     },
     { 
       size: "22ft+ Heavy Duty", 
       ideal: "Pizza (Wood-fired), Full BBQ, High Volume", 
       advantage: "Industrial capacity for massive crowds.",
-      image: "https://images.unsplash.com/photo-1498654200943-1088dd4438ae?q=80&w=800&auto=format&fit=crop"
+      image: "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"
     }
   ];
 

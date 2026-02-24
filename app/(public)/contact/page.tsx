@@ -5,10 +5,13 @@ import PageHeader from "@/components/ui/PageHeader";
 import ContactForm from "@/components/ContactForm";
 import FAQSection from "@/components/FAQSection";
 import { Phone, Mail, MapPin, Clock, MessageSquare, ShieldCheck, Factory, Instagram, Facebook, Youtube, ArrowRight } from "lucide-react";
-import { getSettings, getPageSEO, getSEO, getFAQs } from "@/lib/db";
+import { getSettings, getPageSEO, getSEO, getFAQs, getMediaAsset } from "@/lib/db";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -22,9 +25,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const [settings, faqs] = await Promise.all([
+  const [settings, faqs, contactHero] = await Promise.all([
     getSettings(),
-    getFAQs()
+    getFAQs(),
+    getMediaAsset("contact", "hero", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=1200"),
   ]);
 
   const stats = [
@@ -188,8 +192,8 @@ export default async function ContactPage() {
            <div className="relative rounded-[3rem] overflow-hidden bg-secondary text-white p-12 md:p-24 group">
               <div className="absolute inset-0">
                  <Image 
-                    src="https://images.unsplash.com/photo-1590402444816-a118f0951307?q=80&w=1200&auto=format&fit=crop" 
-                    alt="Elite Steel Factory" 
+                    src={contactHero.url} 
+                    alt={contactHero.alt || "Elite Steel Factory"} 
                     fill 
                     className="object-cover opacity-20 group-hover:scale-110 transition-transform duration-[2000ms]"
                  />

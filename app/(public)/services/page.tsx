@@ -1,13 +1,16 @@
 import React from "react";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
 import Image from "next/image";
 import { Truck, Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X, Award, MapPin, Zap } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
 
-import { getSEO, getPageSEO, getFAQs } from "@/lib/db";
+import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
 import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,15 +25,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ServicesPage() {
-  const faqs = await getFAQs();
-  const pageSeo = await getPageSEO("services");
+  const [faqs, pageSeo, servicesHero, truckImage, trailerImage] = await Promise.all([
+    getFAQs(),
+    getPageSEO("services"),
+    getMediaAsset("services", "hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=800"),
+    getMediaAsset("services", "service_card_1", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"),
+    getMediaAsset("services", "service_card_2", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800"),
+  ]);
   const sections = pageSeo.sections || {};
 
   const services = [
     {
       title: "Custom Food Trucks",
       icon: Truck,
-      image: "https://images.unsplash.com/photo-1565123409695-7b5ef63a48b9?q=80&w=800&auto=format&fit=crop",
+      image: truckImage.url,
       description: "The ultimate mobile billboard. Our custom food trucks are engineered for performance and designed to turn heads. Built on reliable step-van chassis, they offer maximum mobility.",
       features: ["Step Van Conversions", "New & Used Chassis", "Generator Installation", "Full Graphic Wraps"],
       href: "/services/custom-food-trucks",
@@ -39,7 +47,7 @@ export default async function ServicesPage() {
     {
       title: "Concession Trailers",
       icon: Box,
-      image: "https://images.unsplash.com/photo-1596792342371-d41c4849206c?q=80&w=800&auto=format&fit=crop",
+      image: trailerImage.url,
       description: "Maximize your kitchen space and lower your overhead. Trailers are perfect for semi-permanent locations and high-volume events where you need more room to operate.",
       features: ["Custom Sizes (10' - 30')", "Porch & Smoker Builds", "Lower Maintenance", "Detachable Towing"],
       href: "/services/custom-food-trailers",
@@ -93,8 +101,8 @@ export default async function ServicesPage() {
                 <div className="absolute -inset-4 bg-primary/20 rounded-[2rem] -rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
                 <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl">
                    <Image 
-                      src="https://images.unsplash.com/photo-1590402444816-a118f0951307?q=80&w=800" 
-                      alt="Workshop Fabrication"
+                      src={servicesHero.url} 
+                      alt={servicesHero.alt || "Workshop Fabrication"}
                       fill
                       className="object-cover"
                    />

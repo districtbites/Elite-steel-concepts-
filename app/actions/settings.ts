@@ -3,6 +3,28 @@
 import { updateSettings, updateSEO } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
+// Helper to revalidate ALL public-facing pages so changes show up immediately
+function revalidateAllPublicPages() {
+    const publicPaths = [
+        "/",
+        "/about",
+        "/services",
+        "/services/custom-food-trucks",
+        "/services/custom-food-trailers",
+        "/portfolio",
+        "/process",
+        "/blog",
+        "/contact",
+        "/quote",
+        "/testimonials",
+        "/privacy",
+        "/terms",
+    ];
+    publicPaths.forEach((p) => revalidatePath(p));
+    // Also revalidate the layout tree for metadata inheritance
+    revalidatePath("/", "layout");
+}
+
 export async function saveSettings(formData: FormData) {
     const updates = {
         email: formData.get("email") as string,
@@ -49,7 +71,7 @@ export async function saveSettings(formData: FormData) {
 
     await updateSettings(updates);
     revalidatePath("/admin/settings");
-    revalidatePath("/", "layout");
+    revalidateAllPublicPages();
     return { success: true, message: "Global Settings Updated!" };
 }
 
@@ -63,7 +85,7 @@ export async function addFAQ(formData: FormData) {
 
     await createFAQ({ question, answer, category, order });
     revalidatePath("/admin/faqs");
-    revalidatePath("/contact"); // Assuming FAQs are shown here
+    revalidateAllPublicPages();
     return { success: true };
 }
 
@@ -77,7 +99,7 @@ export async function editFAQ(formData: FormData) {
 
     await updateFAQ(id, { question, answer, category, order });
     revalidatePath("/admin/faqs");
-    revalidatePath("/contact");
+    revalidateAllPublicPages();
     return { success: true };
 }
 
@@ -85,7 +107,7 @@ export async function removeFAQ(id: string) {
     const { deleteFAQ } = await import("@/lib/db");
     await deleteFAQ(id);
     revalidatePath("/admin/faqs");
-    revalidatePath("/contact");
+    revalidateAllPublicPages();
     return { success: true };
 }
 
@@ -106,7 +128,7 @@ export async function saveGlobalSEO(formData: FormData) {
 
     await updateSEO(updates);
     revalidatePath("/admin/seo");
-    revalidatePath("/", "layout");
+    revalidateAllPublicPages();
     return { success: true, message: "Global SEO Master Config Synchronized!" };
 }
 
@@ -146,8 +168,8 @@ export async function savePageSEO(pageId: string, formData: FormData) {
 
     await updateSEO({ ...currentSEO, pages });
     revalidatePath("/admin/seo");
-    revalidatePath("/", "layout");
-    return { success: true, message: `SEO Config for ${pageId} Updated!` };
+    revalidateAllPublicPages();
+    return { success: true, message: `SEO Config for "${pageId}" deployed to live site!` };
 }
 
 export async function saveSEO(formData: FormData) {
@@ -198,6 +220,6 @@ export async function saveSEO(formData: FormData) {
 
     await updateSEO(updates);
     revalidatePath("/admin/seo");
-    revalidatePath("/", "layout");
+    revalidateAllPublicPages();
     return { success: true, message: "SEO Master Config Synchronized Successfully!" };
 }

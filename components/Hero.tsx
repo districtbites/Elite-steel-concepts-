@@ -7,17 +7,21 @@ import { PageSection } from "@/lib/db";
 interface HeroProps {
   imageAlts?: { [key: string]: string };
   content?: PageSection;
+  heroImage?: { url: string; alt: string };
 }
 
-const Hero = ({ imageAlts, content }: HeroProps) => {
+const Hero = ({ imageAlts, content, heroImage }: HeroProps) => {
+  const defaultImage = "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=1920";
+  const bgSrc = heroImage?.url || defaultImage;
+  const bgAlt = heroImage?.alt || imageAlts?.hero || "Elite Steel Concepts Custom Food Truck Construction";
   return (
     <section className="relative min-h-screen flex items-start justify-center bg-secondary pb-20">
       {/* Background Image / Overlay */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30 z-10" />
         <Image 
-            src="https://images.unsplash.com/photo-1565123409695-7b5ef63a48b9?q=80&w=1920&auto=format&fit=crop"
-            alt={imageAlts?.hero || "Elite Steel Concepts Custom Food Truck Construction"}
+            src={bgSrc}
+            alt={bgAlt}
             fill
             priority
             className="object-cover opacity-60 transform scale-105 animate-slow-zoom"

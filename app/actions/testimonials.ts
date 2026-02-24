@@ -26,6 +26,7 @@ export async function addTestimonial(formData: FormData) {
 
     revalidatePath("/testimonials");
     revalidatePath("/admin/testimonials");
+    revalidatePath("/");
     return { success: true };
 }
 
@@ -51,6 +52,7 @@ export async function editTestimonial(formData: FormData) {
 
     revalidatePath("/testimonials");
     revalidatePath("/admin/testimonials");
+    revalidatePath("/");
     return { success: true };
 }
 
@@ -60,5 +62,6 @@ export async function removeTestimonial(id: string) {
     await deleteTestimonial(id);
     revalidatePath("/testimonials");
     revalidatePath("/admin/testimonials");
+    revalidatePath("/");
     return { success: true };
 }

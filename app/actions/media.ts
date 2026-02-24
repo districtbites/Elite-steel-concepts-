@@ -8,9 +8,12 @@ import path from "path";
 async function saveMediaAsset(file: File): Promise<string> {
     if (!file || file.size === 0) return "";
 
-    // Strictly WebP as requested
-    if (file.type !== "image/webp" && !file.name.toLowerCase().endsWith(".webp")) {
-        throw new Error("Only WebP images are accepted. Please convert your images to .webp format.");
+    // Accept common image formats
+    const allowedTypes = ["image/webp", "image/jpeg", "image/png", "image/jpg"];
+    const allowedExtensions = [".webp", ".jpg", ".jpeg", ".png"];
+    const ext = path.extname(file.name).toLowerCase();
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(ext)) {
+        throw new Error("Only WebP, JPEG, and PNG images are accepted.");
     }
 
     const bytes = await file.arrayBuffer();

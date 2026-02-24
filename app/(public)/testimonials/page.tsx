@@ -4,9 +4,12 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import Button from "@/components/ui/Button";
-import { getTestimonials, getSEO, getPageSEO } from "@/lib/db";
+import { getTestimonials, getSEO, getPageSEO, getMediaAsset } from "@/lib/db";
 import { Star, Quote as QuoteIcon, Play, CheckCircle, ShieldCheck, Award, MessageSquare } from "lucide-react";
 import type { Metadata } from "next";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 import Image from "next/image";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,8 +24,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TestimonialsPage() {
-  const testimonials = await getTestimonials();
-  const pageSeo = await getPageSEO("testimonials");
+  const [testimonials, pageSeo, testimonialsHero] = await Promise.all([
+    getTestimonials(),
+    getPageSEO("testimonials"),
+    getMediaAsset("testimonials", "hero", "https://images.pexels.com/photos/1766686/pexels-photo-1766686.jpeg?auto=compress&cs=tinysrgb&w=1200"),
+  ]);
   const sections = pageSeo.sections || {};
 
   return (
@@ -71,8 +77,8 @@ export default async function TestimonialsPage() {
                  <div className="absolute -inset-4 bg-primary/20 rounded-[2.5rem] rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
                  <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl bg-secondary">
                     <Image 
-                       src="https://images.unsplash.com/photo-1565123409695-7b5ef63a48b9?q=80&w=1200" 
-                       alt="Client Success Story"
+                       src={testimonialsHero.url} 
+                       alt={testimonialsHero.alt || "Client Success Story"}
                        fill
                        className="object-cover opacity-60"
                     />
