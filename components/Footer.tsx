@@ -122,7 +122,7 @@ const Footer = ({ settings }: FooterProps) => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center bg-secondary">
           <p className="text-gray-500 text-xs mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} <a href="https://www.facebook.com/EliteSteelConcepts" className="text-white hover:text-primary transition-colors">Elite Steel Concepts</a> All rights reserved. Created by <a href="http://districtbites.com/" className="text-white hover:text-primary transition-colors">District Bites</a>
+            &copy; {new Date().getFullYear()} <a href="https://www.facebook.com/EliteSteelConcepts" className="text-white hover:text-primary transition-colors">Elite Steel Concepts</a>. All rights reserved.
           </p>
           <div className="flex space-x-6">
             <Link href="/privacy" className="text-gray-500 hover:text-white text-xs">Privacy Policy</Link>

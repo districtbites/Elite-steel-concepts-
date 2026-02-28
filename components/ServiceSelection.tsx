@@ -7,9 +7,16 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 interface ServiceSelectionProps {
   imageAlts?: { [key: string]: string };
+  truckImage?: { url: string; alt: string };
+  trailerImage?: { url: string; alt: string };
 }
 
-const ServiceSelection = ({ imageAlts }: ServiceSelectionProps) => {
+const ServiceSelection = ({ imageAlts, truckImage, trailerImage }: ServiceSelectionProps) => {
+  const truckSrc = truckImage?.url || "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200";
+  const truckAlt = truckImage?.alt || imageAlts?.["truck-platform"] || "Custom Food Truck";
+  const trailerSrc = trailerImage?.url || "https://images.pexels.com/photos/5696001/pexels-photo-5696001.jpeg?auto=compress&cs=tinysrgb&w=1200";
+  const trailerAlt = trailerImage?.alt || imageAlts?.["trailer-platform"] || "Custom Food Trailer";
+
   return (
     <Section className="bg-white py-24">
       <Container>
@@ -29,8 +36,8 @@ const ServiceSelection = ({ imageAlts }: ServiceSelectionProps) => {
           {/* Truck Card */}
           <Link href="/services/custom-food-trucks" className="group relative block h-[500px] md:h-[600px] w-full overflow-hidden rounded-2xl">
              <Image 
-                src="https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200" 
-                alt={imageAlts?.["truck-platform"] || "Custom Food Truck"}
+                src={truckSrc} 
+                alt={truckAlt}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
              />
@@ -60,8 +67,8 @@ const ServiceSelection = ({ imageAlts }: ServiceSelectionProps) => {
           {/* Trailer Card */}
           <Link href="/services/custom-food-trailers" className="group relative block h-[500px] md:h-[600px] w-full overflow-hidden rounded-2xl">
              <Image 
-                src="https://images.pexels.com/photos/5696001/pexels-photo-5696001.jpeg?auto=compress&cs=tinysrgb&w=1200" 
-                alt={imageAlts?.["trailer-platform"] || "Custom Food Trailer"}
+                src={trailerSrc} 
+                alt={trailerAlt}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-110"
              />

@@ -24,6 +24,9 @@ import {
 import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
 import type { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
   const pageSeo = await getPageSEO("custom-food-trucks");
@@ -42,25 +45,31 @@ export default async function CustomFoodTrucksPage() {
   // Dynamic Assets from Media Manager
   const philosophyHero = await getMediaAsset("custom-food-trucks", "philosophy_hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1200");
   const coreInterior = await getMediaAsset("custom-food-trucks", "core_interior", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=1200");
+  const platformCompact = await getMediaAsset("custom-food-trucks", "platform_compact", "https://images.pexels.com/photos/887751/pexels-photo-887751.jpeg?auto=compress&cs=tinysrgb&w=800");
+  const platformStandard = await getMediaAsset("custom-food-trucks", "platform_standard", "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=800");
+  const platformHeavy = await getMediaAsset("custom-food-trucks", "platform_heavy", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800");
 
   const platforms = [
     { 
       size: "14-16ft Compact", 
       ideal: "Coffee, Pastries, Ice Cream", 
       advantage: "Maximum agility for city tight-spots.",
-      image: "https://images.pexels.com/photos/887751/pexels-photo-887751.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: platformCompact.url,
+      imageAlt: platformCompact.alt
     },
     { 
       size: "18-20ft Standard", 
       ideal: "Burgers, Tacos, Fried Chicken", 
       advantage: "The perfect balance of space and mobility.",
-      image: "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: platformStandard.url,
+      imageAlt: platformStandard.alt
     },
     { 
       size: "22ft+ Heavy Duty", 
       ideal: "Pizza (Wood-fired), Full BBQ, High Volume", 
       advantage: "Industrial capacity for massive crowds.",
-      image: "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: platformHeavy.url,
+      imageAlt: platformHeavy.alt
     }
   ];
 
@@ -154,7 +163,7 @@ export default async function CustomFoodTrucksPage() {
                    <div className="relative h-64 overflow-hidden">
                       <Image 
                         src={p.image} 
-                        alt={p.size} 
+                        alt={p.imageAlt || p.size} 
                         fill 
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                       />

@@ -29,11 +29,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const [pageSeo, faqs, settings, heroImage] = await Promise.all([
+  const [pageSeo, faqs, settings, heroImage, homeTruckCard, homeTrailerCard] = await Promise.all([
     getPageSEO("home"),
     getFAQs(),
     getSettings(),
     getMediaAsset("home", "hero", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=1920"),
+    getMediaAsset("home", "truck_card", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200"),
+    getMediaAsset("home", "trailer_card", "https://images.pexels.com/photos/5696001/pexels-photo-5696001.jpeg?auto=compress&cs=tinysrgb&w=1200"),
   ]);
   const alts = pageSeo.imageAlts || {};
   const sections = pageSeo.sections || {};
@@ -73,7 +75,7 @@ export default async function Home() {
       </Section>
 
       {/* ═══════ SERVICES SECTION – H2 + H3 for each service ═══════ */}
-      <ServiceSelection imageAlts={alts} />
+      <ServiceSelection imageAlts={alts} truckImage={homeTruckCard} trailerImage={homeTrailerCard} />
 
       {/* ═══════ WHY CHOOSE US SECTION – H2 + Bullet Points ═══════ */}
       <Section id="why-choose-us" className="bg-gray-50">

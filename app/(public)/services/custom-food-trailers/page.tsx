@@ -24,6 +24,9 @@ import {
 import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
 import type { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
   const pageSeo = await getPageSEO("custom-food-trailers");
@@ -42,25 +45,32 @@ export default async function CustomFoodTrailersPage() {
   // Dynamic Assets
   const trailerHero = await getMediaAsset("custom-food-trailers", "hero", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200");
   const trailerDetail = await getMediaAsset("custom-food-trailers", "fabrication_detail", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1200");
+  const platformPod = await getMediaAsset("custom-food-trailers", "platform_pod", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800");
+  const platformWorkhorse = await getMediaAsset("custom-food-trailers", "platform_workhorse", "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=800");
+  const platformTitan = await getMediaAsset("custom-food-trailers", "platform_titan", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800");
+  const ctaBackground = await getMediaAsset("custom-food-trailers", "cta_background", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1200");
 
   const trailerPlatforms = [
     { 
       size: "10-14ft Pod", 
       ideal: "Specialty Coffee, Juices, Desserts", 
       advantage: "The ultimate solution for high-margin, low-footprint business models.",
-      image: "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: platformPod.url,
+      imageAlt: platformPod.alt
     },
     { 
       size: "18-24ft Workhorse", 
       ideal: "Full Commercial Kitchens, BBQ Porches", 
       advantage: "Maximum interior volume for multi-chef lines and heavy equipment.",
-      image: "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: platformWorkhorse.url,
+      imageAlt: platformWorkhorse.alt
     },
     { 
       size: "26ft+ Event Titan", 
       ideal: "Catering operations, Festival high-volume", 
       advantage: "Dual-axle stability for mobile kitchens that never quit.",
-      image: "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800"
+      image: platformTitan.url,
+      imageAlt: platformTitan.alt
     }
   ];
 
@@ -155,7 +165,7 @@ export default async function CustomFoodTrailersPage() {
                    <div className="relative h-60 overflow-hidden">
                       <Image 
                         src={p.image} 
-                        alt={p.size} 
+                        alt={p.imageAlt || p.size} 
                         fill 
                         className="object-cover group-hover:scale-110 transition-transform duration-700"
                       />
@@ -287,8 +297,8 @@ export default async function CustomFoodTrailersPage() {
            <div className="relative rounded-[4rem] overflow-hidden bg-secondary text-white p-12 md:p-24 shadow-2xl">
               <div className="absolute inset-0">
                  <Image 
-                   src="https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1200" 
-                   alt="Elite Steel Team" 
+                   src={ctaBackground.url} 
+                   alt={ctaBackground.alt || "Elite Steel Team"} 
                    fill 
                    className="object-cover opacity-10"
                  />

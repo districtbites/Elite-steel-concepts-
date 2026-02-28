@@ -378,6 +378,24 @@
   ],
   "assets": [
     {
+      "url": "/uploads/media/1772270319201-s-l960-(2).webp",
+      "alt": "this is testoo",
+      "page": "about",
+      "location": "hero",
+      "dimensions": "",
+      "id": "1772270319215",
+      "createdAt": "2026-02-28T09:18:39.215Z"
+    },
+    {
+      "url": "/uploads/media/1772270229864-task_01kbzp4wnvfdnrygmky31z5n02_1765221376_img_0.webp",
+      "alt": "iio",
+      "page": "home",
+      "location": "truck_card",
+      "dimensions": "",
+      "id": "1772270229884",
+      "createdAt": "2026-02-28T09:17:09.884Z"
+    },
+    {
       "url": "/uploads/media/1771963099060-screenshot-2024-08-14-at-16-56-14-elite-steel-concepts-–-elite-steel-concepts.png",
       "alt": "feature section iamges ",
       "page": "home",
