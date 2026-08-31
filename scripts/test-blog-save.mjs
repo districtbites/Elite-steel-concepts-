@@ -11,8 +11,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT    = path.join(__dirname, '..');
 const DB_PATH = path.join(ROOT, 'data', 'db.json');
 
-const TURSO_URL   = process.env.TURSO_DATABASE_URL   || 'libsql://elite-steel-concepts-districtbites.aws-us-east-1.turso.io';
-const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN      || 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3ODcxNjU3MjMsImlkIjoiMDFhMDFiNjAtNDYwMS03ODkxLTljOTYtOTQ1MTc4MTc5MWRmIiwia2lkIjoiaWs5TEZzWV9WY1VKWGVFcEItbFlJVnFkcDVIRnNFVWkwRFZLSHhaTTBxayIsInJpZCI6IjA5ZTU2NzYyLWIwMmQtNDU5Mi05Nzc0LWUzOTQ2ODg5Yzc3ZCJ9.dsUWyozzUBLzSKPrVTIUFy5V6Nq-2w9A54ZM86djYrHdG937Ypw9JMUEqydqsqXJBa8Dg7gNAVDshQLFoK5tBQ';
+const TURSO_URL   = process.env.TURSO_DATABASE_URL;
+const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN || process.env.LIBSQL_AUTH_TOKEN;
+
+if (!TURSO_URL || !TURSO_TOKEN) {
+  console.error('❌ Error: TURSO_DATABASE_URL and TURSO_AUTH_TOKEN environment variables are required.');
+  process.exit(1);
+}
 
 const db = createClient({ url: TURSO_URL, authToken: TURSO_TOKEN });
 

@@ -32,8 +32,13 @@ deploy-esc.zip
 /.windsurf
 /.copilot
 /.chat
+/.cline
+/.roo
+/.agents
 /.idea
 /.vscode
+*.prompt.md
+.copilot-instructions.md
 
 # testing & coverage
 /coverage
