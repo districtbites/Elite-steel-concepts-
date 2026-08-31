@@ -1,6 +1,6 @@
 "use server";
 
-import { updateSettings, updateSEO } from "@/lib/db";
+import { getSettings, updateSettings, updateSEO } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
 // Helper to revalidate ALL public-facing pages so changes show up immediately
@@ -25,49 +25,59 @@ function revalidateAllPublicPages() {
     revalidatePath("/", "layout");
 }
 
+/**
+ * Save settings — ONLY updates fields that are actually present in the FormData.
+ * This prevents hidden/inactive sections from being overwritten with null.
+ * When a section is not rendered in the DOM, its inputs aren't in the FormData,
+ * so we skip those keys entirely and preserve the existing DB values.
+ */
 export async function saveSettings(formData: FormData) {
-    const updates = {
-        email: formData.get("email") as string,
-        phone: formData.get("phone") as string,
-        address: formData.get("address") as string,
-        businessHours: formData.get("businessHours") as string,
-        logoUrl: formData.get("logoUrl") as string,
+    const currentSettings = await getSettings();
 
-        // Communication
-        salesEmail: formData.get("salesEmail") as string,
-        supportEmail: formData.get("supportEmail") as string,
-        whatsappPhone: formData.get("whatsappPhone") as string,
+    // Build updates by merging current settings with only the fields present in formData
+    const stringFields = [
+        "email", "phone", "address", "businessHours", "logoUrl",
+        "salesEmail", "supportEmail", "whatsappPhone",
+        "instagram", "facebook", "twitter", "linkedin", "youtube",
+        "taxId", "certifications",
+        "primaryColor", "secondaryColor", "accentColor",
+        "googleMapsLink", "mapEmbedUrl",
+        "googleAnalyticsId", "facebookPixelId", "tiktokPixelId",
+        "smtpHost", "smtpUser", "smtpPassword", "smtpFrom", "notificationEmail",
+    ] as const;
 
-        // Socials
-        instagram: formData.get("instagram") as string,
-        facebook: formData.get("facebook") as string,
-        twitter: formData.get("twitter") as string,
-        linkedin: formData.get("linkedin") as string,
-        youtube: formData.get("youtube") as string,
+    const numberFields = [
+        "trucksBuiltCount", "experienceYears", "smtpPort",
+    ] as const;
 
-        // Compliance
-        taxId: formData.get("taxId") as string,
-        certifications: formData.get("certifications") as string,
+    const booleanFields = [
+        "maintenanceMode", "smtpSecure",
+    ] as const;
 
-        // Branding
-        primaryColor: formData.get("primaryColor") as string,
-        secondaryColor: formData.get("secondaryColor") as string,
-        accentColor: formData.get("accentColor") as string,
+    // Start from current settings so nothing gets wiped
+    const updates: Record<string, unknown> = { ...currentSettings };
 
-        // Location & Analytics
-        googleMapsLink: formData.get("googleMapsLink") as string,
-        mapEmbedUrl: formData.get("mapEmbedUrl") as string,
-        googleAnalyticsId: formData.get("googleAnalyticsId") as string,
-        facebookPixelId: formData.get("facebookPixelId") as string,
-        tiktokPixelId: formData.get("tiktokPixelId") as string,
+    // Only override string fields that are ACTUALLY in the submitted formData
+    for (const key of stringFields) {
+        if (formData.has(key)) {
+            updates[key] = formData.get(key) as string;
+        }
+    }
 
-        // Metrics
-        trucksBuiltCount: parseInt(formData.get("trucksBuiltCount") as string || "0"),
-        experienceYears: parseInt(formData.get("experienceYears") as string || "0"),
+    // Only override number fields that are ACTUALLY in the submitted formData
+    for (const key of numberFields) {
+        if (formData.has(key)) {
+            const raw = formData.get(key) as string;
+            updates[key] = parseInt(raw || "0", 10);
+        }
+    }
 
-        // Status
-        maintenanceMode: formData.get("maintenanceMode") === "true",
-    };
+    // Only override boolean fields that are ACTUALLY in the submitted formData
+    for (const key of booleanFields) {
+        if (formData.has(key)) {
+            updates[key] = formData.get(key) === "true";
+        }
+    }
 
     await updateSettings(updates);
     revalidatePath("/admin/settings");
@@ -222,4 +232,36 @@ export async function saveSEO(formData: FormData) {
     revalidatePath("/admin/seo");
     revalidateAllPublicPages();
     return { success: true, message: "SEO Master Config Synchronized Successfully!" };
+}
+
+/**
+ * Test SMTP connection by sending a test email
+ */
+export async function testSmtpConnection() {
+    try {
+        const settings = await getSettings();
+
+        if (!settings.smtpUser || !settings.smtpPassword) {
+            return { success: false, message: "SMTP credentials are not configured. Save your SMTP settings first." };
+        }
+
+        const { sendTestEmail } = await import("@/lib/mailer");
+        await sendTestEmail(settings);
+
+        return { success: true, message: `Test email sent to ${settings.notificationEmail || "esteelquotes@gmail.com"}!` };
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Unknown error";
+        console.error("[SMTP Test] Failed:", errorMessage);
+        return { success: false, message: `SMTP test failed: ${errorMessage}` };
+    }
+}
+
+/**
+ * Force refresh the sitemap
+ */
+export async function updateSitemap() {
+    revalidatePath("/sitemap.xml");
+    revalidatePath("/sitemap.ts");
+    revalidatePath("/", "layout");
+    return { success: true, message: "Sitemap updated successfully with all new links!" };
 }

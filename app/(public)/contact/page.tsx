@@ -21,6 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: pageSeo?.title || `Contact Elite Steel Concepts | Custom Food Trucks`,
     description: pageSeo?.description || seo.description,
     keywords: pageSeo?.keywords || seo.keywords,
+    alternates: { canonical: '/contact' },
   };
 }
 
@@ -31,17 +32,11 @@ export default async function ContactPage() {
     getMediaAsset("contact", "hero", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=1200"),
   ]);
 
-  const stats = [
-    { label: "Fabrication Time", value: "8-12 Weeks", icon: Clock },
-    { label: "Code Guaranteed", value: "Health & Fire", icon: ShieldCheck },
-    { label: "Facility tours", value: "By Appointment", icon: Factory },
-  ];
-
   const socialLinks = [
-    { name: "Instagram", icon: Instagram, href: "#" },
-    { name: "Facebook", icon: Facebook, href: "#" },
-    { name: "Youtube", icon: Youtube, href: "#" },
-  ];
+    { name: "Instagram", icon: Instagram, href: settings.instagram || "#" },
+    { name: "Facebook", icon: Facebook, href: settings.facebook || "#" },
+    { name: "Youtube", icon: Youtube, href: settings.youtube || "#" },
+  ].filter(link => link.href && link.href !== "#");
 
   return (
     <>
@@ -50,58 +45,64 @@ export default async function ContactPage() {
         subtitle="Secure your fabrication slot or schedule a design consultation with our engineering team."
       />
 
-      <Section className="bg-white overflow-hidden">
+      <Section className="bg-white overflow-hidden pb-32">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
             {/* Intel Sidebar (5 Cols) */}
-            <div className="lg:col-span-5 space-y-12">
+            <div className="lg:col-span-5 space-y-12 mt-8 lg:mt-0">
               <div className="relative">
-                <span className="text-primary font-bold tracking-widest uppercase text-[10px] mb-4 block underline decoration-secondary decoration-4 underline-offset-8">Primary Channels</span>
-                <h2 className="text-4xl font-black uppercase text-secondary tracking-tighter leading-tight mb-6">
-                  Elite Steel <br/> <span className="text-primary italic">Direct Access</span>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1.5 h-1.5 bg-primary" />
+                  <span className="text-black font-black tracking-[0.2em] uppercase text-[10px]">Primary Channels</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-black tracking-tighter leading-[0.9] mb-6">
+                  Elite Steel <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Direct Access</span>
                 </h2>
-                <p className="text-gray-500 text-lg font-light leading-relaxed">
+                <p className="text-gray-500 text-sm font-bold uppercase tracking-widest leading-relaxed max-w-md">
                   Our fabrication shop is where the magic happens. We're ready to translate your culinary vision into a mobile powerhouse.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
-                <div className="bg-gray-50 p-6 rounded-[2rem] border border-gray-100 group hover:border-primary transition-all duration-300">
-                  <div className="flex items-center gap-6">
-                    <div className="bg-white p-4 rounded-2xl shadow-sm text-primary group-hover:scale-110 transition-transform">
+                <div className="bg-[#0a0a0a] p-8 border border-[#1a1a1a] group hover:border-primary transition-colors relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                    <div className="bg-[#1a1a1a] p-4 text-primary shrink-0">
                       <Phone size={24} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">24/7 Hotline</p>
-                      <a href={`tel:${settings.phone}`} className="text-xl font-black text-secondary hover:text-primary transition-colors">
+                      <p className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-1">24/7 Hotline</p>
+                      <a href={`tel:${settings.phone}`} className="text-xl md:text-2xl font-black text-white hover:text-primary transition-colors tracking-tight">
                         {settings.phone}
                       </a>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-gray-50 p-6 rounded-[2rem] border border-gray-100 group hover:border-primary transition-all duration-300">
-                  <div className="flex items-center gap-6">
-                    <div className="bg-white p-4 rounded-2xl shadow-sm text-primary group-hover:scale-110 transition-transform">
+                <div className="bg-[#0a0a0a] p-8 border border-[#1a1a1a] group hover:border-primary transition-colors relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                    <div className="bg-[#1a1a1a] p-4 text-primary shrink-0">
                       <Mail size={24} />
                     </div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Official Inquiry</p>
-                      <a href={`mailto:${settings.email}`} className="text-xl font-black text-secondary hover:text-primary transition-colors">
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-1">Official Inquiry</p>
+                      <a href={`mailto:${settings.email}`} className="text-lg md:text-xl font-black text-white hover:text-primary transition-colors truncate block">
                         {settings.email}
                       </a>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-gray-50 p-6 rounded-[2rem] border border-gray-100 group hover:border-primary transition-all duration-300">
-                  <div className="flex items-center gap-6">
-                    <div className="bg-white p-4 rounded-2xl shadow-sm text-primary group-hover:scale-110 transition-transform">
+                <div className="bg-[#0a0a0a] p-8 border border-[#1a1a1a] group hover:border-primary transition-colors relative overflow-hidden">
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                    <div className="bg-[#1a1a1a] p-4 text-primary shrink-0">
                       <MapPin size={24} />
                     </div>
                     <div>
-                      <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-1">Global HQ</p>
-                      <p className="font-bold text-secondary text-sm">
+                      <p className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-1">Global HQ</p>
+                      <p className="font-bold text-white text-sm md:text-base leading-tight uppercase tracking-widest">
                         {settings.address}
                       </p>
                     </div>
@@ -110,61 +111,56 @@ export default async function ContactPage() {
               </div>
 
               {/* Social Channels */}
-              <div className="pt-8 border-t border-gray-100">
-                <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-6">Connect via Social</h4>
-                <div className="flex gap-4">
-                  {socialLinks.map((social) => (
-                    <a key={social.name} href={social.href} className="w-12 h-12 bg-secondary text-white rounded-xl flex items-center justify-center hover:bg-primary hover:text-secondary transition-all shadow-lg group">
-                      <social.icon size={20} className="group-hover:scale-110 transition-transform" />
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              {/* Stats / Indicators */}
-              <div className="bg-secondary p-10 rounded-[3rem] text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-                <div className="space-y-8 relative z-10">
-                   {stats.map((stat, i) => (
-                     <div key={i} className="flex items-center gap-4">
-                        <div className="text-primary"><stat.icon size={24} /></div>
-                        <div>
-                           <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 opacity-60">{stat.label}</div>
-                           <div className="text-sm font-bold uppercase tracking-tight">{stat.value}</div>
-                        </div>
-                     </div>
-                   ))}
-                </div>
-              </div>
+              {socialLinks.length > 0 && (
+                 <div className="pt-8 border-t-2 border-black">
+                   <h4 className="text-[10px] font-black uppercase text-black tracking-[0.2em] mb-6 flex items-center gap-2">
+                     <div className="w-1.5 h-1.5 bg-primary" /> Connect via Social
+                   </h4>
+                   <div className="flex gap-4">
+                     {socialLinks.map((social) => (
+                       <a key={social.name} href={social.href} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-gray-100 text-black border border-gray-200 flex items-center justify-center hover:bg-primary hover:text-black hover:border-primary transition-colors group">
+                         <social.icon size={22} className="group-hover:scale-110 transition-transform" />
+                       </a>
+                     ))}
+                   </div>
+                 </div>
+              )}
             </div>
 
             {/* Application Form Main (7 Cols) */}
             <div className="lg:col-span-7">
                <div className="sticky top-32">
-                  <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl relative border border-gray-50">
-                     <div className="absolute -top-6 -left-6 bg-primary text-secondary p-4 rounded-2xl shadow-xl hidden md:block">
-                        <MessageSquare size={32} />
-                     </div>
-                     <div className="mb-10">
-                        <h3 className="text-3xl font-black uppercase text-secondary tracking-tighter mb-2">
-                          Project Brief Submission
-                        </h3>
-                        <p className="text-gray-400 font-light text-sm italic">
-                          "Typically replied to within 4 business hours"
-                        </p>
+                  <div className="bg-white p-8 md:p-14 border border-gray-200 relative group shadow-2xl">
+                     <div className="absolute top-0 right-0 w-16 h-16 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-colors" />
+                     
+                     <div className="mb-10 border-b-2 border-black pb-8 flex items-start justify-between gap-4">
+                        <div>
+                           <h3 className="text-3xl md:text-4xl font-black uppercase text-black tracking-tighter mb-3 leading-none">
+                             Project Brief
+                           </h3>
+                           <p className="text-gray-500 font-bold text-[10px] uppercase tracking-[0.2em] flex items-center gap-3">
+                             <span className="relative flex h-2 w-2">
+                               <span className="animate-ping absolute inline-flex h-full w-full bg-primary opacity-75"></span>
+                               <span className="relative inline-flex h-2 w-2 bg-primary"></span>
+                             </span>
+                             Comms Channel Open
+                           </p>
+                        </div>
+                        <div className="hidden md:block bg-[#0a0a0a] text-primary p-4 border border-[#1a1a1a]">
+                           <MessageSquare size={24} />
+                        </div>
                      </div>
                      <ContactForm />
                   </div>
 
                   {/* Trust Badge */}
-                  <div className="mt-12 flex flex-col md:flex-row items-center gap-8 px-4 opacity-50 grayscale hover:grayscale-0 transition-all">
-                     <div className="text-[10px] font-black uppercase text-secondary tracking-[0.2em] whitespace-nowrap">Authorized Fabrication Partners</div>
-                     <div className="w-full h-[1px] bg-gray-100 hidden md:block"></div>
-                     <div className="flex gap-8 items-center">
-                        {/* Use placeholders/logos if available */}
-                        <span className="font-black text-xs uppercase tracking-tighter text-secondary">NFPA 96</span>
-                        <span className="font-black text-xs uppercase tracking-tighter text-secondary">NSF CERT</span>
-                        <span className="font-black text-xs uppercase tracking-tighter text-secondary">ANSI Standard</span>
+                  <div className="mt-12 flex flex-col md:flex-row items-center gap-8 px-4 opacity-70 hover:opacity-100 transition-opacity">
+                     <div className="text-[10px] font-black uppercase text-black tracking-[0.2em] whitespace-nowrap">Authorized Partners</div>
+                     <div className="w-full h-[2px] bg-black hidden md:block"></div>
+                     <div className="flex gap-6 items-center shrink-0">
+                        <span className="font-black text-[10px] uppercase tracking-widest text-gray-500 border border-gray-200 px-3 py-1">NFPA 96</span>
+                        <span className="font-black text-[10px] uppercase tracking-widest text-gray-500 border border-gray-200 px-3 py-1">NSF CERT</span>
+                        <span className="font-black text-[10px] uppercase tracking-widest text-gray-500 border border-gray-200 px-3 py-1">ANSI Std</span>
                      </div>
                   </div>
                </div>
@@ -175,11 +171,41 @@ export default async function ContactPage() {
 
       {/* Map Integration */}
       {settings.mapEmbedUrl && (
-        <Section className="bg-gray-50 py-0">
-           <div 
-               className="w-full h-[500px] grayscale hover:grayscale-0 transition-all duration-1000 shadow-inner"
-               dangerouslySetInnerHTML={{ __html: settings.mapEmbedUrl }}
-           />
+        <Section className="py-0 overflow-hidden bg-gray-50 border-t border-gray-200">
+          <div className="relative w-full h-[500px] lg:h-[600px] group">
+            {/* Map iframe */}
+            <iframe
+              src={settings.mapEmbedUrl}
+              width="100%"
+              height="100%"
+              style={{ border: 0, display: "block" }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Elite Steel Concepts Location"
+              className="w-full h-full grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
+            />
+            {/* Floating address card */}
+            <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 bg-[#0a0a0a] border border-[#1a1a1a] p-8 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center gap-8 z-10 max-w-lg">
+              <div className="bg-primary p-4 shrink-0 text-black hidden sm:block">
+                <MapPin size={24} />
+              </div>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mb-2">Fabrication HQ</p>
+                <p className="text-sm font-bold text-white uppercase tracking-widest leading-relaxed">{settings.address}</p>
+              </div>
+              {settings.googleMapsLink && (
+                <a
+                  href={settings.googleMapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="sm:ml-auto bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] px-6 py-4 hover:bg-primary transition-colors whitespace-nowrap"
+                >
+                  Directions
+                </a>
+              )}
+            </div>
+          </div>
         </Section>
       )}
 
@@ -187,28 +213,35 @@ export default async function ContactPage() {
       <FAQSection faqs={faqs.filter(f => f.category === "General" || f.category === "Process").slice(0, 4)} />
 
       {/* Factory Tour Banner */}
-      <Section className="bg-white">
+      <Section className="bg-white py-24">
         <Container>
-           <div className="relative rounded-[3rem] overflow-hidden bg-secondary text-white p-12 md:p-24 group">
-              <div className="absolute inset-0">
+           <div className="relative bg-[#0a0a0a] border border-[#1a1a1a] p-12 md:p-24 overflow-hidden group">
+              {/* Background texture */}
+              <div className="absolute inset-0 z-0">
                  <Image 
                     src={contactHero.url} 
                     alt={contactHero.alt || "Elite Steel Factory"} 
                     fill 
-                    className="object-cover opacity-20 group-hover:scale-110 transition-transform duration-[2000ms]"
+                    className="object-cover opacity-20 grayscale group-hover:grayscale-0 transition-all duration-[2000ms]"
                  />
-                 <div className="absolute inset-0 bg-gradient-to-r from-secondary via-secondary/80 to-transparent"></div>
+                 <div className="absolute inset-0 bg-[#0a0a0a]/80 mix-blend-multiply"></div>
+                 {/* Industrial grid */}
+                 <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }}></div>
               </div>
-              <div className="relative z-10 max-w-2xl">
-                 <span className="text-primary font-bold tracking-widest uppercase text-xs mb-4 block">Visual Confirmation</span>
-                 <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-tight mb-8">
-                    Schedule Your <br/> <span className="text-primary italic">Factory Tour</span>
+              
+              <div className="relative z-10 max-w-3xl">
+                 <div className="flex items-center gap-3 mb-6">
+                    <Factory size={16} className="text-primary" />
+                    <span className="text-primary font-black tracking-[0.2em] uppercase text-[10px]">Visual Confirmation</span>
+                 </div>
+                 <h2 className="text-5xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8 text-white">
+                    Schedule Your <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Factory Tour</span>
                  </h2>
-                 <p className="text-gray-400 text-lg font-light leading-relaxed mb-10">
+                 <p className="text-gray-400 text-sm font-bold uppercase tracking-widest leading-relaxed mb-12 max-w-2xl border-l-2 border-primary/30 pl-6">
                     See our engineering excellence in person. Visit our Manassas facility to walk through builds in progress and meet the master fabricators behind the steel.
                  </p>
-                 <Link href={`tel:${settings.phone}`} className="inline-flex items-center gap-3 bg-primary text-secondary px-10 py-5 rounded-xl font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-2xl">
-                    Call To Arrange <ArrowRight size={18} />
+                 <Link href={`tel:${settings.phone}`} className="inline-flex items-center gap-4 bg-primary text-black border border-primary px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-transparent hover:text-primary transition-colors">
+                    Call To Arrange <ArrowRight size={14} />
                  </Link>
               </div>
            </div>

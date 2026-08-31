@@ -24,3 +24,36 @@ export async function removeNewsletter(id: string) {
     await deleteNewsletter(id);
     revalidatePath("/admin/newsletter");
 }
+
+export async function sendNewsletterCampaign(formData: FormData) {
+    const subject = formData.get("subject") as string;
+    const headerOverride = formData.get("headerOverride") as string;
+    const message = formData.get("message") as string;
+
+    if (!subject || !message) {
+        return { error: "Subject and message are required." };
+    }
+
+    const { getNewsletters, getSettings } = await import("@/lib/db");
+    const { sendNewsletterBlast } = await import("@/lib/mailer");
+
+    const subscribers = await getNewsletters();
+    const emails = subscribers.map(s => s.email);
+
+    if (emails.length === 0) {
+        return { error: "No subscribers found to send to." };
+    }
+
+    const settings = await getSettings();
+
+    try {
+        const result = await sendNewsletterBlast(settings, subject, headerOverride, message, emails);
+        if (!result.success) {
+            return { error: result.error || "Failed to send blast." };
+        }
+        return { success: true, message: `Successfully sent to ${result.sent} subscribers.` };
+    } catch (err) {
+        console.error(err);
+        return { error: "An unexpected error occurred while sending the campaign." };
+    }
+}

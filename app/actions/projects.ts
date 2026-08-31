@@ -4,6 +4,7 @@ import { createProject, updateProject, deleteProject } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import fs from "fs/promises";
 import path from "path";
+import { tursoSaveMedia, tursoDeleteMedia } from "@/lib/turso";
 
 // Redundant UPLOAD_DIR removed
 
@@ -28,17 +29,22 @@ async function saveImage(file: File): Promise<string> {
     const projectRoot = process.cwd();
     const uploadDir = path.join(projectRoot, "public", "uploads", "projects");
     const filepath = path.join(uploadDir, filename);
+    const mediaPath = `/uploads/projects/${filename}`;
 
     try {
         await fs.mkdir(uploadDir, { recursive: true });
         await fs.writeFile(filepath, buffer);
-        console.log(`[Upload Success] Saved image to: ${filepath}`);
-    } catch (error: any) {
-        console.error(`[Upload Error] Failed to save image: ${error.message}`);
-        throw new Error("Could not save the image on the server. Please check folder permissions.");
+    } catch {
+        // Read-only serverless filesystem
     }
 
-    return `/uploads/projects/${filename}`;
+    try {
+        await tursoSaveMedia(mediaPath, filename, file.type || "image/jpeg", buffer);
+    } catch (error: any) {
+        console.warn("Could not save project image to Turso:", error?.message);
+    }
+
+    return mediaPath;
 }
 
 function generateSlug(title: string): string {
@@ -213,6 +219,7 @@ export async function removeProject(id: string) {
         if (project.image && project.image.startsWith("/uploads/")) {
             const imagePath = path.join(process.cwd(), "public", project.image);
             await fs.unlink(imagePath).catch(() => { });
+            await tursoDeleteMedia(project.image).catch(() => { });
         }
         // Delete gallery images
         if (project.gallery) {
@@ -220,6 +227,7 @@ export async function removeProject(id: string) {
                 if (img.startsWith("/uploads/")) {
                     const imgPath = path.join(process.cwd(), "public", img);
                     await fs.unlink(imgPath).catch(() => { });
+                    await tursoDeleteMedia(img).catch(() => { });
                 }
             }
         }

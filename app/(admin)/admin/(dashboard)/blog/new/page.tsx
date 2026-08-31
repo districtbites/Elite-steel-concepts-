@@ -5,9 +5,9 @@ import BlogEditor from "@/components/admin/BlogEditor";
 export default function NewBlogPostPage() {
   return (
     <div className="max-w-[1400px] mx-auto">
-        <form>
-           <BlogEditor action={createBlogPost} />
-        </form>
+      <form action={createBlogPost}>
+        <BlogEditor action={createBlogPost} />
+      </form>
     </div>
   );
 }

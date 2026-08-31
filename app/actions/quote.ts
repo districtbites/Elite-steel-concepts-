@@ -1,7 +1,8 @@
 "use server";
 
-import { createQuote, Quote } from "@/lib/db";
+import { createQuote, Quote, getSettings } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { sendQuoteNotification } from "@/lib/mailer";
 
 export async function submitQuoteForm(formData: FormData) {
     const name = formData.get("name") as string;
@@ -27,7 +28,7 @@ export async function submitQuoteForm(formData: FormData) {
         return { error: "Missing required fields" };
     }
 
-    await createQuote({
+    const newQuote = await createQuote({
         name,
         email,
         phone,
@@ -44,6 +45,14 @@ export async function submitQuoteForm(formData: FormData) {
         powerRequirements,
         services
     });
+
+    // Send email notification (non-blocking — errors won't fail the request)
+    try {
+        const settings = await getSettings();
+        await sendQuoteNotification(settings, newQuote);
+    } catch (err) {
+        console.error("[Quote] Email notification failed:", err);
+    }
 
     revalidatePath("/admin");
     revalidatePath("/admin/quotes");

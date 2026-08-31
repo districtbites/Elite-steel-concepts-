@@ -8,7 +8,10 @@ import { ArrowRight } from "lucide-react";
 
 const HomeBlogSection = async () => {
   const posts = await getPosts();
-  const publishedPosts = posts.filter((p) => p.status === "Published").slice(0, 3);
+  const publishedPosts = posts
+    .filter((p) => p.status === "Published")
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 3);
 
   if (publishedPosts.length === 0) return null;
 

@@ -4,11 +4,8 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import QuoteForm from "@/components/QuoteForm";
 import FAQSection from "@/components/FAQSection";
-import { ShieldCheck, Zap, Factory, Clock, Award, CheckCircle2, ChevronRight } from "lucide-react";
-
+import { ShieldCheck, Zap, Factory, Award, CheckCircle2, ChevronRight } from "lucide-react";
 import Link from "next/link";
-
-import Image from "next/image";
 import { getSEO, getPageSEO, getFAQs } from "@/lib/db";
 import type { Metadata } from "next";
 
@@ -23,6 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: pageSeo?.title || `Request A Quote | Elite Steel Concepts`,
     description: pageSeo?.description || seo.description,
     keywords: pageSeo?.keywords || seo.keywords,
+    alternates: { canonical: '/quote' },
   };
 }
 
@@ -48,54 +46,55 @@ export default async function QuotePage() {
         subtitle="The blueprint for your culinary empire starts here. Provide your project specifications for a comprehensive fabrication analysis."
       />
 
-      <Section className="bg-gray-50/50">
-        <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+      <Section className="bg-[#0a0a0a] overflow-hidden pb-32 pt-20 border-b border-[#1a1a1a] relative">
+        <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }} />
+        <Container className="relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
             
             {/* Left Column: Form (7 Cols) */}
-            <div className="lg:col-span-7">
-               <div className="bg-white p-8 md:p-16 rounded-[4rem] shadow-2xl relative border border-gray-100 overflow-hidden">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                  
-                  <div className="mb-12">
-                     <span className="text-primary font-bold tracking-widest uppercase text-[10px] mb-4 block">Fabrication Request</span>
-                     <h2 className="text-3xl md:text-5xl font-black uppercase text-secondary tracking-tighter leading-tight mb-6">
-                        Build <span className="text-primary italic">Specifications</span>
-                     </h2>
-                     <p className="text-gray-500 font-light leading-relaxed">
-                        To provide an accurate engineering estimate, please be as specific as possible regarding your equipment needs and menu concept.
-                     </p>
-                  </div>
-
-                  <QuoteForm />
-                  
-                  <div className="mt-12 flex items-center justify-center gap-8 opacity-30 grayscale saturate-0">
-                     <span className="font-black text-[10px] uppercase tracking-widest text-secondary">Authorized Systems:</span>
-                     <span className="font-black text-xs uppercase text-secondary tracking-tighter">NFPA 96</span>
-                     <span className="font-black text-xs uppercase text-secondary tracking-tighter">NSF</span>
-                     <span className="font-black text-xs uppercase text-secondary tracking-tighter">ANSI</span>
-                  </div>
+            <div className="lg:col-span-7 flex flex-col gap-8">
+               <div className="mb-2">
+                   <div className="flex items-center gap-3 mb-6">
+                     <div className="w-1.5 h-1.5 bg-primary" />
+                     <span className="text-white font-black tracking-[0.2em] uppercase text-[10px]">Fabrication Request</span>
+                   </div>
+                   <h2 className="text-4xl md:text-5xl lg:text-7xl font-black uppercase text-white tracking-tighter leading-[0.85] mb-6">
+                      Build <br/><span className="text-primary">Specifications</span>
+                   </h2>
+                   <p className="text-gray-400 text-sm font-bold uppercase tracking-widest leading-relaxed max-w-md border-l-2 border-primary pl-4">
+                      To provide an accurate engineering estimate, please be as specific as possible regarding your equipment needs and menu concept.
+                   </p>
+               </div>
+               
+               <QuoteForm />
+               
+               <div className="mt-4 flex flex-wrap items-center gap-6 opacity-80 hover:opacity-100 transition-opacity">
+                  <span className="font-black text-[10px] uppercase tracking-[0.2em] text-gray-500 border border-[#1a1a1a] px-3 py-2 bg-black">Authorized Systems</span>
+                  <span className="font-black text-xs uppercase text-white tracking-tighter">NFPA 96</span>
+                  <span className="font-black text-xs uppercase text-white tracking-tighter">NSF</span>
+                  <span className="font-black text-xs uppercase text-white tracking-tighter">ANSI</span>
                </div>
             </div>
 
             {/* Right Column: High-Value Sidebar (5 Cols) */}
-            <div className="lg:col-span-5 space-y-12">
+            <div className="lg:col-span-5 space-y-12 mt-8 lg:mt-0 lg:sticky lg:top-32 h-fit">
                
                {/* Elite Advantage */}
-               <div className="space-y-10">
-                  <div className="inline-flex items-center gap-2 bg-secondary text-primary px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
-                     <Clock size={12} /> Real-Time Response Cycle
+               <div className="space-y-6">
+                  <div className="inline-flex items-center gap-3 bg-primary border border-primary text-black px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em]">
+                     <div className="w-2 h-2 bg-black animate-pulse"></div>
+                     Real-Time Response Cycle
                   </div>
                   
-                  <div className="space-y-8">
+                  <div className="space-y-4 pt-6">
                      {advantages.map((adv, i) => (
-                        <div key={i} className="flex gap-6 group">
-                           <div className="bg-white w-14 h-14 rounded-2xl shadow-sm flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-secondary transition-all duration-300 shrink-0">
-                              <adv.icon size={24} />
+                        <div key={i} className="flex gap-6 group bg-black p-6 border-2 border-[#1a1a1a] hover:border-primary transition-colors duration-300">
+                           <div className="bg-[#1a1a1a] w-12 h-12 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-colors duration-300 shrink-0">
+                              <adv.icon size={20} />
                            </div>
-                           <div className="space-y-2">
-                              <h4 className="text-lg font-black uppercase text-secondary tracking-tight">{adv.title}</h4>
-                              <p className="text-sm text-gray-500 leading-relaxed font-light">{adv.text}</p>
+                           <div className="space-y-1.5">
+                              <h4 className="text-lg font-black uppercase text-white tracking-tighter">{adv.title}</h4>
+                              <p className="text-xs text-gray-500 font-bold uppercase tracking-widest leading-relaxed">{adv.text}</p>
                            </div>
                         </div>
                      ))}
@@ -103,43 +102,42 @@ export default async function QuotePage() {
                </div>
 
                {/* Metrics Snapshot */}
-               <div className="bg-secondary p-12 rounded-[3.5rem] text-white relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--color-primary)_0%,_transparent_60%)] opacity-10"></div>
+               <div className="bg-black p-10 border-2 border-[#1a1a1a] text-white relative overflow-hidden group">
                   <div className="relative z-10 space-y-10">
-                     <h3 className="text-2xl font-black uppercase tracking-tighter leading-none">
-                        Fabrication <br/> <span className="text-primary">Integrity Metrics</span>
+                     <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-none">
+                        Fabrication <br/> <span className="text-primary">Metrics</span>
                      </h3>
-                     <div className="space-y-6">
+                     <div className="space-y-4">
                         {processMetrics.map((met, i) => (
-                           <div key={i} className="flex justify-between items-center border-b border-white/10 pb-4">
-                              <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{met.label}</span>
+                           <div key={i} className="flex justify-between items-center border-b border-[#1a1a1a] pb-4">
+                              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{met.label}</span>
                               <span className="text-sm font-black text-primary uppercase">{met.value}</span>
                            </div>
                         ))}
                      </div>
-                     <div className="bg-white/5 p-6 rounded-2xl border border-white/10">
+                     <div className="bg-[#0a0a0a] p-6 border border-[#1a1a1a]">
                         <div className="flex items-start gap-4">
-                           <CheckCircle2 size={24} className="text-primary shrink-0" />
-                           <p className="text-xs text-gray-400 leading-relaxed">
+                           <CheckCircle2 size={24} className="text-primary shrink-0 mt-1" />
+                           <p className="text-xs text-gray-400 leading-relaxed font-bold uppercase tracking-widest">
                               "Elite Steel's quoting process was more detailed than the actual build from other shops. They found issues in my menu workflow before we even broke ground."
                            </p>
                         </div>
-                        <div className="mt-4 text-[9px] font-black uppercase tracking-widest text-primary text-right">— Marco's Pizza Truck</div>
+                        <div className="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-primary border-t border-[#1a1a1a] pt-4">MARCO'S PIZZA TRUCK</div>
                      </div>
                   </div>
                </div>
 
                {/* Guided Path */}
-               <div className="p-8 space-y-6">
-                  <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-6 flex items-center gap-2">
-                     <Factory size={14} className="text-primary"/> The Road To Handover
+               <div className="bg-black p-10 border-2 border-[#1a1a1a] space-y-8 relative group hover:border-primary transition-colors">
+                  <h4 className="text-[10px] font-black uppercase text-white tracking-[0.2em] flex items-center gap-3">
+                     <Factory size={16} className="text-primary" /> The Road To Handover
                   </h4>
                   <div className="space-y-4">
                      {['Requirement Analysis', 'CAD Workflow Design', 'Precision Fabrication', 'Health Dept. Verification'].map((step, i) => (
-                        <div key={i} className="flex items-center gap-4 text-secondary/40 font-black uppercase text-[10px] tracking-widest transition-all hover:text-secondary cursor-default">
-                           <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
+                        <div key={i} className="flex items-center gap-4 text-gray-500 font-black uppercase text-[10px] tracking-[0.2em] transition-colors hover:text-white cursor-default bg-[#0a0a0a] p-4 border border-[#1a1a1a]">
+                           <div className="w-2 h-2 bg-primary"></div>
                            {step}
-                           {i < 3 && <ChevronRight size={12} className="ml-auto opacity-20" />}
+                           {i < 3 && <ChevronRight size={14} className="ml-auto text-gray-600" />}
                         </div>
                      ))}
                   </div>
@@ -150,34 +148,32 @@ export default async function QuotePage() {
         </Container>
       </Section>
 
-
       {/* Preparation Guide Card */}
-      <Section className="bg-gray-50 py-24">
+      <Section className="bg-white py-32 border-b border-gray-100">
         <Container>
-          <div className="bg-secondary rounded-[4rem] p-12 md:p-20 text-white relative overflow-hidden">
-             <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 -skew-x-12 translate-x-32 hidden lg:block"></div>
-             <div className="relative z-10 flex flex-col lg:flex-row items-center gap-16">
-                <div className="lg:col-span-1 space-y-6">
-                   <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-secondary">
+          <div className="border-4 border-black p-12 md:p-16 text-black relative bg-gray-50">
+             <div className="flex flex-col lg:flex-row items-start gap-16">
+                <div className="lg:col-span-1 space-y-6 max-w-sm">
+                   <div className="w-16 h-16 bg-black flex items-center justify-center text-primary shadow-[4px_4px_0px_0px_rgba(247,147,30,1)]">
                       <Factory size={32} />
                    </div>
-                   <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-tight">
+                   <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
                       Before You <br/> <span className="text-primary">Apply</span>
                    </h2>
-                   <p className="text-gray-400 font-light leading-relaxed max-w-sm">
+                   <p className="text-gray-500 text-xs font-bold uppercase tracking-widest leading-relaxed">
                       Ensure you have the following information ready to help our engineers provide the most accurate assessment.
                    </p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-200 flex-1">
                    {[
-                     { title: "Menu Core", text: "Knowing your primary cooking method (Grilling vs Frying) determines your exhaust hood size." },
-                     { title: "Power Loads", text: "Estimate your total wattage for generator sizing and electrical circuit planning." },
-                     { title: "Vehicle Specs", text: "If providing a vehicle, we require the VIN and current structural photos." },
-                     { title: "Permit Zone", text: "City/County health codes vary significantly. Let us know where you'll be operating." }
+                     { title: "Menu Core", text: "Primary cooking method dictates exhaust hood size." },
+                     { title: "Power Loads", text: "Estimate total wattage for generator sizing." },
+                     { title: "Vehicle Specs", text: "Required VIN and structural photos if providing." },
+                     { title: "Permit Zone", text: "City/County health codes vary. Note operations zone." }
                    ].map((item, i) => (
-                     <div key={i} className="bg-white/5 p-8 rounded-3xl border border-white/10 hover:border-primary transition-all">
-                        <h4 className="text-primary font-black uppercase text-xs tracking-widest mb-3">{item.title}</h4>
-                        <p className="text-xs text-gray-400 leading-loose">{item.text}</p>
+                     <div key={i} className="bg-white p-8 group hover:bg-black hover:text-white transition-colors border border-transparent hover:border-black">
+                        <h4 className="text-black group-hover:text-primary font-black uppercase text-[10px] tracking-[0.2em] mb-4 transition-colors">{item.title}</h4>
+                        <p className="text-xs text-gray-500 font-bold uppercase tracking-widest leading-relaxed group-hover:text-gray-400 transition-colors">{item.text}</p>
                      </div>
                    ))}
                 </div>
@@ -187,14 +183,14 @@ export default async function QuotePage() {
       </Section>
 
       {/* Sticky Support CTA */}
-      <section className="bg-white border-t border-gray-100 py-12">
+      <section className="bg-primary border-y border-black py-16">
          <Container>
             <div className="flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
                <div>
-                  <h3 className="text-xl font-black uppercase text-secondary tracking-tight">Need Immediate Technical Assistance?</h3>
-                  <p className="text-sm text-gray-500 font-light">Skip the form and talk to a master fabricator today.</p>
+                  <h3 className="text-3xl md:text-5xl font-black uppercase text-black tracking-tighter mb-2 leading-none">Need Technical Assistance?</h3>
+                  <p className="text-xs text-black/80 font-black uppercase tracking-[0.2em]">Skip the form and talk to a master fabricator today.</p>
                </div>
-               <Link href="/contact" className="px-12 py-5 bg-secondary text-white rounded-full font-black uppercase text-[10px] tracking-widest hover:scale-105 transition-all shadow-xl">
+               <Link href="/contact" className="px-10 py-5 bg-black text-white border-2 border-black font-black uppercase text-[10px] tracking-[0.2em] hover:bg-white hover:text-black transition-colors shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none hover:translate-x-2 hover:translate-y-2 shrink-0 whitespace-nowrap">
                   Schedule Consultation
                </Link>
             </div>
@@ -203,4 +199,3 @@ export default async function QuotePage() {
     </>
   );
 }
-

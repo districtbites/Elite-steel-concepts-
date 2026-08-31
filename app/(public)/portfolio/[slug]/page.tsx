@@ -20,6 +20,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
 
 interface PageProps {
   params: Promise<{
@@ -29,6 +30,24 @@ interface PageProps {
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await getProjectBySlug(slug);
+  if (!project) return { title: "Project Not Found" };
+  return {
+    title: `${project.title} | Portfolio | Elite Steel Concepts`,
+    description: project.description || `Custom food truck build: ${project.title}. See the full build details from Elite Steel Concepts — 12+ years, 350+ builds.`,
+    alternates: {
+      canonical: `/portfolio/${slug}`,
+    },
+    openGraph: {
+      title: project.title,
+      images: [project.image],
+      type: "website",
+    },
+  };
+}
 
 export default async function ProjectDetailsPage({ params }: PageProps) {
   const { slug } = await params;

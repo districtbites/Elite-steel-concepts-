@@ -21,7 +21,9 @@ import {
   CornerUpRight,
   Monitor
 } from "lucide-react";
-import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
+import { getSEO, getPageSEO, getFAQs, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
+import { autoLinkMarkdown } from "@/lib/internalLinks";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
@@ -35,12 +37,21 @@ export async function generateMetadata(): Promise<Metadata> {
     title: pageSeo?.title || `Elite Custom Food Trailers | Heavy Duty Fabrication`,
     description: pageSeo?.description || "Professional custom concession trailers. Engineered for stability, maximum volume, and long-term durability. Built for high-capacity culinary operations.",
     keywords: pageSeo?.keywords || seo.keywords,
+    alternates: { canonical: '/services/custom-food-trailers' },
   };
 }
 
 export default async function CustomFoodTrailersPage() {
-  const faqs = await getFAQs();
+  const [faqs, rules, linkSettings] = await Promise.all([
+    getFAQs(),
+    getInternalLinkRules(),
+    getInternalLinkSettings(),
+  ]);
+  const activeRules = rules.filter(r => r.enabled !== false);
   const trailerFaqs = faqs.filter(f => f.category === "Fabrication" || f.category === "Process").slice(0, 5);
+
+  const introDescRaw = "A custom concession trailer from Elite Steel Concepts offers the highest ROI in the mobile food industry. More square footage for equipment and staff, without the engine maintenance of a truck. Learn about our custom food truck conversions or request an itemized build quote.";
+  const introDescLinked = autoLinkMarkdown(introDescRaw, activeRules, linkSettings).updatedContent;
 
   // Dynamic Assets
   const trailerHero = await getMediaAsset("custom-food-trailers", "hero", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200");
@@ -133,7 +144,7 @@ export default async function CustomFoodTrailersPage() {
                      Volume & <br/> <span className="text-primary italic">Precision</span>
                    </h2>
                    <p className="text-gray-500 text-lg font-light leading-relaxed">
-                     A concession trailer from Elite Steel Concepts offers the highest ROI in the mobile food industry. More square footage for equipment and staff, without the engine maintenance of a truck.
+                     <AutoLinkedText text={introDescLinked} />
                    </p>
                 </div>
                 

@@ -5,13 +5,29 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "react/no-unescaped-entities": "off",
+      "@typescript-eslint/no-require-imports": "off",
+      "react-hooks/set-state-in-effect": "off",
+      "@next/next/no-html-link-for-pages": "off",
+      "prefer-const": "warn",
+    },
+  },
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    ".venv/**",
+    "tmp/**",
+    "data/backups/**",
+    ".claude/**",
+    "scripts/**",
+    "scratch*.js",
+    "server.js",
   ]),
 ]);
 

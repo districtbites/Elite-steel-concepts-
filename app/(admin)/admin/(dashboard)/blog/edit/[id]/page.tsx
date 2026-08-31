@@ -24,9 +24,9 @@ export default async function EditBlogPostPage({ params }: PageProps) {
 
   return (
     <div className="max-w-[1400px] mx-auto">
-        <form>
-           <BlogEditor action={updateWithId} initialData={post} />
-        </form>
+      <form action={updateWithId}>
+        <BlogEditor action={updateWithId} initialData={post} />
+      </form>
     </div>
   );
 }

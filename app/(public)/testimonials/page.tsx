@@ -4,7 +4,9 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import Button from "@/components/ui/Button";
-import { getTestimonials, getSEO, getPageSEO, getMediaAsset } from "@/lib/db";
+import { getTestimonials, getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
+import { autoLinkMarkdown } from "@/lib/internalLinks";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import { Star, Quote as QuoteIcon, Play, CheckCircle, ShieldCheck, Award, MessageSquare } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -20,15 +22,19 @@ export async function generateMetadata(): Promise<Metadata> {
     title: pageSeo?.title || `Client Success Stories | ${seo.siteTitle}`,
     description: pageSeo?.description || seo.description,
     keywords: pageSeo?.keywords || seo.keywords,
+    alternates: { canonical: '/testimonials' },
   };
 }
 
 export default async function TestimonialsPage() {
-  const [testimonials, pageSeo, testimonialsHero] = await Promise.all([
+  const [testimonials, pageSeo, rules, linkSettings, testimonialsHero] = await Promise.all([
     getTestimonials(),
     getPageSEO("testimonials"),
+    getInternalLinkRules(),
+    getInternalLinkSettings(),
     getMediaAsset("testimonials", "hero", "https://images.pexels.com/photos/1766686/pexels-photo-1766686.jpeg?auto=compress&cs=tinysrgb&w=1200"),
   ]);
+  const activeRules = rules.filter(r => r.enabled !== false);
   const sections = pageSeo.sections || {};
 
   return (
@@ -104,7 +110,7 @@ export default async function TestimonialsPage() {
                     "They didn't just build a truck, they built a <span className="text-primary italic">scalable business</span>."
                  </h2>
                  <p className="text-gray-600 text-lg leading-relaxed mb-8 font-light italic">
-                    "When I first came to Elite Steel Concepts, I had a vision but no idea about technical specs or flow. They took my menu and designed a kitchen that allows our team to serve 200 portions an hour without breaking a sweat."
+                    &ldquo;<AutoLinkedText text={autoLinkMarkdown("When I first came to Elite Steel Concepts, I had a vision but no idea about technical specs or flow. They took my menu and designed a kitchen that allows our team to serve 200 portions an hour without breaking a sweat.", activeRules, linkSettings).updatedContent} />&rdquo;
                  </p>
                  <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2 text-secondary font-bold text-xs uppercase tracking-widest bg-gray-50 px-5 py-3 rounded-full border border-gray-100">
@@ -141,7 +147,7 @@ export default async function TestimonialsPage() {
                             </div>
 
                             <p className="text-gray-600 mb-10 text-md leading-relaxed flex-grow font-light">
-                                &ldquo;{testimonial.content}&rdquo;
+                                &ldquo;<AutoLinkedText text={autoLinkMarkdown(testimonial.content, activeRules, linkSettings).updatedContent} />&rdquo;
                             </p>
 
                             <div className="pt-8 border-t border-gray-50 flex items-center justify-between">

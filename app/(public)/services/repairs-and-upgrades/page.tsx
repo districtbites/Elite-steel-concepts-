@@ -4,8 +4,13 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import { Wrench, Zap, Droplets, Wind, ArrowRight } from "lucide-react";
-import { getSEO, getPageSEO } from "@/lib/db";
+import { getSEO, getPageSEO, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
+import { autoLinkMarkdown } from "@/lib/internalLinks";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -15,10 +20,20 @@ export async function generateMetadata(): Promise<Metadata> {
     title: pageSeo?.title || `Repairs & Upgrades | ${seo.siteTitle}`,
     description: pageSeo?.description || seo.description,
     keywords: pageSeo?.keywords || seo.keywords,
+    alternates: { canonical: '/services/repairs-and-upgrades' },
   };
 }
 
-export default function RepairsAndUpgradesPage() {
+export default async function RepairsAndUpgradesPage() {
+  const [rules, linkSettings] = await Promise.all([
+    getInternalLinkRules(),
+    getInternalLinkSettings(),
+  ]);
+  const activeRules = rules.filter(r => r.enabled !== false);
+
+  const emergencyRaw = "We understand that downtime means lost revenue. Contact Elite Steel Concepts directly for priority scheduling on urgent food truck repairs, fire suppression installation, or to request a custom quote for a complete mobile kitchen overhaul.";
+  const emergencyLinked = autoLinkMarkdown(emergencyRaw, activeRules, linkSettings).updatedContent;
+
   return (
     <>
       <PageHeader
@@ -64,9 +79,9 @@ export default function RepairsAndUpgradesPage() {
           </div>
 
           <div className="bg-secondary p-8 md:p-12 rounded-xl text-center">
-            <h3 className="text-2xl font-black uppercase text-white mb-4 tracking-tight">Need Emergency Service?</h3>
-            <p className="text-gray-400 max-w-xl mx-auto mb-6">
-              We understand that downtime means lost revenue. Contact us directly for priority scheduling on urgent repairs.
+            <h3 className="text-2xl font-black uppercase text-white mb-4 tracking-tight">Need Priority Service?</h3>
+            <p className="text-gray-400 max-w-xl mx-auto mb-6 leading-relaxed">
+              <AutoLinkedText text={emergencyLinked} />
             </p>
           </div>
         </Container>

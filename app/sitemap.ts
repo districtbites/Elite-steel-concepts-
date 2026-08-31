@@ -1,5 +1,8 @@
 import { MetadataRoute } from 'next'
-import { getPosts, getProjects, getSEO } from '@/lib/db'
+import { getPosts, getProjects, getSEO, getLocations } from '@/lib/db'
+
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const seo = await getSEO()
@@ -11,21 +14,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const posts = await getPosts()
     const projects = await getProjects()
 
+    const seenBlogSlugs = new Set<string>()
     const blogUrls = posts
         .filter(post => post.status === "Published")
-        .map((post) => ({
-            url: `${base}/blog/${post.slug}`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly' as const,
-            priority: 0.6,
-        }))
+        .filter(post => {
+            if (seenBlogSlugs.has(post.slug)) return false
+            seenBlogSlugs.add(post.slug)
+            return true
+        })
+        .map((post) => {
+            const dateObj = post.date ? new Date(post.date) : new Date();
+            return {
+                url: `${base}/blog/${post.slug}`,
+                lastModified: isNaN(dateObj.getTime()) ? new Date() : dateObj,
+                changeFrequency: 'monthly' as const,
+                priority: 0.6,
+            };
+        })
 
-    const projectUrls = projects.map((project) => ({
-        url: `${base}/portfolio/${project.slug}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.7,
-    }))
+    const projectUrls = projects.map((project) => {
+        const dateObj = project.completionDate ? new Date(project.completionDate) : new Date();
+        return {
+            url: `${base}/portfolio/${project.slug}`,
+            lastModified: isNaN(dateObj.getTime()) ? new Date() : dateObj,
+            changeFrequency: 'monthly' as const,
+            priority: 0.7,
+        };
+    })
+
+    const locations = await getLocations()
+    const locationUrls = [
+        { url: '/locations', priority: 0.9, changeFrequency: 'monthly' as const },
+        ...locations.filter(loc => loc.published).map((loc) => ({
+            url: `/locations/${loc.slug}`,
+            priority: 0.9,
+            changeFrequency: 'monthly' as const,
+        })),
+    ]
 
     const staticRoutes = [
         { url: '', priority: 1.0, changeFrequency: 'monthly' as const },
@@ -36,6 +61,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: '/blog', priority: 0.8, changeFrequency: 'weekly' as const },
         { url: '/contact', priority: 0.7, changeFrequency: 'monthly' as const },
         { url: '/quote', priority: 1.0, changeFrequency: 'monthly' as const },
+        { url: '/compliance', priority: 0.9, changeFrequency: 'monthly' as const },
         { url: '/testimonials', priority: 0.8, changeFrequency: 'monthly' as const },
         { url: '/privacy', priority: 0.3, changeFrequency: 'yearly' as const },
         { url: '/terms', priority: 0.3, changeFrequency: 'yearly' as const },
@@ -46,7 +72,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: '/services/repairs-and-upgrades', priority: 0.8, changeFrequency: 'monthly' as const },
     ]
 
-    const staticUrls = staticRoutes.map((route) => ({
+    const staticUrls = [...staticRoutes, ...locationUrls].map((route) => ({
         url: `${base}${route.url}`,
         lastModified: new Date(),
         changeFrequency: route.changeFrequency,

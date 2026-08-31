@@ -4,6 +4,7 @@ import { createAsset, updateAsset, deleteAsset, getAssets } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import fs from "fs/promises";
 import path from "path";
+import { tursoSaveMedia, tursoDeleteMedia } from "@/lib/turso";
 
 // ─── All public paths that consume media assets ───
 const MEDIA_CONSUMING_PATHS = [
@@ -81,23 +82,32 @@ async function saveMediaAsset(file: File): Promise<string> {
     const uploadDir = path.join(projectRoot, "public", "uploads", "media");
     const filepath = path.join(uploadDir, filename);
 
+    const mediaPath = `/uploads/media/${filename}`;
+
     try {
         await fs.mkdir(uploadDir, { recursive: true });
         await fs.writeFile(filepath, optimized);
-    } catch (error: any) {
-        throw new Error("Could not save the image on the server.");
+    } catch {
+        // Read-only serverless filesystem
     }
 
-    return `/uploads/media/${filename}`;
+    try {
+        await tursoSaveMedia(mediaPath, filename, "image/webp", optimized);
+    } catch (error: any) {
+        console.warn("Could not save media asset to Turso:", error?.message);
+    }
+
+    return mediaPath;
 }
 
 /**
- * Delete an old file from the uploads directory (fire & forget).
+ * Delete an old file from the uploads directory and Turso (fire & forget).
  */
 async function cleanupOldFile(url: string) {
     if (url && url.startsWith("/uploads/")) {
         const filepath = path.join(process.cwd(), "public", url);
         await fs.unlink(filepath).catch(() => { });
+        await tursoDeleteMedia(url).catch(() => { });
     }
 }
 

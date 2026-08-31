@@ -4,8 +4,13 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import { Workflow, FileCode, ShieldCheck } from "lucide-react";
-import { getSEO, getPageSEO } from "@/lib/db";
+import { getSEO, getPageSEO, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
+import { autoLinkMarkdown } from "@/lib/internalLinks";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -15,10 +20,20 @@ export async function generateMetadata(): Promise<Metadata> {
     title: pageSeo?.title || `Design & Consultation | ${seo.siteTitle}`,
     description: pageSeo?.description || seo.description,
     keywords: pageSeo?.keywords || seo.keywords,
+    alternates: { canonical: '/services/design-and-consultation' },
   };
 }
 
-export default function DesignAndConsultationPage() {
+export default async function DesignAndConsultationPage() {
+  const [rules, linkSettings] = await Promise.all([
+    getInternalLinkRules(),
+    getInternalLinkSettings(),
+  ]);
+  const activeRules = rules.filter(r => r.enabled !== false);
+
+  const designMattersRaw = "A well-designed kitchen layout can increase your output by 30% or more. From reducing steps between stations to ensuring proper ventilation flow, every detail counts. Our custom food truck design consultations at Elite Steel Concepts have helped hundreds of entrepreneurs avoid costly mistakes and build more efficient kitchens. Discover our custom food truck conversions or review our DMV compliance guides.";
+  const designMattersLinked = autoLinkMarkdown(designMattersRaw, activeRules, linkSettings).updatedContent;
+
   return (
     <>
       <PageHeader
@@ -59,7 +74,7 @@ export default function DesignAndConsultationPage() {
            <div className="bg-gray-50 p-8 md:p-12 rounded-xl border border-gray-100 text-center">
              <h3 className="text-2xl font-black uppercase text-secondary mb-4 tracking-tight">Why Design Matters</h3>
              <p className="text-gray-600 max-w-2xl mx-auto leading-relaxed">
-               A well-designed kitchen layout can increase your output by 30% or more. From reducing steps between stations to ensuring proper ventilation flow, every detail counts. Our design consultations have helped hundreds of entrepreneurs avoid costly mistakes and build more efficient kitchens.
+               <AutoLinkedText text={designMattersLinked} />
              </p>
            </div>
         </Container>

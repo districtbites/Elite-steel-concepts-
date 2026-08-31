@@ -6,7 +6,9 @@ import Button from "@/components/ui/Button";
 import CTASection from "@/components/ui/CTASection";
 import { FileText, Phone, PenTool, CheckSquare, Hammer, ArrowRight, Lightbulb, Clock, ShieldCheck, Sparkles, Zap, MessageSquare } from "lucide-react";
 
-import { getSEO, getPageSEO } from "@/lib/db";
+import { getSEO, getPageSEO, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
+import { autoLinkMarkdown } from "@/lib/internalLinks";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
@@ -20,10 +22,16 @@ export async function generateMetadata(): Promise<Metadata> {
     title: pageSeo?.title || `Our Process | ${seo.siteTitle}`,
     description: pageSeo?.description || seo.description,
     keywords: pageSeo?.keywords || seo.keywords,
+    alternates: { canonical: '/process' },
   };
 }
 
 export default async function ProcessPage() {
+  const [rules, linkSettings] = await Promise.all([
+    getInternalLinkRules(),
+    getInternalLinkSettings(),
+  ]);
+  const activeRules = rules.filter(r => r.enabled !== false);
   const steps = [
     {
       number: "01",
@@ -136,13 +144,13 @@ export default async function ProcessPage() {
 
                       {/* Side B: Detailed Content Card */}
                       <div className="w-full md:w-6/12">
-                         <div className="bg-white p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 hover:border-primary/30 transition-all group relative overflow-hidden">
+                         <div className="bg-white p-10 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 hover:border-primary/30 transition-colors group relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
                                <step.icon size={120} />
                             </div>
                             
                             <p className="text-gray-600 text-lg leading-relaxed mb-8 font-light italic">
-                               "{step.description}"
+                               &ldquo;<AutoLinkedText text={autoLinkMarkdown(step.description, activeRules, linkSettings).updatedContent} />&rdquo;
                             </p>
                             
                             <div className="grid grid-cols-1 gap-4 mb-8">
@@ -174,14 +182,10 @@ export default async function ProcessPage() {
       </Section>
 
       {/* Expectation / Reliability Section */}
-      <Section className="bg-secondary py-32 overflow-hidden relative">
-         <div className="absolute top-0 right-0 w-full h-full opacity-5 pointer-events-none">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
-         </div>
-         
-         <Container className="relative z-10">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-               <div>
+      <Section className="bg-[#0a0a0a] py-32 overflow-hidden border-t border-[#1a1a1a]">
+         <Container>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
+               <div className="sticky top-32">
                   <span className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-6 block">Beyond The Build</span>
                   <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-8 leading-[0.9]">
                      What to <br/> <span className="text-primary italic">Expect</span> <br/> From Us
@@ -190,23 +194,30 @@ export default async function ProcessPage() {
                      <p className="text-gray-400 text-lg leading-relaxed">
                         We believe quality fabrication is only half the battle. Professional communication and timeline integrity are what separate Elite Steel from the rest of the industry.
                      </p>
-                     <div className="flex items-center gap-4 text-white font-black text-sm uppercase tracking-widest bg-white/5 p-4 rounded-2xl border border-white/10 w-fit">
-                        <MessageSquare className="text-primary" /> Weekly Progress Updates
+                     <div className="flex items-center gap-4 text-white font-black text-sm uppercase tracking-widest bg-[#111] p-4 rounded-xl border border-[#222] w-fit">
+                        <MessageSquare className="text-primary" size={18} /> Weekly Progress Updates
                      </div>
                   </div>
                </div>
 
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <div className="flex flex-col gap-10 relative pt-10 lg:pt-0">
+                  {/* Subtle connecting line */}
+                  <div className="absolute left-[23px] top-8 bottom-8 w-px bg-white/5 hidden md:block"></div>
+                  
                   {[
-                    { title: "Transparency", icon: ShieldCheck, desc: "Detailed contracts and itemized pricing with no bait-and-switch." },
-                    { title: "Speed", icon: Zap, desc: "Optimized workflow that gets you on the road weeks faster than competitors." },
-                    { title: "Support", icon: Phone, desc: "Direct access to your project manager throughout the entire build phase." },
-                    { title: "Precision", icon: Sparkles, desc: "Every rivet and weld is inspected by our quality control lead." }
+                    { title: "Transparency", icon: ShieldCheck, desc: "Detailed contracts and itemized pricing with no bait-and-switch.", indent: "ml-0" },
+                    { title: "Speed", icon: Zap, desc: "Optimized workflow that gets you on the road weeks faster than competitors.", indent: "md:ml-12" },
+                    { title: "Support", icon: Phone, desc: "Direct access to your project manager throughout the entire build phase.", indent: "md:ml-24" },
+                    { title: "Precision", icon: Sparkles, desc: "Every rivet and weld is inspected by our quality control lead.", indent: "md:ml-36" }
                   ].map((item, i) => (
-                     <div key={i} className="bg-white/5 p-8 rounded-[2rem] border border-white/10 backdrop-blur-sm group hover:bg-white/10 transition-all">
-                        <item.icon className="text-primary mb-6 group-hover:scale-110 transition-transform" size={32} />
-                        <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-2">{item.title}</h4>
-                        <p className="text-sm text-gray-400 leading-relaxed font-light">{item.desc}</p>
+                     <div key={i} className={`flex items-start gap-6 group relative ${item.indent}`}>
+                        <div className="bg-[#111] ring-1 ring-white/10 p-3.5 rounded-xl z-10 shrink-0 group-hover:ring-primary/40 transition-colors">
+                           <item.icon className="text-primary group-hover:scale-110 transition-transform duration-300" size={20} />
+                        </div>
+                        <div className="pt-2">
+                           <h4 className="text-xl font-black text-white uppercase tracking-tighter mb-2">{item.title}</h4>
+                           <p className="text-sm text-gray-400 leading-relaxed font-light max-w-sm">{item.desc}</p>
+                        </div>
                      </div>
                   ))}
                </div>

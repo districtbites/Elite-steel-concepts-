@@ -4,8 +4,13 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import { Check } from "lucide-react";
-import { getSEO, getPageSEO } from "@/lib/db";
+import { getSEO, getPageSEO, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
+import { autoLinkMarkdown } from "@/lib/internalLinks";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -15,10 +20,20 @@ export async function generateMetadata(): Promise<Metadata> {
     title: pageSeo?.title || `Fleet Expansion | ${seo.siteTitle}`,
     description: pageSeo?.description || seo.description,
     keywords: pageSeo?.keywords || seo.keywords,
+    alternates: { canonical: '/services/fleet-expansion' },
   };
 }
 
-export default function FleetExpansionPage() {
+export default async function FleetExpansionPage() {
+  const [rules, linkSettings] = await Promise.all([
+    getInternalLinkRules(),
+    getInternalLinkSettings(),
+  ]);
+  const activeRules = rules.filter(r => r.enabled !== false);
+
+  const fleetDescRaw = "Whether you need 5 custom food trucks or 50 concession trailers, Elite Steel Concepts delivers identical build quality, equipment layouts, and nationwide compliance. Streamline your multi-unit mobile kitchen operations with a standardized fleet program.";
+  const fleetDescLinked = autoLinkMarkdown(fleetDescRaw, activeRules, linkSettings).updatedContent;
+
   return (
     <>
       <PageHeader
@@ -35,7 +50,7 @@ export default function FleetExpansionPage() {
                 Consistent Quality at Scale
               </h2>
               <p className="text-gray-600 text-lg leading-relaxed mb-8">
-                Whether you need 5 trucks or 50, we deliver identical build quality, equipment layouts, and branding. Streamline your operations with a standardized fleet.
+                <AutoLinkedText text={fleetDescLinked} />
               </p>
               <ul className="space-y-4 mb-8">
                 {[

@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# dependencies & packages
 /node_modules
 /.pnp
 .pnp.*
@@ -9,16 +9,49 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+/.venv
+/venv
+/env
+/ENV
+__pycache__/
+*.pyc
 
-# testing
+# package archives & zips
+*.zip
+*.tar.gz
+*.tgz
+deploy-esc.zip
+
+# AI assistants & IDEs
+/.claude
+/.gemini
+/.antigravity
+/.cursor
+/.impeccable
+/.ai
+/.windsurf
+/.copilot
+/.chat
+/.idea
+/.vscode
+
+# testing & coverage
 /coverage
 
 # next.js
 /.next/
 /out/
 
-# production
+# production & build
 /build
+server.js
+
+# temp & scratch files
+/tmp
+*.log
+stderr.log
+scratch*.js
+/data/backups
 
 # misc
 .DS_Store
@@ -30,8 +63,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+!.env.example
 
 # vercel
 .vercel

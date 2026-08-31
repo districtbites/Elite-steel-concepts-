@@ -2,7 +2,6 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Container from "./ui/Container";
-import Section from "./ui/Section";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 interface ServiceSelectionProps {
@@ -11,92 +10,201 @@ interface ServiceSelectionProps {
   trailerImage?: { url: string; alt: string };
 }
 
-const ServiceSelection = ({ imageAlts, truckImage, trailerImage }: ServiceSelectionProps) => {
-  const truckSrc = truckImage?.url || "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200";
-  const truckAlt = truckImage?.alt || imageAlts?.["truck-platform"] || "Custom Food Truck";
-  const trailerSrc = trailerImage?.url || "https://images.pexels.com/photos/5696001/pexels-photo-5696001.jpeg?auto=compress&cs=tinysrgb&w=1200";
-  const trailerAlt = trailerImage?.alt || imageAlts?.["trailer-platform"] || "Custom Food Trailer";
+const ServiceSelection = ({
+  imageAlts,
+  truckImage,
+  trailerImage,
+}: ServiceSelectionProps) => {
+  const truckSrc =
+    truckImage?.url ||
+    "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200";
+  const truckAlt =
+    truckImage?.alt || imageAlts?.["truck-platform"] || "Custom Food Truck";
+  const trailerSrc =
+    trailerImage?.url ||
+    "/concession-trailer.png";
+  const trailerAlt =
+    trailerImage?.alt ||
+    imageAlts?.["trailer-platform"] ||
+    "Custom Food Trailer";
+
+  const truckFeatures = [
+    "Maximum Mobility & City Access",
+    "Compact Footprint — Easy Parking",
+    "Iconic Branded Presence",
+    "All-in-One Self-Contained Kitchen",
+  ];
+  const trailerFeatures = [
+    "Lower Initial Investment",
+    "Larger Kitchen Floor Space",
+    "Flexible Towing Vehicle Options",
+    "Ideal for Events & Festivals",
+  ];
 
   return (
-    <Section className="bg-white py-24">
+    <section className="bg-white py-20 md:py-28">
       <Container>
-        <div className="text-center mb-16 space-y-4">
-          <span className="text-primary font-bold tracking-widest uppercase text-sm">
-            Start Your Build
-          </span>
-          <h2 className="text-4xl md:text-6xl font-black text-secondary uppercase tracking-tight">
-            Choose Your Platform
-          </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">
-            The foundation of your business starts here. Select the mobile kitchen that fits your vision and budget.
+        {/* Section header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-14">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-px w-12 bg-primary" />
+              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                Start Your Build
+              </span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight">
+              Choose Your
+              <span className="block text-gray-400">Platform</span>
+            </h2>
+          </div>
+          <p className="text-gray-500 text-sm max-w-sm leading-relaxed md:text-right">
+            The foundation of your business starts here. Select the mobile
+            kitchen that fits your vision and budget.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-          {/* Truck Card */}
-          <Link href="/services/custom-food-trucks" className="group relative block h-[500px] md:h-[600px] w-full overflow-hidden rounded-2xl">
-             <Image 
-                src={truckSrc} 
+        {/* Cards side by side */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-100">
+          {/* Food Trucks */}
+          <Link
+            href="/services/custom-food-trucks"
+            id="service-food-trucks-card"
+            className="group relative block overflow-hidden bg-white"
+          >
+            {/* Image */}
+            <div className="relative h-[340px] md:h-[420px] overflow-hidden">
+              <Image
+                src={truckSrc}
                 alt={truckAlt}
                 fill
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
-             />
-             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent transition-opacity duration-300" />
-             
-             <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
-                <h3 className="text-3xl md:text-4xl font-black uppercase mb-4 group-hover:text-primary transition-colors">
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+              {/* Hover accent bar */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-10" />
+
+              {/* Label on image */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-2 block">
+                  Platform 01
+                </span>
+                <h3 className="text-3xl font-black text-white uppercase tracking-tight group-hover:text-primary transition-colors duration-200">
                   Food Trucks
                 </h3>
-                <p className="text-gray-300 mb-6 line-clamp-2 group-hover:line-clamp-none transition-all">
-                   The ultimate all-in-one mobile kitchen. Perfect for high-mobility businesses and city streets.
-                </p>
-                
-                {/* Features List */}
-                <div className="mb-8 space-y-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                   <div className="flex items-center text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-primary mr-2"/> Maximum Mobility</div>
-                   <div className="flex items-center text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-primary mr-2"/> Compact Footprint</div>
-                   <div className="flex items-center text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-primary mr-2"/> Iconic Brand Presence</div>
-                </div>
+              </div>
+            </div>
 
-                <span className="inline-flex items-center text-sm font-bold uppercase tracking-wider bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full hover:bg-primary hover:text-secondary transition-all">
-                   Explore Trucks <ArrowRight className="ml-2 w-4 h-4" />
-                </span>
-             </div>
+            {/* Content below image */}
+            <div className="p-8 border-t border-gray-100 group-hover:border-primary/20 transition-colors">
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                The ultimate all-in-one mobile kitchen. Self-contained, branded,
+                and built for high-mobility city operations.
+              </p>
+              <ul className="space-y-2.5 mb-8">
+                {truckFeatures.map((f) => (
+                  <li key={f} className="flex items-center gap-3">
+                    <CheckCircle2
+                      size={14}
+                      className="text-primary shrink-0"
+                    />
+                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                      {f}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex items-center gap-2 text-primary text-xs font-black uppercase tracking-wider">
+                <span>Explore Food Trucks</span>
+                <ArrowRight
+                  size={14}
+                  className="group-hover:translate-x-1.5 transition-transform"
+                />
+              </div>
+            </div>
           </Link>
 
-          {/* Trailer Card */}
-          <Link href="/services/custom-food-trailers" className="group relative block h-[500px] md:h-[600px] w-full overflow-hidden rounded-2xl">
-             <Image 
-                src={trailerSrc} 
+          {/* Concession Trailers */}
+          <Link
+            href="/services/custom-food-trailers"
+            id="service-trailers-card"
+            className="group relative block overflow-hidden bg-white"
+          >
+            {/* Image */}
+            <div className="relative h-[340px] md:h-[420px] overflow-hidden">
+              <Image
+                src={trailerSrc}
                 alt={trailerAlt}
                 fill
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
-             />
-             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent transition-opacity duration-300" />
-             
-             <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
-                <h3 className="text-3xl md:text-4xl font-black uppercase mb-4 group-hover:text-primary transition-colors">
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+
+              {/* Hover accent bar */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-10" />
+
+              {/* Label on image */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-2 block">
+                  Platform 02
+                </span>
+                <h3 className="text-3xl font-black text-white uppercase tracking-tight group-hover:text-primary transition-colors duration-200">
                   Concession Trailers
                 </h3>
-                <p className="text-gray-300 mb-6 line-clamp-2 group-hover:line-clamp-none transition-all">
-                   Spacious, flexible, and cost-effective. Ideal for stationary events, festivals, and large crews.
-                </p>
+              </div>
+            </div>
 
-                {/* Features List */}
-                 <div className="mb-8 space-y-2 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
-                   <div className="flex items-center text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-primary mr-2"/> Lower Initial Cost</div>
-                   <div className="flex items-center text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-primary mr-2"/> Flexible Towing Vehicle</div>
-                   <div className="flex items-center text-sm font-medium"><CheckCircle2 className="w-4 h-4 text-primary mr-2"/> Larger Kitchen Space</div>
-                </div>
+            {/* Content below image */}
+            <div className="p-8 border-t border-gray-100 group-hover:border-primary/20 transition-colors">
+              <p className="text-gray-600 text-sm leading-relaxed mb-6">
+                Spacious, flexible, and cost-effective. The preferred platform
+                for events, festivals, and stationary operations.
+              </p>
+              <ul className="space-y-2.5 mb-8">
+                {trailerFeatures.map((f) => (
+                  <li key={f} className="flex items-center gap-3">
+                    <CheckCircle2
+                      size={14}
+                      className="text-primary shrink-0"
+                    />
+                    <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                      {f}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div className="flex items-center gap-2 text-primary text-xs font-black uppercase tracking-wider">
+                <span>Explore Trailers</span>
+                <ArrowRight
+                  size={14}
+                  className="group-hover:translate-x-1.5 transition-transform"
+                />
+              </div>
+            </div>
+          </Link>
+        </div>
 
-                <span className="inline-flex items-center text-sm font-bold uppercase tracking-wider bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full hover:bg-primary hover:text-secondary transition-all">
-                   Explore Trailers <ArrowRight className="ml-2 w-4 h-4" />
-                </span>
-             </div>
+        {/* Bottom CTA nudge */}
+        <div className="mt-px bg-[#0a0a0a] p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-gray-400">
+            Not sure which platform is right for you?{" "}
+            <a href="tel:+15716510337" className="text-primary hover:underline font-bold">
+              Call us — we'll guide you.
+            </a>
+          </p>
+          <Link
+            href="/quote"
+            id="platform-quote-btn"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-xs px-6 py-3 transition-all"
+          >
+            Get a Free Quote <ArrowRight size={14} />
           </Link>
         </div>
       </Container>
-    </Section>
+    </section>
   );
 };
 

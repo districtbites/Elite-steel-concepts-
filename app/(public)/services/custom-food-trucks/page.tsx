@@ -21,7 +21,9 @@ import {
   HardHat,
   Smartphone
 } from "lucide-react";
-import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
+import { getSEO, getPageSEO, getFAQs, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
+import { autoLinkMarkdown } from "@/lib/internalLinks";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
@@ -35,12 +37,21 @@ export async function generateMetadata(): Promise<Metadata> {
     title: pageSeo?.title || `Elite Custom Food Trucks | Fabrication & Design`,
     description: pageSeo?.description || "High-performance custom food truck fabrication. From step vans to heavy-duty mobile kitchens, engineered for speed and compliance.",
     keywords: pageSeo?.keywords || seo.keywords,
+    alternates: { canonical: '/services/custom-food-trucks' },
   };
 }
 
 export default async function CustomFoodTrucksPage() {
-  const faqs = await getFAQs();
+  const [faqs, rules, linkSettings] = await Promise.all([
+    getFAQs(),
+    getInternalLinkRules(),
+    getInternalLinkSettings(),
+  ]);
+  const activeRules = rules.filter(r => r.enabled !== false);
   const truckFaqs = faqs.filter(f => f.category === "Fabrication" || f.category === "Process").slice(0, 5);
+
+  const introDescRaw = "A custom food truck from Elite Steel Concepts is a precision tool. We focus on commercial kitchen design, ergonomic safety, and health code compliance. Every weld and every corner is designed to withstand the rigors of 24/7 commercial operation. You can also explore our custom concession trailers or request a custom quote.";
+  const introDescLinked = autoLinkMarkdown(introDescRaw, activeRules, linkSettings).updatedContent;
 
   // Dynamic Assets from Media Manager
   const philosophyHero = await getMediaAsset("custom-food-trucks", "philosophy_hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1200");
@@ -113,7 +124,7 @@ export default async function CustomFoodTrucksPage() {
                 Redefining The <br/> <span className="text-primary italic">Mobile Kitchen</span>
               </h2>
               <p className="text-gray-500 text-xl font-light leading-relaxed">
-                A food truck from Elite Steel Concepts is a precision tool. We focus on **Line Speed**, **Ergonomic Safety**, and **Compliance Longevity**. Every weld and every corner is designed to withstand the rigors of 24/7 commercial operation.
+                <AutoLinkedText text={introDescLinked} />
               </p>
               <div className="flex flex-wrap gap-4 pt-4">
                  <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl text-[10px] font-black uppercase text-secondary border border-gray-100">

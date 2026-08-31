@@ -2,23 +2,21 @@
 
 import React, { useState } from "react";
 import { 
-    Eye, 
-    Mail, 
-    Phone, 
-    Calendar, 
-    Clock, 
-    DollarSign, 
-    Truck, 
-    MapPin, 
-    Briefcase, 
-    FileText, 
-    Search, 
-    Filter, 
-    Trash2, 
-    CheckCircle2, 
-    User,
-    ArrowUpRight,
-    Settings
+  Eye, 
+  Mail, 
+  Phone, 
+  Calendar, 
+  Clock, 
+  DollarSign, 
+  Truck, 
+  MapPin, 
+  Briefcase, 
+  FileText, 
+  Search, 
+  Trash2, 
+  User,
+  Settings,
+  MoreVertical
 } from "lucide-react";
 import { Quote } from "@/lib/db";
 import Modal from "@/components/ui/Modal";
@@ -28,163 +26,148 @@ interface QuoteListProps {
   initialQuotes: Quote[];
 }
 
-const QuoteList = ({ initialQuotes }: QuoteListProps) => {
+const STAGES: Quote["status"][] = [
+  "New", 
+  "Contacted", 
+  "Designing", 
+  "Quoted", 
+  "In Production", 
+  "Delivered", 
+  "Closed"
+];
+
+export default function QuoteList({ initialQuotes }: QuoteListProps) {
+  const [quotes, setQuotes] = useState<Quote[]>(initialQuotes);
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState<string>("All");
-  const [filterType, setFilterType] = useState<string>("All");
+  const [draggedQuoteId, setDraggedQuoteId] = useState<string | null>(null);
 
-  const filteredQuotes = initialQuotes.filter(quote => {
-    const matchesSearch = 
-        quote.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        quote.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        quote.phone.includes(searchTerm);
-    
-    const matchesStatus = filterStatus === "All" || quote.status === filterStatus;
-    const matchesType = filterType === "All" || quote.projectType === filterType;
-
-    return matchesSearch && matchesStatus && matchesType;
+  const filteredQuotes = quotes.filter(quote => {
+    return quote.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+           quote.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+           quote.phone.includes(searchTerm);
   });
 
   const handleStatusUpdate = async (id: string, newStatus: Quote["status"]) => {
-    await updateQuoteStatus(id, newStatus);
+    // Optimistic update
+    setQuotes(prev => prev.map(q => q.id === id ? { ...q, status: newStatus } : q));
     if (selectedQuote && selectedQuote.id === id) {
-        setSelectedQuote({ ...selectedQuote, status: newStatus });
+      setSelectedQuote({ ...selectedQuote, status: newStatus });
     }
+    // Server update
+    await updateQuoteStatus(id, newStatus);
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to remove this request?")) {
-        await removeQuote(id);
-        setSelectedQuote(null);
+      setQuotes(prev => prev.filter(q => q.id !== id));
+      await removeQuote(id);
+      setSelectedQuote(null);
     }
   };
 
-  const projectTypes = Array.from(new Set(initialQuotes.map(q => q.projectType)));
+  // Drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedQuoteId(id);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = async (e: React.DragEvent, status: Quote["status"]) => {
+    e.preventDefault();
+    if (draggedQuoteId) {
+      await handleStatusUpdate(draggedQuoteId, status);
+      setDraggedQuoteId(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
-      {/* Search & Filter Bar */}
-      <div className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-96">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input 
-                  type="text" 
-                  placeholder="Search clients, emails, or phones..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full bg-gray-50 border-0 pl-12 pr-4 py-3.5 rounded-2xl outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium text-sm"
-              />
-          </div>
-          <div className="flex gap-4 w-full md:w-auto">
-              <div className="flex items-center gap-2 bg-gray-50 px-4 rounded-2xl border border-transparent focus-within:border-primary/20">
-                  <Filter size={14} className="text-gray-400" />
-                  <select 
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className="bg-transparent border-0 py-3 text-xs font-black uppercase tracking-widest outline-none text-secondary"
-                  >
-                      <option value="All">All Status</option>
-                      <option value="New">New</option>
-                      <option value="Contacted">Contacted</option>
-                      <option value="Closed">Closed</option>
-                  </select>
-              </div>
-              <div className="flex items-center gap-2 bg-gray-50 px-4 rounded-2xl border border-transparent focus-within:border-primary/20">
-                  <Briefcase size={14} className="text-gray-400" />
-                  <select 
-                    value={filterType}
-                    onChange={(e) => setFilterType(e.target.value)}
-                    className="bg-transparent border-0 py-3 text-xs font-black uppercase tracking-widest outline-none text-secondary"
-                  >
-                      <option value="All">All Types</option>
-                      {projectTypes.map(type => (
-                          <option key={type} value={type}>{type}</option>
-                      ))}
-                  </select>
-              </div>
-          </div>
+      {/* Search Bar */}
+      <div className="bg-admin-surface p-6 border border-admin-border shadow-sm flex items-center justify-between">
+        <div className="relative w-full max-w-md">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-admin-muted" size={18} />
+          <input 
+            type="text" 
+            placeholder="Search leads, emails, or phones..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-admin-bg border-0 pl-12 pr-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium text-sm text-admin-text"
+          />
+        </div>
       </div>
 
-      {/* Table Section */}
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden min-h-[400px]">
-        <div className="overflow-x-auto">
-            <table className="w-full text-left">
-                <thead className="bg-gray-50/50 border-b border-gray-100">
-                    <tr>
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Client Profile</th>
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Project Specs</th>
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Lifecycle</th>
-                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                    {filteredQuotes.map((quote) => (
-                        <tr key={quote.id} className="group hover:bg-gray-50/30 transition-all">
-                            <td className="px-8 py-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-10 h-10 rounded-2xl bg-secondary flex items-center justify-center text-primary font-black uppercase">
-                                        {quote.name.charAt(0)}
-                                    </div>
-                                    <div>
-                                        <div className="font-black text-secondary uppercase tracking-tight">{quote.name}</div>
-                                        <div className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">{quote.email}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td className="px-8 py-6">
-                                <span className="px-3 py-1 bg-gray-100 text-secondary text-[10px] font-black uppercase tracking-widest rounded-lg block w-max mb-2">
-                                    {quote.projectType}
-                                </span>
-                                <div className="flex items-center gap-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                                    <span className="flex items-center gap-1"><DollarSign size={10} className="text-primary" /> {quote.budget || "TBD"}</span>
-                                    <span className="flex items-center gap-1"><Clock size={10} className="text-primary" /> {quote.timeline}</span>
-                                </div>
-                            </td>
-                            <td className="px-8 py-6">
-                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${
-                                    quote.status === "New" ? "bg-primary/10 text-primary" : 
-                                    quote.status === "Contacted" ? "bg-blue-50 text-blue-500" : 
-                                    "bg-gray-100 text-gray-400"
-                                }`}>
-                                    <div className={`w-1.5 h-1.5 rounded-full ${
-                                        quote.status === "New" ? "bg-primary" : 
-                                        quote.status === "Contacted" ? "bg-blue-500" : 
-                                        "bg-gray-400"
-                                    }`} />
-                                    {quote.status}
-                                </div>
-                                <div className="text-[10px] text-gray-400 font-medium mt-1 uppercase">{quote.date}</div>
-                            </td>
-                            <td className="px-8 py-6 text-right">
-                                <div className="flex items-center justify-end gap-2">
-                                    <button 
-                                        onClick={() => setSelectedQuote(quote)}
-                                        className="p-2.5 bg-gray-50 text-secondary rounded-xl hover:bg-secondary hover:text-white transition-all shadow-sm group-hover:shadow-md"
-                                    >
-                                        <Eye size={16} />
-                                    </button>
-                                    <button 
-                                        onClick={() => handleDelete(quote.id)}
-                                        className="p-2.5 bg-gray-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm group-hover:shadow-md"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-        {filteredQuotes.length === 0 && (
-            <div className="p-20 text-center space-y-4">
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-300">
-                    <Search size={32} />
-                </div>
-                <p className="text-gray-400 font-black uppercase tracking-widest text-xs">No project inquiries match your search.</p>
+      {/* Kanban Board */}
+      <div className="flex gap-6 overflow-x-auto pb-8 min-h-[600px]">
+        {STAGES.map(stage => {
+          const stageQuotes = filteredQuotes.filter(q => q.status === stage);
+          return (
+            <div 
+              key={stage} 
+              className="flex-shrink-0 w-[320px] flex flex-col bg-admin-surface border border-admin-border"
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, stage)}
+            >
+              {/* Column Header */}
+              <div className="p-4 border-b border-admin-border bg-admin-bg/50 flex justify-between items-center sticky top-0">
+                <h3 className="text-xs font-black uppercase tracking-widest text-admin-text">{stage}</h3>
+                <span className="bg-admin-surface border border-admin-border px-2 py-0.5 text-[10px] font-bold text-admin-muted">
+                  {stageQuotes.length}
+                </span>
+              </div>
+
+              {/* Cards Container */}
+              <div className="flex-1 p-3 space-y-3 overflow-y-auto min-h-[150px]">
+                {stageQuotes.map(quote => (
+                  <div
+                    key={quote.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, quote.id)}
+                    className="bg-admin-bg border border-admin-border p-4 shadow-sm cursor-grab active:cursor-grabbing hover:border-primary/40 transition-colors group relative"
+                  >
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <div className="font-black text-admin-text uppercase tracking-tight text-sm">{quote.name}</div>
+                        <div className="text-[10px] text-admin-muted font-bold tracking-widest mt-0.5 truncate max-w-[200px]">{quote.email}</div>
+                      </div>
+                      <button 
+                        onClick={() => setSelectedQuote(quote)}
+                        className="text-admin-muted hover:text-primary transition-colors"
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+                    </div>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-admin-muted uppercase tracking-widest">
+                        <Truck size={12} className="text-primary" /> 
+                        <span className="truncate">{quote.projectType}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-admin-muted uppercase tracking-widest">
+                        <DollarSign size={12} className="text-primary" /> 
+                        <span>{quote.budget || "TBD"}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-admin-border/50">
+                      <div className="text-[9px] text-admin-muted font-medium uppercase">{quote.date}</div>
+                      <button 
+                        onClick={() => setSelectedQuote(quote)}
+                        className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline"
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-        )}
+          )
+        })}
       </div>
 
       {/* Advanced Details Modal */}
@@ -192,157 +175,162 @@ const QuoteList = ({ initialQuotes }: QuoteListProps) => {
         <Modal 
           isOpen={!!selectedQuote} 
           onClose={() => setSelectedQuote(null)}
-          title="Inquiry Intelligence"
+          title="Lead Intelligence"
         >
           <div className="space-y-10 pb-6">
             {/* Modal Header Actions */}
-            <div className="flex flex-wrap items-center justify-between border-b border-gray-100 pb-8 gap-6">
-                <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-3xl bg-secondary flex items-center justify-center text-primary text-2xl font-black uppercase">
-                        {selectedQuote.name.charAt(0)}
-                    </div>
-                    <div>
-                        <h2 className="text-2xl font-black uppercase text-secondary tracking-tighter leading-tight">{selectedQuote.name}</h2>
-                        <div className="flex items-center gap-3 mt-1">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 px-3 py-1 rounded-full">{selectedQuote.status}</span>
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Received {selectedQuote.date}</span>
-                        </div>
-                    </div>
+            <div className="flex flex-wrap items-center justify-between border-b border-admin-border pb-8 gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-admin-surface flex items-center justify-center text-primary text-2xl font-black uppercase">
+                  {selectedQuote.name.charAt(0)}
                 </div>
-                <div className="flex gap-2">
-                    <select 
-                        value={selectedQuote.status}
-                        onChange={(e) => handleStatusUpdate(selectedQuote.id, e.target.value as Quote["status"])}
-                        className="bg-secondary text-white px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border-0 outline-none hover:bg-primary hover:text-secondary transition-all cursor-pointer appearance-none"
-                    >
-                        <option value="New">Mark as New</option>
-                        <option value="Contacted">Mark as Contacted</option>
-                        <option value="Closed">Mark as Closed</option>
-                    </select>
+                <div>
+                  <h2 className="text-2xl font-black uppercase text-admin-text tracking-tighter leading-tight">{selectedQuote.name}</h2>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 px-3 py-1">{selectedQuote.status}</span>
+                    <span className="text-[10px] font-bold text-admin-muted uppercase tracking-widest">Received {selectedQuote.date}</span>
+                  </div>
                 </div>
+              </div>
+              <div className="flex gap-2 items-center">
+                <select 
+                  value={selectedQuote.status}
+                  onChange={(e) => handleStatusUpdate(selectedQuote.id, e.target.value as Quote["status"])}
+                  className="bg-admin-surface text-admin-text px-4 py-2.5 text-[10px] font-black uppercase tracking-widest border border-admin-border outline-none focus:border-primary transition-all cursor-pointer appearance-none"
+                >
+                  {STAGES.map(stage => (
+                    <option key={stage} value={stage}>Move to {stage}</option>
+                  ))}
+                </select>
+                <button 
+                  onClick={() => handleDelete(selectedQuote.id)}
+                  className="p-2.5 bg-admin-bg text-red-500 hover:bg-red-500 hover:text-admin-text transition-all border border-admin-border hover:border-red-500"
+                  title="Delete Lead"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {/* Contact Intel */}
-                <div className="space-y-6">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 flex items-center">
-                        <User size={12} className="mr-2" /> Contact Intel
-                    </h3>
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-primary/20 transition-all">
-                            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-primary">
-                                <Mail size={18} />
-                            </div>
-                            <div className="flex-1 overflow-hidden">
-                                <div className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Direct Email</div>
-                                <a href={`mailto:${selectedQuote.email}`} className="text-sm font-bold text-secondary block truncate hover:text-primary transition-colors">{selectedQuote.email}</a>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-primary/20 transition-all">
-                            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-primary">
-                                <Phone size={18} />
-                            </div>
-                            <div>
-                                <div className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Phone Line</div>
-                                <a href={`tel:${selectedQuote.phone}`} className="text-sm font-bold text-secondary block hover:text-primary transition-colors">{selectedQuote.phone}</a>
-                            </div>
-                        </div>
-                        {selectedQuote.company && (
-                            <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-transparent hover:border-primary/20 transition-all">
-                                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-primary">
-                                    <Briefcase size={18} />
-                                </div>
-                                <div>
-                                    <div className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Affiliation</div>
-                                    <span className="text-sm font-bold text-secondary uppercase tracking-tight">{selectedQuote.company}</span>
-                                </div>
-                            </div>
-                        )}
+              {/* Contact Intel */}
+              <div className="space-y-6">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-admin-muted flex items-center">
+                  <User size={12} className="mr-2" /> Contact Intel
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 bg-admin-bg border border-transparent hover:border-primary/20 transition-all">
+                    <div className="w-10 h-10 bg-admin-surface flex items-center justify-center shadow-sm text-primary">
+                      <Mail size={18} />
                     </div>
+                    <div className="flex-1 overflow-hidden">
+                      <div className="text-[9px] font-black uppercase text-admin-muted tracking-widest">Direct Email</div>
+                      <a href={`mailto:${selectedQuote.email}`} className="text-sm font-bold text-admin-text block truncate hover:text-primary transition-colors">{selectedQuote.email}</a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 p-4 bg-admin-bg border border-transparent hover:border-primary/20 transition-all">
+                    <div className="w-10 h-10 bg-admin-surface flex items-center justify-center shadow-sm text-primary">
+                      <Phone size={18} />
+                    </div>
+                    <div>
+                      <div className="text-[9px] font-black uppercase text-admin-muted tracking-widest">Phone Line</div>
+                      <a href={`tel:${selectedQuote.phone}`} className="text-sm font-bold text-admin-text block hover:text-primary transition-colors">{selectedQuote.phone}</a>
+                    </div>
+                  </div>
+                  {selectedQuote.company && (
+                    <div className="flex items-center gap-4 p-4 bg-admin-bg border border-transparent hover:border-primary/20 transition-all">
+                      <div className="w-10 h-10 bg-admin-surface flex items-center justify-center shadow-sm text-primary">
+                        <Briefcase size={18} />
+                      </div>
+                      <div>
+                        <div className="text-[9px] font-black uppercase text-admin-muted tracking-widest">Affiliation</div>
+                        <span className="text-sm font-bold text-admin-text uppercase tracking-tight">{selectedQuote.company}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
+              </div>
 
-                {/* Build Parameters */}
-                <div className="space-y-6">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 flex items-center">
-                        <Settings size={12} className="mr-2" /> Build Parameters
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="p-5 bg-secondary rounded-[2rem] text-white">
-                            <div className="text-primary mb-2"><Truck size={20} /></div>
-                            <div className="text-[9px] font-black uppercase opacity-50 tracking-widest">Architecture</div>
-                            <div className="text-sm font-black uppercase tracking-tight leading-tight mt-1">{selectedQuote.projectType}</div>
-                        </div>
-                        <div className="p-5 bg-white border border-gray-100 rounded-[2rem] shadow-sm">
-                            <div className="text-primary mb-2"><DollarSign size={20} /></div>
-                            <div className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Allocation</div>
-                            <div className="text-sm font-black text-secondary leading-tight mt-1">{selectedQuote.budget || "TBD"}</div>
-                        </div>
-                        <div className="p-5 bg-white border border-gray-100 rounded-[2rem] shadow-sm">
-                            <div className="text-primary mb-2"><Clock size={20} /></div>
-                            <div className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Deployment</div>
-                            <div className="text-sm font-black text-secondary leading-tight mt-1">{selectedQuote.timeline}</div>
-                        </div>
-                        <div className="p-5 bg-white border border-gray-100 rounded-[2rem] shadow-sm">
-                            <div className="text-primary mb-2"><MapPin size={20} /></div>
-                            <div className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Sourcing</div>
-                            <div className="text-xs font-black text-secondary leading-tight mt-1 uppercase">{selectedQuote.sourcing}</div>
-                        </div>
-                    </div>
+              {/* Build Parameters */}
+              <div className="space-y-6">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-admin-muted flex items-center">
+                  <Settings size={12} className="mr-2" /> Build Parameters
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-5 bg-admin-surface border border-admin-border text-admin-text">
+                    <div className="text-primary mb-2"><Truck size={20} /></div>
+                    <div className="text-[9px] font-black uppercase opacity-50 tracking-widest">Architecture</div>
+                    <div className="text-sm font-black uppercase tracking-tight leading-tight mt-1">{selectedQuote.projectType}</div>
+                  </div>
+                  <div className="p-5 bg-admin-surface border border-admin-border shadow-sm">
+                    <div className="text-primary mb-2"><DollarSign size={20} /></div>
+                    <div className="text-[9px] font-black uppercase text-admin-muted tracking-widest">Allocation</div>
+                    <div className="text-sm font-black text-admin-text leading-tight mt-1">{selectedQuote.budget || "TBD"}</div>
+                  </div>
+                  <div className="p-5 bg-admin-surface border border-admin-border shadow-sm">
+                    <div className="text-primary mb-2"><Clock size={20} /></div>
+                    <div className="text-[9px] font-black uppercase text-admin-muted tracking-widest">Deployment</div>
+                    <div className="text-sm font-black text-admin-text leading-tight mt-1">{selectedQuote.timeline}</div>
+                  </div>
+                  <div className="p-5 bg-admin-surface border border-admin-border shadow-sm">
+                    <div className="text-primary mb-2"><MapPin size={20} /></div>
+                    <div className="text-[9px] font-black uppercase text-admin-muted tracking-widest">Sourcing</div>
+                    <div className="text-xs font-black text-admin-text leading-tight mt-1 uppercase">{selectedQuote.sourcing}</div>
+                  </div>
                 </div>
+              </div>
             </div>
 
             {/* Inbound Message */}
             <div className="space-y-6">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 flex items-center">
-                    <FileText size={14} className="mr-2" /> Vision & Objectives
-                </h3>
-                <div className="bg-gray-50 p-8 rounded-[2.5rem] border border-gray-100 italic text-gray-600 leading-loose">
-                    "{selectedQuote.message}"
-                </div>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-admin-muted flex items-center">
+                <FileText size={14} className="mr-2" /> Vision & Objectives
+              </h3>
+              <div className="bg-admin-bg p-8 border border-admin-border italic text-admin-muted leading-loose">
+                "{selectedQuote.message}"
+              </div>
             </div>
 
             {/* Technical Add-ons */}
             {(selectedQuote.dimensions || selectedQuote.equipment || selectedQuote.menuType || (selectedQuote.services && selectedQuote.services.length > 0)) && (
-                <div className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {selectedQuote.menuType && (
-                        <div>
-                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest block mb-2">Gastronomy Type</span>
-                            <span className="px-4 py-2 bg-secondary text-primary text-[10px] font-black uppercase rounded-lg tracking-widest">{selectedQuote.menuType}</span>
-                        </div>
-                    )}
-                    {selectedQuote.dimensions && (
-                        <div>
-                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest block mb-1">Architecture Scale</span>
-                            <span className="text-sm font-bold text-secondary uppercase tracking-tighter">{selectedQuote.dimensions}</span>
-                        </div>
-                    )}
-                    {selectedQuote.services && selectedQuote.services.length > 0 && (
-                        <div className="md:col-span-1">
-                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest block mb-3">Service Inclusions</span>
-                            <div className="flex flex-wrap gap-2">
-                                {selectedQuote.services.map(s => (
-                                    <span key={s} className="px-3 py-1.5 bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase rounded-md tracking-widest">
-                                        {s}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                    {selectedQuote.equipment && (
-                        <div className="md:col-span-3 pt-4">
-                            <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest block mb-3">Inventory Requirements</span>
-                            <div className="p-6 bg-white border-2 border-dashed border-gray-100 rounded-3xl text-sm font-bold text-gray-500 uppercase tracking-tight leading-relaxed">
-                                {selectedQuote.equipment}
-                            </div>
-                        </div>
-                    )}
-                </div>
+              <div className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-admin-border">
+                {selectedQuote.menuType && (
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-admin-muted tracking-widest block mb-2">Gastronomy Type</span>
+                    <span className="px-4 py-2 bg-admin-surface border border-admin-border text-primary text-[10px] font-black uppercase tracking-widest">{selectedQuote.menuType}</span>
+                  </div>
+                )}
+                {selectedQuote.dimensions && (
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-admin-muted tracking-widest block mb-1">Architecture Scale</span>
+                    <span className="text-sm font-bold text-admin-text uppercase tracking-tighter">{selectedQuote.dimensions}</span>
+                  </div>
+                )}
+                {selectedQuote.services && selectedQuote.services.length > 0 && (
+                  <div className="md:col-span-1">
+                    <span className="text-[10px] font-black uppercase text-admin-muted tracking-widest block mb-3">Service Inclusions</span>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedQuote.services.map(s => (
+                        <span key={s} className="px-3 py-1.5 bg-primary/5 border border-primary/20 text-primary text-[9px] font-black uppercase tracking-widest">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {selectedQuote.equipment && (
+                  <div className="md:col-span-3 pt-4">
+                    <span className="text-[10px] font-black uppercase text-admin-muted tracking-widest block mb-3">Inventory Requirements</span>
+                    <div className="p-6 bg-admin-surface border-2 border-dashed border-admin-border text-sm font-bold text-admin-muted uppercase tracking-tight leading-relaxed">
+                      {selectedQuote.equipment}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </Modal>
       )}
     </div>
   );
-};
-
-export default QuoteList;
+}

@@ -1,13 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { MoveRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "outline" | "white";
   size?: "sm" | "md" | "lg";
   href?: string;
   icon?: boolean;
-  pill?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -17,27 +16,26 @@ const Button: React.FC<ButtonProps> = ({
   className = "",
   href,
   icon = false,
-  pill = false,
   ...props
 }) => {
   const baseStyles =
-    `inline-flex items-center justify-center font-bold uppercase tracking-wider transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ${pill ? 'rounded-full' : 'rounded-sm'}`;
+    "inline-flex items-center justify-center font-black uppercase tracking-[0.2em] transition-colors focus:outline-none disabled:opacity-50 disabled:pointer-events-none border border-transparent";
 
   const variants = {
     primary:
-      "bg-primary hover:bg-orange-600 text-white focus:ring-primary shadow-lg hover:shadow-xl hover:-translate-y-0.5",
+      "bg-primary text-black border-primary hover:bg-black hover:text-primary hover:border-black",
     secondary:
-      "bg-secondary hover:bg-gray-900 text-white focus:ring-secondary shadow-md hover:shadow-lg",
+      "bg-black text-white border-black hover:bg-primary hover:text-black hover:border-primary",
     outline:
-      "border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary",
+      "bg-transparent border-black text-black hover:bg-black hover:text-white",
     white:
-      "bg-white text-secondary hover:bg-gray-100 focus:ring-white shadow-md hover:shadow-lg",
+      "bg-white text-black border-white hover:bg-black hover:text-white hover:border-black",
   };
 
   const sizes = {
-    sm: "text-xs px-4 py-2",
-    md: "text-sm px-6 py-3",
-    lg: "text-base px-8 py-4",
+    sm: "text-[10px] px-6 py-3",
+    md: "text-[10px] px-8 py-4",
+    lg: "text-xs px-12 py-5",
   };
 
   const classes = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;
@@ -45,7 +43,7 @@ const Button: React.FC<ButtonProps> = ({
   const content = (
     <>
       {children}
-      {icon && <MoveRight className="ml-2 w-4 h-4" />}
+      {icon && <ArrowRight className="ml-3 w-4 h-4" />}
     </>
   );
 

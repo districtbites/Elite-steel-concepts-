@@ -18,7 +18,7 @@ const Footer = ({ settings }: FooterProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}
           <div className="space-y-6">
-            <div className="relative w-48 h-12">
+            <div className="relative w-48 h-16 md:w-56 md:h-20">
                  <Image
                   src={settings.logoUrl || "/logo.png"}
                   alt="Elite Steel Concepts"
@@ -65,9 +65,12 @@ const Footer = ({ settings }: FooterProps) => {
               {[
                 { name: "Home", href: "/" },
                 { name: "About Us", href: "/about" },
+                { name: "Services", href: "/services" },
+                { name: "Locations Directory", href: "/locations" },
                 { name: "Process", href: "/process" },
                 { name: "Portfolio", href: "/portfolio" },
                 { name: "Testimonials", href: "/testimonials" },
+                { name: "Compliance", href: "/compliance" },
                 { name: "Blog", href: "/blog" }
               ].map((item) => (
                 <li key={item.name}>
@@ -84,15 +87,15 @@ const Footer = ({ settings }: FooterProps) => {
             <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">Services</h3>
              <ul className="space-y-3">
               {[
-                "Custom Food Trucks",
-                "Custom Food Trailers",
-                "Repairs & Upgrades",
-                "Design & Consultation",
-                "Fleet Expansion"
+                { name: "Custom Food Trucks", href: "/services/custom-food-trucks" },
+                { name: "Custom Food Trailers", href: "/services/custom-food-trailers" },
+                { name: "Repairs & Upgrades", href: "/services/repairs-and-upgrades" },
+                { name: "Design & Consultation", href: "/services/design-and-consultation" },
+                { name: "Fleet Expansion", href: "/services/fleet-expansion" }
               ].map((item) => (
-                <li key={item}>
-                  <Link href="/services" className="text-gray-400 hover:text-white transition-colors text-sm">
-                    {item}
+                <li key={item.name}>
+                  <Link href={item.href} className="text-gray-400 hover:text-white transition-colors text-sm">
+                    {item.name}
                   </Link>
                 </li>
               ))}
@@ -125,6 +128,7 @@ const Footer = ({ settings }: FooterProps) => {
             &copy; {new Date().getFullYear()} <a href="https://www.facebook.com/EliteSteelConcepts" className="text-white hover:text-primary transition-colors">Elite Steel Concepts</a>. All rights reserved.
           </p>
           <div className="flex space-x-6">
+            <Link href="/locations" className="text-gray-500 hover:text-white text-xs">Locations</Link>
             <Link href="/privacy" className="text-gray-500 hover:text-white text-xs">Privacy Policy</Link>
             <Link href="/terms" className="text-gray-500 hover:text-white text-xs">Terms of Service</Link>
             <Link href="/sitemap.xml" className="text-gray-500 hover:text-white text-xs">Sitemap</Link>

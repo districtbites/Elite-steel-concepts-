@@ -1,5 +1,15 @@
 import fs from 'fs/promises';
 import path from 'path';
+import {
+    InternalLinkRule,
+    InternalLinkSettings,
+    DEFAULT_INTERNAL_LINK_RULES,
+    DEFAULT_INTERNAL_LINK_SETTINGS
+} from './internalLinks';
+import { isTursoConfigured, tursoGet, tursoSet, tursoGetAllKV, tursoBatchSet } from './turso';
+import { autoInitializeTursoIfEmpty } from './tursoSync';
+
+export type { InternalLinkRule, InternalLinkSettings };
 
 const DB_PATH = path.join(process.cwd(), 'data/db.json');
 
@@ -17,6 +27,7 @@ export interface BlogPost {
     slug: string;
     status: "Published" | "Draft";
     content?: string;
+    metaDescription?: string;
 }
 
 export interface Quote {
@@ -40,7 +51,7 @@ export interface Quote {
     services?: string[]; // e.g., ["Design", "Permits", "Fabrication"]
 
     date: string;
-    status: "New" | "Contacted" | "Closed";
+    status: "New" | "Contacted" | "Designing" | "Quoted" | "In Production" | "Delivered" | "Closed";
 }
 
 export interface Contact {
@@ -95,6 +106,15 @@ export interface GlobalSettings {
 
     // System Status
     maintenanceMode?: boolean;
+
+    // SMTP / Email Configuration
+    smtpHost?: string;       // e.g. smtp.gmail.com
+    smtpPort?: number;       // e.g. 587
+    smtpUser?: string;       // SMTP username / Gmail address
+    smtpPassword?: string;   // SMTP password / App password
+    smtpFrom?: string;       // "From" display name + address
+    notificationEmail?: string; // Where to send quote/contact alerts
+    smtpSecure?: boolean;    // true = TLS (port 465), false = STARTTLS
 }
 
 export interface FAQ {
@@ -151,6 +171,38 @@ export interface Newsletter {
     date: string;
 }
 
+export interface LocationFAQ {
+    question: string;
+    answer: string;
+}
+
+export interface LocationSection {
+    heading: string;
+    content: string;
+}
+
+export interface LocationEntry {
+    id: string;
+    slug: string;
+    city: string;
+    state: string;
+    h1: string;
+    intro: string;
+    ctaText: string;
+    distance: string;
+    whyEsc: string;
+    localDetails: string[];
+    faq: LocationFAQ[];
+    sections: {
+        design: LocationSection;
+        fabrication: LocationSection;
+        delivery: LocationSection;
+    };
+    titleTag: string;
+    metaDescription: string;
+    published: boolean;
+}
+
 export interface Project {
     id: string;
     title: string;
@@ -182,6 +234,18 @@ export interface MediaAsset {
     createdAt: string;
 }
 
+export type AdminRole = "super_admin" | "admin" | "manager" | "seo";
+
+export interface User {
+    id: string;
+    name: string;
+    email: string;
+    password: string; // Storing plain text for this mock DB, use hashing in prod
+    role: AdminRole;
+    createdAt: string;
+    forcePasswordChange?: boolean;
+}
+
 interface DatabaseSchema {
     posts: BlogPost[];
     quotes: Quote[];
@@ -193,12 +257,16 @@ interface DatabaseSchema {
     faqs?: FAQ[];
     newsletters?: Newsletter[];
     assets?: MediaAsset[];
+    users?: User[];
+    locations?: LocationEntry[];
+    internalLinkRules?: InternalLinkRule[];
+    internalLinkSettings?: InternalLinkSettings;
 }
 
 const DEFAULT_SETTINGS: GlobalSettings = {
-    email: "esteelconcepts@gmail.com",
+    email: "esteelquotes@gmail.com",
     phone: "(571) 651-0337",
-    address: "8303 Rugby Rd, Manassas VA",
+    address: "11200 Bertalice Ct, Manassas, VA 20110",
     instagram: "https://www.instagram.com/elitesteelconcepts/",
     facebook: "https://www.facebook.com/EliteSteelConcepts",
     twitter: "https://twitter.com",
@@ -207,7 +275,15 @@ const DEFAULT_SETTINGS: GlobalSettings = {
     businessHours: "Mon-Fri: 9AM - 6PM | Sat: 10AM - 2PM | Sun: Closed",
     logoUrl: "/logo.png",
     googleMapsLink: "",
-    mapEmbedUrl: ""
+    mapEmbedUrl: "",
+    // SMTP defaults
+    smtpHost: "smtp.gmail.com",
+    smtpPort: 587,
+    smtpUser: "",
+    smtpPassword: "",
+    smtpFrom: "Elite Steel Concepts <esteelquotes@gmail.com>",
+    notificationEmail: "esteelquotes@gmail.com",
+    smtpSecure: false,
 };
 
 const PAGE_STRUCTURE: { [key: string]: { [key: string]: PageSection } } = {
@@ -255,12 +331,59 @@ const DEFAULT_SEO: SEOSettings = {
     pages: {}
 };
 
+// ─── High-Speed In-Memory Cache ───
+let memoryDbCache: DatabaseSchema | null = null;
+let lastCacheTime = 0;
+const CACHE_TTL_MS = 30 * 1000; // 30s cache TTL for instant sub-millisecond page loads
+
+export function invalidateDbCache() {
+    memoryDbCache = null;
+    lastCacheTime = 0;
+}
+
 // Helper to read DB
 async function readDb(): Promise<DatabaseSchema> {
+    const now = Date.now();
+    // 1. Return from memory cache if fresh (0ms response)
+    if (memoryDbCache && (now - lastCacheTime < CACHE_TTL_MS)) {
+        return memoryDbCache;
+    }
+
+    if (isTursoConfigured()) {
+        try {
+            // High-speed single query fetching all keys at once
+            const kvMap = await tursoGetAllKV();
+            if (Object.keys(kvMap).length > 0) {
+                const schema: DatabaseSchema = {
+                    posts: kvMap.posts || [],
+                    quotes: kvMap.quotes || [],
+                    contacts: kvMap.contacts || [],
+                    settings: kvMap.settings || DEFAULT_SETTINGS,
+                    seo: kvMap.seo || DEFAULT_SEO,
+                    testimonials: kvMap.testimonials || [],
+                    projects: kvMap.projects || [],
+                    faqs: kvMap.faqs || [],
+                    newsletters: kvMap.newsletters || [],
+                    assets: kvMap.assets || [],
+                    users: kvMap.users || [],
+                    locations: kvMap.locations || [],
+                    internalLinkRules: kvMap.internalLinkRules && kvMap.internalLinkRules.length > 0 ? kvMap.internalLinkRules : DEFAULT_INTERNAL_LINK_RULES,
+                    internalLinkSettings: kvMap.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS
+                };
+                memoryDbCache = schema;
+                lastCacheTime = now;
+                return schema;
+            }
+        } catch (tursoErr) {
+            console.error("Turso read error, falling back to local db.json:", tursoErr);
+        }
+    }
+
+    // Local JSON fallback
     try {
         const data = await fs.readFile(DB_PATH, 'utf-8');
         const parsed = JSON.parse(data);
-        return {
+        const schema: DatabaseSchema = {
             posts: parsed.posts || [],
             quotes: parsed.quotes || [],
             contacts: parsed.contacts || [],
@@ -270,8 +393,15 @@ async function readDb(): Promise<DatabaseSchema> {
             projects: parsed.projects || [],
             faqs: parsed.faqs || [],
             newsletters: parsed.newsletters || [],
-            assets: parsed.assets || []
+            assets: parsed.assets || [],
+            users: parsed.users || [],
+            locations: parsed.locations || [],
+            internalLinkRules: parsed.internalLinkRules && parsed.internalLinkRules.length > 0 ? parsed.internalLinkRules : DEFAULT_INTERNAL_LINK_RULES,
+            internalLinkSettings: parsed.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS
         };
+        memoryDbCache = schema;
+        lastCacheTime = now;
+        return schema;
     } catch (error) {
         return {
             posts: [],
@@ -283,14 +413,52 @@ async function readDb(): Promise<DatabaseSchema> {
             projects: [],
             faqs: [],
             newsletters: [],
-            assets: []
+            assets: [],
+            users: [],
+            locations: [],
+            internalLinkRules: DEFAULT_INTERNAL_LINK_RULES,
+            internalLinkSettings: DEFAULT_INTERNAL_LINK_SETTINGS
         };
     }
 }
 
-// Helper to write DB
+// Helper to write DB — always writes to BOTH Turso and local db.json in parallel
 async function writeDb(data: DatabaseSchema): Promise<void> {
-    await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    // Instantly update memory cache
+    memoryDbCache = data;
+    lastCacheTime = Date.now();
+
+    const tursoWrite = isTursoConfigured()
+        ? tursoBatchSet([
+              { key: 'posts', value: data.posts || [] },
+              { key: 'quotes', value: data.quotes || [] },
+              { key: 'contacts', value: data.contacts || [] },
+              { key: 'settings', value: data.settings || DEFAULT_SETTINGS },
+              { key: 'seo', value: data.seo || DEFAULT_SEO },
+              { key: 'testimonials', value: data.testimonials || [] },
+              { key: 'projects', value: data.projects || [] },
+              { key: 'faqs', value: data.faqs || [] },
+              { key: 'newsletters', value: data.newsletters || [] },
+              { key: 'assets', value: data.assets || [] },
+              { key: 'users', value: data.users || [] },
+              { key: 'locations', value: data.locations || [] },
+              { key: 'internalLinkRules', value: data.internalLinkRules || DEFAULT_INTERNAL_LINK_RULES },
+              { key: 'internalLinkSettings', value: data.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS },
+          ]).catch((err) => console.error('[DB] Turso write error:', err))
+        : Promise.resolve();
+
+    const fileWrite = (async () => {
+        try {
+            await fs.mkdir(path.dirname(DB_PATH), { recursive: true });
+            await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+        } catch (err) {
+            // Log but don't throw — filesystem may be read-only in some deploy targets
+            console.error('[DB] Local db.json write error:', err);
+        }
+    })();
+
+    // Run both in parallel — neither blocks the other
+    await Promise.all([tursoWrite, fileWrite]);
 }
 
 // --- BLOG POSTS ---
@@ -350,7 +518,8 @@ export async function createQuote(quote: Omit<Quote, 'id' | 'date' | 'status'>):
 
 export async function getQuotes(): Promise<Quote[]> {
     const db = await readDb();
-    return db.quotes || [];
+    const quotes = db.quotes || [];
+    return quotes.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export async function updateQuote(id: string, updates: Partial<Quote>): Promise<Quote | null> {
@@ -386,7 +555,8 @@ export async function createContact(contact: Omit<Contact, 'id' | 'date' | 'stat
 
 export async function getContacts(): Promise<Contact[]> {
     const db = await readDb();
-    return db.contacts || [];
+    const contacts = db.contacts || [];
+    return contacts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 export async function updateContact(id: string, updates: Partial<Contact>): Promise<Contact | null> {
@@ -636,5 +806,173 @@ export async function deleteAsset(id: string): Promise<void> {
     db.assets = db.assets?.filter((a) => a.id !== id) || [];
     await writeDb(db);
 }
+
+// --- USERS ---
+export async function getUsers(): Promise<User[]> {
+    const db = await readDb();
+    const users = db.users || [];
+    if (users.length === 0) {
+        // Seed default super admin
+        const superAdmin: User = {
+            id: "1",
+            name: "System Admin",
+            email: "admin@esc.com",
+            password: "Escadmin123@",
+            role: "super_admin",
+            createdAt: new Date().toISOString(),
+            forcePasswordChange: false
+        };
+        db.users = [superAdmin];
+        await writeDb(db);
+        return [superAdmin];
+    }
+    return users;
+}
+
+export async function getUserByEmail(email: string): Promise<User | undefined> {
+    const users = await getUsers();
+    return users.find(u => u.email.toLowerCase() === email.toLowerCase());
+}
+
+export async function createUser(user: Omit<User, 'id' | 'createdAt' | 'forcePasswordChange'>): Promise<User> {
+    const db = await readDb();
+    const newUser: User = {
+        ...user,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+        forcePasswordChange: true // Always force change for newly created accounts
+    };
+    if (!db.users) db.users = [];
+    db.users.push(newUser);
+    await writeDb(db);
+    return newUser;
+}
+
+export async function updateUser(id: string, updates: Partial<User>): Promise<User | null> {
+    const db = await readDb();
+    const index = db.users?.findIndex((u) => u.id === id) ?? -1;
+    if (index === -1) return null;
+
+    db.users![index] = { ...db.users![index], ...updates };
+    await writeDb(db);
+    return db.users![index];
+}
+
+export async function deleteUser(id: string): Promise<void> {
+    const db = await readDb();
+    db.users = db.users?.filter((u) => u.id !== id) || [];
+    await writeDb(db);
+}
+
+// --- LOCATIONS ---
+export async function getLocations(): Promise<LocationEntry[]> {
+    const db = await readDb();
+    return db.locations || [];
+}
+
+export async function getLocationBySlug(slug: string): Promise<LocationEntry | undefined> {
+    const db = await readDb();
+    return db.locations?.find((l) => l.slug === slug);
+}
+
+export async function createLocation(location: Omit<LocationEntry, 'id'>): Promise<LocationEntry> {
+    const db = await readDb();
+    const newLocation: LocationEntry = {
+        ...location,
+        id: Date.now().toString(),
+    };
+    if (!db.locations) db.locations = [];
+    db.locations.push(newLocation);
+    await writeDb(db);
+    return newLocation;
+}
+
+export async function updateLocation(id: string, updates: Partial<LocationEntry>): Promise<LocationEntry | null> {
+    const db = await readDb();
+    const index = db.locations?.findIndex((l) => l.id === id) ?? -1;
+    if (index === -1) return null;
+
+    db.locations![index] = { ...db.locations![index], ...updates };
+    await writeDb(db);
+    return db.locations![index];
+}
+
+export async function deleteLocation(id: string): Promise<void> {
+    const db = await readDb();
+    db.locations = db.locations?.filter((l) => l.id !== id) || [];
+    await writeDb(db);
+}
+
+// --- INTERNAL LINKING ---
+export async function getInternalLinkRules(): Promise<InternalLinkRule[]> {
+    const db = await readDb();
+    return db.internalLinkRules && db.internalLinkRules.length > 0
+        ? db.internalLinkRules
+        : DEFAULT_INTERNAL_LINK_RULES;
+}
+
+export async function getInternalLinkRuleById(id: string): Promise<InternalLinkRule | undefined> {
+    const rules = await getInternalLinkRules();
+    return rules.find(r => r.id === id);
+}
+
+export async function createInternalLinkRule(rule: Omit<InternalLinkRule, 'id' | 'createdAt'>): Promise<InternalLinkRule> {
+    const db = await readDb();
+    const newRule: InternalLinkRule = {
+        ...rule,
+        id: `rule-${Date.now()}`,
+        createdAt: new Date().toISOString()
+    };
+    if (!db.internalLinkRules || db.internalLinkRules.length === 0) {
+        db.internalLinkRules = [...DEFAULT_INTERNAL_LINK_RULES];
+    }
+    db.internalLinkRules.unshift(newRule);
+    await writeDb(db);
+    return newRule;
+}
+
+export async function updateInternalLinkRule(id: string, updates: Partial<InternalLinkRule>): Promise<InternalLinkRule | null> {
+    const db = await readDb();
+    if (!db.internalLinkRules || db.internalLinkRules.length === 0) {
+        db.internalLinkRules = [...DEFAULT_INTERNAL_LINK_RULES];
+    }
+    const index = db.internalLinkRules.findIndex(r => r.id === id);
+    if (index === -1) return null;
+    db.internalLinkRules[index] = { ...db.internalLinkRules[index], ...updates };
+    await writeDb(db);
+    return db.internalLinkRules[index];
+}
+
+export async function deleteInternalLinkRule(id: string): Promise<void> {
+    const db = await readDb();
+    if (!db.internalLinkRules || db.internalLinkRules.length === 0) {
+        db.internalLinkRules = [...DEFAULT_INTERNAL_LINK_RULES];
+    }
+    db.internalLinkRules = db.internalLinkRules.filter(r => r.id !== id);
+    await writeDb(db);
+}
+
+export async function resetInternalLinkRules(): Promise<InternalLinkRule[]> {
+    const db = await readDb();
+    db.internalLinkRules = [...DEFAULT_INTERNAL_LINK_RULES];
+    await writeDb(db);
+    return db.internalLinkRules;
+}
+
+export async function getInternalLinkSettings(): Promise<InternalLinkSettings> {
+    const db = await readDb();
+    return db.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS;
+}
+
+export async function updateInternalLinkSettings(updates: Partial<InternalLinkSettings>): Promise<InternalLinkSettings> {
+    const db = await readDb();
+    db.internalLinkSettings = {
+        ...(db.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS),
+        ...updates
+    };
+    await writeDb(db);
+    return db.internalLinkSettings;
+}
+
 
 

@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
       site: seo.twitterHandle,
     },
     alternates: {
-      canonical: seo.canonicalUrl,
+      canonical: '/',
     }
   };
 }
@@ -39,8 +39,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${montserrat.variable} antialiased font-sans text-foreground bg-background flex flex-col min-h-screen`}
       >
         <Analytics />

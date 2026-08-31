@@ -1,7 +1,8 @@
 "use server";
 
-import { createContact } from "@/lib/db";
+import { createContact, getSettings } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { sendContactNotification } from "@/lib/mailer";
 
 export async function submitContactForm(formData: FormData) {
     const name = formData.get("name") as string;
@@ -13,12 +14,20 @@ export async function submitContactForm(formData: FormData) {
         return { error: "Missing required fields" };
     }
 
-    await createContact({
+    const newContact = await createContact({
         name,
         email,
         phone,
         message
     });
+
+    // Send email notification (non-blocking — errors won't fail the request)
+    try {
+        const settings = await getSettings();
+        await sendContactNotification(settings, newContact);
+    } catch (err) {
+        console.error("[Contact] Email notification failed:", err);
+    }
 
     revalidatePath("/admin");
     revalidatePath("/admin/contacts");
