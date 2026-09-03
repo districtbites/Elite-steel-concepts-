@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!project) return { title: "Project Not Found" };
   return {
     title: `${project.title} | Portfolio | Elite Steel Concepts`,
-    description: project.description || `Custom food truck build: ${project.title}. See the full build details from Elite Steel Concepts — 12+ years, 350+ builds.`,
+    description: project.description || `Custom food truck build: ${project.title}. See the full build details from Elite Steel Concepts — 14+ years, 350+ builds.`,
     alternates: {
       canonical: `/portfolio/${slug}`,
     },

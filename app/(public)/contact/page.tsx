@@ -108,6 +108,23 @@ export default async function ContactPage() {
                     </div>
                   </div>
                 </div>
+
+                {settings.businessHours && (
+                  <div className="bg-[#0a0a0a] p-8 border border-[#1a1a1a] group hover:border-primary transition-colors relative overflow-hidden">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top" />
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                      <div className="bg-[#1a1a1a] p-4 text-primary shrink-0">
+                        <Clock size={24} />
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-1">Business Hours</p>
+                        <p className="font-bold text-white text-sm md:text-base leading-tight uppercase tracking-widest">
+                          {settings.businessHours}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Social Channels */}

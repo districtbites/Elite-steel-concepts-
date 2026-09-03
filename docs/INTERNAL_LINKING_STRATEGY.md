@@ -113,7 +113,7 @@ Every internal link must point to an intentional destination within this 4-tier 
 - **DMV Compliance Hub (`/compliance`)**: Health codes, fire marshals, NSF standards, DC/MD/VA regulations.
 - **Build Process (`/process`)**: 6-stage engineering roadmap from CAD design to keys handover.
 - **Portfolio Showcase (`/portfolio`)**: Completed builds and project case studies (`/portfolio/ironclad-smoker`, `/portfolio/dough-and-fire`, `/portfolio/copper-espresso`, `/portfolio/volt-burgers`, `/portfolio/neon-noodle`, `/portfolio/baja-coastal`).
-- **About Us (`/about`)**: Company history, Manassas facility, 12+ years of experience, 350+ trucks built.
+- **About Us (`/about`)**: Company history, Manassas facility, 14+ years of experience, 350+ trucks built.
 - **Testimonials (`/testimonials`)**: Verified client reviews and operator success stories.
 
 ### Tier 4: Regional & Geo Target Pages
@@ -308,7 +308,7 @@ Silo 7: DMV & Regional Market Guides
 | `custom-food-truck-builder-in-maryland-2026-what-maryland-entrepreneurs-need-to-know-before-starting` | `/locations/baltimore-md` | `Maryland custom food truck builders` | *"We design and deliver turnkey mobile kitchens for [Maryland custom food truck builders](/locations/baltimore-md) across Baltimore and Montgomery County."* |
 | | `/compliance` | `Maryland mobile food compliance codes` | *"Maryland requires strict grease trap and fire standards; review our [Maryland mobile food compliance codes](/compliance)."* |
 | `custom-food-truck-builders-in-virginia-how-to-choose-the-right-one-in-2026` | `/` | `Elite Steel Concepts in Manassas, VA` | *"Tour our fabrication facility at [Elite Steel Concepts in Manassas, VA](/) to inspect active builds."* |
-| | `/about` | `12+ years of custom fabrication experience` | *"Choose a team with [12+ years of custom fabrication experience](/about) and 350+ completed builds."* |
+| | `/about` | `14+ years of custom fabrication experience` | *"Choose a team with [14+ years of custom fabrication experience](/about) and 350+ completed builds."* |
 
 ---
 

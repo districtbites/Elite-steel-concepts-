@@ -29,7 +29,7 @@
 ## 1. Executive Summary & Non-Technical Overview
 
 ### 1.1 Company Overview and Website Purpose
-Elite Steel Concepts (ESC), based in Manassas Park, Virginia, is an industry-leading manufacturer and custom fabricator of commercial food trucks, mobile kitchens, food trailers, and specialized concession vehicles. With over 12 years of craftsmanship and 350+ completed builds operating across 48 states, the company delivers custom-engineered, 100% health-code and fire-safety compliant mobile units.
+Elite Steel Concepts (ESC), based in Manassas, Virginia, is an industry-leading manufacturer and custom fabricator of commercial food trucks, mobile kitchens, food trailers, and specialized concession vehicles. With over 14 years of craftsmanship and 350+ completed builds operating across 48 states, the company delivers custom-engineered, 100% health-code and fire-safety compliant mobile units.
 
 The primary website ([esteelconcepts.com](https://www.esteelconcepts.com)) is the core commercial engine and digital command center for the business. It is designed to accomplish four primary business objectives:
 1. **High-Intent Lead Generation:** Capture detailed, qualified build inquiries from prospective food truck entrepreneurs, executive chefs, and commercial fleet managers through a custom-built interactive Quote Builder.
@@ -99,7 +99,7 @@ esc-new-website/
 │   │       ├── login/                      # Staff Authentication Gateway
 │   │       └── ThemeProvider.tsx           # High-Contrast Admin Theme Context
 │   ├── (public)/                           # Public-Facing Website Route Group
-│   │   ├── about/                          # Company Story, Facility, 12+ Year Heritage
+│   │   ├── about/                          # Company Story, Facility, 14+ Year Heritage
 │   │   ├── blog/                           # Master Blog Index & Dynamic [slug] Articles
 │   │   ├── compliance/                     # Health Codes, DMV Regulations & Fire Safety
 │   │   ├── contact/                        # Direct Consultation & Workshop Contact Form
@@ -423,7 +423,7 @@ pm2 restart esc-production
 #### 2. General Contact Inquiry Workflow
 * **Trigger:** Customer submits the consultation form on `/contact`.
 * **Internal Dispatch:** Transmits the message, contact name, phone, and inquiry details to staff.
-* **Customer Dispatch:** Acknowledges receipt with company phone numbers, shop address in Manassas Park, VA, and estimated response timeframe.
+* **Customer Dispatch:** Acknowledges receipt with company phone numbers, shop address in Manassas, VA, and estimated response timeframe.
 
 #### 3. Administrative SMTP Diagnostic Tool
 Staff can test email connectivity and verify authentication directly from the Admin Settings dashboard (`/admin/settings` under Email & SMTP) using the built-in diagnostic test runner.
@@ -436,7 +436,7 @@ Staff can test email connectivity and verify authentication directly from the Ad
 * **Turso Cloud (ChiselStrike):** Managed libSQL database cluster hosted on AWS US-East-1 for ultra-low latency query execution.
 * **Google Workspace / Gmail SMTP:** Secure transactional email relay for lead dispatches.
 * **Google Analytics 4 / Google Tag Manager:** Client-side event tracking and conversion measurement injected conditionally via `components/Analytics.tsx`.
-* **Google Maps Embed API:** Interactive map integration displaying Elite Steel Concepts' fabrication headquarters in Manassas Park, Virginia.
+* **Google Maps Embed API:** Interactive map integration displaying Elite Steel Concepts' fabrication headquarters in Manassas, Virginia.
 * **Lucide Icon Engine:** Open-source vector icon delivery.
 
 ### 8.2 Environment Variable Matrix
@@ -732,7 +732,7 @@ Silo 7: DMV & Regional Market Guides
   * `/compliance` $\rightarrow$ `Maryland mobile food compliance codes`
 * **Post:** `custom-food-truck-builders-in-virginia-how-to-choose-the-right-one-in-2026`
   * `/` $\rightarrow$ `Elite Steel Concepts in Manassas, VA`
-  * `/about` $\rightarrow$ `12+ years of custom fabrication experience`
+  * `/about` $\rightarrow$ `14+ years of custom fabrication experience`
 
 ---
 
@@ -741,15 +741,15 @@ Silo 7: DMV & Regional Market Guides
 ### 11.1 Blog Post Fixes & Meta Description Formula
 All 30 published blog posts in `data/db.json` were audited and upgraded with custom meta descriptions (150–175 characters) following the high-converting search formula:
 1. Specific value proposition the reader gains.
-2. One ESC verified proof point (350+ builds, 12+ years, 48 states, 100% inspection pass rate).
+2. One ESC verified proof point (350+ builds, 14+ years, 48 states, 100% inspection pass rate).
 3. Direct call-to-action with phone number: `(571) 651-0337`.
 
 *Placeholder Content Removal:* Removed literal template strings across 14 articles (e.g., `- Point two`, `- Point three`, `### Your Sub-heading Here`, `- Second item`). Corrected reading time calculations and replaced incorrect CTAs offering used trucks with custom build consultations.
 
 ### 11.2 Homepage Structured Data & Meta Enhancements
-* **Site Title:** `Custom Food Truck Builder | 350+ Builds | Elite Steel Concepts | Manassas Park VA`
-* **Site Description:** `12+ years, 350+ builds, 48 states. Expert food truck builders in Manassas Park, VA. 100% health code compliant. Custom trucks, trailers & repairs. Free quote: (571) 651-0337.`
-* **LocalBusiness JSON-LD Schema:** Injected structured data containing official business name, telephone (`+15716510337`), physical address (8303 Rugby Rd, Manassas Park, VA 20111), operating hours, service catalog, and geo-served areas.
+* **Site Title:** `Custom Food Truck Builder | 350+ Builds | Elite Steel Concepts | Manassas VA`
+* **Site Description:** `14+ years, 350+ builds, 48 states. Expert food truck builders in Manassas, VA. 100% health code compliant. Custom trucks, trailers & repairs. Free quote: (571) 651-0337.`
+* **LocalBusiness JSON-LD Schema:** Injected structured data containing official business name, telephone (`+15716510337`), physical address (11200 Bertalice Ct, Manassas, VA 20110), operating hours, service catalog, and geo-served areas.
 
 ### 11.3 Blog Post Template Upgrades (`app/(public)/blog/[slug]/page.tsx`)
 * **Quick Answer Box:** Displays the post's `metaDescription` in a high-visibility callout box directly below the header to target Google Position 0 (Featured Snippets).

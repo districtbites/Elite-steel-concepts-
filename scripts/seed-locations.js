@@ -72,8 +72,8 @@ function loc(city, state, slug, distance, customData = {}) {
   const isHomeBase = distance.startsWith("0 miles");
   
   const intro = customData.intro || (isHomeBase
-    ? `Elite Steel Concepts is headquartered in Manassas, VA, building top-tier custom food trucks, concession trailers, and mobile kitchens for entrepreneurs right here in ${city}, ${state}. With 12+ years of fabrication expertise and 350+ completed builds, we deliver 100% health-code-compliant units directly from our local workshop. From concept and blueprint drafting to final inspection, we handle every stage.`
-    : `Elite Steel Concepts builds premium custom food trucks and concession trailers for entrepreneurs in ${city}, ${state}. Based in Manassas, VA — ${distance} away — we deliver 100% health-code-compliant mobile kitchens with 12+ years of master fabrication expertise. From initial CAD design to turnkey handover, we handle your entire build.`);
+    ? `Elite Steel Concepts is headquartered in Manassas, VA, building top-tier custom food trucks, concession trailers, and mobile kitchens for entrepreneurs right here in ${city}, ${state}. With 14+ years of fabrication expertise and 350+ completed builds, we deliver 100% health-code-compliant units directly from our local workshop. From concept and blueprint drafting to final inspection, we handle every stage.`
+    : `Elite Steel Concepts builds premium custom food trucks and concession trailers for entrepreneurs in ${city}, ${state}. Based in Manassas, VA — ${distance} away — we deliver 100% health-code-compliant mobile kitchens with 14+ years of master fabrication expertise. From initial CAD design to turnkey handover, we handle your entire build.`);
 
   const whyEsc = customData.whyEsc || (isHomeBase
     ? `${city} entrepreneurs choose Elite Steel Concepts because our primary fabrication facility is right in your backyard. You can visit our workshop, inspect your build in-person during fabrication, and receive direct on-site support. Every truck and trailer we build meets 100% of ${cfg.dept} requirements and local fire marshal codes.`
@@ -138,7 +138,7 @@ function loc(city, state, slug, distance, customData = {}) {
       },
     },
     titleTag: `Food Truck Builder in ${city}, ${state} | Elite Steel Concepts`,
-    metaDescription: `Custom food truck and concession trailer builder serving ${city}, ${state}. 12+ years experience, 350+ builds, 100% code compliant. Free quote. Call (571) 651-0337.`,
+    metaDescription: `Custom food truck and concession trailer builder serving ${city}, ${state}. 14+ years experience, 350+ builds, 100% code compliant. Free quote. Call (571) 651-0337.`,
     published: true,
   };
 }

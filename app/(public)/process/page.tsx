@@ -4,7 +4,7 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
 import CTASection from "@/components/ui/CTASection";
-import { FileText, Phone, PenTool, CheckSquare, Hammer, ArrowRight, Lightbulb, Clock, ShieldCheck, Sparkles, Zap, MessageSquare } from "lucide-react";
+import { FileText, Phone, PenTool, CheckSquare, Hammer, ArrowRight, Lightbulb, Clock, ShieldCheck, Sparkles, Zap, MessageSquare, Award } from "lucide-react";
 
 import { getSEO, getPageSEO, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown } from "@/lib/internalLinks";
@@ -234,21 +234,3 @@ export default async function ProcessPage() {
     </>
   );
 }
-
-const Award = ({ size }: { size: number }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
-    <path d="m12 15 3.5 3.5L17 13.5 13.5 12 12 16Z"/>
-    <path d="m12 15-3.5 3.5L7 13.5 10.5 12 12 16Z"/>
-    <circle cx="12" cy="7" r="4"/>
-  </svg>
-);

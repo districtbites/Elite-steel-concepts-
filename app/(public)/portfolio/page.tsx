@@ -36,7 +36,7 @@ export default async function PortfolioPage() {
   const categories = new Set(allProjects.map((p) => p.category)).size;
 
   const stats = [
-    { label: "Builds Completed", value: settings.trucksBuiltCount || "150+", icon: Award },
+    { label: "Builds Completed", value: settings.trucksBuiltCount ? `${settings.trucksBuiltCount}+` : "350+", icon: Award },
     { label: "Categories", value: `${categories} Types`, icon: Zap },
     { label: "Client Satisfaction", value: "100%", icon: Star },
     { label: "Gallery Projects", value: `${allProjects.length} Units`, icon: Camera },

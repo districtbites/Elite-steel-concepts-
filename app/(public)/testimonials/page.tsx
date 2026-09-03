@@ -56,11 +56,11 @@ export default async function TestimonialsPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 bg-secondary rounded-[3rem] p-12 text-white items-center shadow-2xl relative overflow-hidden">
                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px] rounded-full -mr-32 -mt-32"></div>
                <div className="text-center space-y-2 relative z-10">
-                  <div className="text-4xl md:text-5xl font-black text-primary">500+</div>
+                  <div className="text-4xl md:text-5xl font-black text-primary">350+</div>
                   <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Trucks Built</div>
                </div>
                <div className="text-center space-y-2 relative z-10 border-l border-white/10">
-                  <div className="text-4xl md:text-5xl font-black text-primary">12+</div>
+                  <div className="text-4xl md:text-5xl font-black text-primary">14+</div>
                   <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Years Exp</div>
                </div>
                <div className="text-center space-y-2 relative z-10 border-l border-white/10">

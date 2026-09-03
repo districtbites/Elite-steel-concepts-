@@ -143,7 +143,7 @@ export default async function LocationPage({ params }: PageProps) {
   const nearbyLocations = [...sameState.slice(0, 8), ...otherStates.slice(0, 4)];
 
   const trustPoints = [
-    "12+ Years Experience",
+    "14+ Years Experience",
     "350+ Builds Completed",
     "100% Code Compliant",
     "Nationwide Delivery",
@@ -273,7 +273,7 @@ export default async function LocationPage({ params }: PageProps) {
                     <li className="flex items-start gap-3">
                       <Clock size={15} className="text-primary shrink-0 mt-0.5" />
                       <span className="text-sm text-gray-400">
-                        Mon–Fri 9AM–5PM · Sat 9AM–2PM
+                        {settings.businessHours || "Mon-Sat | 09:00 AM - 05:00 PM"}
                       </span>
                     </li>
                   </ul>
@@ -342,7 +342,7 @@ export default async function LocationPage({ params }: PageProps) {
             <div className="w-px h-4 bg-white/30 hidden md:block" />
             <div className="flex items-center gap-2">
               <Clock size={13} />
-              <span>Mon–Fri 9AM–5PM · Sat 9AM–2PM</span>
+              <span>{settings.businessHours || "Mon-Sat | 09:00 AM - 05:00 PM"}</span>
             </div>
           </div>
         </Container>
@@ -370,7 +370,7 @@ export default async function LocationPage({ params }: PageProps) {
                   {!location.distance.startsWith("0 miles") ? `is ${location.distance} from ${location.city}. ` : "is your local builder. "}
                   We've completed{" "}
                   <strong className="text-black">350+ custom food truck</strong>{" "}
-                  and concession trailer builds over 12+ years, serving the entire
+                  and concession trailer builds over 14+ years, serving the entire
                   DMV region. Every build is{" "}
                   <strong className="text-black">
                     100% health code compliant
@@ -532,7 +532,7 @@ export default async function LocationPage({ params }: PageProps) {
 
               <div className="grid grid-cols-1 gap-3">
                 {[
-                  "12+ Years Experience",
+                  "14+ Years Experience",
                   "350+ Builds Completed",
                   "100% Code Compliant",
                   "Nationwide Delivery",

@@ -606,7 +606,7 @@ const SettingsForm = ({ settings }: SettingsFormProps) => {
  type="text"
  name="businessHours"
  defaultValue={settings.businessHours ||""}
- placeholder="Mon-Fri: 9AM - 6PM | Sat: 10AM - 2PM"
+ placeholder="Mon-Fri: 9:00 AM - 5:00 PM | Sat: 9:00 AM - 2:00 PM"
  />
  </div>
  </div>

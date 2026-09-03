@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const stats = [
-  { value: "12+", label: "Years in Business", icon: Clock },
+  { value: "14+", label: "Years in Business", icon: Clock },
   { value: "350+", label: "Custom Builds", icon: Truck },
   { value: "48", label: "States Served", icon: MapPin },
   { value: "100%", label: "Code Compliant", icon: Shield },
@@ -38,7 +38,7 @@ export default async function LocationsPage() {
   const activeRules = rules.filter(r => r.enabled !== false);
   const publishedLocations = locations.filter(l => l.published);
 
-  const heroDescRaw = "Elite Steel Concepts is based in Manassas, VA — centrally positioned to serve Virginia, Washington DC, Maryland, and surrounding states across the Mid-Atlantic and Southeast. 12+ years of custom food truck and concession trailer fabrication excellence. 350+ builds completed. Every truck built to 100% local health code standards.";
+  const heroDescRaw = "Elite Steel Concepts is based in Manassas, VA — centrally positioned to serve Virginia, Washington DC, Maryland, and surrounding states across the Mid-Atlantic and Southeast. 14+ years of custom food truck and concession trailer fabrication excellence. 350+ builds completed. Every truck built to 100% local health code standards.";
   const heroDescLinked = autoLinkMarkdown(heroDescRaw, activeRules, linkSettings).updatedContent;
   return (
     <>
@@ -285,7 +285,7 @@ export default async function LocationsPage() {
                   {settings.address}
                 </p>
                 <p className="text-gray-500 text-sm mt-2">
-                  Mon–Fri 9AM–5PM &middot; Sat 9AM–2PM &middot; Walk-ins
+                  {settings.businessHours || "Mon-Sat | 09:00 AM - 05:00 PM"} &middot; Walk-ins
                   welcome
                 </p>
               </div>

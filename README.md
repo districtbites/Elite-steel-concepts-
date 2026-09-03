@@ -8,7 +8,7 @@
 
 ## Overview
 
-This repository houses the official digital platform for **Elite Steel Concepts** (ESC), an industry-leading manufacturer and custom fabricator of commercial food trucks, mobile kitchens, food trailers, and specialized concession vehicles based in Manassas Park, Virginia.
+This repository houses the official digital platform for **Elite Steel Concepts** (ESC), an industry-leading manufacturer and custom fabricator of commercial food trucks, mobile kitchens, food trailers, and specialized concession vehicles based in Manassas, Virginia.
 
 The platform is a custom-engineered, full-stack web application designed for commercial lead generation, interactive custom food truck and trailer quote calculations, comprehensive content management, and regional/national SEO dominance across the DMV (DC, Maryland, Virginia) and nationwide markets.
 

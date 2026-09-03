@@ -12,7 +12,7 @@
 ## 1. Executive Summary & Non-Technical Overview
 
 ### 1.1 Company Overview and Website Purpose
-Elite Steel Concepts (ESC), based in Manassas Park, Virginia, is an industry-leading manufacturer and custom fabricator of commercial food trucks, mobile kitchens, food trailers, and specialized concession vehicles. With over 12 years of craftsmanship and 350+ completed builds operating across 48 states, the company delivers custom-engineered, 100% health-code and fire-safety compliant mobile units.
+Elite Steel Concepts (ESC), based in Manassas, Virginia, is an industry-leading manufacturer and custom fabricator of commercial food trucks, mobile kitchens, food trailers, and specialized concession vehicles. With over 14 years of craftsmanship and 350+ completed builds operating across 48 states, the company delivers custom-engineered, 100% health-code and fire-safety compliant mobile units.
 
 The primary website ([esteelconcepts.com](https://www.esteelconcepts.com)) is the core commercial engine and digital command center for the business. It is designed to accomplish four primary business objectives:
 1. **High-Intent Lead Generation:** Capture detailed, qualified build inquiries from prospective food truck entrepreneurs, executive chefs, and commercial fleet managers through a custom-built interactive Quote Builder.
@@ -80,7 +80,7 @@ esc-new-website/
 │   │       ├── login/                      # Staff Authentication Gateway
 │   │       └── ThemeProvider.tsx           # High-Contrast Admin Theme Context
 │   ├── (public)/                           # Public-Facing Website Route Group
-│   │   ├── about/                          # Company Story, Facility, 12+ Year Heritage
+│   │   ├── about/                          # Company Story, Facility, 14+ Year Heritage
 │   │   ├── blog/                           # Master Blog Index & Dynamic [slug] Articles
 │   │   ├── compliance/                     # Health Codes, DMV Regulations & Fire Safety
 │   │   ├── contact/                        # Direct Consultation & Workshop Contact Form
@@ -403,7 +403,7 @@ pm2 restart esc-production
 #### 2. General Contact Inquiry Workflow
 * **Trigger:** Customer submits the consultation form on `/contact`.
 * **Internal Dispatch:** Transmits the message, contact name, phone, and inquiry details to staff.
-* **Customer Dispatch:** Acknowledges receipt with company phone numbers, shop address in Manassas Park, VA, and estimated response timeframe.
+* **Customer Dispatch:** Acknowledges receipt with company phone numbers, shop address in Manassas, VA, and estimated response timeframe.
 
 #### 3. Administrative SMTP Diagnostic Tool
 Staff can test email connectivity and verify authentication directly from the Admin Settings dashboard (`/admin/settings` under Email & SMTP) using the built-in diagnostic test runner.
@@ -416,7 +416,7 @@ Staff can test email connectivity and verify authentication directly from the Ad
 * **Turso Cloud (ChiselStrike):** Managed libSQL database cluster hosted on AWS US-East-1 for ultra-low latency query execution.
 * **Google Workspace / Gmail SMTP:** Secure transactional email relay for lead dispatches.
 * **Google Analytics 4 / Google Tag Manager:** Client-side event tracking and conversion measurement injected conditionally via `components/Analytics.tsx`.
-* **Google Maps Embed API:** Interactive map integration displaying Elite Steel Concepts' fabrication headquarters in Manassas Park, Virginia.
+* **Google Maps Embed API:** Interactive map integration displaying Elite Steel Concepts' fabrication headquarters in Manassas, Virginia.
 * **Lucide Icon Engine:** Open-source vector icon delivery.
 
 ### 8.2 Environment Variable Matrix
@@ -470,7 +470,7 @@ The following feature sets have been developed, tested locally, and are fully re
 1. **30+ SEO-Optimized Commercial Blog Articles:**
    * Full meta descriptions written following high-converting search formulas.
    * Removal of legacy template placeholder text.
-   * Inclusion of verified proof points (350+ builds, 12+ years, 48 states, 100% inspection pass rate).
+   * Inclusion of verified proof points (350+ builds, 14+ years, 48 states, 100% inspection pass rate).
 2. **Programmatic Contextual Internal Linking Engine:**
    * Automated insertion of keyword-matched internal links connecting high-traffic blog articles to commercial quote and service pages.
    * Full admin control panel (`/admin/internal-links`) allowing live modification of anchor text rules and target URLs.

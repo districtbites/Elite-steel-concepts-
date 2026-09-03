@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, Youtube, Linkedin } from "lucide-react";
+import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, Youtube, Linkedin, Clock } from "lucide-react";
 import Container from "./ui/Container";
 import { GlobalSettings } from "@/lib/db";
 
@@ -118,6 +118,12 @@ const Footer = ({ settings }: FooterProps) => {
                 <Mail className="w-5 h-5 text-primary mr-3 shrink-0" />
                 <span className="text-gray-400 text-sm">{settings.email}</span>
               </li>
+              {settings.businessHours && (
+                <li className="flex items-start">
+                  <Clock className="w-5 h-5 text-primary mr-3 mt-0.5 shrink-0" />
+                  <span className="text-gray-400 text-sm">{settings.businessHours}</span>
+                </li>
+              )}
             </ul>
           </div>
         </div>

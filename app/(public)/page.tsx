@@ -102,7 +102,7 @@ export default async function Home() {
       icon: Award,
       text:
         whyChooseUsLines[1] ||
-        "12+ Years of Expert Fabrication Experience",
+        "14+ Years of Expert Fabrication Experience",
     },
     {
       icon: Truck,
@@ -169,7 +169,7 @@ export default async function Home() {
               {/* Stat row */}
               <div className="flex items-center gap-8 mt-10 pt-10 border-t border-gray-100">
                 {[
-                  { val: `${settings.experienceYears || 12}+`, lbl: "Yrs Exp" },
+                  { val: `${settings.experienceYears || 14}+`, lbl: "Yrs Exp" },
                   { val: `${settings.trucksBuiltCount || 350}+`, lbl: "Builds" },
                   { val: "48", lbl: "States" },
                 ].map(({ val, lbl }) => (
@@ -265,7 +265,7 @@ export default async function Home() {
               <div className="grid grid-cols-2 gap-px bg-[#1a1a1a]">
                 {[
                   {
-                    value: `${settings.experienceYears || 12}+`,
+                    value: `${settings.experienceYears || 14}+`,
                     label: "Years Experience",
                     sub: "Since 2012",
                   },

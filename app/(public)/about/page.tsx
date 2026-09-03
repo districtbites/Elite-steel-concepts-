@@ -148,7 +148,7 @@ export default async function AboutPage() {
                {[
                  { label: "Builds Completed", value: "350+", icon: Award },
                  { label: "Active Clients", value: "280+", icon: Users },
-                 { label: "Years Experience", value: "12+", icon: Zap },
+                 { label: "Years Experience", value: "14+", icon: Zap },
                  { label: "States Served", value: "48", icon: Globe }
                ].map((stat, i) => (
                  <div key={i} className="flex flex-col items-center justify-center group relative p-8">

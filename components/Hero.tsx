@@ -17,7 +17,7 @@ interface HeroProps {
 const CYCLING_WORDS = ["Food Trucks", "Trailers", "Mobile Kitchens"];
 
 const STATS = [
-  { value: "12+", label: "Years Experience", icon: Star },
+  { value: "14+", label: "Years Experience", icon: Star },
   { value: "350+", label: "Custom Builds", icon: Truck },
   { value: "100%", label: "Code Compliant", icon: Shield },
   { value: "48", label: "States Served", icon: MapPin },

@@ -28,18 +28,18 @@
 
 All 30 published blog posts were missing `metaDescription`. Every post now has a custom meta description following the audit formula:
 - Specific benefit the reader gets
-- One ESC proof point (350+ builds, 12+ years, 48 states, 100% pass rate)
+- One ESC proof point (350+ builds, 14+ years, 48 states, 100% pass rate)
 - Call-to-action with phone number (571) 651-0337
 - 150–175 characters
 
 | Post | Meta Description |
 |---|---|
-| Food Truck Permits 2026 | "Food truck permits 2026: every license you need before opening in any state. ESC builds 100% code-compliant trucks. 12+ years, 350+ builds. Free guide: (571) 651-0337." |
+| Food Truck Permits 2026 | "Food truck permits 2026: every license you need before opening in any state. ESC builds 100% code-compliant trucks. 14+ years, 350+ builds. Free guide: (571) 651-0337." |
 | 50 Food Truck Ideas | "50 proven food truck ideas ranked by profit potential in 2026. Real revenue data. Elite Steel Concepts has built 350+ trucks. Get inspired and get a free custom build quote." |
 | Food Truck Menu Ideas | "30 most profitable food truck menu ideas in 2026. Real profit margins, concept breakdowns. Elite Steel Concepts — 350+ custom builds. Free design consultation: (571) 651-0337." |
-| Food Truck Layout | "Design the perfect food truck layout — the builder's 5-zone guide for 2026. ESC: 12+ years, 350+ builds. Free custom design consultation: (571) 651-0337." |
+| Food Truck Layout | "Design the perfect food truck layout — the builder's 5-zone guide for 2026. ESC: 14+ years, 350+ builds. Free custom design consultation: (571) 651-0337." |
 | Fire Suppression | "Food truck fire suppression systems — what every owner must know before inspection. ESC installs & certifies Ansul systems in DMV. Don't fail inspection. (571) 651-0337." |
-| Custom Builders Virginia | "How to choose a custom food truck builder in Virginia in 2026. ESC: 12+ years, 350+ builds, Manassas Park VA. Serving all of Virginia & DMV. Free quote: (571) 651-0337." |
+| Custom Builders Virginia | "How to choose a custom food truck builder in Virginia in 2026. ESC: 14+ years, 350+ builds, Manassas VA. Serving all of Virginia & DMV. Free quote: (571) 651-0337." |
 | *(all 30 posts covered)* | *(see db.json for complete list)* |
 
 ### 1.2 Placeholder Text Fixed
@@ -105,21 +105,21 @@ The Layout post tags field contained `#Cu` (hashtag cut off mid-word) and `#Best
 | | Value |
 |---|---|
 | **Before** | `Elite Steel Concepts \| Custom Food Trucks & Mobile Kitchen Fabrication` |
-| **After** | `Custom Food Truck Builder \| 350+ Builds \| Elite Steel Concepts \| Manassas Park VA` |
+| **After** | `Custom Food Truck Builder \| 350+ Builds \| Elite Steel Concepts \| Manassas VA` |
 
 ### 2.2 Site Description Updated
 
 | | Value |
 |---|---|
 | **Before** | *(empty)* |
-| **After** | `12+ years, 350+ builds, 48 states. Expert food truck builders in Manassas Park, VA. 100% health code compliant. Custom trucks, trailers & repairs. Free quote: (571) 651-0337.` |
+| **After** | `14+ years, 350+ builds, 48 states. Expert food truck builders in Manassas, VA. 100% health code compliant. Custom trucks, trailers & repairs. Free quote: (571) 651-0337.` |
 
 ### 2.3 Homepage Meta Title Updated
 
 | | Value |
 |---|---|
 | **Before** | `Custom Food Truck Builders VA \| Elite Steel Concepts` |
-| **After** | `Custom Food Truck Builder \| 350+ Builds \| Elite Steel Concepts \| Manassas Park VA` |
+| **After** | `Custom Food Truck Builder \| 350+ Builds \| Elite Steel Concepts \| Manassas VA` |
 
 ### 2.4 LocalBusiness JSON-LD Schema Added
 
@@ -128,8 +128,8 @@ A full `LocalBusiness` structured data block was added to the homepage. This fee
 - `@type`: `LocalBusiness`
 - `name`: Elite Steel Concepts
 - `telephone`: +15716510337
-- `address`: 8303 Rugby Rd, Manassas Park, VA 20111
-- `openingHoursSpecification`: Mon–Fri 9AM–5PM, Sat 9AM–2PM
+- `address`: 11200 Bertalice Ct, Manassas, VA 20110
+- `openingHoursSpecification`: Mon–Sat 9AM–5PM
 - `hasOfferCatalog`: Custom Food Truck Fabrication, Concession Trailer Building, Repairs, Fire Suppression, Hood Installation, Generator Installation
 - `areaServed`: Virginia, Maryland, Washington DC
 
@@ -158,7 +158,7 @@ A `FAQPage` structured data extractor was built into the page template. It autom
 ### 3.4 Inline CTA Added (Mid-Article)
 
 A prominent CTA box was added at the 55% mark of every post — between the first and second half of content. It includes:
-- ESC name and proof points (12+ years, 350+ builds, 100% health code compliant)
+- ESC name and proof points (14+ years, 350+ builds, 100% health code compliant)
 - Clickable phone number `(571) 651-0337`
 - Link to `/quote`
 
@@ -229,7 +229,7 @@ All live at `/locations/[slug]`:
 
 ### 4.4 Locations Index Page
 
-`/locations` serves as the hub page listing all Tier 1 cities with a nationwide delivery section and stat grid (12+ years, 350+ builds, 48 states, 100% code compliant).
+`/locations` serves as the hub page listing all Tier 1 cities with a nationwide delivery section and stat grid (14+ years, 350+ builds, 48 states, 100% code compliant).
 
 ---
 
@@ -420,7 +420,7 @@ The following items from the audit documents are recommended for the next phase:
 - **Tier 2 location pages**: Richmond, Virginia Beach, Norfolk, Fredericksburg, Herndon, Reston, Leesburg, Ashburn
 
 ### Medium Priority  
-- **Service pages for commercial-intent keywords**: Dedicated pages for `Custom Food Truck Builder Virginia`, `Food Truck Fabricator Manassas Park VA`, `Concession Trailer Builder Northern Virginia`
+- **Service pages for commercial-intent keywords**: Dedicated pages for `Custom Food Truck Builder Virginia`, `Food Truck Fabricator Manassas VA`, `Concession Trailer Builder Northern Virginia`
 - **Portfolio SEO**: Add keyword-rich descriptions to each portfolio project — currently minimal SEO value
 - **Google Business Profile**: Update service area to match all Tier 1 + Tier 2 cities, add build photos, enable weekly posts
 

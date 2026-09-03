@@ -303,7 +303,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
                     </div>
                     <h4 className="text-3xl font-black uppercase tracking-tighter text-black mb-2 leading-none">Ready to Execute?</h4>
                     <p className="text-black/80 text-xs font-black uppercase tracking-widest">
-                      12+ years · 350+ builds · Manassas, VA
+                      14+ years · 350+ builds · Manassas, VA
                     </p>
                   </div>
                   <div className="relative z-10 shrink-0 w-full md:w-auto">

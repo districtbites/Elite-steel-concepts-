@@ -109,7 +109,7 @@ export default async function ServicesPage() {
                       <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Code Compliant</p>
                    </div>
                    <div className="space-y-3">
-                      <div className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">12+ YRS</div>
+                      <div className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">14+ YRS</div>
                       <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Engineering Exp.</p>
                    </div>
                 </div>
