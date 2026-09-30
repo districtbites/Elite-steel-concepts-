@@ -52,17 +52,15 @@ const Header = ({ settings }: HeaderProps) => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
-          isScrolled || isOpen 
-            ? "bg-[#050505] border-b border-[#1a1a1a] shadow-lg shadow-black/50 py-1" 
-            : "bg-gradient-to-b from-black/90 via-black/50 to-transparent py-2"
+        className={`fixed top-0 left-0 right-0 z-[100] bg-[#0a0a0a] transition-shadow duration-300 ${
+          isScrolled || isOpen ? "shadow-lg shadow-black/50" : ""
         }`}
       >
         <Container>
-          <div className="flex items-center justify-between py-4 md:py-5">
+          <div className="flex items-center justify-between py-3 md:py-4">
             {/* Logo */}
             <Link href="/" className="relative z-[110] flex items-center group shrink-0">
-              <div className="relative w-48 h-12 sm:w-56 sm:h-14 md:w-64 md:h-16 lg:w-72 lg:h-18 transition-transform duration-300 group-hover:scale-[1.02]">
+              <div className="relative w-44 h-11 sm:w-52 sm:h-13 md:w-56 md:h-14 transition-transform duration-300 group-hover:scale-[1.02]">
                 <Image
                   src="/logo-horizontal-white.png"
                   alt="Elite Steel Concepts"
@@ -75,7 +73,7 @@ const Header = ({ settings }: HeaderProps) => {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8 xl:space-x-10 relative z-[105]">
+            <nav className="hidden lg:flex items-center gap-7 xl:gap-9 relative z-[105]">
               {navLinks.map((link) => {
                 const isActive =
                   link.href === "/"
@@ -86,7 +84,7 @@ const Header = ({ settings }: HeaderProps) => {
                   <Link
                     key={link.name}
                     href={link.href}
-                    className={`relative text-[10px] font-black uppercase tracking-[0.2em] transition-colors py-1 group ${
+                    className={`relative text-[15px] font-bold transition-colors py-1 group ${
                       isActive ? "text-primary" : "text-white hover:text-primary"
                     }`}
                   >
@@ -101,16 +99,13 @@ const Header = ({ settings }: HeaderProps) => {
                   </Link>
                 );
               })}
-              <div className="pl-6 border-l border-white/10 flex items-center">
-                <Button
-                  href="/quote"
-                  variant="primary"
-                  size="sm"
-                  className="shadow-[0_0_15px_rgba(247,147,30,0.3)] hover:shadow-[0_0_25px_rgba(247,147,30,0.5)]"
-                >
-                  Initialize Quote
-                </Button>
-              </div>
+              <Link
+                href="/quote"
+                id="header-quote-btn"
+                className="ml-2 inline-flex items-center bg-primary hover:bg-orange-600 text-white text-sm font-bold px-5 py-2.5 transition-colors"
+              >
+                Get a Free Quote
+              </Link>
             </nav>
 
             {/* Mobile Menu Button */}
@@ -127,6 +122,9 @@ const Header = ({ settings }: HeaderProps) => {
             </button>
           </div>
         </Container>
+
+        {/* Hazard stripe */}
+        <div className="hazard-stripe h-2.5 relative z-[105]" aria-hidden />
 
         {/* Mobile Navigation Overlay */}
         <div
@@ -161,7 +159,7 @@ const Header = ({ settings }: HeaderProps) => {
             
             <div className={`pt-10 w-full max-w-xs transition-all duration-500 delay-300 transform ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
               <Button href="/quote" variant="primary" size="lg" className="w-full" onClick={() => setIsOpen(false)}>
-                Initialize Quote
+                Get a Free Quote
               </Button>
             </div>
             

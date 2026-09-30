@@ -46,7 +46,7 @@ const ProcessSteps = () => {
             <div className="flex items-center gap-3 mb-4">
               <div className="h-px w-12 bg-primary" />
               <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                How It Works
+                How We Work
               </span>
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter leading-tight">
@@ -84,7 +84,7 @@ const ProcessSteps = () => {
                       className="text-primary"
                     />
                   </div>
-                  <span className="text-[56px] font-black text-white/[0.04] leading-none select-none">
+                  <span className="text-[56px] font-black text-white/90 group-hover:text-primary leading-none select-none transition-colors">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                 </div>
@@ -93,7 +93,7 @@ const ProcessSteps = () => {
                 <h3 className="text-sm font-black text-white uppercase tracking-wide mb-3 group-hover:text-primary transition-colors">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 text-xs leading-relaxed flex-1">
+                <p className="text-gray-300 text-sm leading-relaxed flex-1">
                   {step.description}
                 </p>
 

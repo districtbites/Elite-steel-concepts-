@@ -2,8 +2,45 @@ import React from "react";
 import Link from "next/link";
 import Container from "./ui/Container";
 import Section from "./ui/Section";
-import { Star, Quote, ArrowRight } from "lucide-react";
+import { ArrowRight, Film, Sparkles } from "lucide-react";
+import ReelCard from "./ui/ReelCard";
 import { getTestimonials } from "@/lib/db";
+
+interface VideoReel {
+  id: string;
+  title: string;
+  client: string;
+  location: string;
+  videoUrl: string;
+  views: string;
+}
+
+const sampleReels: VideoReel[] = [
+  {
+    id: "reel-1",
+    title: "Inside Taco Fiesta 24ft Custom Food Truck Build",
+    client: "Carlos & Maria R.",
+    location: "Washington, DC",
+    videoUrl: "/videos/reels/reel-1.mp4",
+    views: "14.2K",
+  },
+  {
+    id: "reel-2",
+    title: "Full Walkthrough: 20ft Smokehouse BBQ Concession Trailer",
+    client: "Chef Marcus Vance",
+    location: "Richmond, VA",
+    videoUrl: "/videos/reels/reel-2.mp4",
+    views: "28.9K",
+  },
+  {
+    id: "reel-3",
+    title: "Handover Day! Custom Mobile Espresso & Bakery Truck",
+    client: "Sarah's Artisan Coffee",
+    location: "Baltimore, MD",
+    videoUrl: "/videos/reels/reel-3.mp4",
+    views: "19.5K",
+  }
+];
 
 const Testimonials = async () => {
   const testimonials = await getTestimonials();
@@ -12,64 +49,116 @@ const Testimonials = async () => {
   if (recentTestimonials.length === 0) return null;
 
   return (
-    <Section className="bg-white text-secondary border-t border-gray-100">
+    <Section className="bg-white text-secondary border-t border-gray-100 py-20 md:py-28">
       <Container>
         {/* Header */}
         <div className="text-center mb-16">
-          <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Testimonials</span>
+          <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">
+            Testimonials
+          </span>
           <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-secondary mb-6">
             Client Success
           </h2>
           <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed mb-8">
-            We don't just build trucks; we build businesses. Hear from the entrepreneurs who trust us with their mobile kitchens.
+            We don't just build trucks; we build businesses. Watch real video walkthroughs and client handover reels from entrepreneurs who trust Elite Steel Concepts.
           </p>
-          <Link href="/testimonials" className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-secondary hover:text-primary transition-colors">
+          <Link 
+            href="/testimonials" 
+            className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-secondary hover:text-primary transition-colors"
+          >
             See All Reviews <ArrowRight size={16} className="ml-2" />
           </Link>
         </div>
 
-        {/* Grid */}
+        {/* ═══ VIDEO TESTIMONIALS & REELS SECTION ════════════════ */}
+        <div>
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                <Film size={20} />
+              </div>
+              <div>
+                <h3 className="text-xl md:text-2xl font-black uppercase text-secondary tracking-tight">
+                  Featured Build Reels
+                </h3>
+                <p className="text-xs text-gray-500 uppercase tracking-wider font-bold">
+                  Real Video Handovers & Kitchen Tours
+                </p>
+              </div>
+            </div>
+            <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
+              <Sparkles size={14} /> 4K Video Reviews
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sampleReels.map((reel) => (
+              <ReelCard
+                key={reel.id}
+                title={reel.title}
+                client={reel.client}
+                location={reel.location}
+                videoUrl={reel.videoUrl}
+                views={reel.views}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* ═══ TEXT WRITTEN TESTIMONIALS — hidden for now ═══════
+        <div className="flex items-center justify-between mb-8">
+          <h3 className="text-xl md:text-2xl font-black uppercase text-secondary tracking-tight">
+            Verified Owner Reviews
+          </h3>
+          <span className="text-xs text-gray-400 uppercase tracking-widest font-bold">5.0 Star Rated Builds</span>
+        </div>
+
+        {/- Grid -/}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {recentTestimonials.map((testimonial) => (
             <div 
               key={testimonial.id} 
-              className="bg-white border border-gray-100 shadow-sm p-8 rounded-lg relative hover:shadow-lg hover:border-primary/30 hover-lift transition-all duration-300 group"
+              className="bg-white border border-gray-100 shadow-sm p-8 rounded-2xl relative hover:shadow-lg hover:border-primary/30 hover-lift transition-all duration-300 group flex flex-col justify-between"
             >
-              {/* Quote Icon */}
+              {/- Quote Icon -/}
               <div className="absolute top-6 right-6 text-black/5 group-hover:text-primary/10 transition-colors duration-300">
                 <Quote size={48} fill="currentColor" />
               </div>
 
-              {/* Stars */}
-              <div className="flex gap-1 mb-6 text-primary">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} size={18} fill="currentColor" />
-                ))}
+              <div>
+                {/- Stars -/}
+                <div className="flex gap-1 mb-6 text-primary">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} size={18} fill="currentColor" />
+                  ))}
+                </div>
+
+                {/- Content -/}
+                <p className="text-gray-600 mb-8 italic leading-relaxed relative z-10 line-clamp-4">
+                  "{testimonial.content}"
+                </p>
               </div>
 
-              {/* Content */}
-              <p className="text-gray-600 mb-8 italic leading-relaxed relative z-10 line-clamp-4">
-                "{testimonial.content}"
-              </p>
-
-              {/* Author */}
-              <div className="mt-auto pt-6 border-t border-gray-100">
+              {/- Author -/}
+              <div className="pt-6 border-t border-gray-100">
                 <h4 className="font-bold text-secondary text-lg mb-1">
                   {testimonial.clientName}
                 </h4>
                 {(testimonial.role || testimonial.company) && (
-                    <p className="text-primary text-xs uppercase tracking-wider font-bold">
+                  <p className="text-primary text-xs uppercase tracking-wider font-bold">
                     {testimonial.role}{testimonial.role && testimonial.company ? ", " : ""}{testimonial.company}
-                    </p>
+                  </p>
                 )}
               </div>
             </div>
           ))}
         </div>
+        */}
       </Container>
     </Section>
   );
 };
 
 export default Testimonials;
+

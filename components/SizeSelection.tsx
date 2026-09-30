@@ -54,16 +54,16 @@ const SizeSelection = () => {
         <div className="text-center mb-20">
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-px w-12 bg-primary" />
-            <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-              Not Sure How Much Space You Will Need?
+            <span className="text-primary text-xs font-black uppercase tracking-[0.25em] text-center">
+              Which Food Truck Size Is Right for You?
             </span>
             <div className="h-px w-12 bg-primary" />
           </div>
-          <h2 className="text-5xl md:text-7xl font-black uppercase tracking-tighter text-white mb-6">
-            Size <span className="text-primary">Matters</span>
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[1.05] text-black mb-6">
+            Choose Your Ideal Food Truck Size
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
-            Whether you're new to the food truck business, or you're considering an upgrade, size does matter. Select the footprint that matches your menu and volume.
+            The right food truck size depends on your menu, equipment, staff, storage, &amp; business needs. We&apos;ll help you choose a smart layout that fits for a food business.
           </p>
         </div>
 

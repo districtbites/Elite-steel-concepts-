@@ -203,8 +203,8 @@ export default async function CustomFoodTrucksPage() {
             <div className="lg:col-span-5 space-y-12">
                <div>
                   <span className="text-primary font-bold tracking-widest uppercase text-xs mb-4 block">Industrial Bio-Sphere</span>
-                  <h2 className="text-4xl font-black uppercase tracking-tighter leading-tight mb-8">
-                    The <span className="text-primary">Engineering</span> <br/> Core
+                  <h2 className="text-4xl text-black font-black uppercase tracking-tighter leading-tight mb-8">
+                    The Engineering <br/> Core
                   </h2>
                   <p className="text-gray-400 font-light text-lg leading-relaxed">
                     Aesthetics are temporary, engineering is forever. We focus on the invisible systems that keep your business running when the heat is on.
@@ -218,7 +218,7 @@ export default async function CustomFoodTrucksPage() {
                           <core.icon size={28} />
                        </div>
                        <div className="space-y-2 flex-1">
-                          <h4 className="text-lg font-black uppercase tracking-tight">{core.title}</h4>
+                          <h4 className="text-lg font-black uppercase tracking-tight text-primary">{core.title}</h4>
                           <p className="text-xs text-gray-400 leading-relaxed font-light">{core.desc}</p>
                        </div>
                     </div>

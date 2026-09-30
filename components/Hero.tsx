@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Phone, ArrowRight, MapPin, Truck, Shield, Star } from "lucide-react";
 import Container from "./ui/Container";
@@ -23,15 +22,7 @@ const STATS = [
   { value: "48", label: "States Served", icon: MapPin },
 ];
 
-const Hero = ({ imageAlts, content, heroImage }: HeroProps) => {
-  const defaultImage =
-    "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=1920";
-  const bgSrc = heroImage?.url || defaultImage;
-  const bgAlt =
-    heroImage?.alt ||
-    imageAlts?.hero ||
-    "Elite Steel Concepts Custom Food Truck Construction";
-
+const Hero = ({ content }: HeroProps) => {
   const [wordIndex, setWordIndex] = useState(0);
   const [animating, setAnimating] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -50,51 +41,10 @@ const Hero = ({ imageAlts, content, heroImage }: HeroProps) => {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex flex-col bg-[#0a0a0a] overflow-hidden">
-      {/* ── Background Image with slow-zoom ── */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        <Image
-          src={bgSrc}
-          alt={bgAlt}
-          fill
-          priority
-          sizes="100vw"
-          quality={85}
-          className="object-cover opacity-30 animate-slow-zoom"
-        />
-        {/* Multi-layer gradient for depth */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/85 to-[#0a0a0a]/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent" />
-      </div>
-
-      {/* ── Grid texture overlay ── */}
-      <div
-        className="absolute inset-0 z-1 pointer-events-none opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 60px), repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 60px)",
-        }}
-      />
-
-      {/* ── Diagonal scan line animation ── */}
-      <div className="absolute inset-0 z-1 pointer-events-none overflow-hidden">
-        <div className="absolute inset-y-0 w-[60%] bg-white hero-diag-scan" />
-      </div>
-
-      {/* ── Orange accent particles ── */}
-      <div className="absolute inset-0 z-1 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 right-[15%] w-2 h-2 bg-primary rounded-full hero-particle-1" />
-        <div className="absolute top-1/2 right-[30%] w-1.5 h-1.5 bg-primary/60 rounded-full hero-particle-2" />
-        <div className="absolute top-3/4 right-[10%] w-1 h-1 bg-primary/40 rounded-full hero-particle-3" />
-      </div>
-
-      {/* ── Right-side vertical orange rule ── */}
-      <div className="absolute top-0 right-[38%] h-full w-px bg-gradient-to-b from-transparent via-primary/20 to-transparent z-1 hidden lg:block" />
-
+    <section className="relative flex flex-col bg-gradient-to-b from-[#1c1c1c] to-[#0a0a0a] overflow-hidden">
       {/* ── Main Content ── */}
-      <Container className="relative z-10 flex-1 flex flex-col justify-center pt-28 pb-12 md:pt-36 md:pb-20">
+      <Container className="relative z-10 pt-32 md:pt-40 pb-10 md:pb-12">
         <div className="max-w-5xl">
-
           {/* Badge */}
           <div className="hero-badge flex items-center gap-3 mb-8">
             <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-2">
@@ -103,19 +53,12 @@ const Hero = ({ imageAlts, content, heroImage }: HeroProps) => {
                 Based in Manassas, VA
               </span>
             </div>
-            <div className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-primary/40 to-transparent" />
           </div>
 
-          {/* Headline — line 1 */}
-          <div className="overflow-hidden mb-1">
-            <div className="hero-line-1 text-[clamp(2.8rem,7vw,6rem)] font-black text-white uppercase tracking-tighter leading-[0.88]">
-              Custom
-            </div>
-          </div>
-
-          {/* Headline — line 2: cycling word */}
-          <div className="overflow-hidden mb-1">
-            <div className="hero-line-2 text-[clamp(2.8rem,7vw,6rem)] font-black uppercase tracking-tighter leading-[0.88]">
+          {/* Headline */}
+          <h1 className="text-[clamp(2.5rem,5.2vw,4.75rem)] font-black uppercase tracking-tighter leading-[0.92] mb-8">
+            <span className="hero-line-1 block text-white">Custom</span>
+            <span className="hero-line-2 block">
               <span
                 className="text-primary inline-block transition-all duration-300"
                 style={{
@@ -125,34 +68,29 @@ const Hero = ({ imageAlts, content, heroImage }: HeroProps) => {
               >
                 {CYCLING_WORDS[wordIndex]}
               </span>
-            </div>
-          </div>
-
-          {/* Headline — line 3 */}
-          <div className="overflow-hidden mb-10">
-            <div className="hero-line-3 text-[clamp(2.8rem,7vw,6rem)] font-black text-white uppercase tracking-tighter leading-[0.88] flex items-baseline gap-4 flex-wrap">
-              Built to Perform
-              <span className="inline-block w-16 md:w-24 h-1.5 bg-primary translate-y-[-10px]" />
-            </div>
-          </div>
+            </span>
+            <span className="hero-line-3 block text-white">
+              Built to Perform.
+            </span>
+          </h1>
 
           {/* Subheading */}
-          <div className="hero-sub max-w-xl mb-10">
-            <ReadMore 
+          <div className="hero-sub max-w-xl mb-8">
+            <ReadMore
               text={content?.content || "Design. Fabrication. Ready to Serve. We turn your culinary vision into a high-performance mobile business — 100% health code compliant, on time, on budget."}
               maxLength={180}
-              className="text-gray-400 text-lg leading-relaxed font-light"
+              className="text-gray-300 text-lg leading-relaxed"
             />
           </div>
 
           {/* CTAs */}
-          <div className="hero-cta flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-14">
+          <div className="hero-cta flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-4">
             <Link
               href="/quote"
               id="hero-get-quote-btn"
               className="group inline-flex items-center gap-3 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-sm px-8 py-4 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-primary/25 hero-orange-pulse"
             >
-              {content?.ctaText || "Request a Free Quote"}
+              Get a Free Quote
               <ArrowRight
                 size={16}
                 className="group-hover:translate-x-1 transition-transform"
@@ -162,39 +100,42 @@ const Hero = ({ imageAlts, content, heroImage }: HeroProps) => {
             <a
               href="tel:+15716510337"
               id="hero-call-btn"
-              className="inline-flex items-center gap-3 border border-white/20 hover:border-primary text-white hover:text-primary font-black uppercase tracking-wider text-sm px-8 py-4 transition-all duration-200"
+              className="inline-flex items-center gap-3 border border-white/30 hover:border-primary text-white hover:text-primary font-black uppercase tracking-wider text-sm px-8 py-4 transition-all duration-200"
             >
               <Phone size={16} />
               (571) 651-0337
             </a>
 
             <Link
-              href="/portfolio"
-              id="hero-portfolio-btn"
-              className="hidden sm:inline-flex items-center gap-2 text-gray-500 hover:text-white font-bold uppercase tracking-wider text-xs transition-colors underline-offset-4 hover:underline"
+              href="/services"
+              id="hero-services-btn"
+              className="group inline-flex items-center gap-3 bg-white hover:bg-primary text-black hover:text-white font-black uppercase tracking-wider text-sm px-8 py-4 transition-all duration-200 hover:-translate-y-0.5"
             >
-              View Portfolio
+              Explore Our Services
+              <ArrowRight
+                size={16}
+                className="group-hover:translate-x-1 transition-transform"
+              />
             </Link>
           </div>
 
-          {/* Stats ticker row */}
-          <div className="hero-stats">
-            <div className="flex items-stretch gap-px bg-[#1a1a1a] w-fit">
-              {STATS.map(({ value, label, icon: Icon }, i) => (
+          {/* Stats — row under the buttons */}
+          <div className="hero-stats mt-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10 w-full md:w-fit">
+              {STATS.map(({ value, label, icon: Icon }) => (
                 <div
                   key={label}
-                  className="flex items-center gap-3 bg-[#0f0f0f] hover:bg-[#141414] px-6 py-4 transition-colors group"
-                  style={{ animationDelay: `${1 + i * 0.12}s` }}
+                  className="flex items-center gap-4 bg-[#141414] hover:bg-[#1a1a1a] px-6 py-4 transition-colors group"
                 >
                   <Icon
-                    size={14}
+                    size={18}
                     className="text-primary shrink-0 group-hover:scale-110 transition-transform"
                   />
                   <div>
-                    <div className="text-lg font-black text-white leading-none">
+                    <div className="text-2xl font-black text-white leading-none">
                       {value}
                     </div>
-                    <div className="text-[9px] font-bold text-gray-600 uppercase tracking-widest mt-0.5">
+                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
                       {label}
                     </div>
                   </div>
@@ -205,20 +146,54 @@ const Hero = ({ imageAlts, content, heroImage }: HeroProps) => {
         </div>
       </Container>
 
-      {/* ── Scroll indicator ── */}
-      <div className="relative z-10 flex flex-col items-center pb-8 gap-2">
-        <span className="text-[10px] text-gray-600 font-black uppercase tracking-[0.3em]">
-          Scroll
-        </span>
-        <div className="w-5 h-8 border border-white/10 rounded-full flex justify-center p-1">
-          <div className="w-0.5 h-2 bg-primary rounded-full animate-scroll-down" />
-        </div>
-      </div>
+      {/* ── Food trailer + truck illustration on the road ── */}
+      <Container className="relative z-10">
+        <div className="relative mx-auto max-w-4xl overflow-hidden">
+          <svg
+            viewBox="0 0 960 190"
+            className="w-full h-auto block"
+            role="img"
+            aria-label="Custom food trailer towed by a food truck"
+          >
+            <g className="hero-rig">
+              {/* Concession trailer */}
+              <rect x="20" y="10" width="540" height="124" fill="#d1d5db" />
+              {/* Serving window + awning */}
+              <rect x="150" y="34" width="250" height="56" fill="#1f2937" />
+              <polygon points="138,34 412,34 396,18 154,18" fill="#F7931E" />
+              <rect x="150" y="84" width="250" height="8" fill="#9ca3af" />
+              {/* Brand stripes */}
+              <rect x="20" y="104" width="540" height="10" fill="#F7931E" />
+              <rect x="20" y="118" width="540" height="6" fill="#ffffff" />
+              <rect x="20" y="128" width="540" height="12" fill="#374151" />
+              {/* Hitch */}
+              <rect x="560" y="122" width="80" height="6" fill="#4b5563" />
 
-      {/* ── Bottom edge divider ── */}
-      <div className="absolute bottom-0 left-0 right-0 z-10">
-        <div className="h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
-      </div>
+              {/* Food truck */}
+              <rect x="640" y="30" width="190" height="112" fill="#F7931E" />
+              <rect x="664" y="50" width="120" height="44" fill="#1f2937" />
+              <rect x="640" y="116" width="190" height="6" fill="#ffffff" />
+              <path d="M830 142 V60 H880 L930 104 V142 Z" fill="#F7931E" />
+              <path d="M842 70 H876 L912 104 H842 Z" fill="#1f2937" />
+              <rect x="920" y="118" width="30" height="24" fill="#374151" />
+
+              {/* Wheels */}
+              {[200, 262, 690, 780, 890].map((cx) => (
+                <g key={cx} className="wheel">
+                  <circle cx={cx} cy="150" r="24" fill="#111" stroke="#e5e7eb" strokeWidth="3" />
+                  <circle cx={cx} cy="150" r="8" fill="#6b7280" />
+                  <rect x={cx - 1.5} y="130" width="3" height="12" fill="#6b7280" />
+                </g>
+              ))}
+            </g>
+            {/* Road */}
+            <rect x="0" y="174" width="960" height="4" fill="#3f3f46" />
+          </svg>
+        </div>
+      </Container>
+
+      {/* ── Bottom hazard stripe ── */}
+      <div className="hazard-stripe h-2.5 relative z-10" aria-hidden />
     </section>
   );
 };
