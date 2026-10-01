@@ -72,10 +72,7 @@ const ReelCard = ({ title, location, videoUrl }: ReelCardProps) => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/40 pointer-events-none" />
 
             {/* Top Badges */}
-            <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
-              <span className="bg-primary text-black font-black text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full shadow-md">
-                Client Reel
-              </span>
+            <div className="absolute top-4 left-4 right-4 flex items-center justify-end z-10 pointer-events-none">
               {duration && (
                 <span className="bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-2.5 py-1 rounded-full border border-white/10">
                   {duration}

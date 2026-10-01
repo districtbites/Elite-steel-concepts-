@@ -63,7 +63,7 @@ const SizeSelection = () => {
             Choose Your Ideal Food Truck Size
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
-            The right food truck size depends on your menu, equipment, staff, storage, &amp; business needs. We&apos;ll help you choose a smart layout that fits for a food business.
+            We&apos;ll help you choose the right size and layout for your menu, equipment, staff, storage, and operating needs.
           </p>
         </div>
 

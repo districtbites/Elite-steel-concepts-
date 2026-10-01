@@ -168,8 +168,8 @@ const Header = ({ settings }: HeaderProps) => {
           </div>
         </Container>
 
-        {/* Hazard stripe + scroll-driven truck */}
-        <div className="relative z-[105]">
+        {/* Hazard stripe + scroll-driven truck — hide while mobile menu is open */}
+        <div className={`relative z-[105] ${isOpen ? "invisible" : ""}`}>
           <div className="hazard-stripe h-2.5" aria-hidden />
           <div
             ref={truckRef}
@@ -212,14 +212,14 @@ const Header = ({ settings }: HeaderProps) => {
 
         {/* Mobile Navigation Overlay */}
         <div
-          className={`fixed inset-0 bg-[#0a0a0a] z-[90] lg:hidden transition-all duration-500 ease-in-out ${
+          className={`fixed inset-0 bg-[#0a0a0a] z-[100] lg:hidden transition-all duration-500 ease-in-out ${
             isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
           }`}
         >
           {/* Industrial Grid Texture for Menu */}
           <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }} />
 
-          <div className="relative z-10 flex flex-col items-center justify-center h-screen space-y-8 p-8">
+          <div className="relative z-10 flex flex-col items-center justify-start sm:justify-center min-h-full overflow-y-auto pt-24 pb-10 px-6 space-y-5 sm:space-y-7">
             {navLinks.map((link, idx) => {
               const isActive =
                 link.href === "/"
@@ -230,9 +230,9 @@ const Header = ({ settings }: HeaderProps) => {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`text-4xl font-black uppercase tracking-tighter transition-all duration-300 transform ${
+                  className={`text-3xl sm:text-4xl font-black uppercase tracking-tighter transition-all duration-300 transform ${
                     isActive ? "text-primary" : "text-white hover:text-primary"
-                  } ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}
+                  } ${isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}
                   style={{ transitionDelay: `${idx * 50}ms` }}
                   onClick={() => setIsOpen(false)}
                 >
@@ -240,18 +240,31 @@ const Header = ({ settings }: HeaderProps) => {
                 </Link>
               );
             })}
-            
-            <div className={`pt-10 w-full max-w-xs transition-all duration-500 delay-300 transform ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+
+            <div
+              className={`pt-6 w-full max-w-xs transition-all duration-500 delay-300 transform ${
+                isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+              }`}
+            >
               <Button href="/quote" variant="primary" size="lg" className="w-full" onClick={() => setIsOpen(false)}>
                 Get a Free Quote
               </Button>
             </div>
-            
-            <div className={`mt-12 flex flex-col items-center text-gray-500 border-t border-[#1a1a1a] pt-8 w-full max-w-xs transition-all duration-500 delay-400 transform ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-               <a href={`tel:${settings.phone}`} className="flex items-center mb-4 font-black text-white hover:text-primary transition-colors text-xl tracking-tight">
-                 <Phone className="w-5 h-5 mr-3 text-primary" /> {settings.phone}
-               </a>
-               <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] border border-primary px-3 py-1">Manassas HQ | Nationwide Delivery</span>
+
+            <div
+              className={`mt-6 flex flex-col items-center text-gray-500 border-t border-[#1a1a1a] pt-6 w-full max-w-xs transition-all duration-500 delay-400 transform ${
+                isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+              }`}
+            >
+              <a
+                href={`tel:${settings.phone}`}
+                className="flex items-center mb-4 font-black text-white hover:text-primary transition-colors text-lg sm:text-xl tracking-tight"
+              >
+                <Phone className="w-5 h-5 mr-3 text-primary" /> {settings.phone}
+              </a>
+              <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] border border-primary px-3 py-1">
+                Manassas HQ | Nationwide Delivery
+              </span>
             </div>
           </div>
         </div>

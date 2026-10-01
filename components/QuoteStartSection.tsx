@@ -45,11 +45,11 @@ const QuoteStartSection = () => {
           </div>
 
           <Link
-            href="/contact"
-            id="quote-contact-btn"
+            href="/quote"
+            id="quote-free-quote-btn"
             className="group inline-flex items-center gap-3 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-sm px-12 py-4 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-primary/25"
           >
-            Contact Us
+            Get a Free Quote
             <ArrowRight
               size={16}
               className="group-hover:translate-x-1 transition-transform"
@@ -58,7 +58,7 @@ const QuoteStartSection = () => {
 
           <div className="mt-4 inline-flex items-center gap-2 text-gray-500 text-xs font-bold uppercase tracking-widest">
             <Clock size={13} className="text-primary" />
-            Takes 4 minutes
+            Takes 3 minutes
           </div>
         </div>
       </Container>

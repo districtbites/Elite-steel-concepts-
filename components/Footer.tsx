@@ -18,14 +18,17 @@ const Footer = ({ settings }: FooterProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}
           <div className="space-y-6">
-            <div className="relative w-48 h-16 md:w-56 md:h-20">
-                 <Image
-                  src={settings.logoUrl || "/logo.png"}
+            <Link href="/" className="inline-block group">
+              <div className="relative w-36 h-9 sm:w-40 sm:h-10 md:w-44 md:h-11 transition-transform duration-300 group-hover:scale-[1.02]">
+                <Image
+                  src="/logo-horizontal-white.png"
                   alt="Elite Steel Concepts"
                   fill
-                  className="object-contain object-left grayscale brightness-200" 
+                  sizes="(max-width: 640px) 144px, 176px"
+                  className="object-contain object-left"
                 />
-            </div>
+              </div>
+            </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
               Elite Steel Concepts designs & builds custom food trucks and trailers in Manassas, VA. Premium mobile kitchens crafted for performance. Get a free quote today!
             </p>

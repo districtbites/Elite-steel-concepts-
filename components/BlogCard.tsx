@@ -73,7 +73,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
 
         {/* Footer CTA */}
         <div className="mt-auto flex items-center text-black font-black text-xs uppercase tracking-wider group-hover:text-primary transition-colors">
-          Read Intel 
+          Read Article 
           <ArrowRight size={14} className="ml-2 transform group-hover:translate-x-1.5 transition-transform" />
         </div>
       </div>
