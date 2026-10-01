@@ -20,7 +20,7 @@ const FAQSection = ({ faqs }: FAQSectionProps) => {
   if (!faqs || faqs.length === 0) return null;
 
   return (
-    <section className="py-24 bg-white border-t border-gray-100">
+    <section className="py-8 md:py-12 bg-white border-t border-gray-100">
       <Container>
         <div className="flex flex-col lg:flex-row gap-16">
           <div className="w-full lg:w-1/3">

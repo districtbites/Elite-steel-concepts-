@@ -7,7 +7,6 @@ import {
   PlugZap,
   Flame,
   Truck,
-  ArrowRight,
 } from "lucide-react";
 
 const whyChooseFeatures = [
@@ -51,10 +50,10 @@ const whyChooseFeatures = [
 
 const WhyChooseSection: React.FC = () => {
   return (
-    <section className="bg-gray-50/70 py-20 md:py-28 border-b border-gray-100">
+    <section className="bg-gray-50/70 py-8 md:py-12 border-b border-gray-100">
       <Container>
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-primary" />
             <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
@@ -74,33 +73,17 @@ const WhyChooseSection: React.FC = () => {
             return (
               <div
                 key={feature.title}
-                className="group bg-white rounded-3xl p-8 md:p-10 border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col items-center text-center justify-between"
+                className="group bg-white rounded-3xl p-8 md:p-10 border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col items-center justify-center text-center"
               >
-                <div className="flex flex-col items-center">
-                  {/* Icon Box */}
-                  <div className="size-16 bg-black text-white rounded-2xl flex items-center justify-center mb-6 shadow-md group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                    <Icon size={28} strokeWidth={2} />
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-xl font-black text-black tracking-tight mb-4">
-                    {feature.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-gray-500 text-sm leading-relaxed font-normal mb-6">
-                    {feature.description}
-                  </p>
+                {/* Icon Box */}
+                <div className="size-16 bg-black text-white rounded-2xl flex items-center justify-center mb-6 shadow-md group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                  <Icon size={28} strokeWidth={2} />
                 </div>
 
-                {/* Learn More footer link */}
-                <div className="inline-flex items-center gap-1 text-xs font-bold text-gray-400 group-hover:text-primary transition-colors cursor-pointer mt-auto">
-                  <span>Learn more</span>
-                  <ArrowRight
-                    size={12}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
-                </div>
+                {/* Title */}
+                <h3 className="text-xl font-black text-black tracking-tight group-hover:text-primary transition-colors">
+                  {feature.title}
+                </h3>
               </div>
             );
           })}

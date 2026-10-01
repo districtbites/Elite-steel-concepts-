@@ -7,12 +7,11 @@ import {
   Droplets,
   Wind,
   Zap,
-  ShieldCheck,
   Coffee,
   Truck,
   Layers,
   Thermometer,
-  Sparkles,
+  // Sparkles, — used by the hidden Layout Specs Banner
   Box,
   Compass,
 } from "lucide-react";
@@ -182,36 +181,36 @@ const trailerData: VehicleLayout = {
 
 export default function InteractiveFloorPlan() {
   const [activeSide, setActiveSide] = useState<"truck" | "trailer">("truck");
-  const [activeHotspotId, setActiveHotspotId] = useState<string | null>(
-    "truck-fire-suppression",
-  );
 
   const activeVehicle = activeSide === "truck" ? truckData : trailerData;
-  const activeHotspot =
-    activeVehicle.hotspots.find((h) => h.id === activeHotspotId) ||
-    activeVehicle.hotspots[0];
 
-  const handleSideSwitch = (side: "truck" | "trailer") => {
-    setActiveSide(side);
-    const newVehicle = side === "truck" ? truckData : trailerData;
-    setActiveHotspotId(newVehicle.hotspots[0].id);
-  };
+  const handleSideSwitch = (side: "truck" | "trailer") => setActiveSide(side);
 
   return (
-    <section className="bg-[#050505] py-20 md:py-32 relative overflow-hidden">
+    <section className="bg-white border-y border-gray-100 py-8 md:py-12 relative overflow-hidden">
       {/* Blueprint Background Grid */}
       <div
-        className="absolute inset-0 opacity-20 pointer-events-none"
+        className="absolute inset-0 opacity-60 pointer-events-none"
         style={{
           backgroundImage: `
-            linear-gradient(to right, #333 1px, transparent 1px),
-            linear-gradient(to bottom, #333 1px, transparent 1px)
+            linear-gradient(to right, #f1f1f1 1px, transparent 1px),
+            linear-gradient(to bottom, #f1f1f1 1px, transparent 1px)
           `,
           backgroundSize: "40px 40px",
         }}
       />
 
       <Container>
+        {/* Section header */}
+        <div className="flex items-center justify-center gap-3 mb-12 relative z-10">
+          <div className="h-px w-12 bg-primary" />
+          <h2 className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
+            Our Services
+          </h2>
+          <div className="h-px w-12 bg-primary" />
+        </div>
+
+        {/* Previous header ("Interactive Interior Floor Plans") — hidden for now
         <div className="text-center mb-12 relative z-10">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-12 bg-primary" />
@@ -235,85 +234,70 @@ export default function InteractiveFloorPlan() {
             workflow ergonomics.
           </p>
         </div>
+        */}
 
         {/* Side Selection Selector (Truck Interior vs Trailer Interior) */}
         <div className="relative z-10 max-w-4xl mx-auto mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2 bg-[#0c0c0c] border border-[#222] rounded-2xl shadow-xl">
-            {/* Side 1: Truck Interior */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2 bg-gray-50 border border-gray-200 rounded-2xl shadow-sm">
+            {/* Custom Food Truck */}
             <button
               onClick={() => handleSideSwitch("truck")}
               className={`flex items-center justify-between p-4 md:p-6 rounded-xl transition-all duration-300 text-left border ${
                 activeSide === "truck"
-                  ? "bg-[#161616] border-primary shadow-[0_0_25px_rgba(255,165,0,0.15)]"
-                  : "bg-transparent border-transparent hover:bg-[#121212] opacity-70 hover:opacity-100"
+                  ? "bg-white border-primary shadow-[0_8px_25px_rgba(247,147,30,0.18)]"
+                  : "bg-transparent border-transparent hover:bg-white opacity-80 hover:opacity-100"
               }`}
             >
               <div className="flex items-center gap-4">
                 <div
-                  className={`p-3 rounded-lg ${activeSide === "truck" ? "bg-primary text-black" : "bg-[#1f1f1f] text-gray-400"}`}
+                  className={`p-3 rounded-lg ${activeSide === "truck" ? "bg-primary text-black" : "bg-gray-200 text-gray-500"}`}
                 >
                   <Truck size={24} />
                 </div>
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-primary mb-1">
-                    Side 1
-                  </div>
-                  <div className="text-lg font-black text-white uppercase tracking-tight">
-                    Food Truck Interior
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    Self-Contained Driveable Mobile Kitchen
-                  </div>
+                <div className="text-lg font-black text-black uppercase tracking-tight">
+                  Custom Food Truck
                 </div>
               </div>
               <div
-                className={`size-4 rounded-full border-2 flex items-center justify-center ${activeSide === "truck" ? "border-primary bg-primary" : "border-gray-600"}`}
+                className={`size-4 rounded-full border-2 flex items-center justify-center ${activeSide === "truck" ? "border-primary bg-primary" : "border-gray-300"}`}
               >
                 {activeSide === "truck" && (
-                  <div className="size-1.5 rounded-full bg-black" />
+                  <div className="size-1.5 rounded-full bg-white" />
                 )}
               </div>
             </button>
 
-            {/* Side 2: Trailer Interior */}
+            {/* Custom Food Trailer */}
             <button
               onClick={() => handleSideSwitch("trailer")}
               className={`flex items-center justify-between p-4 md:p-6 rounded-xl transition-all duration-300 text-left border ${
                 activeSide === "trailer"
-                  ? "bg-[#161616] border-primary shadow-[0_0_25px_rgba(255,165,0,0.15)]"
-                  : "bg-transparent border-transparent hover:bg-[#121212] opacity-70 hover:opacity-100"
+                  ? "bg-white border-primary shadow-[0_8px_25px_rgba(247,147,30,0.18)]"
+                  : "bg-transparent border-transparent hover:bg-white opacity-80 hover:opacity-100"
               }`}
             >
               <div className="flex items-center gap-4">
                 <div
-                  className={`p-3 rounded-lg ${activeSide === "trailer" ? "bg-primary text-black" : "bg-[#1f1f1f] text-gray-400"}`}
+                  className={`p-3 rounded-lg ${activeSide === "trailer" ? "bg-primary text-black" : "bg-gray-200 text-gray-500"}`}
                 >
-                  <Layers size={24} />
+                  <Truck size={24} />
                 </div>
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-wider text-primary mb-1">
-                    Side 2
-                  </div>
-                  <div className="text-lg font-black text-white uppercase tracking-tight">
-                    Trailer Interior
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    Expanded Towable Commercial Kitchen
-                  </div>
+                <div className="text-lg font-black text-black uppercase tracking-tight">
+                  Custom Food Trailer
                 </div>
               </div>
               <div
-                className={`size-4 rounded-full border-2 flex items-center justify-center ${activeSide === "trailer" ? "border-primary bg-primary" : "border-gray-600"}`}
+                className={`size-4 rounded-full border-2 flex items-center justify-center ${activeSide === "trailer" ? "border-primary bg-primary" : "border-gray-300"}`}
               >
                 {activeSide === "trailer" && (
-                  <div className="size-1.5 rounded-full bg-black" />
+                  <div className="size-1.5 rounded-full bg-white" />
                 )}
               </div>
             </button>
           </div>
         </div>
 
-        {/* Layout Specs Banner */}
+        {/* Layout Specs Banner (badge, name, typical length / power / best for) — hidden for now
         <div className="relative z-10 bg-[#0a0a0a]/80 backdrop-blur-md border border-[#1f1f1f] rounded-xl p-6 mb-10 max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-2">
@@ -342,95 +326,34 @@ export default function InteractiveFloorPlan() {
             ))}
           </div>
         </div>
+        */}
 
-        {/* Interactive Blueprint and Specs Grid */}
-        <div className="relative max-w-6xl mx-auto flex flex-col lg:flex-row gap-8 items-start z-10">
-          {/* Blueprint Area */}
-          <div className="w-full lg:w-2/3 relative bg-[#0a0a0a] border-2 border-[#1a1a1a] shadow-2xl overflow-hidden rounded-xl">
-            {/* Header overlay badge */}
+        {/* Vehicle image — crossfades when switching Side 1 / Side 2 */}
+        <div className="relative max-w-5xl mx-auto z-10">
+          <div className="relative w-full aspect-[4/3] md:aspect-[16/9] bg-gray-100 border border-gray-200 shadow-xl overflow-hidden rounded-xl">
+            {[truckData, trailerData].map((vehicle) => {
+              const isActive = vehicle === activeVehicle;
+              return (
+                <Image
+                  key={vehicle.id}
+                  src={vehicle.image}
+                  alt={vehicle.name}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 1024px"
+                  aria-hidden={!isActive}
+                  className={`object-cover transition-all duration-700 ease-out ${
+                    isActive ? "opacity-100 scale-100" : "opacity-0 scale-105"
+                  }`}
+                />
+              );
+            })}
+
+            {/* Label overlay */}
             <div className="absolute top-4 left-4 z-20 bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2">
               <span className="size-2 rounded-full bg-primary animate-pulse" />
               <span>
-                {activeSide === "truck"
-                  ? "SIDE 1: FOOD TRUCK BLUEPRINT"
-                  : "SIDE 2: TRAILER BLUEPRINT"}
+                {activeSide === "truck" ? "SIDE 1: FOOD TRUCK" : "SIDE 2: TRAILER"}
               </span>
-            </div>
-
-            <div className="relative w-full aspect-[16/9] md:aspect-[4/3] min-h-[340px] flex items-center justify-center p-4">
-              <Image
-                src={activeVehicle.image}
-                alt={activeVehicle.name}
-                width={1024}
-                height={1024}
-                className="w-full h-full object-contain opacity-90 mix-blend-screen transition-all duration-500"
-                priority
-              />
-
-              {/* Hotspots */}
-              {activeVehicle.hotspots.map((spot) => (
-                <button
-                  key={spot.id}
-                  onClick={() => setActiveHotspotId(spot.id)}
-                  className="absolute z-20 -translate-x-1/2 -translate-y-1/2 group"
-                  style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
-                >
-                  {/* Radar pulse effect */}
-                  <div className="absolute inset-0 rounded-full bg-primary/60 animate-ping opacity-75 group-hover:bg-white/50" />
-
-                  {/* Core button */}
-                  <div
-                    className={`relative size-8 md:w-11 md:h-11 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-[0_0_15px_rgba(255,165,0,0.4)] ${
-                      activeHotspotId === spot.id
-                        ? "bg-primary border-white text-white scale-110"
-                        : "bg-[#0a0a0a]/80 backdrop-blur-sm border-primary text-primary hover:bg-primary hover:border-white hover:text-white hover:scale-110"
-                    }`}
-                  >
-                    <spot.icon size={18} className="md:size-5" />
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            <div className="bg-[#0e0e0e] border-t border-[#1a1a1a] px-6 py-3 flex flex-wrap items-center justify-between text-xs text-gray-500 gap-2">
-              <span>Click hotspots on floor plan to view equipment specs</span>
-              <span className="text-primary font-bold">
-                {activeVehicle.hotspots.length} Key Systems Marked
-              </span>
-            </div>
-          </div>
-
-          {/* Details Panel */}
-          <div className="w-full lg:w-1/3 min-h-[360px] flex flex-col">
-            <div className="bg-[#0f0f0f] border border-[#1a1a1a] p-8 h-full flex flex-col relative rounded-xl shadow-xl animate-in fade-in duration-300">
-              <div className="flex items-center justify-between mb-6">
-                <div className="size-14 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20">
-                  <activeHotspot.icon size={28} className="text-primary" />
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 bg-[#171717] px-3 py-1.5 rounded-full border border-[#222]">
-                  {activeSide === "truck"
-                    ? "Truck Interior Detail"
-                    : "Trailer Interior Detail"}
-                </span>
-              </div>
-
-              <h3 className="text-2xl font-black text-white uppercase tracking-tight mb-4 leading-tight">
-                {activeHotspot.title}
-              </h3>
-
-              <p className="text-gray-400 leading-relaxed text-sm mb-6">
-                {activeHotspot.description}
-              </p>
-
-              <div className="mt-auto pt-6 border-t border-[#1a1a1a] flex flex-col gap-3">
-                <div className="flex items-center gap-2 text-xs font-black text-primary uppercase tracking-widest">
-                  <ShieldCheck size={16} /> 100% Health & Fire Code Compliant
-                </div>
-                <p className="text-[11px] text-gray-500 italic">
-                  Fabricated using heavy-duty 304 food-grade stainless steel
-                  with precision TIG welds.
-                </p>
-              </div>
             </div>
           </div>
         </div>

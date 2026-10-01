@@ -1,8 +1,6 @@
 import React from "react";
-import Link from "next/link";
 import Container from "./ui/Container";
 import Section from "./ui/Section";
-import { ArrowRight, Film, Sparkles } from "lucide-react";
 import ReelCard from "./ui/ReelCard";
 import { getTestimonials } from "@/lib/db";
 
@@ -49,49 +47,21 @@ const Testimonials = async () => {
   if (recentTestimonials.length === 0) return null;
 
   return (
-    <Section className="bg-white text-secondary border-t border-gray-100 py-20 md:py-28">
+    <Section className="!py-8 md:!py-12 bg-white text-secondary border-t border-gray-100">
       <Container>
         {/* Header */}
-        <div className="text-center mb-16">
-          <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">
-            Testimonials
-          </span>
-          <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-secondary mb-6">
-            Client Success
-          </h2>
-          <div className="w-24 h-1 bg-primary mx-auto mb-6"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed mb-8">
-            We don't just build trucks; we build businesses. Watch real video walkthroughs and client handover reels from entrepreneurs who trust Elite Steel Concepts.
-          </p>
-          <Link 
-            href="/testimonials" 
-            className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-secondary hover:text-primary transition-colors"
-          >
-            See All Reviews <ArrowRight size={16} className="ml-2" />
-          </Link>
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center gap-3">
+            <div className="h-px w-8 bg-primary" />
+            <span className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
+              Client Testimonials
+            </span>
+            <div className="h-px w-8 bg-primary" />
+          </div>
         </div>
 
         {/* ═══ VIDEO TESTIMONIALS & REELS SECTION ════════════════ */}
         <div>
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
-                <Film size={20} />
-              </div>
-              <div>
-                <h3 className="text-xl md:text-2xl font-black uppercase text-secondary tracking-tight">
-                  Featured Build Reels
-                </h3>
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-bold">
-                  Real Video Handovers & Kitchen Tours
-                </p>
-              </div>
-            </div>
-            <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
-              <Sparkles size={14} /> 4K Video Reviews
-            </div>
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {sampleReels.map((reel) => (
               <ReelCard

@@ -1,6 +1,6 @@
 import Hero from "@/components/Hero";
 import Container from "@/components/ui/Container";
-import ServiceSelection from "@/components/ServiceSelection";
+// import ServiceSelection from "@/components/ServiceSelection"; // section hidden below
 import WhyChooseSection from "@/components/WhyChooseSection";
 import SizeSelection from "@/components/SizeSelection";
 import Testimonials from "@/components/Testimonials";
@@ -13,12 +13,8 @@ import ReadMore from "@/components/ui/ReadMore";
 import ProcessSteps from "@/components/ProcessSteps";
 import QuoteStartSection from "@/components/QuoteStartSection";
 import {
-  CheckCircle2,
+  // CheckCircle2, Shield, Zap, Award, Truck — used by the hidden "Why Choose Us" section
   MapPin,
-  Shield,
-  Zap,
-  Award,
-  Truck,
   ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
@@ -102,40 +98,41 @@ export default async function Home() {
     linkSettings,
   ).updatedContent;
 
-  const whyChooseUsLines = (sections.whychooseus?.content || "")
-    .split("\n")
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0);
+  // Used by the hidden "Why Choose Us" dark section below
+  // const whyChooseUsLines = (sections.whychooseus?.content || "")
+  //   .split("\n")
+  //   .map((line) => line.trim())
+  //   .filter((line) => line.length > 0);
 
-  const whyChooseUsItems = [
-    {
-      icon: Shield,
-      text: whyChooseUsLines[0] || "100% Health & Fire Code Compliant Builds",
-    },
-    {
-      icon: Award,
-      text: whyChooseUsLines[1] || "14+ Years of Expert Fabrication Experience",
-    },
-    {
-      icon: Truck,
-      text: whyChooseUsLines[2] || "Custom Designed to Your Menu & Workflow",
-    },
-    {
-      icon: Zap,
-      text: whyChooseUsLines[3] || "Precision TIG/MIG Welding & NSF Standards",
-    },
-    {
-      icon: CheckCircle2,
-      text:
-        whyChooseUsLines[4] ||
-        "End-to-End Support: Design → Fabrication → Handover",
-    },
-    {
-      icon: MapPin,
-      text:
-        whyChooseUsLines[5] || "Based in Manassas VA, Serving DMV & Nationwide",
-    },
-  ];
+  // const whyChooseUsItems = [
+  //   {
+  //     icon: Shield,
+  //     text: whyChooseUsLines[0] || "100% Health & Fire Code Compliant Builds",
+  //   },
+  //   {
+  //     icon: Award,
+  //     text: whyChooseUsLines[1] || "14+ Years of Expert Fabrication Experience",
+  //   },
+  //   {
+  //     icon: Truck,
+  //     text: whyChooseUsLines[2] || "Custom Designed to Your Menu & Workflow",
+  //   },
+  //   {
+  //     icon: Zap,
+  //     text: whyChooseUsLines[3] || "Precision TIG/MIG Welding & NSF Standards",
+  //   },
+  //   {
+  //     icon: CheckCircle2,
+  //     text:
+  //       whyChooseUsLines[4] ||
+  //       "End-to-End Support: Design → Fabrication → Handover",
+  //   },
+  //   {
+  //     icon: MapPin,
+  //     text:
+  //       whyChooseUsLines[5] || "Based in Manassas VA, Serving DMV & Nationwide",
+  //   },
+  // ];
 
   const coverageAreas = [
     "Washington DC",
@@ -154,94 +151,94 @@ export default async function Home() {
       )}
 
       {/* ═══ HERO ════════════════════════════════════════════ */}
-      <Hero imageAlts={alts} content={sections.hero} heroImage={heroImage} />
+      <Hero
+        imageAlts={alts}
+        content={sections.hero}
+        heroImage={heroImage}
+        slides={[
+          {
+            url: homeTruckCard.url,
+            alt: homeTruckCard.alt || "Custom food truck built by Elite Steel Concepts",
+            label: "Platform 01",
+            title: "Custom Food Trucks",
+            href: "/services/custom-food-trucks",
+          },
+          {
+            url: homeTrailerCard.url,
+            alt: homeTrailerCard.alt || "Custom concession trailer built by Elite Steel Concepts",
+            label: "Platform 02",
+            title: "Concession Trailers",
+            href: "/services/custom-food-trailers",
+          },
+        ]}
+      />
 
       {/* ═══ INTRO ═══════════════════════════════════════════ */}
       <section
         id="intro"
-        className="bg-white py-20 md:py-28 border-b border-gray-100"
+        className="bg-white py-8 md:py-12 border-b border-gray-100"
       >
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-stretch">
-            {/* Left: headline */}
-            <div className="lg:col-span-5 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="h-px w-12 bg-primary" />
-                  <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                    What We Build
-                  </span>
-                </div>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black leading-[1.05] uppercase tracking-tight">
-                  {sections.intro?.title ||
-                    "Custom Food Trucks & Concession Trailers For Entrepreneurs"}
-                </h2>
-              </div>
-
-              {/* Stat row */}
-              <div className="flex items-center gap-8 md:gap-12 mt-10 pt-8 border-t border-gray-100">
-                {[
-                  { val: `${settings.experienceYears || 14}+`, lbl: "Yrs Exp" },
-                  {
-                    val: `${settings.trucksBuiltCount || 350}+`,
-                    lbl: "Builds",
-                  },
-                  { val: "48", lbl: "States" },
-                ].map(({ val, lbl }) => (
-                  <div key={lbl}>
-                    <div className="text-3xl font-black text-black">{val}</div>
-                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                      {lbl}
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* Heading — same centered style as Why Choose */}
+          <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+            <div className="inline-flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-primary" />
+              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                What We Build
+              </span>
+              <div className="h-px w-8 bg-primary" />
             </div>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black uppercase tracking-tight leading-tight">
+              {sections.intro?.title ||
+                "Custom Food Trucks & Concession Trailers For Entrepreneurs"}
+            </h2>
+          </div>
 
-            {/* Right: copy + CTA */}
-            <div className="lg:col-span-7 pl-0 lg:pl-12 border-l-0 lg:border-l-2 border-primary/30 flex flex-col justify-between py-1">
-              <div className="mb-8">
-                <ReadMore
-                  text={introLinked}
-                  maxLength={300}
-                  className="text-base md:text-lg text-gray-600 leading-relaxed font-normal max-w-prose"
+          {/* Copy + CTAs */}
+          <div className="flex flex-col gap-8">
+            <div>
+              <ReadMore
+                text={introLinked}
+                maxLength={300}
+                className="text-base md:text-lg text-gray-600 leading-relaxed font-normal max-w-3xl mx-auto text-center"
+                buttonClassName="mt-2 text-primary font-bold text-xs uppercase tracking-wider hover:underline flex items-center gap-1 self-center"
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/about"
+                id="intro-about-btn"
+                className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-xs px-7 py-4 transition-all shadow-sm"
+              >
+                About ESC
+                <ArrowRight
+                  size={14}
+                  className="group-hover:translate-x-1 transition-transform"
                 />
-              </div>
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                <Link
-                  href="/about"
-                  id="intro-about-btn"
-                  className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-xs px-7 py-4 transition-all shadow-sm"
-                >
-                  About ESC
-                  <ArrowRight
-                    size={14}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
-                </Link>
-                <Link
-                  href="/portfolio"
-                  id="intro-portfolio-btn"
-                  className="group inline-flex items-center justify-center gap-2 border-2 border-black hover:bg-black text-black hover:text-white font-black uppercase tracking-wider text-xs px-7 py-3.5 transition-all"
-                >
-                  See Our Work
-                  <ArrowRight
-                    size={14}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
-                </Link>
-              </div>
+              </Link>
+              <Link
+                href="/portfolio"
+                id="intro-portfolio-btn"
+                className="group inline-flex items-center justify-center gap-2 border-2 border-black hover:bg-black text-black hover:text-white font-black uppercase tracking-wider text-xs px-7 py-3.5 transition-all"
+              >
+                See Our Work
+                <ArrowRight
+                  size={14}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+              </Link>
             </div>
           </div>
         </Container>
       </section>
 
-      {/* ═══ SERVICES ════════════════════════════════════════ */}
+      {/* ═══ SERVICES (Choose Your Custom Food Truck & Trailer) — hidden for now ═══
       <ServiceSelection
         imageAlts={alts}
         truckImage={homeTruckCard}
         trailerImage={homeTrailerCard}
       />
+      */}
 
       {/* ═══ GET A QUOTE ═════════════════════════════════════ */}
       <QuoteStartSection />
@@ -249,11 +246,11 @@ export default async function Home() {
       {/* ═══ WHY CHOOSE SECTION (CARDS) ══════════════════════ */}
       <WhyChooseSection />
 
-      {/* ═══ WHY CHOOSE US ═══════════════════════════════════ */}
+      {/* ═══ WHY CHOOSE US (dark stats + checklist) — hidden for now ═══
       <section id="why-choose-us" className="bg-[#0a0a0a] py-20 md:py-28">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-            {/* Left: feature list */}
+            {/- Left: feature list -/}
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-px w-12 bg-primary" />
@@ -286,9 +283,9 @@ export default async function Home() {
               </div>
             </div>
 
-            {/* Right: dark stat card + testimonial quote */}
+            {/- Right: dark stat card + testimonial quote -/}
             <div className="space-y-px">
-              {/* Stats 2x2 grid */}
+              {/- Stats 2x2 grid -/}
               <div className="grid grid-cols-2 gap-px bg-[#1a1a1a]">
                 {[
                   {
@@ -326,7 +323,7 @@ export default async function Home() {
                 ))}
               </div>
 
-              {/* Testimonial quote */}
+              {/- Testimonial quote -/}
               <div className="bg-primary p-8">
                 <div className="text-4xl text-white/20 font-serif leading-none mb-4">
                   &ldquo;
@@ -341,7 +338,7 @@ export default async function Home() {
                 </p>
               </div>
 
-              {/* CTA button */}
+              {/- CTA button -/}
               <div className="bg-[#0f0f0f] p-6 flex items-center justify-between">
                 <p className="text-sm text-gray-500">
                   Ready to join 350+ successful builds?
@@ -358,6 +355,7 @@ export default async function Home() {
           </div>
         </Container>
       </section>
+      */}
 
       {/* ═══ PROCESS ═════════════════════════════════════════ */}
       <ProcessSteps />
@@ -371,25 +369,26 @@ export default async function Home() {
       {/* ═══ LOCAL COVERAGE ══════════════════════════════════ */}
       <section
         id="local-coverage"
-        className="bg-white py-20 md:py-28 border-t border-gray-100"
+        className="bg-white pt-8 md:pt-12 pb-8 md:pb-10 border-t border-gray-100"
       >
         <Container>
-          {/* Row 1: copy */}
-          <div className="max-w-3xl">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="h-px w-12 bg-primary" />
+          {/* Row 1: copy — centered */}
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-primary" />
               <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 {sections.localcoverage?.subtitle || "Service Area"}
               </span>
+              <div className="h-px w-8 bg-primary" />
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight mb-8">
+            <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight mb-6">
               {sections.localcoverage?.title || "USA Area ESC Cover"}
             </h2>
             <ReadMore
               text={localCoverageLinked}
               maxLength={250}
-              className="text-gray-500 text-lg leading-relaxed max-w-prose"
-              buttonClassName="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-black border border-black px-4 py-2 hover:bg-primary hover:border-primary transition-colors flex items-center gap-2"
+              className="text-gray-500 text-lg leading-relaxed text-center"
+              buttonClassName="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-black border border-black px-4 py-2 hover:bg-primary hover:border-primary transition-colors inline-flex items-center gap-2 self-center"
             />
           </div>
 
@@ -422,7 +421,7 @@ export default async function Home() {
           </div>
 
           {/* Row 3: locations button */}
-          <div className="mt-12 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <Link
               href="/locations"
               id="coverage-view-locations-btn"
@@ -450,7 +449,7 @@ export default async function Home() {
       {/* ═══ FAQ ═════════════════════════════════════════════ */}
       {faqs.length > 0 && <FAQSection faqs={faqs.slice(0, 5)} />}
 
-      {/* ═══ FINAL CTA ═══════════════════════════════════════ */}
+      {/* ═══ FINAL CTA — hidden for now ═══════════════════════
       <CTASection
         title={sections.cta?.title || "Ready to Start Your Build?"}
         subtitle={
@@ -460,6 +459,7 @@ export default async function Home() {
         buttonText={sections.cta?.ctaText || "Get a Free Quote"}
         buttonHref="/quote"
       />
+      */}
 
       {/* ═══ APPLICATION MODAL (ONE-TIME PER SESSION) ═══════ */}
       <ApplicationModal />

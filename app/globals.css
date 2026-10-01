@@ -272,27 +272,10 @@ body {
   );
 }
 
-/* Hero rig drives in from the left, wheels spinning */
-@keyframes rigDriveIn {
-  from { transform: translateX(-110%); }
-  to   { transform: translateX(0); }
-}
-@keyframes wheelSpin {
-  to { transform: rotate(-720deg); }
-}
-.hero-rig {
-  animation: rigDriveIn 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
-}
-.hero-rig .wheel {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: wheelSpin 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-rig,
-  .hero-rig .wheel {
-    animation: none;
-  }
+/* Hero slider active-slide progress bar */
+@keyframes heroSlideProgress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
 /* ============================= */

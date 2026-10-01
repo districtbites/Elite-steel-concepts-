@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Let `next dev` serve dev assets/HMR when viewed through an ngrok tunnel
+  allowedDevOrigins: ['*.ngrok-free.app', '*.ngrok.app', '*.ngrok.io'],
   images: {
     unoptimized: true,
     remotePatterns: [

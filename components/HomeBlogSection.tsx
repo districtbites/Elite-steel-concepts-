@@ -16,7 +16,7 @@ const HomeBlogSection = async () => {
   if (publishedPosts.length === 0) return null;
 
   return (
-    <Section className="bg-gray-50">
+    <Section className="!py-8 md:!py-12 bg-gray-50">
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>

@@ -8,7 +8,7 @@ const QuoteStartSection = () => {
   return (
     <section
       id="get-a-quote"
-      className="relative overflow-hidden bg-[#050505] py-24 md:py-32 border-b border-[#1a1a1a]"
+      className="relative overflow-hidden bg-[#050505] py-10 md:py-14 border-b border-[#1a1a1a]"
     >
       {/* Blueprint grid backdrop */}
       <div
@@ -30,38 +30,26 @@ const QuoteStartSection = () => {
 
       <Container>
         <div className="relative z-10 flex flex-col items-center text-center">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-px w-12 bg-primary" />
-            <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-              Free Quote
-            </span>
-            <div className="h-px w-12 bg-primary" />
-          </div>
-
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tight leading-[1.05] mb-12">
+          <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight leading-[1.05] mb-4">
             Get A Quote
           </h2>
 
-          <div className="relative w-full max-w-[520px] aspect-[1167/494] mb-10">
+          <div className="relative w-full max-w-[280px] md:max-w-[320px] aspect-[1167/494] mb-10">
             <Image
               src="/logo-horizontal-white.png"
               alt="Elite Steel Concepts"
               fill
-              sizes="(max-width: 640px) 90vw, 520px"
+              sizes="(max-width: 640px) 280px, 320px"
               className="object-contain drop-shadow-[0_10px_40px_rgba(0,0,0,0.6)]"
             />
           </div>
 
-          <p className="text-gray-300 text-lg md:text-2xl font-light mb-10 max-w-xl">
-            Let&apos;s get your project off the ground!
-          </p>
-
           <Link
-            href="/quote"
-            id="quote-start-btn"
+            href="/contact"
+            id="quote-contact-btn"
             className="group inline-flex items-center gap-3 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-sm px-12 py-4 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-primary/25"
           >
-            Get a Free Quote
+            Contact Us
             <ArrowRight
               size={16}
               className="group-hover:translate-x-1 transition-transform"

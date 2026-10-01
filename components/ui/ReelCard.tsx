@@ -17,7 +17,13 @@ const formatDuration = (seconds: number) => {
   return `${m}:${String(s).padStart(2, "0")}`;
 };
 
-const ReelCard = ({ title, client, location, videoUrl, views }: ReelCardProps) => {
+const pauseOtherReels = (current: HTMLVideoElement) => {
+  document.querySelectorAll<HTMLVideoElement>("video[data-reel]").forEach((v) => {
+    if (v !== current && !v.paused) v.pause();
+  });
+};
+
+const ReelCard = ({ title, location, videoUrl }: ReelCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [duration, setDuration] = useState<string | null>(null);
@@ -31,6 +37,7 @@ const ReelCard = ({ title, client, location, videoUrl, views }: ReelCardProps) =
   const handlePlay = () => {
     const video = videoRef.current;
     if (!video) return;
+    pauseOtherReels(video);
     video.muted = false;
     video.play();
     setPlaying(true);
@@ -42,11 +49,16 @@ const ReelCard = ({ title, client, location, videoUrl, views }: ReelCardProps) =
         {/* Video — "#t=0.1" makes browsers paint the first frame as a poster */}
         <video
           ref={videoRef}
+          data-reel
           src={`${videoUrl}#t=0.1`}
           preload="metadata"
           playsInline
           controls={playing}
           onLoadedMetadata={(e) => setDuration(formatDuration(e.currentTarget.duration))}
+          onPlay={(e) => {
+            pauseOtherReels(e.currentTarget);
+            setPlaying(true);
+          }}
           onPause={() => setPlaying(false)}
           onEnded={() => setPlaying(false)}
           className={`size-full object-cover transition-all duration-500 ${
@@ -83,18 +95,11 @@ const ReelCard = ({ title, client, location, videoUrl, views }: ReelCardProps) =
               </span>
             </button>
 
-            {/* Bottom Video Meta Information */}
+            {/* Bottom — location only */}
             <div className="absolute bottom-0 inset-x-0 p-6 z-10 text-white pointer-events-none">
-              <span className="text-primary font-bold text-xs uppercase tracking-widest block mb-1">
+              <span className="text-primary font-bold text-xs uppercase tracking-widest block">
                 {location}
               </span>
-              <h4 className="text-lg font-black uppercase leading-snug tracking-tight text-white mb-2 line-clamp-2">
-                {title}
-              </h4>
-              <div className="flex items-center justify-between text-xs text-gray-300 pt-3 border-t border-white/15">
-                <span className="font-semibold">{client}</span>
-                <span className="text-gray-400 font-mono text-[11px]">{views} views</span>
-              </div>
             </div>
           </>
         )}

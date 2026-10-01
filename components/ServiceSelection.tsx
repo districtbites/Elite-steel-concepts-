@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Container from "./ui/Container";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+// import { ArrowRight, CheckCircle2 } from "lucide-react"; // used by the hidden blocks below
 // import { PenTool, Wrench } from "lucide-react"; // used by the hidden support services row
 
 interface ServiceSelectionProps {
@@ -29,19 +29,19 @@ const ServiceSelection = ({
     imageAlts?.["trailer-platform"] ||
     "Custom Food Trailer";
 
-  const truckFeatures = [
-    "Maximum Mobility & City Access",
-    "Compact Footprint — Easy Parking",
-    "Iconic Branded Presence",
-    "All-in-One Self-Contained Kitchen",
-  ];
+  // const truckFeatures = [
+  //   "Maximum Mobility & City Access",
+  //   "Compact Footprint — Easy Parking",
+  //   "Iconic Branded Presence",
+  //   "All-in-One Self-Contained Kitchen",
+  // ];
 
-  const trailerFeatures = [
-    "Lower Initial Investment",
-    "Larger Kitchen Floor Space (10' - 30')",
-    "Flexible Towing Options",
-    "Ideal for High-Volume Events",
-  ];
+  // const trailerFeatures = [
+  //   "Lower Initial Investment",
+  //   "Larger Kitchen Floor Space (10' - 30')",
+  //   "Flexible Towing Options",
+  //   "Ideal for High-Volume Events",
+  // ];
 
   // const supportServices = [
   //   {
@@ -67,10 +67,10 @@ const ServiceSelection = ({
   // ];
 
   return (
-    <section className="bg-white py-20 md:py-28 border-b border-gray-100">
+    <section className="bg-white pt-12 md:pt-16 pb-20 md:pb-28 border-b border-gray-100">
       <Container>
         {/* Section Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-10 md:mb-12">
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-4">
               <div className="h-px w-12 bg-primary" />
@@ -133,6 +133,7 @@ const ServiceSelection = ({
               </div>
             </Link>
 
+            {/* Card details (description, features, explore button) — hidden for now
             <div className="p-8 flex flex-col justify-between flex-1 bg-white">
               <div>
                 <p className="text-gray-600 text-sm leading-relaxed mb-6 font-normal">
@@ -158,6 +159,7 @@ const ServiceSelection = ({
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
+            */}
           </div>
 
           {/* Concession Trailers Card */}
@@ -192,6 +194,7 @@ const ServiceSelection = ({
               </div>
             </Link>
 
+            {/* Card details (description, features, explore button) — hidden for now
             <div className="p-8 flex flex-col justify-between flex-1 bg-white">
               <div>
                 <p className="text-gray-600 text-sm leading-relaxed mb-6 font-normal">
@@ -217,6 +220,7 @@ const ServiceSelection = ({
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
+            */}
           </div>
         </div>
 

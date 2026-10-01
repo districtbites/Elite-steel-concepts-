@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -29,6 +29,51 @@ const Header = ({ settings }: HeaderProps) => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Little truck that drives along the stripe as the page scrolls
+  const truckRef = useRef<HTMLDivElement>(null);
+  const truckBodyRef = useRef<SVGGElement>(null);
+  const wheelRefs = useRef<(SVGGElement | null)[]>([]);
+
+  useEffect(() => {
+    let frame = 0;
+    let lastY = window.scrollY;
+
+    const update = () => {
+      frame = 0;
+      const truck = truckRef.current;
+      if (!truck) return;
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(Math.max(y / max, 0), 1) : 0;
+      const travel = window.innerWidth - truck.offsetWidth;
+      truck.style.transform = `translateX(${progress * travel}px)`;
+
+      // Face the direction of travel
+      if (y !== lastY && truckBodyRef.current) {
+        truckBodyRef.current.style.transform = y < lastY ? "scaleX(-1)" : "scaleX(1)";
+      }
+      // Spin wheels in proportion to distance driven
+      const angle = (progress * travel) / 5 * (180 / Math.PI);
+      wheelRefs.current.forEach((w) => {
+        if (w) w.style.transform = `rotate(${angle}deg)`;
+      });
+      lastY = y;
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
   }, []);
 
   const navLinks = [
@@ -60,12 +105,12 @@ const Header = ({ settings }: HeaderProps) => {
           <div className="flex items-center justify-between py-3 md:py-4">
             {/* Logo */}
             <Link href="/" className="relative z-[110] flex items-center group shrink-0">
-              <div className="relative w-44 h-11 sm:w-52 sm:h-13 md:w-56 md:h-14 transition-transform duration-300 group-hover:scale-[1.02]">
+              <div className="relative w-36 h-9 sm:w-40 sm:h-10 md:w-44 md:h-11 transition-transform duration-300 group-hover:scale-[1.02]">
                 <Image
                   src="/logo-horizontal-white.png"
                   alt="Elite Steel Concepts"
                   fill
-                  sizes="(max-width: 640px) 200px, (max-width: 1024px) 260px, 300px"
+                  sizes="(max-width: 640px) 144px, (max-width: 1024px) 176px, 176px"
                   className="object-contain object-left"
                   priority
                 />
@@ -123,8 +168,47 @@ const Header = ({ settings }: HeaderProps) => {
           </div>
         </Container>
 
-        {/* Hazard stripe */}
-        <div className="hazard-stripe h-2.5 relative z-[105]" aria-hidden />
+        {/* Hazard stripe + scroll-driven truck */}
+        <div className="relative z-[105]">
+          <div className="hazard-stripe h-2.5" aria-hidden />
+          <div
+            ref={truckRef}
+            aria-hidden
+            className="absolute left-0 -bottom-[3px] w-10 h-[22px] pointer-events-none will-change-transform drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]"
+          >
+            <svg viewBox="0 0 44 24" className="size-full overflow-visible">
+              <g
+                ref={truckBodyRef}
+                style={{ transformBox: "fill-box", transformOrigin: "center", transition: "transform 0.25s ease" }}
+              >
+                {/* Box */}
+                <rect x="1" y="3" width="27" height="15" rx="1.5" fill="#111111" stroke="#F7931E" strokeWidth="1" />
+                {/* Serving window */}
+                <rect x="6" y="6" width="15" height="6" fill="#F7931E" />
+                <rect x="5" y="5" width="17" height="1.5" fill="#ffffff" />
+                {/* Cab */}
+                <path d="M28 18 V7 H35 L41 13 V18 Z" fill="#111111" stroke="#F7931E" strokeWidth="1" />
+                <path d="M30 8.5 H34.3 L38.5 12.8 H30 Z" fill="#9ca3af" />
+                {/* Stripe + bumper */}
+                <rect x="1" y="14.5" width="40" height="1.5" fill="#F7931E" />
+                <rect x="40" y="15.5" width="3" height="2.5" fill="#374151" />
+                {/* Wheels */}
+                {[9, 33].map((cx, i) => (
+                  <g
+                    key={cx}
+                    ref={(el) => {
+                      wheelRefs.current[i] = el;
+                    }}
+                    style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                  >
+                    <circle cx={cx} cy="19" r="4" fill="#111" stroke="#e5e7eb" strokeWidth="1" />
+                    <rect x={cx - 0.5} y="15.8" width="1" height="2.4" fill="#9ca3af" />
+                  </g>
+                ))}
+              </g>
+            </svg>
+          </div>
+        </div>
 
         {/* Mobile Navigation Overlay */}
         <div
