@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Container from "./ui/Container";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 const QuoteStartSection = () => {
   return (
@@ -55,11 +55,6 @@ const QuoteStartSection = () => {
               className="group-hover:translate-x-1 transition-transform"
             />
           </Link>
-
-          <div className="mt-4 inline-flex items-center gap-2 text-gray-500 text-xs font-bold uppercase tracking-widest">
-            <Clock size={13} className="text-primary" />
-            Takes 3 minutes
-          </div>
         </div>
       </Container>
     </section>

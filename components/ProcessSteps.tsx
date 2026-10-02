@@ -26,7 +26,7 @@ const defaultSteps: ProcessStep[] = [
   {
     title: "Quote Request",
     description:
-      "Fill out our quote form with your build requirements. Takes 3 minutes — we respond within 24 hours.",
+      "Fill out our quote form with your build requirements. We respond within 24 hours.",
     icon: FileText,
   },
   {
@@ -73,11 +73,7 @@ const ProcessSteps = ({
   ),
   steps = defaultSteps,
   showFullProcessLink = true,
-  ctaText = (
-    <>
-      Ready to start? Step 1 takes <strong className="text-black">3 minutes.</strong>
-    </>
-  ),
+  ctaText = "Ready to start? Begin with a free quote.",
 }: ProcessStepsProps) => {
   return (
     <section id="our-process" className="bg-white border-y border-gray-100 py-8 md:py-12">

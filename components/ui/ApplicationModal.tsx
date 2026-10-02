@@ -180,7 +180,7 @@ export default function ApplicationModal({
                     Build Your
                     <br />
                   </span>
-                  <span className="text-primary">Custom Kitchen</span>
+                  <span className="text-primary">Custom Mobile Kitchen</span>
                 </h2>
 
                 {/* Mobile: compact trust line */}
@@ -206,7 +206,7 @@ export default function ApplicationModal({
 
               <div className="hidden md:flex pt-4 border-t border-white/10 items-center justify-between gap-3 text-[10px] font-black uppercase tracking-widest">
                 <span className="text-gray-400">Fast Consultation</span>
-                <span className="text-primary">Limited Slots</span>
+                <span className="text-primary">24/7 Support</span>
               </div>
             </div>
           </div>
@@ -269,7 +269,7 @@ export default function ApplicationModal({
                 />
                 <input
                   type="text"
-                  placeholder="Where You Want to Go!"
+                  placeholder="What do you want to build?"
                   value={destination}
                   onChange={(e) => setDestination(e.target.value)}
                   className={inputClass}

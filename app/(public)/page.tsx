@@ -9,7 +9,7 @@ import ApplicationModal from "@/components/ui/ApplicationModal";
 import CTASection from "@/components/ui/CTASection";
 import FAQSection from "@/components/FAQSection";
 import InteractiveFloorPlan from "@/components/ui/InteractiveFloorPlan";
-import ReadMore from "@/components/ui/ReadMore";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import ProcessSteps from "@/components/ProcessSteps";
 import QuoteStartSection from "@/components/QuoteStartSection";
 import {
@@ -196,12 +196,10 @@ export default async function Home() {
 
           {/* Copy + CTAs */}
           <div className="flex flex-col gap-8">
-            <div>
-              <ReadMore
+            <div className="text-base md:text-lg text-gray-600 leading-relaxed font-normal max-w-3xl mx-auto text-center">
+              <AutoLinkedText
                 text={introLinked}
-                maxLength={300}
-                className="text-base md:text-lg text-gray-600 leading-relaxed font-normal max-w-3xl mx-auto text-center"
-                buttonClassName="mt-2 text-primary font-bold text-xs uppercase tracking-wider hover:underline flex items-center gap-1 self-center"
+                linkClassName="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
               />
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -232,6 +230,12 @@ export default async function Home() {
         </Container>
       </section>
 
+      {/* ═══ SERVICES / FLOOR PLAN ═══════════════════════════ */}
+      <InteractiveFloorPlan />
+
+      {/* ═══ SIZE GUIDE ══════════════════════════════════════ */}
+      <SizeSelection />
+
       {/* ═══ SERVICES (Choose Your Custom Food Truck & Trailer) — hidden for now ═══
       <ServiceSelection
         imageAlts={alts}
@@ -242,6 +246,9 @@ export default async function Home() {
 
       {/* ═══ GET A QUOTE ═════════════════════════════════════ */}
       <QuoteStartSection />
+
+      {/* ═══ PROCESS ═════════════════════════════════════════ */}
+      <ProcessSteps />
 
       {/* ═══ WHY CHOOSE SECTION (CARDS) ══════════════════════ */}
       <WhyChooseSection />
@@ -357,15 +364,6 @@ export default async function Home() {
       </section>
       */}
 
-      {/* ═══ PROCESS ═════════════════════════════════════════ */}
-      <ProcessSteps />
-
-      {/* ═══ FLOOR PLAN EXPLORER ═════════════════════════════ */}
-      <InteractiveFloorPlan />
-
-      {/* ═══ SIZE GUIDE ══════════════════════════════════════ */}
-      <SizeSelection />
-
       {/* ═══ LOCAL COVERAGE ══════════════════════════════════ */}
       <section
         id="local-coverage"
@@ -384,12 +382,12 @@ export default async function Home() {
             <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight mb-6">
               {sections.localcoverage?.title || "USA Area ESC Cover"}
             </h2>
-            <ReadMore
-              text={localCoverageLinked}
-              maxLength={250}
-              className="text-gray-500 text-lg leading-relaxed text-center"
-              buttonClassName="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-black border border-black px-4 py-2 hover:bg-primary hover:border-primary transition-colors inline-flex items-center gap-2 self-center"
-            />
+            <div className="text-gray-500 text-lg leading-relaxed text-center">
+              <AutoLinkedText
+                text={localCoverageLinked}
+                linkClassName="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
+              />
+            </div>
           </div>
 
           {/* Row 2: area tiles */}

@@ -43,7 +43,7 @@ const truckData: VehicleLayout = {
   subtitle: "Integrated Engine & Self-Contained Mobile Kitchen",
   tagline:
     "Designed for high mobility, compact footprint, and fast urban setup.",
-  image: "/blueprint.png",
+  image: "/uploads/home/floorplan-truck.jpg",
   badge: "Self-Propelled Build",
   specs: [
     { label: "Typical Length", value: "18ft - 30ft Total" },
@@ -114,7 +114,7 @@ const trailerData: VehicleLayout = {
   subtitle: "Spacious Dedicated Kitchen Chassis & Towable Rig",
   tagline:
     "Maximizes interior floor space, ceiling height, and dual service lines.",
-  image: "/concession-trailer.png",
+  image: "/uploads/home/floorplan-trailer.jpg",
   badge: "Towable Heavy Duty",
   specs: [
     { label: "Typical Length", value: "14ft - 32ft Box" },
@@ -330,7 +330,7 @@ export default function InteractiveFloorPlan() {
 
         {/* Vehicle image — crossfades when switching Side 1 / Side 2 */}
         <div className="relative max-w-5xl mx-auto z-10">
-          <div className="relative w-full aspect-[4/3] md:aspect-[16/9] bg-gray-100 border border-gray-200 shadow-xl overflow-hidden rounded-xl">
+          <div className="relative w-full aspect-[4/3] md:aspect-[16/9] bg-[#111] border border-gray-200 shadow-xl overflow-hidden rounded-xl">
             {[truckData, trailerData].map((vehicle) => {
               const isActive = vehicle === activeVehicle;
               return (

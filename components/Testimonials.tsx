@@ -53,7 +53,7 @@ const Testimonials = async () => {
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center gap-3">
             <div className="h-px w-8 bg-primary" />
-            <span className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
+            <span className="text-primary text-base md:text-lg font-black uppercase tracking-[0.25em]">
               Client Testimonials
             </span>
             <div className="h-px w-8 bg-primary" />

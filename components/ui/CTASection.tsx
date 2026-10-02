@@ -34,7 +34,7 @@ const CTASection: React.FC<CTASectionProps> = ({
           {title}
         </h2>
         {subtitle && (
-          <p className="text-gray-400 text-sm md:text-base font-bold uppercase tracking-widest max-w-2xl mx-auto mb-8 leading-relaxed">
+          <p className="text-white/80 text-sm md:text-base font-medium tracking-normal max-w-2xl mx-auto mb-8 leading-relaxed normal-case">
             {subtitle}
           </p>
         )}
