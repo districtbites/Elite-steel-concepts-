@@ -21,7 +21,7 @@ const CTASection: React.FC<CTASectionProps> = ({
   secondaryButtonHref,
 }) => {
   return (
-    <section className="relative bg-[#0a0a0a] border-y border-[#1a1a1a] py-20 md:py-32 overflow-hidden group">
+    <section className="relative bg-[#0a0a0a] border-y border-[#1a1a1a] py-12 md:py-16 overflow-hidden group">
       {/* Industrial Grid Background */}
       <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }} />
       
@@ -30,11 +30,11 @@ const CTASection: React.FC<CTASectionProps> = ({
       <div className="absolute top-0 right-0 w-1 h-full bg-primary scale-y-0 group-hover:scale-y-100 transition-transform duration-1000 origin-top" />
 
       <Container className="relative z-10 text-center max-w-4xl">
-        <h2 className="text-4xl md:text-6xl lg:text-7xl font-black uppercase text-white mb-6 tracking-tighter leading-none">
+        <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase text-white mb-4 tracking-tighter leading-none">
           {title}
         </h2>
         {subtitle && (
-          <p className="text-gray-400 text-sm md:text-base font-bold uppercase tracking-widest max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-gray-400 text-sm md:text-base font-bold uppercase tracking-widest max-w-2xl mx-auto mb-8 leading-relaxed">
             {subtitle}
           </p>
         )}

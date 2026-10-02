@@ -1,11 +1,13 @@
 import React from "react";
+import Link from "next/link";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import ReadMore from "@/components/ui/ReadMore";
+import ProcessSteps, { aboutBuildingProcessSteps } from "@/components/ProcessSteps";
 import Image from "next/image";
-import { Check, Shield, Award, Users, Target, Zap, Settings2 } from "lucide-react";
+import { Shield, Target, Zap } from "lucide-react";
 import { getPageSEO, getSEO, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import type { Metadata } from "next";
@@ -26,9 +28,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const [pageSeo, aboutHero, rules, linkSettings] = await Promise.all([
+  const [pageSeo, aboutHero, truckImage, trailerImage, rules, linkSettings] = await Promise.all([
     getPageSEO("about"),
     getMediaAsset("about", "hero", "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=800"),
+    getMediaAsset("home", "truck_card", "/food-truck-transparent.png"),
+    getMediaAsset("home", "trailer_card", "/concession-trailer.png"),
     getInternalLinkRules(),
     getInternalLinkSettings(),
   ]);
@@ -36,9 +40,8 @@ export default async function AboutPage() {
   const alts = pageSeo.imageAlts || {};
   const sections = pageSeo.sections || {};
 
-  const storyRaw = typeof sections.story?.content === "string"
-    ? sections.story.content
-    : "At Elite Steel Concepts, we believe that every great chef deserves a kitchen that works as hard as they do. Founded on the principles of integrity and master craftsmanship, we have helped hundreds of entrepreneurs transition from dreamers to business owners.";
+  const storyRaw =
+    "Our mission is to build high-quality custom food trailers and trucks using durable, commercial-grade materials, reliable equipment, expert construction, and practical kitchen layouts. Every build is carefully designed around the client's menu, workflow, and business needs, with a strong focus on durability, functionality, professional finishing, and applicable code requirements. We use quality materials and thoughtful designs to create dependable mobile kitchen solutions that support entrepreneurs from their first launch through long-term business growth.";
   const storyLinked = autoLinkMarkdown(storyRaw, activeRules, linkSettings).updatedContent;
   
   const values = [
@@ -69,78 +72,133 @@ export default async function AboutPage() {
       )}
       <PageHeader
         title={sections.header?.title || "Operational History"}
-        subtitle={sections.header?.subtitle || "Crafting the heart of mobile commerce since 2012. We are more than fabricators; we are your partners in entrepreneurship."}
+        subtitle="With 14+ years of experience, Elite Steel Concepts builds custom food trucks, trailers & mobile kitchens designed for food businesses. Based in Manassas, Virginia, we proudly serve entrepreneurs nationwide."
       />
 
       {/* Intro Section */}
-      <Section className="bg-white py-24 md:py-32">
+      <Section className="!py-10 md:!py-14 bg-white">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
-            <div className="lg:col-span-5 relative group">
-              {/* Sharp geometric accent */}
-              <div className="absolute -left-4 -top-4 w-full h-full bg-primary translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-14 items-start">
+            {/* Image */}
+            <div className="lg:col-span-5 relative group w-full max-w-sm sm:max-w-md lg:max-w-none mx-auto lg:mx-0">
+              <div
+                className="absolute inset-0 translate-x-3 -translate-y-3 bg-primary hidden sm:block"
+                aria-hidden
+              />
               <div className="relative aspect-[4/5] border-2 border-black overflow-hidden bg-black z-10">
-                <Image 
+                <Image
                   src={aboutHero.url}
                   alt={aboutHero.alt || alts["about-hero"] || "Elite Steel Concepts Workshop"}
                   fill
-                  className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
+                  className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
+                  sizes="(max-width: 1024px) 90vw, 420px"
+                  priority
                 />
               </div>
             </div>
-            
-            <div className="lg:col-span-7 space-y-12">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-2 h-2 bg-primary" />
-                  <span className="text-black font-black tracking-[0.2em] uppercase text-[10px]">
-                    {sections.story?.subtitle || "Established 2012"}
-                  </span>
-                </div>
-                <h2 className="text-5xl md:text-7xl font-black uppercase text-black tracking-tighter leading-[0.9]">
-                  {sections.story?.title || (
-                      <>Pioneers in <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Mobile Food</span></>
-                  )}
-                </h2>
+
+            {/* Copy — top-aligned with image */}
+            <div className="lg:col-span-7 flex flex-col lg:pt-1">
+              <div className="inline-flex items-center gap-3 mb-4">
+                <div className="h-px w-8 bg-primary shrink-0" />
+                <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                  Our Mission
+                </span>
               </div>
-              
-              <div className="pl-6 border-l-[3px] border-black">
-                <ReadMore 
-                  text={storyLinked} 
-                  maxLength={250} 
-                  className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed max-w-prose"
-                  buttonClassName="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-black border border-black px-4 py-2 hover:bg-primary hover:border-primary transition-colors flex items-center gap-2"
+
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[2.5rem] font-black uppercase text-black tracking-tight leading-[1.15] mb-5">
+                Built Custom Food Trucks &amp; Trailers for Entrepreneurs With Big Ideas
+              </h2>
+
+              <div className="max-w-xl">
+                <ReadMore
+                  text={storyLinked}
+                  maxLength={280}
+                  className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed"
+                  buttonClassName="mt-5 text-[10px] font-black uppercase tracking-[0.2em] text-black border border-black px-4 py-2.5 hover:bg-primary hover:border-primary transition-colors inline-flex items-center gap-2"
                 />
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-8 border-t-2 border-gray-100">
-                 <div className="flex flex-col gap-3 group">
-                    <div className="w-12 h-12 bg-[#0a0a0a] text-primary flex items-center justify-center border border-[#1a1a1a] group-hover:bg-primary group-hover:text-black transition-colors shrink-0">
-                       <Settings2 size={24} />
-                    </div>
-                    <div>
-                       <h4 className="font-black uppercase tracking-[0.2em] text-[10px] text-black mb-2">Expert Fabrication</h4>
-                       <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">In-house welding and engineering team.</p>
-                    </div>
-                 </div>
-                 <div className="flex flex-col gap-3 group">
-                    <div className="w-12 h-12 bg-[#0a0a0a] text-primary flex items-center justify-center border border-[#1a1a1a] group-hover:bg-primary group-hover:text-black transition-colors shrink-0">
-                       <Shield size={24} />
-                    </div>
-                    <div>
-                       <h4 className="font-black uppercase tracking-[0.2em] text-[10px] text-black mb-2">Code Compliance</h4>
-                       <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">Deep knowledge of local health regulations.</p>
-                    </div>
-                 </div>
               </div>
             </div>
           </div>
         </Container>
       </Section>
 
-      {/* Stats / Numbers */}
+      {/* What We Manufacture */}
+      <Section className="!py-10 md:!py-14 bg-white border-t border-gray-100">
+        <Container>
+          <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
+            <div className="inline-flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-10 bg-primary" />
+              <span className="text-primary text-sm font-black uppercase tracking-[0.25em]">
+                Platforms
+              </span>
+              <div className="h-px w-10 bg-primary" />
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-black uppercase tracking-tight leading-tight">
+              What We Manufacture
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
+            <Link
+              href="/services/custom-food-trucks"
+              className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
+            >
+              <div className="px-6 pt-6 pb-2 text-center">
+                <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
+                  Truck
+                </h3>
+              </div>
+              <div className="relative aspect-[16/11] mx-5 mb-6 bg-gray-50">
+                <Image
+                  src={truckImage.url}
+                  alt={truckImage.alt || alts["truck-platform"] || "Custom Food Truck"}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain p-5 transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+            </Link>
+
+            <Link
+              href="/services/custom-food-trailers"
+              className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
+            >
+              <div className="px-6 pt-6 pb-2 text-center">
+                <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
+                  Trailer
+                </h3>
+              </div>
+              <div className="relative aspect-[16/11] mx-5 mb-6 bg-gray-50">
+                <Image
+                  src={trailerImage.url}
+                  alt={trailerImage.alt || alts["trailer-platform"] || "Custom Food Trailer"}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain p-5 transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+            </Link>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Our Building Process */}
+      <ProcessSteps
+        eyebrow="How We Build"
+        title={
+          <>
+            Our Building
+            <span className="block text-primary">Process</span>
+          </>
+        }
+        steps={aboutBuildingProcessSteps}
+        showFullProcessLink={false}
+        ctaText="Ready to share your idea? Start with a free quote."
+      />
+
+      {/* Stats / Numbers — hidden for now
       <Section dark className="!bg-[#0a0a0a] py-24 border-y border-[#1a1a1a] relative overflow-hidden">
-         {/* Industrial grid overlay */}
          <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px)" }} />
          
          <Container className="relative z-10">
@@ -152,7 +210,6 @@ export default async function AboutPage() {
                  { label: "States Served", value: "48", icon: Globe }
                ].map((stat, i) => (
                  <div key={i} className="flex flex-col items-center justify-center group relative p-8">
-                    {/* Corner accents */}
                     <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                     <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -166,54 +223,64 @@ export default async function AboutPage() {
             </div>
          </Container>
       </Section>
+      */}
 
       {/* Values / DNA */}
-      <Section className="bg-white py-32">
+      <Section className="!py-10 md:!py-14 bg-gray-50/70 border-y border-gray-100">
         <Container>
-           <div className="max-w-4xl mb-24 relative">
-              <div className="absolute -left-10 top-4 w-4 h-full bg-primary hidden lg:block" />
-              <div className="flex items-center gap-3 mb-4">
-                 <div className="w-1.5 h-1.5 bg-black" />
-                 <span className="text-black font-black tracking-[0.2em] uppercase text-[10px]">Operational Standard</span>
-              </div>
-              <h2 className="text-6xl md:text-8xl font-black uppercase text-black tracking-tighter leading-[0.85]">
-                 The Elite <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">DNA</span>
-              </h2>
-           </div>
+          <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
+            <div className="inline-flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-primary" />
+              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                Operational Standard
+              </span>
+              <div className="h-px w-8 bg-primary" />
+            </div>
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase text-black tracking-tight leading-tight">
+              The Elite <span className="text-primary">DNA</span>
+            </h2>
+          </div>
 
-           <div className="space-y-16 lg:space-y-24">
-              {values.map((v, i) => (
-                <div key={i} className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start group">
-                   {/* Number Block */}
-                   <div className="w-full lg:w-1/4 shrink-0">
-                      <div className="bg-[#0a0a0a] text-white border border-[#1a1a1a] p-8 relative overflow-hidden group-hover:border-primary transition-colors">
-                         <div className="absolute -right-4 -top-4 text-[100px] font-black text-[#1a1a1a] leading-none select-none">
-                            0{i + 1}
-                         </div>
-                         <v.icon size={48} className="text-primary mb-6 relative z-10 group-hover:scale-110 transition-transform" />
-                         <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white relative z-10">Pillar 0{i + 1}</h4>
-                      </div>
-                   </div>
-                   
-                   {/* Content */}
-                   <div className="w-full lg:w-3/4 lg:pt-6">
-                      <h3 className="text-3xl md:text-5xl font-black uppercase text-black mb-6 tracking-tighter">
-                         {v.title}
-                      </h3>
-                      <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium">
-                         {v.description}
-                      </p>
-                   </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            {values.map((v, i) => (
+              <div
+                key={v.title}
+                className="group bg-white border border-gray-100 hover:border-primary/40 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden"
+              >
+                <div className="relative bg-[#0a0a0a] p-8 overflow-hidden">
+                  <div className="absolute -right-2 -top-2 text-[7rem] font-black text-white/[0.04] leading-none select-none pointer-events-none">
+                    0{i + 1}
+                  </div>
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                  <div className="relative z-10 size-14 bg-primary/10 border border-primary/30 flex items-center justify-center mb-5 group-hover:bg-primary transition-colors">
+                    <v.icon
+                      size={26}
+                      className="text-primary group-hover:text-black transition-colors"
+                    />
+                  </div>
+                  <span className="relative z-10 text-[10px] font-black uppercase tracking-[0.25em] text-primary">
+                    Pillar 0{i + 1}
+                  </span>
                 </div>
-              ))}
-           </div>
+
+                <div className="p-8 flex flex-col flex-1">
+                  <h3 className="text-xl md:text-2xl font-black uppercase text-black tracking-tight mb-4 leading-snug">
+                    {v.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm md:text-base leading-relaxed font-medium">
+                    {v.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </Container>
       </Section>
 
       <CTASection
-        title={sections.cta?.title || "Ready to Execute?"}
-        subtitle={sections.cta?.subtitle || "Let's build a business that moves with you. Initialize your custom quote today."}
-        buttonText={sections.cta?.ctaText || "Request Quote"}
+        title="Ready to Build Your Custom Food Business?"
+        subtitle="Your food business starts with the right build. Elite Steel Concepts is ready to help bring your idea to reality. Contact us today!"
+        buttonText="Get a free quote today!"
         buttonHref="/quote"
         secondaryButtonText="Read Intelligence Briefs"
         secondaryButtonHref="/blog"
@@ -221,21 +288,3 @@ export default async function AboutPage() {
     </>
   );
 }
-
-const Globe = ({ size, className }: { size?: number, className?: string }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <circle cx="12" cy="12" r="10" />
-    <line x1="2" y1="12" x2="22" y2="12" />
-    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-  </svg>
-);

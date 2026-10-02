@@ -304,8 +304,8 @@ const PAGE_STRUCTURE: { [key: string]: { [key: string]: PageSection } } = {
         "cta": { title: "Ready to Start Your Build?", subtitle: "Tell us about your vision and let's create the perfect mobile kitchen for your business.", ctaText: "Get a Free Quote" }
     },
     "about": {
-        "header": { title: "Our Story", subtitle: "Crafting the heart of mobile commerce since 2012. We are more than fabricators; we are your partners in entrepreneurship." },
-        "story": { title: "Empowering the Next Generation of Food Pioneers", subtitle: "Since 2012", content: "At Elite Steel Concepts, we believe that every great chef deserves a kitchen that works as hard as they do. Founded on the principles of integrity and master craftsmanship, we have helped hundreds of entrepreneurs transition from dreamers to business owners." },
+        "header": { title: "Our Story", subtitle: "With 14+ years of experience, Elite Steel Concepts builds custom food trucks, trailers & mobile kitchens designed for food businesses. Based in Manassas, Virginia, we proudly serve entrepreneurs nationwide." },
+        "story": { title: "Built Custom Food Trucks & Trailers for Entrepreneurs With Big Ideas", subtitle: "Our Mission", content: "Our mission is to build high-quality custom food trailers and trucks using durable, commercial-grade materials, reliable equipment, expert construction, and practical kitchen layouts. Every build is carefully designed around the client's menu, workflow, and business needs, with a strong focus on durability, functionality, professional finishing, and applicable code requirements. We use quality materials and thoughtful designs to create dependable mobile kitchen solutions that support entrepreneurs from their first launch through long-term business growth." },
         "cta": { title: "Ready to Start Your Journey?", subtitle: "Let's build a business that moves with you. Get your custom quote started today.", ctaText: "Get Free Quote" }
     },
     "services": {
