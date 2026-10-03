@@ -4,10 +4,16 @@ import Container from "./Container";
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
+  eyebrow?: string;
   className?: string;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, className = "" }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({
+  title,
+  subtitle,
+  eyebrow = "Elite Steel Concepts",
+  className = "",
+}) => {
   return (
     <div className={`relative bg-[#0a0a0a] pt-32 pb-12 md:pt-40 md:pb-16 overflow-hidden border-b border-[#1a1a1a] ${className}`}>
       {/* Brutalist Grid Pattern */}
@@ -19,7 +25,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, className = ""
       <Container className="relative z-10 text-center">
         <div className="inline-flex items-center gap-3 mb-4">
            <div className="w-2 h-2 bg-primary" />
-           <span className="text-primary font-black uppercase tracking-[0.2em] text-[10px]">Elite Steel Concepts</span>
+           <span className="text-primary font-black uppercase tracking-[0.2em] text-[10px]">{eyebrow}</span>
            <div className="w-2 h-2 bg-primary" />
         </div>
         <h1 className="text-4xl md:text-6xl font-black uppercase text-white mb-4 tracking-tighter leading-none">

@@ -309,7 +309,7 @@ const PAGE_STRUCTURE: { [key: string]: { [key: string]: PageSection } } = {
         "cta": { title: "Ready to Start Your Journey?", subtitle: "Let's build a business that moves with you. Get your custom quote started today.", ctaText: "Get Free Quote" }
     },
     "services": {
-        "header": { title: "Expert Fabrication", subtitle: "Master craftsmanship applied to the art of mobile kitchens." },
+        "header": { title: "Expert Food Truck, Food Trailer & Mobile Kitchen Services Nationwide", subtitle: "We build custom food trucks and trailers designed around your menu, equipment, and business goals." },
         "intro": { title: "Industry Leading Mobile Kitchen Solutions", subtitle: "Precision Builds", content: "At Elite Steel Concepts, we don't just build boxes with kitchens. We engineer high-performance commercial environments designed to maximize flow, sanitation, and safety while projecting a premium brand image." },
         "cta": { title: "Build Your Business On A Foundation Of Steel", ctaText: "Get Custom Quote" }
     },

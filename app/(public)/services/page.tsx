@@ -73,8 +73,9 @@ export default async function ServicesPage() {
         />
       )}
       <PageHeader
-        title={sections.header?.title || "Expert Fabrication"}
-        subtitle={sections.header?.subtitle || "Master craftsmanship applied to the art of mobile kitchens. From ground-up builds to advanced engineering, we deliver the elite standard."}
+        eyebrow="ECS Services"
+        title="Expert Food Truck, Food Trailer & Mobile Kitchen Services Nationwide"
+        subtitle="We build custom food trucks and trailers designed around your menu, equipment, and business goals."
       />
 
       {/* Intro / Stats Section */}
