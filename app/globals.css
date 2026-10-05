@@ -383,10 +383,37 @@ body {
   border-radius: max(4px, inherit);
 }
 
-/* Prevent long text from breaking containers */
-.break-words-safe {
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  word-break: break-word;
-  hyphens: auto;
+@keyframes truckDrive {
+  0%,
+  100% {
+    transform: translateX(-10px);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+@keyframes roadScroll {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -44;
+  }
+}
+
+.truck-drive {
+  animation: truckDrive 5.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.road-scroll {
+  animation: roadScroll 1.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .truck-drive,
+  .road-scroll {
+    animation: none;
+  }
 }

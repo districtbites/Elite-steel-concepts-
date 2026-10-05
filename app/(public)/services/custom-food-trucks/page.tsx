@@ -160,19 +160,20 @@ export default async function CustomFoodTrucksPage() {
     title: string;
     tagline: string;
     color: string;
+    accent: string;
     icon: LucideIcon;
   }[] = [
-    { title: "Asian Food Truck", tagline: "Ramen, bao & dumplings", color: "#E53935", icon: Soup },
-    { title: "BBQ Truck", tagline: "Smoked & slow-cooked", color: "#8D6E63", icon: Flame },
-    { title: "American Food Truck", tagline: "Burgers, fries & shakes", color: "#1E88E5", icon: Beef },
-    { title: "Chicken Food Truck", tagline: "Fried, grilled & wings", color: "#F9A825", icon: Drumstick },
-    { title: "Coffee Food Truck", tagline: "Espresso & specialty drinks", color: "#6D4C41", icon: Coffee },
-    { title: "Dessert Food Truck", tagline: "Sweets, cakes & treats", color: "#EC407A", icon: IceCream },
-    { title: "Halal Food Truck", tagline: "Authentic halal street food", color: "#43A047", icon: UtensilsCrossed },
-    { title: "Mexican Food Truck", tagline: "Tacos, burritos & more", color: "#FB8C00", icon: Flame },
-    { title: "Pizza Food Truck", tagline: "Fresh-fired pizza", color: "#E53935", icon: Pizza },
-    { title: "Seafood Food Truck", tagline: "Fresh catch & seafood", color: "#039BE5", icon: Fish },
-    { title: "Soul Food Truck", tagline: "Classic comfort food", color: "#8E24AA", icon: UtensilsCrossed },
+    { title: "Asian Food Truck", tagline: "Ramen, bao & dumplings", color: "#C62828", accent: "#FFCDD2", icon: Soup },
+    { title: "BBQ Truck", tagline: "Smoked & slow-cooked", color: "#5D4037", accent: "#D7CCC8", icon: Flame },
+    { title: "American Food Truck", tagline: "Burgers, fries & shakes", color: "#1565C0", accent: "#BBDEFB", icon: Beef },
+    { title: "Chicken Food Truck", tagline: "Fried, grilled & wings", color: "#F9A825", accent: "#FFF8E1", icon: Drumstick },
+    { title: "Coffee Food Truck", tagline: "Espresso & specialty drinks", color: "#4E342E", accent: "#D7CCC8", icon: Coffee },
+    { title: "Dessert Food Truck", tagline: "Sweets, cakes & treats", color: "#D81B60", accent: "#FCE4EC", icon: IceCream },
+    { title: "Halal Food Truck", tagline: "Authentic halal street food", color: "#2E7D32", accent: "#C8E6C9", icon: UtensilsCrossed },
+    { title: "Mexican Food Truck", tagline: "Tacos, burritos & more", color: "#EF6C00", accent: "#FFE0B2", icon: Flame },
+    { title: "Pizza Food Truck", tagline: "Fresh-fired pizza", color: "#E53935", accent: "#FFCDD2", icon: Pizza },
+    { title: "Seafood Food Truck", tagline: "Fresh catch & seafood", color: "#00838F", accent: "#B2EBF2", icon: Fish },
+    { title: "Soul Food Truck", tagline: "Classic comfort food", color: "#6A1B9A", accent: "#E1BEE7", icon: UtensilsCrossed },
   ];
 
   const whyChoosePoints = [
@@ -194,15 +195,8 @@ export default async function CustomFoodTrucksPage() {
       />
 
       {/* Custom Food Truck Types */}
-      <section className="relative !py-10 md:!py-14 bg-[#0c0c0c] border-y border-[#1a1a1a] overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.035] pointer-events-none"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 48px), repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 48px)",
-          }}
-        />
-        <Container className="relative z-10">
+      <Section className="!py-10 md:!py-14 bg-white border-b border-gray-100">
+        <Container>
           <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3 mb-3">
               <div className="h-px w-8 bg-primary" />
@@ -211,92 +205,89 @@ export default async function CustomFoodTrucksPage() {
               </span>
               <div className="h-px w-8 bg-primary" />
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-white tracking-tight leading-tight mb-3">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-3">
               Custom Food Trucks
             </h2>
-            <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed">
+            <p className="text-gray-500 text-base md:text-lg font-medium leading-relaxed">
               Build a Food Truck That Fits Your Business
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 max-w-6xl mx-auto">
-            {truckTypes.map((type) => (
+            {truckTypes.map((type, index) => (
               <div
                 key={type.title}
-                className="group relative flex flex-col items-center text-center border border-dashed border-primary/35 hover:border-primary bg-[#141414] hover:bg-[#1a1a1a] transition-all duration-300 px-5 py-8 md:px-6 md:py-10 hover:shadow-[0_0_28px_rgba(247,147,30,0.18)]"
+                className="group relative flex flex-col items-center text-center border-2 border-dashed border-primary/40 hover:border-primary bg-white hover:bg-primary/[0.04] transition-all duration-300 px-5 py-8 md:px-6 md:py-10 hover:shadow-md overflow-hidden"
               >
-                {/* Stylized truck illustration */}
-                <div className="relative mb-5 md:mb-6 w-full max-w-[220px] pt-3">
+                {/* Truck on road */}
+                <div className="relative mb-5 md:mb-6 w-full max-w-[240px] pt-4 h-[100px]">
+                  {/* Animated road dashes */}
                   <svg
-                    viewBox="0 0 200 90"
-                    className="w-full h-auto"
+                    viewBox="0 0 240 20"
+                    className="absolute bottom-0 left-0 w-full h-5"
                     aria-hidden
                   >
-                    <rect
-                      x="18"
-                      y="28"
-                      width="118"
-                      height="42"
-                      rx="4"
-                      fill={type.color}
-                      className="opacity-90 group-hover:opacity-100 transition-opacity"
-                    />
-                    <rect x="28" y="34" width="36" height="22" rx="2" fill="#0c0c0c" opacity="0.35" />
-                    <rect x="72" y="34" width="28" height="16" rx="2" fill="#0c0c0c" opacity="0.25" />
-                    <path
-                      d="M136 38h28l14 18v14H136V38z"
-                      fill={type.color}
-                      className="opacity-95"
-                    />
-                    <rect x="148" y="44" width="18" height="14" rx="1.5" fill="#0c0c0c" opacity="0.35" />
-                    <circle cx="48" cy="72" r="11" fill="#1a1a1a" stroke="#333" strokeWidth="3" />
-                    <circle cx="48" cy="72" r="4" fill="#555" />
-                    <circle cx="152" cy="72" r="11" fill="#1a1a1a" stroke="#333" strokeWidth="3" />
-                    <circle cx="152" cy="72" r="4" fill="#555" />
                     <line
-                      x1="10"
-                      y1="84"
-                      x2="190"
-                      y2="84"
-                      stroke="#F7931E"
-                      strokeWidth="1.5"
-                      strokeDasharray="6 5"
-                      opacity="0.45"
+                      x1="0"
+                      y1="10"
+                      x2="480"
+                      y2="10"
+                      className="stroke-primary/50 road-scroll"
+                      strokeWidth="2"
+                      strokeDasharray="10 8"
+                      style={{ animationDelay: `${index * 0.15}s` }}
                     />
                   </svg>
 
-                  {/* Food icon badge — clear & professional */}
-                  <div className="absolute -top-1 left-1/2 -translate-x-[18%] flex flex-col items-center">
-                    <div
-                      className="size-11 sm:size-12 md:size-[3.25rem] rounded-full bg-white border-[3px] border-primary flex items-center justify-center shadow-[0_4px_20px_rgba(0,0,0,0.45)] group-hover:scale-110 transition-transform duration-300"
-                    >
-                      <type.icon
-                        size={22}
-                        className="sm:hidden"
-                        strokeWidth={2.25}
-                        style={{ color: type.color }}
-                      />
-                      <type.icon
-                        size={26}
-                        className="hidden sm:block"
-                        strokeWidth={2.25}
-                        style={{ color: type.color }}
-                      />
+                  {/* Moving truck + badge */}
+                  <div
+                    className="truck-drive absolute bottom-3 left-0 right-0 flex justify-center"
+                    style={{ animationDelay: `${index * 0.35}s` }}
+                  >
+                    <div className="relative w-[200px]">
+                      <svg viewBox="0 0 200 78" className="w-full h-auto drop-shadow-md" aria-hidden>
+                        {/* Body */}
+                        <rect x="16" y="18" width="120" height="40" rx="3" fill={type.color} />
+                        {/* Accent roof stripe */}
+                        <rect x="16" y="18" width="120" height="5" rx="2" fill="#F7931E" />
+                        {/* Service window */}
+                        <rect x="26" y="28" width="38" height="20" rx="2" fill={type.accent} />
+                        <rect x="70" y="28" width="30" height="14" rx="1.5" fill="rgba(0,0,0,0.22)" />
+                        {/* Cab */}
+                        <path d="M136 26h30l14 18v14H136V26z" fill={type.color} />
+                        <rect x="148" y="32" width="20" height="14" rx="1.5" fill={type.accent} />
+                        {/* Bumper accent */}
+                        <rect x="16" y="54" width="8" height="4" fill="#F7931E" />
+                        {/* Wheels */}
+                        <circle cx="46" cy="62" r="10" fill="#1a1a1a" />
+                        <circle cx="46" cy="62" r="4.5" fill="#F7931E" />
+                        <circle cx="150" cy="62" r="10" fill="#1a1a1a" />
+                        <circle cx="150" cy="62" r="4.5" fill="#F7931E" />
+                      </svg>
+
+                      {/* Food icon badge */}
+                      <div className="absolute -top-1 left-[22%] size-10 sm:size-11 rounded-full bg-white border-[2.5px] border-primary flex items-center justify-center shadow-md">
+                        <type.icon
+                          size={20}
+                          strokeWidth={2.25}
+                          style={{ color: type.color }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <h3 className="text-sm md:text-base font-black uppercase tracking-wide text-primary mb-2 leading-snug">
+                <h3 className="text-sm md:text-base font-black uppercase tracking-wide text-black mb-1.5 leading-snug">
                   {type.title}
                 </h3>
-                <p className="text-xs md:text-sm text-gray-500 font-medium tracking-wide">
+                <p className="text-xs md:text-sm text-primary font-semibold tracking-wide">
                   {type.tagline}
                 </p>
               </div>
             ))}
           </div>
         </Container>
-      </section>
+      </Section>
 
       {/* Why Entrepreneurs Choose ESC */}
       <Section className="!py-10 md:!py-14 bg-gray-50/80 border-b border-gray-100">
