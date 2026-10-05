@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
@@ -47,21 +48,25 @@ export default async function ServicesPage() {
 
   const services = [
     {
-      title: "Custom Food Trucks",
+      title: "Custom Food Trailers, Concession Trailers & Mobile Kitchens Services",
       icon: Truck,
       image: truckImage.url,
-      description: "The ultimate mobile billboard. Our custom food trucks are engineered for performance and designed to turn heads. Built on reliable step-van chassis, they offer maximum mobility.",
+      description:
+        "At ESC, we build custom food trailers, concession trailers, and mobile kitchens designed around your menu, equipment, workflow, and business needs, with durable construction, practical layouts, quality materials, and compliance-focused designs.",
       features: ["Step Van Conversions", "New & Used Chassis", "Generator Installation", "Full Graphic Wraps"],
-      href: "/services/custom-food-trucks",
+      href: "/quote",
+      ctaText: "Get Your Free Quote",
     },
-    {
-      title: "Concession Trailers",
-      icon: Box,
-      image: trailerImage.url,
-      description: "Maximize your kitchen space and lower your overhead. Trailers are perfect for semi-permanent locations and high-volume events where you need more room to operate.",
-      features: ["Custom Sizes (10' - 30')", "Porch & Smoker Builds", "Lower Maintenance", "Detachable Towing"],
-      href: "/services/custom-food-trailers",
-    }
+    // Concession Trailers — hidden for now
+    // {
+    //   title: "Concession Trailers",
+    //   icon: Box,
+    //   image: trailerImage.url,
+    //   description: "Maximize your kitchen space and lower your overhead. Trailers are perfect for semi-permanent locations and high-volume events where you need more room to operate.",
+    //   features: ["Custom Sizes (10' - 30')", "Porch & Smoker Builds", "Lower Maintenance", "Detachable Towing"],
+    //   href: "/services/custom-food-trailers",
+    //   ctaText: "Specifications",
+    // },
   ];
 
   return (
@@ -76,112 +81,210 @@ export default async function ServicesPage() {
         eyebrow="ECS Services"
         title="Expert Food Truck, Food Trailer & Mobile Kitchen Services Nationwide"
         subtitle="We build custom food trucks and trailers designed around your menu, equipment, and business goals."
+        className="!pb-10 md:!pb-12"
       />
 
-      {/* Intro / Stats Section */}
-      <Section className="bg-white overflow-hidden py-24 md:py-32">
+      {/* What We Manufacture */}
+      <Section className="!py-10 md:!py-14 bg-white border-b border-gray-100">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-             <div className="order-2 lg:order-1">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-1.5 h-1.5 bg-primary" />
-                  <span className="text-black font-black tracking-[0.2em] uppercase text-[10px]">
-                      {sections.intro?.subtitle || "Precision Builds"}
-                  </span>
-                </div>
-                <h2 className="text-5xl md:text-6xl lg:text-7xl font-black uppercase text-black tracking-tighter mb-8 leading-[0.9]">
-                  {sections.intro?.title || (
-                    <>Industry Leading <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Mobile Kitchen</span></>
-                  )}
-                </h2>
-                
-                <div className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed max-w-xl border-l-[3px] border-black pl-6 mb-12">
-                  <ReadMore 
-                    text={introLinked}
-                    maxLength={250}
-                    className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed"
-                    buttonClassName="mt-6 text-[10px] font-black uppercase tracking-[0.2em] text-black border border-black px-4 py-2 hover:bg-primary hover:border-primary transition-colors flex items-center gap-2"
-                  />
-                </div>
+          <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
+            <div className="inline-flex items-center justify-center gap-3">
+              <div className="h-px w-10 bg-primary" />
+              <h2 className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
+                What We Manufacture
+              </h2>
+              <div className="h-px w-10 bg-primary" />
+            </div>
+          </div>
 
-                <div className="grid grid-cols-2 gap-8 p-8 bg-[#0a0a0a] border border-[#1a1a1a]">
-                   <div className="space-y-3">
-                      <div className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">100%</div>
-                      <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Code Compliant</p>
-                   </div>
-                   <div className="space-y-3">
-                      <div className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">14+ YRS</div>
-                      <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Engineering Exp.</p>
-                   </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
+            <Link
+              href="/services/custom-food-trucks"
+              className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
+            >
+              <div className="px-6 pt-6 pb-2 text-center">
+                <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
+                  Truck
+                </h3>
+              </div>
+              <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
+                <Image
+                  src="/uploads/about/about-manufacture-truck.jpg"
+                  alt="Custom white food truck built by Elite Steel Concepts"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+            </Link>
+
+            <Link
+              href="/services/custom-food-trailers"
+              className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
+            >
+              <div className="px-6 pt-6 pb-2 text-center">
+                <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
+                  Trailer
+                </h3>
+              </div>
+              <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
+                <Image
+                  src="/uploads/about/about-manufacture-trailer.jpg"
+                  alt="Custom black and yellow concession trailer by Elite Steel Concepts"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+            </Link>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Intro / Stats Section */}
+      <Section className="!py-10 md:!py-14 bg-white overflow-hidden">
+        <Container>
+          {/* Centered heading only */}
+          <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
+            <div className="inline-flex items-center justify-center gap-3 mb-4">
+              <div className="h-px w-8 bg-primary" />
+              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                {sections.intro?.subtitle || "Precision Builds"}
+              </span>
+              <div className="h-px w-8 bg-primary" />
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-black tracking-tighter leading-[0.95]">
+              {sections.intro?.title || (
+                <>
+                  Industry Leading{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">
+                    Mobile Kitchen
+                  </span>
+                </>
+              )}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
+            <div className="order-2 lg:order-1">
+              <div className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed max-w-xl border-l-[3px] border-black pl-6 mb-8">
+                <ReadMore
+                  text={introLinked}
+                  maxLength={250}
+                  className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed"
+                  buttonClassName="mt-5 text-[10px] font-black uppercase tracking-[0.2em] text-black border border-black px-4 py-2 hover:bg-primary hover:border-primary transition-colors flex items-center gap-2"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-6 p-6 md:p-8 bg-[#0a0a0a] border border-[#1a1a1a]">
+                <div className="space-y-3">
+                  <div className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">
+                    100%
+                  </div>
+                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
+                    Code Compliant
+                  </p>
                 </div>
-             </div>
-             
-             <div className="order-1 lg:order-2 lg:sticky lg:top-32 relative group">
-                <div className="absolute -left-4 -top-4 w-full h-full bg-primary translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
-                <div className="relative aspect-square border-2 border-black overflow-hidden bg-black z-10">
-                   <Image 
-                      src={servicesHero.url} 
-                      alt={servicesHero.alt || "Workshop Fabrication"}
-                      fill
-                      className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
-                   />
+                <div className="space-y-3">
+                  <div className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">
+                    14+ YRS
+                  </div>
+                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
+                    Engineering Exp.
+                  </p>
                 </div>
-             </div>
+              </div>
+            </div>
+
+            <div className="order-1 lg:order-2 lg:sticky lg:top-32 relative group">
+              <div className="absolute -left-4 -top-4 w-full h-full bg-primary translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
+              <div className="relative aspect-square border-2 border-black overflow-hidden bg-black z-10">
+                <Image
+                  src={servicesHero.url}
+                  alt={servicesHero.alt || "Workshop Fabrication"}
+                  fill
+                  className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
+                />
+              </div>
+            </div>
           </div>
         </Container>
       </Section>
 
       {/* Main Services - Alternating */}
-      <Section className="bg-gray-50 border-t border-gray-200 py-32">
+      <Section className="!py-10 md:!py-14 bg-gray-50 border-t border-gray-200">
         <Container>
-           <div className="space-y-32">
-             {services.map((service, index) => (
-                <div key={index} className={`flex flex-col lg:flex-row items-center gap-16 lg:gap-24 ${index % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}>
-                   <div className="w-full lg:w-1/2 relative group">
-                      <div className="absolute -left-4 -top-4 w-full h-full bg-primary translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
-                      <div className="relative aspect-[4/3] border-2 border-black overflow-hidden bg-black z-10">
-                         <Image 
-                            src={service.image} 
-                            alt={service.title}
-                            fill
-                            className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 grayscale group-hover:grayscale-0"
-                         />
-                      </div>
-                   </div>
-                   <div className="w-full lg:w-1/2">
-                      <div className="flex items-center gap-6 mb-8">
-                         <div className="bg-[#0a0a0a] p-5 text-primary border border-[#1a1a1a] shrink-0">
-                           <service.icon size={32} />
-                         </div>
-                         <h2 className="text-4xl lg:text-6xl font-black uppercase text-black tracking-tighter leading-none">{service.title}</h2>
-                      </div>
-                      <p className="text-gray-500 text-xl font-medium leading-relaxed mb-10">
-                         {service.description}
-                      </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
-                         {service.features.map((feature, i) => (
-                            <div key={i} className="flex items-center gap-3 bg-white px-5 py-4 border border-gray-200 hover:border-black transition-colors group/feature">
-                               <Check size={16} className="text-primary shrink-0 group-hover/feature:scale-125 transition-transform" />
-                               <span className="text-[10px] font-black text-black uppercase tracking-[0.2em]">{feature}</span>
-                            </div>
-                         ))}
-                      </div>
-                      <a 
-                        href={service.href} 
-                        className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"
-                      >
-                         Specifications <ArrowRight size={14} />
-                      </a>
-                   </div>
+          <div className="space-y-16 md:space-y-20">
+            {services.map((service, index) => (
+              <div key={index} className="space-y-8 md:space-y-10">
+                {/* Centered heading only */}
+                <div className="text-center max-w-4xl mx-auto">
+                  <div className="inline-flex items-center justify-center gap-3 mb-4">
+                    <div className="h-px w-8 bg-primary" />
+                    <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                      Our Services
+                    </span>
+                    <div className="h-px w-8 bg-primary" />
+                  </div>
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tighter leading-[0.95]">
+                    {service.title}
+                  </h2>
                 </div>
-             ))}
-           </div>
+
+                <div
+                  className={`flex flex-col lg:flex-row items-center gap-10 lg:gap-14 ${
+                    index % 2 !== 0 ? "lg:flex-row-reverse" : ""
+                  }`}
+                >
+                  <div className="w-full lg:w-1/2 relative group">
+                    <div className="absolute -left-4 -top-4 w-full h-full bg-primary translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
+                    <div className="relative aspect-[4/3] border-2 border-black overflow-hidden bg-black z-10">
+                      <Image
+                        src={service.image}
+                        alt={service.title}
+                        fill
+                        className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 grayscale group-hover:grayscale-0"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-1/2">
+                    <p className="text-gray-500 text-lg md:text-xl font-medium leading-relaxed mb-8">
+                      {service.description}
+                    </p>
+                    {service.features.length > 0 && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                        {service.features.map((feature, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center gap-3 bg-white px-5 py-4 border border-gray-200 hover:border-black transition-colors group/feature"
+                          >
+                            <Check
+                              size={16}
+                              className="text-primary shrink-0 group-hover/feature:scale-125 transition-transform"
+                            />
+                            <span className="text-[10px] font-black text-black uppercase tracking-[0.2em]">
+                              {feature}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <a
+                      href={service.href}
+                      className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"
+                    >
+                      {service.ctaText || "Specifications"} <ArrowRight size={14} />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </Container>
       </Section>
 
-      {/* Why Choose Us / Capabilities */}
+      {/* Why Choose Us / Capabilities — hidden for now
       <Section className="bg-[#0a0a0a] py-32 border-y border-[#1a1a1a] relative overflow-hidden">
-         {/* Industrial grid overlay */}
          <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px)" }} />
          
          <Container className="relative z-10">
@@ -219,7 +322,6 @@ export default async function ServicesPage() {
          </Container>
       </Section>
 
-      {/* Support Services Grid */}
       <Section className="bg-white border-b border-gray-200 py-32">
          <Container>
             <div className="text-center mb-20">
@@ -248,21 +350,22 @@ export default async function ServicesPage() {
             </div>
          </Container>
       </Section>
+      */}
 
       {/* Process at a Glance */}
-      <Section className="bg-gray-50 py-32 overflow-hidden border-b border-gray-200">
+      <Section className="!py-10 md:!py-14 bg-gray-50 overflow-hidden border-y border-gray-200">
         <Container>
-           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-24 gap-10">
+           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-10 md:mb-12 gap-6 md:gap-8">
               <div className="max-w-3xl">
-                 <h2 className="text-5xl md:text-6xl lg:text-7xl font-black uppercase text-black tracking-tighter mb-6 leading-[0.9]">The Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Journey</span></h2>
-                 <p className="text-gray-500 text-xl font-medium leading-relaxed border-l-[3px] border-black pl-6">From initial consultation to the first time you fire up the grill, we are with you every step of the way.</p>
+                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-black tracking-tighter mb-4 leading-[0.9]">The Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Journey</span></h2>
+                 <p className="text-gray-500 text-lg md:text-xl font-medium leading-relaxed border-l-[3px] border-black pl-6">From initial consultation to the first time you fire up the grill, we are with you every step of the way.</p>
               </div>
               <a href="/process" className="inline-flex items-center justify-center gap-3 bg-black text-white px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-primary hover:text-black transition-colors shrink-0">
                  Explore Process <ArrowRight size={14} />
               </a>
            </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10 relative">
               <div className="hidden md:block absolute top-12 left-0 w-full h-1 bg-black z-0"></div>
               {[
                  { step: "01", title: "Consult", desc: "Define your menu & needs." },
@@ -271,10 +374,10 @@ export default async function ServicesPage() {
                  { step: "04", title: "Keys", icon: Award, desc: "Training & Handover." }
               ].map((item, i) => (
                  <div key={i} className="relative z-10 group bg-gray-50">
-                    <div className="bg-white w-24 h-24 border-2 border-black flex items-center justify-center text-4xl font-black text-black mb-8 group-hover:border-primary group-hover:bg-primary transition-colors group-hover:-translate-y-2">
+                    <div className="bg-white w-20 h-20 md:w-24 md:h-24 border-2 border-black flex items-center justify-center text-3xl md:text-4xl font-black text-black mb-6 group-hover:border-primary group-hover:bg-primary transition-colors group-hover:-translate-y-2">
                        {item.step}
                     </div>
-                    <h4 className="text-3xl font-black uppercase text-black mb-3 tracking-tighter leading-none">{item.title}</h4>
+                    <h4 className="text-2xl md:text-3xl font-black uppercase text-black mb-2 tracking-tighter leading-none">{item.title}</h4>
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{item.desc}</p>
                  </div>
               ))}
@@ -286,25 +389,25 @@ export default async function ServicesPage() {
       <FAQSection faqs={faqs} />
 
       {/* Final CTA */}
-      <section className="py-32 bg-[#0a0a0a] overflow-hidden relative border-t border-[#1a1a1a]">
+      <section className="py-12 md:py-16 bg-[#0a0a0a] overflow-hidden relative border-t border-[#1a1a1a]">
          <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }} />
          
          <Container className="relative z-10 text-center">
-            <h2 className="text-5xl md:text-7xl lg:text-8xl font-black text-white uppercase tracking-tighter mb-12 max-w-5xl mx-auto leading-[0.85]">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter mb-8 max-w-5xl mx-auto leading-[0.9]">
                {sections.cta?.title || (
                     <>Build Your Business On A <br className="hidden md:block"/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Foundation Of Steel</span></>
                )}
             </h2>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
                <a 
                   href="/quote" 
-                  className="bg-primary text-black border border-primary px-12 py-6 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors min-w-[260px] flex items-center justify-center gap-3"
+                  className="bg-primary text-black border border-primary px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors min-w-[240px] flex items-center justify-center gap-3"
                >
                   {sections.cta?.ctaText || "Initialize Quote"} <ArrowRight size={14} />
                </a>
                <a 
                   href="/portfolio" 
-                  className="bg-transparent text-white border border-white/20 px-12 py-6 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white hover:text-black transition-colors min-w-[260px]"
+                  className="bg-transparent text-white border border-white/20 px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white hover:text-black transition-colors min-w-[240px]"
                >
                   View Recent Builds
                </a>

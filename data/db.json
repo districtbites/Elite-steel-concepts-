@@ -1,6 +1,26 @@
 {
   "quotes": [
     {
+      "name": "Louisa Jane Ballif",
+      "email": "louballif@gmail.com",
+      "phone": "3854728960",
+      "company": "NA",
+      "projectType": "Concession Trailer",
+      "sourcing": "Need Vehicle",
+      "budget": "Under 30k",
+      "timeline": "ASAP",
+      "menuType": "mobile grocery store",
+      "message": "Different concept, open to simpler or more complicated buildouts",
+      "dimensions": "izuzu elf or mitsubishi canter",
+      "equipment": "refirdegerator, coffee maker, food warmer",
+      "brandingNeeds": null,
+      "powerRequirements": "Quiet Diesel",
+      "services": [],
+      "id": "1791084951631",
+      "date": "Oct 4, 2026",
+      "status": "New"
+    },
+    {
       "name": "Harry Mulford",
       "email": "mulfordridingcamp@gmail.com",
       "phone": "7039467595",
@@ -18,7 +38,7 @@
       "services": [],
       "id": "1790292927989",
       "date": "Sep 24, 2026",
-      "status": "New"
+      "status": "Designing"
     },
     {
       "name": "Luis Martins",
@@ -367,7 +387,7 @@
             "title": "Expert Food Truck, Food Trailer & Mobile Kitchen Services Nationwide",
             "subtitle": "We build custom food trucks and trailers designed around your menu, equipment, and business goals.",
             "content": "We build custom food trucks and trailers designed around your menu, equipment, and business goals.\r\n",
-            "ctaText": "Get Your Custom Food Truck Quote Today"
+            "ctaText": "et Your Custom Food Truck Quote Today"
           },
           "intro": {
             "title": "Custom Food Truck Services",
