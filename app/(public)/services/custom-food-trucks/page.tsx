@@ -176,20 +176,21 @@ export default async function CustomFoodTrucksPage() {
         eyebrow="Food Truck Services"
         title="Custom Food Trucks"
         subtitle="Build a Food Truck That Fits Your Business"
+        className="!pb-10 md:!pb-12"
       />
 
       {/* Custom Food Truck Types */}
       <Section className="!py-10 md:!py-14 bg-white border-b border-gray-100">
         <Container>
-          <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
-            <div className="inline-flex items-center justify-center gap-3 mb-4">
+          <div className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
+            <div className="inline-flex items-center justify-center gap-3 mb-3">
               <div className="h-px w-8 bg-primary" />
               <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 Food Truck Concepts
               </span>
               <div className="h-px w-8 bg-primary" />
             </div>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-3">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-2">
               Custom Food Trucks
             </h2>
             <p className="text-gray-500 text-base md:text-lg font-medium leading-relaxed">
@@ -215,15 +216,15 @@ export default async function CustomFoodTrucksPage() {
       {/* Why Entrepreneurs Choose ESC */}
       <Section className="!py-10 md:!py-14 bg-gray-50/80 border-b border-gray-100">
         <Container>
-          <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
-            <div className="inline-flex items-center justify-center gap-3 mb-4">
+          <div className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
+            <div className="inline-flex items-center justify-center gap-3 mb-3">
               <div className="h-px w-8 bg-primary" />
               <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 Why Choose ESC
               </span>
               <div className="h-px w-8 bg-primary" />
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-5">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-4">
               Why Entrepreneurs Choose{" "}
               <span className="text-primary">Elite Steel Concepts</span> for
               Custom Food Truck Builds
@@ -265,7 +266,7 @@ export default async function CustomFoodTrucksPage() {
       </Section>
 
       {/* Luxury CTA — after Why Choose ESC */}
-      <section className="relative py-16 md:py-24 bg-[#0a0a0a] overflow-hidden border-y border-[#1a1a1a]">
+      <section className="relative py-12 md:py-16 bg-[#0a0a0a] overflow-hidden border-y border-[#1a1a1a]">
         <div
           className="absolute inset-0 opacity-[0.04]"
           style={{
@@ -277,7 +278,7 @@ export default async function CustomFoodTrucksPage() {
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[480px] h-[480px] bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
         <Container className="relative z-10 text-center max-w-4xl">
-          <div className="inline-flex items-center justify-center gap-3 mb-5">
+          <div className="inline-flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-primary" />
             <span className="text-primary text-[10px] font-black uppercase tracking-[0.3em]">
               Start Your Build
@@ -285,12 +286,12 @@ export default async function CustomFoodTrucksPage() {
             <div className="h-px w-8 bg-primary" />
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tighter leading-[0.95] mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tighter leading-[0.95] mb-5">
             Ready to Build Your{" "}
             <span className="text-primary">Custom Food Truck?</span>
           </h2>
 
-          <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mb-10">
+          <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mb-8">
             Contact Elite Steel Concepts today to discuss your custom food truck
             project or request a free quote.
           </p>
@@ -305,18 +306,18 @@ export default async function CustomFoodTrucksPage() {
       </section>
 
       {/* Intro Section - The Philosophy */}
-      <Section className="bg-white overflow-hidden">
+      <Section className="!py-10 md:!py-14 bg-white overflow-hidden border-b border-gray-100">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-            <div className="lg:col-span-6 space-y-8">
-              <span className="text-primary font-bold tracking-widest uppercase text-[10px] mb-4 block underline decoration-secondary decoration-4 underline-offset-8">Engineering Philosophy</span>
-              <h2 className="text-4xl md:text-6xl font-black uppercase text-secondary tracking-tighter leading-none mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            <div className="lg:col-span-6 space-y-6">
+              <span className="text-primary font-bold tracking-widest uppercase text-[10px] mb-3 block underline decoration-secondary decoration-4 underline-offset-8">Engineering Philosophy</span>
+              <h2 className="text-3xl md:text-5xl font-black uppercase text-secondary tracking-tighter leading-none mb-4">
                 Redefining The <br/> <span className="text-primary italic">Mobile Kitchen</span>
               </h2>
-              <p className="text-gray-500 text-xl font-light leading-relaxed">
+              <p className="text-gray-500 text-lg font-light leading-relaxed">
                 <AutoLinkedText text={introDescLinked} />
               </p>
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex flex-wrap gap-3 pt-2">
                  <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl text-[10px] font-black uppercase text-secondary border border-gray-100">
                     <CheckCircle2 size={14} className="text-primary" /> Health Dept. Guaranteed
                  </div>
@@ -349,16 +350,16 @@ export default async function CustomFoodTrucksPage() {
       </Section>
 
       {/* Platform Options Section */}
-      <Section className="bg-gray-50">
+      <Section className="!py-10 md:!py-14 bg-gray-50 border-b border-gray-100">
         <Container>
-           <div className="mb-16">
-              <span className="text-primary font-bold tracking-widest uppercase text-[10px] mb-4 block">Foundation Selection</span>
+           <div className="mb-8 md:mb-10">
+              <span className="text-primary font-bold tracking-widest uppercase text-[10px] mb-3 block">Foundation Selection</span>
               <h2 className="text-3xl md:text-5xl font-black uppercase text-secondary tracking-tighter">
                 Platform <span className="text-primary italic">Verticals</span>
               </h2>
            </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
               {platforms.map((p, i) => (
                 <div key={i} className="bg-white rounded-[3rem] overflow-hidden border border-gray-100 shadow-sm group hover:shadow-2xl transition-all duration-500">
                    <div className="relative h-64 overflow-hidden">
@@ -387,21 +388,21 @@ export default async function CustomFoodTrucksPage() {
       </Section>
 
       {/* Engineering Excellence - Feature Grid */}
-      <Section className="bg-secondary text-white overflow-hidden">
+      <Section className="!py-10 md:!py-14 bg-secondary text-white overflow-hidden border-y border-[#1a1a1a]">
         <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
-            <div className="lg:col-span-5 space-y-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+            <div className="lg:col-span-5 space-y-8">
                <div>
-                  <span className="text-primary font-bold tracking-widest uppercase text-xs mb-4 block">Industrial Bio-Sphere</span>
-                  <h2 className="text-4xl text-black font-black uppercase tracking-tighter leading-tight mb-8">
+                  <span className="text-primary font-bold tracking-widest uppercase text-xs mb-3 block">Industrial Bio-Sphere</span>
+                  <h2 className="text-3xl md:text-4xl text-black font-black uppercase tracking-tighter leading-tight mb-5">
                     The Engineering <br/> Core
                   </h2>
-                  <p className="text-gray-400 font-light text-lg leading-relaxed">
+                  <p className="text-gray-400 font-light text-base md:text-lg leading-relaxed">
                     Aesthetics are temporary, engineering is forever. We focus on the invisible systems that keep your business running when the heat is on.
                   </p>
                </div>
                
-               <div className="grid grid-cols-1 gap-8">
+               <div className="grid grid-cols-1 gap-6">
                   {engineeringCore.map((core, i) => (
                     <div key={i} className="flex gap-6 group">
                        <div className="bg-white/10 w-16 h-16 rounded-2xl flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-secondary transition-all">
@@ -458,18 +459,18 @@ export default async function CustomFoodTrucksPage() {
       </Section>
 
       {/* Workflow & Architecture Section */}
-      <Section className="bg-white">
+      <Section className="!py-10 md:!py-14 bg-white border-b border-gray-100">
         <Container>
-          <div className="max-w-4xl mx-auto text-center space-y-8">
+          <div className="max-w-4xl mx-auto text-center space-y-5 md:space-y-6">
             <span className="text-primary font-bold tracking-widest uppercase text-xs">Architectural Prowess</span>
-            <h2 className="text-4xl md:text-6xl font-black uppercase text-secondary tracking-tighter leading-none">
+            <h2 className="text-3xl md:text-5xl font-black uppercase text-secondary tracking-tighter leading-none">
               Workflow <span className="text-primary italic">Architecture</span>
             </h2>
-            <p className="text-gray-500 text-lg font-light leading-relaxed max-w-2xl mx-auto">
+            <p className="text-gray-500 text-base md:text-lg font-light leading-relaxed max-w-2xl mx-auto">
               We design interiors using movement mapping. Every reach, every step, and every hand-off is optimized to reduce friction during peak hours. **Speed of service is built into the blueprint.**
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 pt-6 md:pt-8">
                <div className="space-y-4">
                   <div className="text-primary"><Layout size={40} className="mx-auto" /></div>
                   <h4 className="text-xl font-black uppercase text-secondary">Modular Prep Zones</h4>
