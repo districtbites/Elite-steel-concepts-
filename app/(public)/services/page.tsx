@@ -196,13 +196,6 @@ export default async function ServicesPage() {
             {services.map((service) => (
               <div key={service.title} className="space-y-8 md:space-y-10">
                 <div className="text-center max-w-4xl mx-auto">
-                  <div className="inline-flex items-center justify-center gap-3 mb-4">
-                    <div className="h-px w-8 bg-primary" />
-                    <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                      Our Services
-                    </span>
-                    <div className="h-px w-8 bg-primary" />
-                  </div>
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight">
                     {service.title}
                   </h2>
@@ -315,38 +308,50 @@ export default async function ServicesPage() {
       */}
 
       {/* Process at a Glance */}
-      <Section className="!py-10 md:!py-14 bg-gray-50 overflow-hidden border-y border-gray-200">
+      <Section className="!py-10 md:!py-14 bg-white overflow-hidden border-y border-gray-100">
         <Container>
-           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-10 md:mb-12 gap-6 md:gap-8">
-              <div className="max-w-3xl">
-                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-black tracking-tighter mb-4 leading-[0.9]">
-                   ECS Building <span className="text-primary">Process</span>
-                 </h2>
-                 <p className="text-gray-500 text-base md:text-lg font-medium leading-relaxed border-l-[3px] border-primary pl-6">
-                   At ESC, we work with you from the first idea to the final handover, keeping every step clear and focused on your food business needs.
-                 </p>
-              </div>
-              <a href="/contact" className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shrink-0">
-                 Talk to Our Team <ArrowRight size={14} />
-              </a>
-           </div>
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 md:mb-10 gap-5 md:gap-8">
+            <div className="max-w-3xl">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight mb-3 md:mb-4 leading-tight">
+                ECS Building <span className="text-primary">Process</span>
+              </h2>
+              <p className="text-gray-500 text-sm sm:text-base md:text-lg font-medium leading-relaxed border-l-2 border-primary pl-4 md:pl-6">
+                At ESC, we work with you from the first idea to the final handover, keeping every step clear and focused on your food business needs.
+              </p>
+            </div>
+            <a
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 bg-primary text-black px-7 py-3.5 md:px-10 md:py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shrink-0"
+            >
+              Talk to Our Team <ArrowRight size={14} />
+            </a>
+          </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10 relative">
-              <div className="hidden md:block absolute top-12 left-0 w-full h-1 bg-black z-0"></div>
-              {[
-                 { step: "01", title: "Consult" },
-                 { step: "02", title: "Design" },
-                 { step: "03", title: "Build" },
-                 { step: "04", title: "Keys" },
-              ].map((item) => (
-                 <div key={item.step} className="relative z-10 group bg-gray-50">
-                    <div className="bg-white w-20 h-20 md:w-24 md:h-24 border-2 border-black flex items-center justify-center text-3xl md:text-4xl font-black text-black mb-6 group-hover:border-primary group-hover:bg-primary transition-colors group-hover:-translate-y-2">
-                       {item.step}
-                    </div>
-                    <h4 className="text-2xl md:text-3xl font-black uppercase text-black tracking-tighter leading-none">{item.title}</h4>
-                 </div>
-              ))}
-           </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+            {[
+              { step: "01", title: "Consult" },
+              { step: "02", title: "Design" },
+              { step: "03", title: "Build" },
+              { step: "04", title: "Keys" },
+            ].map((item) => (
+              <div
+                key={item.step}
+                className="group relative bg-gray-50/80 border border-gray-200 hover:border-primary/50 hover:bg-white hover:shadow-sm transition-all duration-300 p-4 sm:p-5 md:p-7 flex flex-col items-center text-center"
+              >
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+
+                <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 mb-3 sm:mb-4 bg-white border border-gray-200 group-hover:border-primary group-hover:bg-primary flex items-center justify-center transition-colors duration-300">
+                  <span className="text-lg sm:text-xl md:text-2xl font-black text-black group-hover:text-white tracking-tight transition-colors">
+                    {item.step}
+                  </span>
+                </div>
+
+                <h4 className="text-xs sm:text-sm md:text-base font-black uppercase text-black tracking-wide group-hover:text-primary transition-colors">
+                  {item.title}
+                </h4>
+              </div>
+            ))}
+          </div>
         </Container>
       </Section>
 
