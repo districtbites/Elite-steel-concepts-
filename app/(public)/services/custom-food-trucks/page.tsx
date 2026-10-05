@@ -174,7 +174,7 @@ export default async function CustomFoodTrucksPage() {
     { title: "Pizza Food Truck", tagline: "Fresh-fired pizza", color: "#E53935", accent: "#FFCDD2", icon: Pizza },
     { title: "Seafood Food Truck", tagline: "Fresh catch & seafood", color: "#00838F", accent: "#B2EBF2", icon: Fish },
     { title: "Soul Food Truck", tagline: "Classic comfort food", color: "#6A1B9A", accent: "#E1BEE7", icon: UtensilsCrossed },
-    { title: "Indian Food Truck", tagline: "Curry, kebabs & street snacks", color: "#E65100", accent: "#FFE0B2", icon: Soup },
+    { title: "Breakfast & Brunch Food Truck", tagline: "Pancakes, waffles & egg sandwiches", color: "#DAA520", accent: "#FFFDE7", icon: Coffee },
   ];
 
   const whyChoosePoints = [
@@ -207,7 +207,8 @@ export default async function CustomFoodTrucksPage() {
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-3">
-              Custom Food Trucks
+              Custom Food Truck Types{" "}
+              <span className="text-primary">ESC Build</span>
             </h2>
             <p className="text-gray-500 text-base md:text-lg font-medium leading-relaxed">
               Build a Food Truck That Fits Your Business
@@ -294,14 +295,7 @@ export default async function CustomFoodTrucksPage() {
       <Section className="!py-10 md:!py-14 bg-gray-50/80 border-b border-gray-100">
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
-            <div className="inline-flex items-center justify-center gap-3 mb-3">
-              <div className="h-px w-8 bg-primary" />
-              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                Why Choose ESC
-              </span>
-              <div className="h-px w-8 bg-primary" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-4">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase text-black tracking-tight leading-tight mb-4">
               Why Entrepreneurs Choose{" "}
               <span className="text-primary">Elite Steel Concepts</span> for
               Custom Food Truck Builds
@@ -343,7 +337,7 @@ export default async function CustomFoodTrucksPage() {
       </Section>
 
       {/* Luxury CTA — after Why Choose ESC */}
-      <section className="relative py-12 md:py-16 bg-[#0a0a0a] overflow-hidden border-y border-[#1a1a1a]">
+      <section className="relative py-10 md:py-12 bg-[#0a0a0a] overflow-hidden border-y border-[#1a1a1a]">
         <div
           className="absolute inset-0 opacity-[0.04]"
           style={{
@@ -382,6 +376,9 @@ export default async function CustomFoodTrucksPage() {
         </Container>
       </section>
 
+      {/* Intro / Platforms / Engineering Core — hidden for now */}
+      {false && (
+        <>
       {/* Intro Section - The Philosophy */}
       <Section className="!py-10 md:!py-14 bg-white overflow-hidden border-b border-gray-100">
         <Container>
@@ -535,10 +532,14 @@ export default async function CustomFoodTrucksPage() {
         </Container>
       </Section>
 
-      {/* Workflow & Architecture Section */}
-      <Section className="!py-10 md:!py-14 bg-white border-b border-gray-100">
+        </>
+      )}
+
+      {/* Workflow & Architecture Section — hidden for now */}
+      {false && (
+      <Section className="!py-8 md:!py-10 bg-white border-b border-gray-100">
         <Container>
-          <div className="max-w-4xl mx-auto text-center space-y-5 md:space-y-6">
+          <div className="max-w-4xl mx-auto text-center space-y-4 md:space-y-5">
             <span className="text-primary font-bold tracking-widest uppercase text-xs">Architectural Prowess</span>
             <h2 className="text-3xl md:text-5xl font-black uppercase text-secondary tracking-tighter leading-none">
               Workflow <span className="text-primary italic">Architecture</span>
@@ -547,7 +548,7 @@ export default async function CustomFoodTrucksPage() {
               We design interiors using movement mapping. Every reach, every step, and every hand-off is optimized to reduce friction during peak hours. **Speed of service is built into the blueprint.**
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 pt-6 md:pt-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-4 md:pt-5">
                <div className="space-y-4">
                   <div className="text-primary"><Layout size={40} className="mx-auto" /></div>
                   <h4 className="text-xl font-black uppercase text-secondary">Modular Prep Zones</h4>
@@ -567,6 +568,7 @@ export default async function CustomFoodTrucksPage() {
           </div>
         </Container>
       </Section>
+      )}
 
       {/* FAQ Integration */}
       <FAQSection faqs={truckFaqs} />
