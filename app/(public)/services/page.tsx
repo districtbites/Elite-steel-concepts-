@@ -53,20 +53,9 @@ export default async function ServicesPage() {
       image: truckImage.url,
       description:
         "At ESC, we build custom food trailers, concession trailers, and mobile kitchens designed around your menu, equipment, workflow, and business needs, with durable construction, practical layouts, quality materials, and compliance-focused designs.",
-      features: ["Step Van Conversions", "New & Used Chassis", "Generator Installation", "Full Graphic Wraps"],
       href: "/quote",
       ctaText: "Get Your Free Quote",
     },
-    // Concession Trailers — hidden for now
-    // {
-    //   title: "Concession Trailers",
-    //   icon: Box,
-    //   image: trailerImage.url,
-    //   description: "Maximize your kitchen space and lower your overhead. Trailers are perfect for semi-permanent locations and high-volume events where you need more room to operate.",
-    //   features: ["Custom Sizes (10' - 30')", "Porch & Smoker Builds", "Lower Maintenance", "Detachable Towing"],
-    //   href: "/services/custom-food-trailers",
-    //   ctaText: "Specifications",
-    // },
   ];
 
   return (
@@ -141,10 +130,9 @@ export default async function ServicesPage() {
         </Container>
       </Section>
 
-      {/* Intro / Stats Section */}
+      {/* Intro Section */}
       <Section className="!py-10 md:!py-14 bg-white overflow-hidden">
         <Container>
-          {/* Centered heading only */}
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
@@ -153,55 +141,47 @@ export default async function ServicesPage() {
               </span>
               <div className="h-px w-8 bg-primary" />
             </div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-black tracking-tighter leading-[0.95]">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight">
               {sections.intro?.title || (
                 <>
                   Industry Leading{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">
-                    Mobile Kitchen
-                  </span>
+                  <span className="text-primary">Mobile Kitchen</span>
                 </>
               )}
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
-            <div className="order-2 lg:order-1">
-              <div className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed max-w-xl border-l-[3px] border-black pl-6 mb-8">
-                <AutoLinkedText
-                  text={introLinked}
-                  linkClassName="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-6 p-6 md:p-8 bg-[#0a0a0a] border border-[#1a1a1a]">
-                <div className="space-y-3">
-                  <div className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">
-                    100%
-                  </div>
-                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
-                    Code Compliant
-                  </p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+            <div className="order-2 lg:order-1 lg:col-span-6 flex items-center">
+              <div className="w-full max-w-xl">
+                <div className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed border-l-2 border-primary pl-5 md:pl-6 mb-7">
+                  <AutoLinkedText
+                    text={introLinked}
+                    linkClassName="text-primary font-semibold underline underline-offset-2 hover:text-orange-600 transition-colors"
+                  />
                 </div>
-                <div className="space-y-3">
-                  <div className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-none">
-                    14+ YRS
-                  </div>
-                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">
-                    Engineering Exp.
-                  </p>
-                </div>
+                <Link
+                  href="/quote"
+                  className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"
+                >
+                  Get Your Free Quote <ArrowRight size={14} />
+                </Link>
               </div>
             </div>
 
-            <div className="order-1 lg:order-2 lg:sticky lg:top-32 relative group">
-              <div className="absolute -left-4 -top-4 w-full h-full bg-primary translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
-              <div className="relative aspect-square border-2 border-black overflow-hidden bg-black z-10">
+            <div className="order-1 lg:order-2 lg:col-span-6 relative group w-full min-h-[260px] sm:min-h-[300px]">
+              <div
+                className="absolute inset-0 translate-x-3 translate-y-3 bg-primary hidden sm:block"
+                aria-hidden
+              />
+              <div className="relative h-full min-h-[260px] sm:min-h-[300px] border-2 border-black overflow-hidden bg-black z-10">
                 <Image
                   src={servicesHero.url}
                   alt={servicesHero.alt || "Workshop Fabrication"}
                   fill
-                  className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
+                  sizes="(max-width: 1024px) 90vw, 50vw"
+                  className="object-cover opacity-95 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                  priority
                 />
               </div>
             </div>
@@ -209,13 +189,12 @@ export default async function ServicesPage() {
         </Container>
       </Section>
 
-      {/* Main Services - Alternating */}
+      {/* Main Services */}
       <Section className="!py-10 md:!py-14 bg-gray-50 border-t border-gray-200">
         <Container>
           <div className="space-y-16 md:space-y-20">
-            {services.map((service, index) => (
-              <div key={index} className="space-y-8 md:space-y-10">
-                {/* Centered heading only */}
+            {services.map((service) => (
+              <div key={service.title} className="space-y-8 md:space-y-10">
                 <div className="text-center max-w-4xl mx-auto">
                   <div className="inline-flex items-center justify-center gap-3 mb-4">
                     <div className="h-px w-8 bg-primary" />
@@ -224,55 +203,40 @@ export default async function ServicesPage() {
                     </span>
                     <div className="h-px w-8 bg-primary" />
                   </div>
-                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tighter leading-[0.95]">
+                  <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight">
                     {service.title}
                   </h2>
                 </div>
 
-                <div
-                  className={`flex flex-col lg:flex-row items-center gap-10 lg:gap-14 ${
-                    index % 2 !== 0 ? "lg:flex-row-reverse" : ""
-                  }`}
-                >
-                  <div className="w-full lg:w-1/2 relative group">
-                    <div className="absolute -left-4 -top-4 w-full h-full bg-primary translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
-                    <div className="relative aspect-[4/3] border-2 border-black overflow-hidden bg-black z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+                  <div className="lg:col-span-6 relative group w-full min-h-[260px] sm:min-h-[300px]">
+                    <div
+                      className="absolute inset-0 translate-x-3 translate-y-3 bg-primary hidden sm:block"
+                      aria-hidden
+                    />
+                    <div className="relative h-full min-h-[260px] sm:min-h-[300px] border-2 border-black overflow-hidden bg-black z-10">
                       <Image
                         src={service.image}
                         alt={service.title}
                         fill
-                        className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 grayscale group-hover:grayscale-0"
+                        sizes="(max-width: 1024px) 90vw, 50vw"
+                        className="object-cover opacity-95 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
                       />
                     </div>
                   </div>
-                  <div className="w-full lg:w-1/2">
-                    <p className="text-gray-500 text-lg md:text-xl font-medium leading-relaxed mb-8">
-                      {service.description}
-                    </p>
-                    {service.features.length > 0 && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                        {service.features.map((feature, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center gap-3 bg-white px-5 py-4 border border-gray-200 hover:border-black transition-colors group/feature"
-                          >
-                            <Check
-                              size={16}
-                              className="text-primary shrink-0 group-hover/feature:scale-125 transition-transform"
-                            />
-                            <span className="text-[10px] font-black text-black uppercase tracking-[0.2em]">
-                              {feature}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <a
-                      href={service.href}
-                      className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"
-                    >
-                      {service.ctaText || "Specifications"} <ArrowRight size={14} />
-                    </a>
+
+                  <div className="lg:col-span-6 flex items-center">
+                    <div className="w-full max-w-xl">
+                      <p className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed mb-7">
+                        {service.description}
+                      </p>
+                      <Link
+                        href={service.href}
+                        className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"
+                      >
+                        {service.ctaText} <ArrowRight size={14} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -355,28 +319,31 @@ export default async function ServicesPage() {
         <Container>
            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-10 md:mb-12 gap-6 md:gap-8">
               <div className="max-w-3xl">
-                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-black tracking-tighter mb-4 leading-[0.9]">The Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Journey</span></h2>
-                 <p className="text-gray-500 text-lg md:text-xl font-medium leading-relaxed border-l-[3px] border-black pl-6">From initial consultation to the first time you fire up the grill, we are with you every step of the way.</p>
+                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-black tracking-tighter mb-4 leading-[0.9]">
+                   ECS Building <span className="text-primary">Process</span>
+                 </h2>
+                 <p className="text-gray-500 text-base md:text-lg font-medium leading-relaxed border-l-[3px] border-primary pl-6">
+                   At ESC, we work with you from the first idea to the final handover, keeping every step clear and focused on your food business needs.
+                 </p>
               </div>
-              <a href="/process" className="inline-flex items-center justify-center gap-3 bg-black text-white px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-primary hover:text-black transition-colors shrink-0">
-                 Explore Process <ArrowRight size={14} />
+              <a href="/contact" className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shrink-0">
+                 Talk to Our Team <ArrowRight size={14} />
               </a>
            </div>
 
            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-10 relative">
               <div className="hidden md:block absolute top-12 left-0 w-full h-1 bg-black z-0"></div>
               {[
-                 { step: "01", title: "Consult", desc: "Define your menu & needs." },
-                 { step: "02", title: "Design", icon: PenTool, desc: "Blueprints & workflow." },
-                 { step: "03", title: "Build", icon: Wrench, desc: "Fabrication & install." },
-                 { step: "04", title: "Keys", icon: Award, desc: "Training & Handover." }
-              ].map((item, i) => (
-                 <div key={i} className="relative z-10 group bg-gray-50">
+                 { step: "01", title: "Consult" },
+                 { step: "02", title: "Design" },
+                 { step: "03", title: "Build" },
+                 { step: "04", title: "Keys" },
+              ].map((item) => (
+                 <div key={item.step} className="relative z-10 group bg-gray-50">
                     <div className="bg-white w-20 h-20 md:w-24 md:h-24 border-2 border-black flex items-center justify-center text-3xl md:text-4xl font-black text-black mb-6 group-hover:border-primary group-hover:bg-primary transition-colors group-hover:-translate-y-2">
                        {item.step}
                     </div>
-                    <h4 className="text-2xl md:text-3xl font-black uppercase text-black mb-2 tracking-tighter leading-none">{item.title}</h4>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{item.desc}</p>
+                    <h4 className="text-2xl md:text-3xl font-black uppercase text-black tracking-tighter leading-none">{item.title}</h4>
                  </div>
               ))}
            </div>
@@ -392,22 +359,20 @@ export default async function ServicesPage() {
          
          <Container className="relative z-10 text-center">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter mb-8 max-w-5xl mx-auto leading-[0.9]">
-               {sections.cta?.title || (
-                    <>Build Your Business On A <br className="hidden md:block"/><span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Foundation Of Steel</span></>
-               )}
+               Ready to Build Your Custom Food Truck?
             </h2>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
                <a 
                   href="/quote" 
                   className="bg-primary text-black border border-primary px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors min-w-[240px] flex items-center justify-center gap-3"
                >
-                  {sections.cta?.ctaText || "Initialize Quote"} <ArrowRight size={14} />
+                  Get a Free Quote <ArrowRight size={14} />
                </a>
                <a 
                   href="/portfolio" 
                   className="bg-transparent text-white border border-white/20 px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white hover:text-black transition-colors min-w-[240px]"
                >
-                  View Recent Builds
+                  View Our Work
                </a>
             </div>
          </Container>
