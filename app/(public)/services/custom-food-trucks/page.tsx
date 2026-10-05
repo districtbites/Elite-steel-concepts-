@@ -174,6 +174,7 @@ export default async function CustomFoodTrucksPage() {
     { title: "Pizza Food Truck", tagline: "Fresh-fired pizza", color: "#E53935", accent: "#FFCDD2", icon: Pizza },
     { title: "Seafood Food Truck", tagline: "Fresh catch & seafood", color: "#00838F", accent: "#B2EBF2", icon: Fish },
     { title: "Soul Food Truck", tagline: "Classic comfort food", color: "#6A1B9A", accent: "#E1BEE7", icon: UtensilsCrossed },
+    { title: "Indian Food Truck", tagline: "Curry, kebabs & street snacks", color: "#E65100", accent: "#FFE0B2", icon: Soup },
   ];
 
   const whyChoosePoints = [
