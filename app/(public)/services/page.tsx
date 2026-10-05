@@ -4,7 +4,7 @@ import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
-import ReadMore from "@/components/ui/ReadMore";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import Image from "next/image";
 import { Truck, Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X, Award, MapPin, Zap } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
@@ -168,11 +168,9 @@ export default async function ServicesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
             <div className="order-2 lg:order-1">
               <div className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed max-w-xl border-l-[3px] border-black pl-6 mb-8">
-                <ReadMore
+                <AutoLinkedText
                   text={introLinked}
-                  maxLength={250}
-                  className="text-gray-600 text-lg md:text-xl font-medium leading-relaxed"
-                  buttonClassName="mt-5 text-[10px] font-black uppercase tracking-[0.2em] text-black border border-black px-4 py-2 hover:bg-primary hover:border-primary transition-colors flex items-center gap-2"
+                  linkClassName="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
                 />
               </div>
 
