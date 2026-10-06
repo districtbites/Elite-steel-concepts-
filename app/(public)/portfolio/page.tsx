@@ -26,8 +26,6 @@ const workGallery = [
   { image: "/uploads/media/1772305025070-whatsapp-image-2024-11-25-at-10.36.37-pm(1).webp", title: "Red Dual-Axle Concession Trailer" },
   { image: "/uploads/media/1772305213502-whatsapp-image-2025-12-20-at-11.27.44-pm(1).webp", title: "Compact Food Trailer" },
   { image: "/uploads/media/1772306135240-whatsapp-(1).webp", title: "Silver Concession Trailer Shell" },
-  { image: "/uploads/about/about-manufacture-trailer.jpg", title: "Custom Food Trailer Showcase" },
-  { image: "/uploads/about/about-manufacture-truck.jpg", title: "Custom Food Truck Showcase" },
 ];
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -63,6 +61,7 @@ export default async function PortfolioPage() {
     <>
       <PageHeader
         eyebrow="Portfolio of ECS"
+        className="!pb-10 md:!pb-12"
         title="Elite Steel Concept Work Portfolio"
         subtitle="Take a look at our completed custom food truck and trailer projects, built by an experienced custom food truck builder and designed around each business’s unique needs."
       >
@@ -74,12 +73,13 @@ export default async function PortfolioPage() {
         </Link>
       </PageHeader>
 
-      {/* ═══════ FEATURED SPOTLIGHT ═══════ */}
+      {/* Hidden: Featured Spotlight, Stats Divider
+      -- ═══════ FEATURED SPOTLIGHT ═══════ --
       {featuredProject && (
         <Section className="bg-white overflow-hidden relative py-24 md:py-32">
           <Container>
             <div className="flex flex-col lg:flex-row items-center gap-16">
-              {/* Image */}
+              -- Image --
               <div className="w-full lg:w-1/2 relative group">
                 <div className="absolute -left-4 -top-4 w-full h-full bg-primary translate-x-2 translate-y-2 group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500" />
                 <div className="relative aspect-video border-2 border-black overflow-hidden bg-black z-10">
@@ -98,7 +98,7 @@ export default async function PortfolioPage() {
                 </div>
               </div>
 
-              {/* Info */}
+              -- Info --
               <div className="w-full lg:w-1/2 space-y-8">
                 <div>
                   <div className="flex items-center gap-3 mb-4">
@@ -163,9 +163,9 @@ export default async function PortfolioPage() {
         </Section>
       )}
 
-      {/* ═══════ STATS DIVIDER ═══════ */}
+      -- ═══════ STATS DIVIDER ═══════ --
       <div className="bg-[#0a0a0a] py-16 border-y border-[#1a1a1a] relative overflow-hidden">
-        {/* Industrial grid overlay */}
+        -- Industrial grid overlay --
         <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px)" }} />
         
         <Container className="relative z-10">
@@ -187,16 +187,17 @@ export default async function PortfolioPage() {
           </div>
         </Container>
       </div>
+      */}
 
       {/* ═══════ MAIN GALLERY ═══════ */}
-      <Section className="bg-white py-24 md:py-32">
+      <Section className="!py-10 md:!py-14 bg-white">
         <Container>
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 md:mb-10">
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="w-1.5 h-1.5 bg-black" />
               <span className="text-black font-black tracking-[0.2em] uppercase text-[10px]">The Gallery</span>
             </div>
-            <h2 className="text-5xl md:text-7xl font-black uppercase text-black tracking-tighter mb-6 leading-none">
+            <h2 className="text-4xl md:text-6xl font-black uppercase text-black tracking-tighter mb-4 leading-none">
               Our Diverse <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Fleet</span>
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed text-sm md:text-base border-l-2 border-black pl-4 text-left">
@@ -213,7 +214,8 @@ export default async function PortfolioPage() {
         </Container>
       </Section>
 
-      {/* ═══════ WHY CHOOSE US (mini) ═══════ */}
+      {/* Hidden: Why Choose Us (mini), FAQ, Final CTA
+      -- ═══════ WHY CHOOSE US (mini) ═══════ --
       <Section className="bg-[#0a0a0a] py-32 border-y border-[#1a1a1a] relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }} />
         
@@ -248,10 +250,10 @@ export default async function PortfolioPage() {
         </Container>
       </Section>
 
-      {/* FAQ */}
+      -- FAQ --
       <FAQSection faqs={faqs.filter((f) => f.category === "Portfolio" || f.category === "General")} />
 
-      {/* ═══════ FINAL CTA ═══════ */}
+      -- ═══════ FINAL CTA ═══════ --
       <Section className="bg-primary py-32 border-t border-black">
         <Container>
           <div className="flex flex-col items-center text-center relative">
@@ -276,6 +278,7 @@ export default async function PortfolioPage() {
           </div>
         </Container>
       </Section>
+      */}
     </>
   );
 }
