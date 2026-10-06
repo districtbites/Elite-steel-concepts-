@@ -45,9 +45,17 @@ export default async function PortfolioPage() {
   return (
     <>
       <PageHeader
-        title="Showcase of Excellence"
-        subtitle="Explore our gallery of high-performance mobile kitchens. Every build represents a unique partnership between our engineering team and culinary visionaries."
-      />
+        eyebrow="Portfolio of ECS"
+        title="Elite Steel Concept Work Portfolio"
+        subtitle="Take a look at our completed custom food truck and trailer projects, built by an experienced custom food truck builder and designed around each business’s unique needs."
+      >
+        <Link
+          href="/quote"
+          className="inline-flex items-center justify-center gap-3 mt-8 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shadow-[0_0_40px_rgba(247,147,30,0.25)]"
+        >
+          Get a free quote today! <ArrowRight size={14} />
+        </Link>
+      </PageHeader>
 
       {/* ═══════ FEATURED SPOTLIGHT ═══════ */}
       {featuredProject && (

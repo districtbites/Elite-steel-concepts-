@@ -6,6 +6,7 @@ interface PageHeaderProps {
   subtitle?: string;
   eyebrow?: string;
   className?: string;
+  children?: React.ReactNode;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -13,6 +14,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   subtitle,
   eyebrow = "Elite Steel Concepts",
   className = "",
+  children,
 }) => {
   return (
     <div className={`relative bg-[#0a0a0a] pt-32 pb-12 md:pt-40 md:pb-16 overflow-hidden border-b border-[#1a1a1a] ${className}`}>
@@ -36,6 +38,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             {subtitle}
           </p>
         )}
+        {children}
       </Container>
     </div>
   );
