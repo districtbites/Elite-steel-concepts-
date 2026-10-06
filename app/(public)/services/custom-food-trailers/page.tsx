@@ -177,93 +177,88 @@ export default async function CustomFoodTrailersPage() {
       />
 
       {/* Custom Concession Trailer Types */}
-      <Section className="!py-10 md:!py-14 bg-gray-50 border-b border-gray-100">
+      <Section className="!py-10 md:!py-14 bg-white border-b border-gray-100">
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-8 md:mb-12">
-            <h2 className="text-2xl md:text-4xl font-black uppercase text-secondary tracking-tighter leading-tight">
-              Custom Concession Trailer Types{" "}
-              <span className="text-primary italic">ESC Build</span>
+            <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight">
+              Custom Concession Trailer Types ESC Build
             </h2>
             <div className="mx-auto mt-4 h-1 w-16 bg-primary" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 max-w-6xl mx-auto">
             {trailerTypes.map((type, index) => (
               <div
                 key={type.title}
-                className="group relative bg-white border border-gray-200 hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-500 overflow-hidden"
+                className="group relative flex flex-col items-center text-center border-2 border-dashed border-primary/40 hover:border-primary bg-white hover:bg-primary/[0.04] transition-all duration-300 px-5 py-8 md:px-6 md:py-10 hover:shadow-md overflow-hidden"
               >
-                <div
-                  className="absolute top-0 left-0 h-1 w-1/4 group-hover:w-full transition-all duration-500"
-                  style={{ backgroundColor: type.color }}
-                />
-
-                {/* Trailer illustration */}
-                <div
-                  className="relative h-44 flex items-end justify-center px-6 pb-4 overflow-hidden"
-                  style={{
-                    backgroundColor: type.accent,
-                    backgroundImage: "radial-gradient(rgba(0,0,0,0.08) 1px, transparent 1px)",
-                    backgroundSize: "14px 14px",
-                  }}
-                >
-                  <span className="absolute top-4 right-5 text-5xl font-black leading-none text-black/10 group-hover:text-primary/40 transition-colors duration-500">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-
-                  <div className="relative w-full max-w-[250px] group-hover:-translate-y-1 transition-transform duration-500">
-                    <svg viewBox="0 0 230 92" className="w-full h-auto drop-shadow-md" aria-hidden>
-                      {/* Hitch & A-frame */}
-                      <path d="M6 64 L44 56 M6 64 L44 70" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
-                      <circle cx="6" cy="64" r="4" fill="#F7931E" />
-                      <rect x="30" y="66" width="3" height="16" fill="#1a1a1a" />
-                      <rect x="25" y="81" width="13" height="3" rx="1" fill="#1a1a1a" />
-                      {/* Body */}
-                      <rect x="44" y="14" width="160" height="58" rx="8" fill={type.color} />
-                      <rect x="44" y="14" width="160" height="6" rx="3" fill="#F7931E" />
-                      <rect x="44" y="64" width="160" height="4" fill="rgba(0,0,0,0.2)" />
-                      {/* Service window */}
-                      <rect x="66" y="30" width="86" height="24" rx="2" fill="#ffffff" opacity="0.92" />
-                      <rect x="66" y="50" width="86" height="4" fill="#1a1a1a" opacity="0.35" />
-                      {/* Door */}
-                      <rect x="166" y="26" width="26" height="40" rx="2" fill="rgba(0,0,0,0.22)" />
-                      <circle cx="187" cy="47" r="1.8" fill="#F7931E" />
-                      {/* Wheels (dual axle) */}
-                      <circle cx="110" cy="74" r="11" fill="#1a1a1a" />
-                      <circle cx="110" cy="74" r="4.5" fill="#F7931E" />
-                      <circle cx="138" cy="74" r="11" fill="#1a1a1a" />
-                      <circle cx="138" cy="74" r="4.5" fill="#F7931E" />
-                    </svg>
-
-                    {/* Awning — opens on hover */}
-                    <div
-                      className="absolute left-[27%] top-[26%] w-[39%] h-[14%] origin-top scale-y-[0.35] group-hover:scale-y-100 transition-transform duration-500"
-                      style={{
-                        backgroundImage: `repeating-linear-gradient(90deg, #F7931E 0px, #F7931E 8px, #ffffff 8px, #ffffff 16px)`,
-                        clipPath: "polygon(0 0, 100% 0, 106% 100%, -6% 100%)",
-                      }}
+                {/* Trailer on road */}
+                <div className="relative mb-5 md:mb-6 w-full max-w-[240px] pt-4 h-[100px]">
+                  {/* Animated road dashes */}
+                  <svg
+                    viewBox="0 0 240 20"
+                    className="absolute bottom-0 left-0 w-full h-5"
+                    aria-hidden
+                  >
+                    <line
+                      x1="0"
+                      y1="10"
+                      x2="480"
+                      y2="10"
+                      className="stroke-primary/50 road-scroll"
+                      strokeWidth="2"
+                      strokeDasharray="10 8"
+                      style={{ animationDelay: `${index * 0.15}s` }}
                     />
+                  </svg>
 
-                    {/* Food icon in window */}
-                    <div className="absolute left-[29%] top-[33%] w-[37%] h-[26%] flex items-center justify-center">
-                      <type.icon size={22} strokeWidth={2.25} style={{ color: type.color }} />
+                  {/* Moving trailer + badge */}
+                  <div
+                    className="truck-drive absolute bottom-3 left-0 right-0 flex justify-center"
+                    style={{ animationDelay: `${index * 0.35}s` }}
+                  >
+                    <div className="relative w-[200px]">
+                      <svg viewBox="0 0 200 78" className="w-full h-auto drop-shadow-md" aria-hidden>
+                        {/* Body */}
+                        <rect x="8" y="14" width="150" height="44" rx="6" fill={type.color} />
+                        {/* Accent roof stripe */}
+                        <rect x="8" y="14" width="150" height="5" rx="2" fill="#F7931E" />
+                        {/* Awning */}
+                        <path d="M40 24h66l4 7H36z" fill="#F7931E" />
+                        <path d="M50 24h10l1 7H49zM72 24h10l1 7H71zM94 24h10l2 7H95z" fill="#ffffff" opacity="0.85" />
+                        {/* Service window */}
+                        <rect x="40" y="31" width="66" height="16" rx="1.5" fill={type.accent} />
+                        {/* Door */}
+                        <rect x="124" y="24" width="22" height="30" rx="1.5" fill="rgba(0,0,0,0.22)" />
+                        <circle cx="141" cy="40" r="1.6" fill="#F7931E" />
+                        {/* Fender line */}
+                        <rect x="8" y="52" width="150" height="3" fill="rgba(0,0,0,0.2)" />
+                        {/* Hitch / A-frame tongue */}
+                        <path d="M158 50 L190 56 M158 58 L190 56" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+                        <circle cx="192" cy="56" r="4" fill="#F7931E" />
+                        <rect x="172" y="56" width="3" height="10" fill="#1a1a1a" />
+                        {/* Wheels (dual axle) */}
+                        <circle cx="66" cy="62" r="10" fill="#1a1a1a" />
+                        <circle cx="66" cy="62" r="4.5" fill="#F7931E" />
+                        <circle cx="92" cy="62" r="10" fill="#1a1a1a" />
+                        <circle cx="92" cy="62" r="4.5" fill="#F7931E" />
+                      </svg>
+
+                      {/* Food icon badge */}
+                      <div className="absolute -top-3 left-[6%] size-10 sm:size-11 rounded-full bg-white border-[2.5px] border-primary flex items-center justify-center shadow-md">
+                        <type.icon
+                          size={20}
+                          strokeWidth={2.25}
+                          style={{ color: type.color }}
+                        />
+                      </div>
                     </div>
                   </div>
-
-                  <div className="absolute bottom-3 left-0 right-0 border-t-2 border-dashed border-black/10" />
                 </div>
 
-                <div className="flex items-center justify-between gap-3 px-6 py-5 border-t border-gray-100">
-                  <h3 className="text-sm md:text-base font-black uppercase tracking-wide text-secondary group-hover:text-primary transition-colors duration-300">
-                    {type.title}
-                  </h3>
-                  <div
-                    className="size-9 shrink-0 rounded-full flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300"
-                    style={{ backgroundColor: type.color }}
-                  >
-                    <type.icon size={16} />
-                  </div>
-                </div>
+                <h3 className="text-sm md:text-base font-black uppercase tracking-wide text-black leading-snug">
+                  {type.title}
+                </h3>
               </div>
             ))}
           </div>
@@ -272,11 +267,10 @@ export default async function CustomFoodTrailersPage() {
 
       {/* Why Entrepreneurs Pick Us */}
       <Section className="bg-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: "repeating-linear-gradient(0deg, #000 0px, #000 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #000 0px, #000 1px, transparent 1px, transparent 40px)" }} />
         <Container className="relative z-10">
           <div className="text-center max-w-4xl mx-auto space-y-6 mb-14">
               <h2 className="text-2xl md:text-4xl font-black uppercase text-secondary tracking-tighter leading-tight">
-                Why Entrepreneurs Pick Elite Steel Concepts for <span className="text-primary italic">Custom Food Trailer</span> Builder
+                Why Entrepreneurs Pick Elite Steel Concepts for Custom Food Trailer Builder
               </h2>
               <p className="text-gray-500 text-lg font-light leading-relaxed max-w-3xl mx-auto">
                 Elite Steel Concepts makes it simple to turn your idea into a real mobile kitchen. As{" "}
@@ -527,7 +521,7 @@ export default async function CustomFoodTrailersPage() {
       */}
 
       {/* Trailer specific FAQs */}
-      <FAQSection faqs={trailerFaqs} />
+      <FAQSection faqs={trailerFaqs} plainHeading />
 
       {/* Hidden: CTA Section
       -- CTA Section --

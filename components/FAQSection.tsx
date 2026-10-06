@@ -12,9 +12,10 @@ interface FAQ {
 
 interface FAQSectionProps {
   faqs: FAQ[];
+  plainHeading?: boolean;
 }
 
-const FAQSection = ({ faqs }: FAQSectionProps) => {
+const FAQSection = ({ faqs, plainHeading = false }: FAQSectionProps) => {
   const [openId, setOpenId] = useState<string | null>(faqs[0]?.id || null);
 
   if (!faqs || faqs.length === 0) return null;
@@ -27,7 +28,7 @@ const FAQSection = ({ faqs }: FAQSectionProps) => {
             <div className="sticky top-24">
               <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Got Questions?</span>
               <h2 className="text-4xl font-black uppercase text-secondary tracking-tight mb-6 leading-tight">
-                Frequently Asked <span className="text-primary">Questions</span>
+                Frequently Asked <span className={plainHeading ? "" : "text-primary"}>Questions</span>
               </h2>
               <p className="text-gray-500 mb-8 leading-relaxed">
                 Everything you need to know about starting your custom build. If you don't find your answer here, feel free to contact us.
