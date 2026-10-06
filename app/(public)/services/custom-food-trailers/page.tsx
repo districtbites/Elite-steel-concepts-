@@ -19,9 +19,22 @@ import {
   Zap, 
   Compass,
   CornerUpRight,
-  Monitor
+  Monitor,
+  PenTool,
+  Hammer,
+  BadgeCheck,
+  Clock,
+  Award,
+  Truck,
+  Coffee,
+  IceCream,
+  Flame,
+  Pizza,
+  UtensilsCrossed,
+  Fish,
+  type LucideIcon
 } from "lucide-react";
-import { getSEO, getPageSEO, getFAQs, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
+import { getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
@@ -42,13 +55,37 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CustomFoodTrailersPage() {
-  const [faqs, rules, linkSettings] = await Promise.all([
-    getFAQs(),
+  const [rules, linkSettings] = await Promise.all([
     getInternalLinkRules(),
     getInternalLinkSettings(),
   ]);
   const activeRules = rules.filter(r => r.enabled !== false);
-  const trailerFaqs = faqs.filter(f => f.category === "Fabrication" || f.category === "Process").slice(0, 5);
+  const trailerFaqs = [
+    {
+      id: "cftr-faq-1",
+      question: "What is a custom food trailer?",
+      answer:
+        "A custom food trailer is a mobile kitchen designed and built around your menu, equipment, workflow, and business needs.",
+    },
+    {
+      id: "cftr-faq-2",
+      question: "Do you build concession trailers for different types of businesses?",
+      answer:
+        "Yes. We build custom concession trailers for businesses such as coffee, BBQ, dessert, catering, and other mobile food concepts.",
+    },
+    {
+      id: "cftr-faq-3",
+      question: "Are your food trailers designed with health and safety requirements in mind?",
+      answer:
+        "Yes. We consider applicable health, electrical, plumbing, ventilation, gas, and fire-safety requirements during the design and build process.",
+    },
+    {
+      id: "cftr-faq-4",
+      question: "How long does a custom food truck build take?",
+      answer:
+        "A typical ground-up build takes between 8 to 12 weeks, depending on the complexity of the design and equipment lead times. We prioritize quality fabrication to ensure your kitchen is built to last.",
+    },
+  ];
 
   const introDescRaw = "A custom concession trailer from Elite Steel Concepts offers the highest ROI in the mobile food industry. More square footage for equipment and staff, without the engine maintenance of a truck. Learn about our custom food truck conversions or request an itemized build quote.";
   const introDescLinked = autoLinkMarkdown(introDescRaw, activeRules, linkSettings).updatedContent;
@@ -108,14 +145,203 @@ export default async function CustomFoodTrailersPage() {
     }
   ];
 
+  const trailerTypes: {
+    title: string;
+    color: string;
+    accent: string;
+    icon: LucideIcon;
+  }[] = [
+    { title: "Coffee Trailer", color: "#4E342E", accent: "#EFEBE9", icon: Coffee },
+    { title: "Dessert Trailer", color: "#D81B60", accent: "#FCE4EC", icon: IceCream },
+    { title: "BBQ Trailer", color: "#5D4037", accent: "#EFEBE9", icon: Flame },
+    { title: "Pizza Trailer", color: "#E53935", accent: "#FFEBEE", icon: Pizza },
+    { title: "Halal Food Trailer", color: "#2E7D32", accent: "#E8F5E9", icon: UtensilsCrossed },
+    { title: "Seafood Trailer", color: "#00838F", accent: "#E0F7FA", icon: Fish },
+  ];
+
+  const whyUs = [
+    { icon: PenTool, title: "Custom & Professional Designs" },
+    { icon: Hammer, title: "Quality Craftsmanship" },
+    { icon: BadgeCheck, title: "Built to Code" },
+    { icon: Clock, title: "8–12 Week Build Time" },
+    { icon: Award, title: "1-Year Structural Warranty" },
+    { icon: Truck, title: "Shipping Across 48 States" },
+  ];
+
   return (
     <>
       <PageHeader
-        title="Custom Food Trailers"
-        subtitle="Unmatched volume, superior stability. We build trailers for culinary entrepreneurs who demand more space and industrial reliability."
+        eyebrow="Food Trailer Services"
+        title="Custom Food Trailer"
+        subtitle="Get a custom food trailer that fits your business"
       />
 
-      {/* Hero Breakdown */}
+      {/* Custom Concession Trailer Types */}
+      <Section className="!py-10 md:!py-14 bg-gray-50 border-b border-gray-100">
+        <Container>
+          <div className="text-center max-w-3xl mx-auto mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-4xl font-black uppercase text-secondary tracking-tighter leading-tight">
+              Custom Concession Trailer Types{" "}
+              <span className="text-primary italic">ESC Build</span>
+            </h2>
+            <div className="mx-auto mt-4 h-1 w-16 bg-primary" />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 max-w-6xl mx-auto">
+            {trailerTypes.map((type, index) => (
+              <div
+                key={type.title}
+                className="group relative bg-white border border-gray-200 hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-500 overflow-hidden"
+              >
+                <div
+                  className="absolute top-0 left-0 h-1 w-1/4 group-hover:w-full transition-all duration-500"
+                  style={{ backgroundColor: type.color }}
+                />
+
+                {/* Trailer illustration */}
+                <div
+                  className="relative h-44 flex items-end justify-center px-6 pb-4 overflow-hidden"
+                  style={{
+                    backgroundColor: type.accent,
+                    backgroundImage: "radial-gradient(rgba(0,0,0,0.08) 1px, transparent 1px)",
+                    backgroundSize: "14px 14px",
+                  }}
+                >
+                  <span className="absolute top-4 right-5 text-5xl font-black leading-none text-black/10 group-hover:text-primary/40 transition-colors duration-500">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+
+                  <div className="relative w-full max-w-[250px] group-hover:-translate-y-1 transition-transform duration-500">
+                    <svg viewBox="0 0 230 92" className="w-full h-auto drop-shadow-md" aria-hidden>
+                      {/* Hitch & A-frame */}
+                      <path d="M6 64 L44 56 M6 64 L44 70" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+                      <circle cx="6" cy="64" r="4" fill="#F7931E" />
+                      <rect x="30" y="66" width="3" height="16" fill="#1a1a1a" />
+                      <rect x="25" y="81" width="13" height="3" rx="1" fill="#1a1a1a" />
+                      {/* Body */}
+                      <rect x="44" y="14" width="160" height="58" rx="8" fill={type.color} />
+                      <rect x="44" y="14" width="160" height="6" rx="3" fill="#F7931E" />
+                      <rect x="44" y="64" width="160" height="4" fill="rgba(0,0,0,0.2)" />
+                      {/* Service window */}
+                      <rect x="66" y="30" width="86" height="24" rx="2" fill="#ffffff" opacity="0.92" />
+                      <rect x="66" y="50" width="86" height="4" fill="#1a1a1a" opacity="0.35" />
+                      {/* Door */}
+                      <rect x="166" y="26" width="26" height="40" rx="2" fill="rgba(0,0,0,0.22)" />
+                      <circle cx="187" cy="47" r="1.8" fill="#F7931E" />
+                      {/* Wheels (dual axle) */}
+                      <circle cx="110" cy="74" r="11" fill="#1a1a1a" />
+                      <circle cx="110" cy="74" r="4.5" fill="#F7931E" />
+                      <circle cx="138" cy="74" r="11" fill="#1a1a1a" />
+                      <circle cx="138" cy="74" r="4.5" fill="#F7931E" />
+                    </svg>
+
+                    {/* Awning — opens on hover */}
+                    <div
+                      className="absolute left-[27%] top-[26%] w-[39%] h-[14%] origin-top scale-y-[0.35] group-hover:scale-y-100 transition-transform duration-500"
+                      style={{
+                        backgroundImage: `repeating-linear-gradient(90deg, #F7931E 0px, #F7931E 8px, #ffffff 8px, #ffffff 16px)`,
+                        clipPath: "polygon(0 0, 100% 0, 106% 100%, -6% 100%)",
+                      }}
+                    />
+
+                    {/* Food icon in window */}
+                    <div className="absolute left-[29%] top-[33%] w-[37%] h-[26%] flex items-center justify-center">
+                      <type.icon size={22} strokeWidth={2.25} style={{ color: type.color }} />
+                    </div>
+                  </div>
+
+                  <div className="absolute bottom-3 left-0 right-0 border-t-2 border-dashed border-black/10" />
+                </div>
+
+                <div className="flex items-center justify-between gap-3 px-6 py-5 border-t border-gray-100">
+                  <h3 className="text-sm md:text-base font-black uppercase tracking-wide text-secondary group-hover:text-primary transition-colors duration-300">
+                    {type.title}
+                  </h3>
+                  <div
+                    className="size-9 shrink-0 rounded-full flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300"
+                    style={{ backgroundColor: type.color }}
+                  >
+                    <type.icon size={16} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      {/* Why Entrepreneurs Pick Us */}
+      <Section className="bg-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: "repeating-linear-gradient(0deg, #000 0px, #000 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #000 0px, #000 1px, transparent 1px, transparent 40px)" }} />
+        <Container className="relative z-10">
+          <div className="text-center max-w-4xl mx-auto space-y-6 mb-14">
+              <h2 className="text-2xl md:text-4xl font-black uppercase text-secondary tracking-tighter leading-tight">
+                Why Entrepreneurs Pick Elite Steel Concepts for <span className="text-primary italic">Custom Food Trailer</span> Builder
+              </h2>
+              <p className="text-gray-500 text-lg font-light leading-relaxed max-w-3xl mx-auto">
+                Elite Steel Concepts makes it simple to turn your idea into a real mobile kitchen. As{" "}
+                <Link href="/about" className="text-primary font-semibold underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors">
+                  experienced concession trailer manufacturers
+                </Link>
+                , we create custom trailers customized to your menu, equipment, space, and brand, so your trailer works the way you need it to.
+              </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-200 border border-gray-200">
+              {whyUs.map((item, i) => (
+                <div key={item.title} className="relative bg-white p-8 group hover:bg-secondary transition-colors duration-500">
+                  <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
+                  <div className="flex items-start justify-between mb-8">
+                    <div className="w-12 h-12 bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-secondary transition-colors duration-500">
+                      <item.icon size={22} />
+                    </div>
+                    <span className="text-4xl font-black text-gray-300 group-hover:text-primary/60 transition-colors duration-500 leading-none">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-black uppercase tracking-wider text-secondary group-hover:text-white transition-colors duration-500 leading-snug">
+                    {item.title}
+                  </h3>
+                </div>
+              ))}
+          </div>
+        </Container>
+      </Section>
+
+      {/* CTA — after Why Entrepreneurs Pick Us */}
+      <section className="relative py-10 md:py-12 bg-[#0a0a0a] overflow-hidden border-y border-[#1a1a1a]">
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 12px)",
+          }}
+        />
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-80" />
+        <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-[480px] h-[480px] bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+
+        <Container className="relative z-10 text-center max-w-4xl">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tighter leading-[0.95] mb-5">
+            Ready to Build Your{" "}
+            <span className="text-primary">Custom Food Trailer?</span>
+          </h2>
+
+          <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mb-8">
+            Contact Elite Steel Concepts today to discuss your custom concession
+            trailer project or request a free quote.
+          </p>
+
+          <Link
+            href="/quote"
+            className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shadow-[0_0_40px_rgba(247,147,30,0.25)]"
+          >
+            Get a Free Quote <ArrowRight size={14} />
+          </Link>
+        </Container>
+      </section>
+
+      {/* Hidden sections: Hero Breakdown, Trailer Foundations, Towing Intelligence, Interior Dynamics
+      -- Hero Breakdown --
       <Section className="bg-white overflow-hidden">
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
@@ -160,7 +386,7 @@ export default async function CustomFoodTrailersPage() {
         </Container>
       </Section>
 
-      {/* Specialized Platforms */}
+      -- Specialized Platforms --
       <Section className="bg-gray-50">
         <Container>
            <div className="max-w-3xl mb-16">
@@ -200,7 +426,7 @@ export default async function CustomFoodTrailersPage() {
         </Container>
       </Section>
 
-      {/* Towing Intelligence & System Integration */}
+      -- Towing Intelligence & System Integration --
       <Section className="bg-secondary text-white relative overflow-hidden">
          <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
             <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -259,7 +485,7 @@ export default async function CustomFoodTrailersPage() {
          </Container>
       </Section>
 
-      {/* Operational Dynamics */}
+      -- Operational Dynamics --
       <Section className="bg-white">
         <Container>
            <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
@@ -298,11 +524,13 @@ export default async function CustomFoodTrailersPage() {
            </div>
         </Container>
       </Section>
+      */}
 
       {/* Trailer specific FAQs */}
       <FAQSection faqs={trailerFaqs} />
 
-      {/* CTA Section */}
+      {/* Hidden: CTA Section
+      -- CTA Section --
       <section className="py-24 bg-white border-t border-gray-100">
         <Container>
            <div className="relative rounded-[4rem] overflow-hidden bg-secondary text-white p-12 md:p-24 shadow-2xl">
@@ -336,6 +564,7 @@ export default async function CustomFoodTrailersPage() {
            </div>
         </Container>
       </section>
+      */}
     </>
   );
 }
