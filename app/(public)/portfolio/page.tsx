@@ -13,6 +13,23 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+const workGallery = [
+  { image: "/uploads/media/1771962759953-screenshot-2024-08-14-at-16-55-57-elite-steel-concepts-–-elite-steel-concepts.png", title: "Stainless Steel Kitchen Line" },
+  { image: "/uploads/media/1771963099060-screenshot-2024-08-14-at-16-56-14-elite-steel-concepts-–-elite-steel-concepts.png", title: "Commercial Cook & Prep Station" },
+  { image: "/uploads/media/1772303727890-whatsapp-image-2024-11-25-at-10.36.37-pm(4).webp", title: "Red Concession Trailer Exterior" },
+  { image: "/uploads/media/1772303843108-whatsapp-image-2024-11-25-at-10.34.46-pm(1).webp", title: "Interior Fabrication in Progress" },
+  { image: "/uploads/media/1772303977449-whatsapp-image-2024-11-25-at-10.34.46-pm.webp", title: "Prep Line & Refrigeration Install" },
+  { image: "/uploads/media/1772304175509-whatsapp-image-2024-11-25-at-10.36.38-pm(3)-(1).webp", title: "Service Window Interior" },
+  { image: "/uploads/media/1772304555222-whatsapp-image-2024-11-25-at-10.36.37-pm.webp", title: "Black Enclosed Concession Trailer" },
+  { image: "/uploads/media/1772304788538-whatsapp-image-2024-11-25-at-10.36.38-pm-(1).webp", title: "Checkered Floor Kitchen Trailer" },
+  { image: "/uploads/media/1772304930043-whatsapp-image-2024-11-25-at-10.36.38-pm(6).webp", title: "Blue Concession Trailer Build" },
+  { image: "/uploads/media/1772305025070-whatsapp-image-2024-11-25-at-10.36.37-pm(1).webp", title: "Red Dual-Axle Concession Trailer" },
+  { image: "/uploads/media/1772305213502-whatsapp-image-2025-12-20-at-11.27.44-pm(1).webp", title: "Compact Food Trailer" },
+  { image: "/uploads/media/1772306135240-whatsapp-(1).webp", title: "Silver Concession Trailer Shell" },
+  { image: "/uploads/about/about-manufacture-trailer.jpg", title: "Custom Food Trailer Showcase" },
+  { image: "/uploads/about/about-manufacture-truck.jpg", title: "Custom Food Truck Showcase" },
+];
+
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
   const pageSeo = await getPageSEO("portfolio");
@@ -183,12 +200,16 @@ export default async function PortfolioPage() {
               Our Diverse <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Fleet</span>
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed text-sm md:text-base border-l-2 border-black pl-4 text-left">
-              Filter by category to browse specific build types. Each project showcases our
+              Browse our completed builds. Each project showcases our
               dedication to structural integrity and culinary innovation.
             </p>
           </div>
-          {/* Note: PortfolioGallery component itself needs to match the design system. Assuming it's already updated or uses standard components. */}
-          <PortfolioGallery initialProjects={allProjects} />
+          <PortfolioGallery
+            items={[
+              ...allProjects.map((p) => ({ image: p.image, title: p.title })),
+              ...workGallery,
+            ]}
+          />
         </Container>
       </Section>
 
