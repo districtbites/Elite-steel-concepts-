@@ -174,16 +174,16 @@ export default async function CustomFoodTrailersPage() {
         eyebrow="Food Trailer Services"
         title="Custom Food Trailer"
         subtitle="Get a custom food trailer that fits your business"
+        className="!pb-10 md:!pb-12"
       />
 
       {/* Custom Concession Trailer Types */}
       <Section className="!py-10 md:!py-14 bg-white border-b border-gray-100">
         <Container>
-          <div className="text-center max-w-3xl mx-auto mb-8 md:mb-12">
+          <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight">
               Custom Concession Trailer Types ESC Build
             </h2>
-            <div className="mx-auto mt-4 h-1 w-16 bg-primary" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 max-w-6xl mx-auto">
@@ -266,9 +266,9 @@ export default async function CustomFoodTrailersPage() {
       </Section>
 
       {/* Why Entrepreneurs Pick Us */}
-      <Section className="bg-white relative overflow-hidden">
+      <Section className="!py-10 md:!py-14 bg-white relative overflow-hidden border-b border-gray-100">
         <Container className="relative z-10">
-          <div className="text-center max-w-4xl mx-auto space-y-6 mb-14">
+          <div className="text-center max-w-4xl mx-auto space-y-4 mb-8 md:mb-10">
               <h2 className="text-2xl md:text-4xl font-black uppercase text-secondary tracking-tighter leading-tight">
                 Why Entrepreneurs Pick Elite Steel Concepts for Custom Food Trailer Builder
               </h2>
@@ -281,7 +281,7 @@ export default async function CustomFoodTrailersPage() {
               </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-200 border border-gray-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-200 border border-gray-200 max-w-6xl mx-auto">
               {whyUs.map((item, i) => (
                 <div key={item.title} className="relative bg-white p-8 group hover:bg-secondary transition-colors duration-500">
                   <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
