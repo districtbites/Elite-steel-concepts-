@@ -52,6 +52,13 @@ export default async function ComplianceHub() {
   const locationDesc2Raw = "Your location, menu, equipment, and type of food operation can all affect the requirements that apply to your mobile kitchen. A food truck operating in Virginia may have different requirements from one operating in Maryland or Washington, DC. At Elite Steel Concepts, we build custom food trucks and trailers throughout the DMV region with applicable location-specific requirements in mind.";
   const locationDesc2Linked = autoLinkMarkdown(locationDesc2Raw, activeRules, linkSettings).updatedContent;
 
+  const considerations = [
+    { icon: Droplets, bg: "bg-blue-50", fg: "text-blue-500", title: "Plumbing & Water Systems", desc: "We plan water, sinks, wastewater, and related plumbing around the requirements of your mobile kitchen and intended food operation." },
+    { icon: Zap, bg: "bg-yellow-50", fg: "text-yellow-600", title: "Electrical Systems", desc: "We plan your electrical layout and power needs around the equipment used in your mobile kitchen." },
+    { icon: Wind, bg: "bg-white", fg: "text-gray-600", title: "Ventilation & Exhaust", desc: "We consider your cooking equipment, menu, and kitchen layout when planning ventilation and exhaust." },
+    { icon: Flame, bg: "bg-orange-50", fg: "text-orange-500", title: "Gas & Fire Safety Considerations", desc: "We consider gas systems, equipment placement, and applicable fire-safety requirements throughout the build." },
+  ];
+
   const buildChecks = [
     { icon: ChefHat, title: "Your Menu", desc: "We review what you plan to cook and serve to understand the type of kitchen and food-preparation setup you need." },
     { icon: Refrigerator, title: "Your Equipment", desc: "We consider your cooking equipment, refrigeration, sinks, storage, and other essential systems when planning the kitchen layout." },
@@ -95,70 +102,50 @@ export default async function ComplianceHub() {
       {/* ─── WHY COMPLIANCE MATTERS ────────────────────────────── */}
       <section className="bg-white py-10 md:py-14 border-b border-gray-100">
         <Container>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="md:col-span-1">
-              <h2 className="text-3xl font-black text-black uppercase tracking-tighter leading-tight mb-4">
-                Why Food Truck <br/><span className="text-primary">Compliance Matters</span>
-              </h2>
-              <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                <AutoLinkedText text={whyDescLinked} />
-              </p>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                <AutoLinkedText text={whyDesc2Linked} />
-              </p>
-            </div>
-            <div className="md:col-span-2">
-              <h2 className="text-2xl md:text-3xl font-black text-black uppercase tracking-tighter leading-tight mb-3">
-                What ESC Considers in <span className="text-primary">Mobile Kitchen Compliances</span>
-              </h2>
-              <p className="text-gray-600 text-sm leading-relaxed mb-8">
-                We consider key health, safety, plumbing, electrical, and food-service requirements when designing your custom mobile kitchen.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                    <Droplets size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-black uppercase tracking-tight mb-2">Plumbing &amp; Water Systems</h3>
-                    <p className="text-gray-500 text-xs leading-relaxed">We plan water, sinks, wastewater, and related plumbing around the requirements of your mobile kitchen and intended food operation.</p>
-                  </div>
+          <div className="text-center max-w-4xl mx-auto space-y-4">
+            <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight">
+              Why Food Truck <span className="text-primary">Compliance Matters</span>
+            </h2>
+            <p className="text-gray-600 text-base leading-relaxed max-w-3xl mx-auto">
+              <AutoLinkedText text={whyDescLinked} />
+            </p>
+            <p className="text-gray-600 text-base leading-relaxed max-w-3xl mx-auto">
+              <AutoLinkedText text={whyDesc2Linked} />
+            </p>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── WHAT ESC CONSIDERS ────────────────────────────────── */}
+      <section className="bg-gray-50 py-10 md:py-14 border-b border-gray-100">
+        <Container>
+          <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
+            <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
+              What ESC Considers in <span className="text-primary">Mobile Kitchen Compliances</span>
+            </h2>
+            <p className="text-gray-500 text-base leading-relaxed">
+              We consider key health, safety, plumbing, electrical, and food-service requirements when designing your custom mobile kitchen.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {considerations.map((item) => (
+              <div key={item.title} className="flex items-start gap-4">
+                <div className={`w-12 h-12 ${item.bg} ${item.fg} flex items-center justify-center shrink-0`}>
+                  <item.icon size={24} />
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-yellow-50 text-yellow-600 flex items-center justify-center shrink-0">
-                    <Zap size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-black uppercase tracking-tight mb-2">Electrical Systems</h3>
-                    <p className="text-gray-500 text-xs leading-relaxed">We plan your electrical layout and power needs around the equipment used in your mobile kitchen.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gray-100 text-gray-600 flex items-center justify-center shrink-0">
-                    <Wind size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-black uppercase tracking-tight mb-2">Ventilation &amp; Exhaust</h3>
-                    <p className="text-gray-500 text-xs leading-relaxed">We consider your cooking equipment, menu, and kitchen layout when planning ventilation and exhaust.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
-                    <Flame size={24} />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-black uppercase tracking-tight mb-2">Gas &amp; Fire Safety Considerations</h3>
-                    <p className="text-gray-500 text-xs leading-relaxed">We consider gas systems, equipment placement, and applicable fire-safety requirements throughout the build.</p>
-                  </div>
+                <div>
+                  <h3 className="font-black text-black uppercase tracking-tight mb-2">{item.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </Container>
       </section>
 
       {/* ─── COMPLIANCE STARTS WITH YOUR LOCATION ─────────────── */}
-      <section className="bg-gray-50 py-10 md:py-14 border-b border-gray-100">
+      <section className="bg-white py-10 md:py-14 border-b border-gray-100">
         <Container>
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
@@ -169,21 +156,21 @@ export default async function ComplianceHub() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-6xl mx-auto">
-            <div className="lg:col-span-7 space-y-4">
-              <p className="text-gray-600 text-base leading-relaxed border-l-4 border-primary pl-5">
-                <AutoLinkedText text={locationDescLinked} />
-              </p>
-              <p className="text-gray-600 text-base leading-relaxed pl-6">
-                <AutoLinkedText text={locationDesc2Linked} />
-              </p>
-            </div>
+          <div className="max-w-3xl mx-auto text-center space-y-4 mb-8 md:mb-10">
+            <p className="text-gray-600 text-base leading-relaxed">
+              <AutoLinkedText text={locationDescLinked} />
+            </p>
+            <p className="text-gray-600 text-base leading-relaxed">
+              <AutoLinkedText text={locationDesc2Linked} />
+            </p>
+          </div>
 
-            <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {["Virginia", "Maryland", "Washington, DC"].map((region) => (
                 <div
                   key={region}
-                  className="group flex items-center gap-4 bg-white border border-gray-200 hover:border-primary px-5 py-4 transition-colors duration-300"
+                  className="group flex items-center gap-4 bg-gray-50 border border-gray-200 hover:border-primary px-5 py-4 transition-colors duration-300"
                 >
                   <div className="w-11 h-11 bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-black transition-colors duration-300">
                     <MapPin size={20} />
