@@ -6,10 +6,14 @@ import {
   ArrowRight, 
   Flame, 
   Droplets,
-  AlertTriangle,
   ClipboardCheck,
   Building2,
-  FileText
+  FileText,
+  Zap,
+  Wind,
+  ChefHat,
+  Refrigerator,
+  Workflow
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import CTASection from "@/components/ui/CTASection";
@@ -33,16 +37,33 @@ export default async function ComplianceHub() {
   ]);
   const activeRules = rules.filter(r => r.enabled !== false);
 
-  const heroDescRaw = "Failing a health inspection means losing weeks of revenue. Elite Steel Concepts engineers 100% health code compliance into every custom food truck and concession trailer build. Use this hub to navigate the complex web of municipal codes across Washington DC, Maryland, and Virginia.";
+  const heroDescRaw = "Building a custom food truck or trailer requires more than installing kitchen equipment. Your mobile kitchen may need to meet applicable health, plumbing, electrical, sanitation, fire-safety, and local food-service requirements before it can operate.";
   const heroDescLinked = autoLinkMarkdown(heroDescRaw, activeRules, linkSettings).updatedContent;
 
-  const costDescRaw = "Generic, out-of-state builders often construct 'pretty boxes' that immediately fail Department of Health (DOH) inspections in the DMV area. When you buy from Elite Steel Concepts, you are buying a guarantee of regional compliance, fire suppression installation, and first-time inspection pass.";
-  const costDescLinked = autoLinkMarkdown(costDescRaw, activeRules, linkSettings).updatedContent;
+  const whyDescRaw = "The right requirements start with the design compliance, which can affect almost every part of a mobile kitchen, from handwashing and dishwashing sinks to water systems, wastewater, equipment placement, food-preparation areas, and electrical systems.";
+  const whyDescLinked = autoLinkMarkdown(whyDescRaw, activeRules, linkSettings).updatedContent;
+
+  const whyDesc2Raw = "Understanding these requirements before fabrication can help you plan the right layout and avoid unnecessary design changes later. As a custom food truck builder, Elite Steel Concepts considers the requirements that may apply to your project based on your planned operation and location.";
+  const whyDesc2Linked = autoLinkMarkdown(whyDesc2Raw, activeRules, linkSettings).updatedContent;
+
+  const locationDescRaw = "Custom food truck starts with knowing where you plan to operate. Health, safety, plumbing, fire, and mobile food requirements can vary between states, counties, cities, and local authorities.";
+  const locationDescLinked = autoLinkMarkdown(locationDescRaw, activeRules, linkSettings).updatedContent;
+
+  const locationDesc2Raw = "Your location, menu, equipment, and type of food operation can all affect the requirements that apply to your mobile kitchen. A food truck operating in Virginia may have different requirements from one operating in Maryland or Washington, DC. At Elite Steel Concepts, we build custom food trucks and trailers throughout the DMV region with applicable location-specific requirements in mind.";
+  const locationDesc2Linked = autoLinkMarkdown(locationDesc2Raw, activeRules, linkSettings).updatedContent;
+
+  const buildChecks = [
+    { icon: ChefHat, title: "Your Menu", desc: "We review what you plan to cook and serve to understand the type of kitchen and food-preparation setup you need." },
+    { icon: Refrigerator, title: "Your Equipment", desc: "We consider your cooking equipment, refrigeration, sinks, storage, and other essential systems when planning the kitchen layout." },
+    { icon: MapPin, title: "Your Operating Location", desc: "We consider where you plan to operate because food truck regulations and health requirements can vary by state, county, and local authority." },
+    { icon: Workflow, title: "Your Kitchen Workflow", desc: "We plan the layout around how your team will prepare, cook, store, and serve food inside the truck or trailer." },
+    { icon: ClipboardCheck, title: "Applicable Requirements", desc: "We consider the relevant health, sanitation, plumbing, electrical, ventilation, and fire-safety requirements that may apply to your build." },
+  ];
 
   return (
     <>
       {/* ─── HERO ──────────────────────────────────────────────── */}
-      <section className="relative bg-[#0a0a0a] text-white pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
+      <section className="relative bg-[#0a0a0a] text-white pt-32 pb-12 md:pt-40 md:pb-16 overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }} />
         <div className="absolute top-0 right-0 w-[40%] h-full bg-primary/5 skew-x-[-12deg] origin-top-right pointer-events-none" />
         
@@ -51,78 +72,84 @@ export default async function ComplianceHub() {
             <div className="flex items-center gap-3 mb-6">
               <div className="h-px w-12 bg-primary" />
               <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                The Compliance Hub
+                Smart Compliance Planning
               </span>
             </div>
-            <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
-              DMV Health & Fire <br/>
-              <span className="text-primary">Code Regulations</span>
+            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.95] mb-8">
+              Food Truck & Trailer Compliance & <br className="hidden md:block" />
+              <span className="text-primary">Custom Build Requirements</span>
             </h1>
             <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-10 max-w-2xl font-light">
               <AutoLinkedText text={heroDescLinked} />
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#dc-codes" className="inline-flex items-center justify-center gap-2 border border-white/20 hover:border-primary hover:text-primary text-white font-black uppercase tracking-wider text-xs px-6 py-4 transition-all">
-                DC Codes
-              </a>
-              <a href="#md-codes" className="inline-flex items-center justify-center gap-2 border border-white/20 hover:border-primary hover:text-primary text-white font-black uppercase tracking-wider text-xs px-6 py-4 transition-all">
-                MD Codes
-              </a>
-              <a href="#va-codes" className="inline-flex items-center justify-center gap-2 border border-white/20 hover:border-primary hover:text-primary text-white font-black uppercase tracking-wider text-xs px-6 py-4 transition-all">
-                VA Codes
-              </a>
-            </div>
+            <Link
+              href="/quote"
+              className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shadow-[0_0_40px_rgba(247,147,30,0.25)]"
+            >
+              Start Your Custom Build <ArrowRight size={14} />
+            </Link>
           </div>
         </Container>
       </section>
 
       {/* ─── WHY COMPLIANCE MATTERS ────────────────────────────── */}
-      <section className="bg-white py-20 border-b border-gray-100">
+      <section className="bg-white py-10 md:py-14 border-b border-gray-100">
         <Container>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="md:col-span-1">
               <h2 className="text-3xl font-black text-black uppercase tracking-tighter leading-tight mb-4">
-                The Cost of <br/><span className="text-primary">Non-Compliance</span>
+                Why Food Truck <br/><span className="text-primary">Compliance Matters</span>
               </h2>
+              <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                <AutoLinkedText text={whyDescLinked} />
+              </p>
               <p className="text-gray-600 text-sm leading-relaxed">
-                <AutoLinkedText text={costDescLinked} />
+                <AutoLinkedText text={whyDesc2Linked} />
               </p>
             </div>
-            <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-8">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-red-50 text-red-500 flex items-center justify-center shrink-0">
-                  <AlertTriangle size={24} />
+            <div className="md:col-span-2">
+              <h2 className="text-2xl md:text-3xl font-black text-black uppercase tracking-tighter leading-tight mb-3">
+                What ESC Considers in <span className="text-primary">Mobile Kitchen Compliances</span>
+              </h2>
+              <p className="text-gray-600 text-sm leading-relaxed mb-8">
+                We consider key health, safety, plumbing, electrical, and food-service requirements when designing your custom mobile kitchen.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
+                    <Droplets size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-black uppercase tracking-tight mb-2">Plumbing &amp; Water Systems</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">We plan water, sinks, wastewater, and related plumbing around the requirements of your mobile kitchen and intended food operation.</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-black text-black uppercase tracking-tight mb-2">Permitting Delays</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed">Failing an initial inspection can result in a 30-45 day wait for a re-inspection, costing thousands in lost daily revenue.</p>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-yellow-50 text-yellow-600 flex items-center justify-center shrink-0">
+                    <Zap size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-black uppercase tracking-tight mb-2">Electrical Systems</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">We plan your electrical layout and power needs around the equipment used in your mobile kitchen.</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
-                  <Flame size={24} />
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-gray-100 text-gray-600 flex items-center justify-center shrink-0">
+                    <Wind size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-black uppercase tracking-tight mb-2">Ventilation &amp; Exhaust</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">We consider your cooking equipment, menu, and kitchen layout when planning ventilation and exhaust.</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-black text-black uppercase tracking-tight mb-2">Fire Marshal Fines</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed">Improperly installed exhaust hoods and lack of certified Ansul systems can lead to immediate shutdown by local Fire Marshals.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                  <Droplets size={24} />
-                </div>
-                <div>
-                  <h3 className="font-black text-black uppercase tracking-tight mb-2">Plumbing Violations</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed">Insufficient gray water retention (must be 15% larger than fresh water capacity in most counties) is the #1 reason trucks fail.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-green-50 text-green-500 flex items-center justify-center shrink-0">
-                  <ShieldCheck size={24} />
-                </div>
-                <div>
-                  <h3 className="font-black text-black uppercase tracking-tight mb-2">The ESC Guarantee</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed">Every truck we build is engineered specifically for the county you plan to operate in. If it fails due to our fabrication, we fix it free.</p>
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+                    <Flame size={24} />
+                  </div>
+                  <div>
+                    <h3 className="font-black text-black uppercase tracking-tight mb-2">Gas &amp; Fire Safety Considerations</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">We consider gas systems, equipment placement, and applicable fire-safety requirements throughout the build.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -130,7 +157,89 @@ export default async function ComplianceHub() {
         </Container>
       </section>
 
-      {/* ─── DC CODES ──────────────────────────────────────────── */}
+      {/* ─── COMPLIANCE STARTS WITH YOUR LOCATION ─────────────── */}
+      <section className="bg-gray-50 py-10 md:py-14 border-b border-gray-100">
+        <Container>
+          <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
+            <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
+              Food Truck Compliance Starts With <span className="text-primary">Your Location</span>
+            </h2>
+            <p className="text-gray-500 text-sm md:text-base font-bold uppercase tracking-widest">
+              Different Locations, Different Requirements
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center max-w-6xl mx-auto">
+            <div className="lg:col-span-7 space-y-4">
+              <p className="text-gray-600 text-base leading-relaxed border-l-4 border-primary pl-5">
+                <AutoLinkedText text={locationDescLinked} />
+              </p>
+              <p className="text-gray-600 text-base leading-relaxed pl-6">
+                <AutoLinkedText text={locationDesc2Linked} />
+              </p>
+            </div>
+
+            <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-4">
+              {["Virginia", "Maryland", "Washington, DC"].map((region) => (
+                <div
+                  key={region}
+                  className="group flex items-center gap-4 bg-white border border-gray-200 hover:border-primary px-5 py-4 transition-colors duration-300"
+                >
+                  <div className="w-11 h-11 bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-black transition-colors duration-300">
+                    <MapPin size={20} />
+                  </div>
+                  <span className="font-black uppercase tracking-tight text-black text-sm md:text-base">
+                    {region}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── WHAT ESC CHECKS BEFORE BUILD ──────────────────────── */}
+      <section className="relative bg-white text-black py-10 md:py-14 overflow-hidden">
+
+        <Container className="relative z-10">
+          <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
+            <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
+              What Elite Steel Concept Checks <span className="text-primary">Before Building Your Trailer</span>
+            </h2>
+            <p className="text-gray-500 text-sm md:text-base font-bold uppercase tracking-widest">
+              Key Details We Consider for Your Mobile Kitchen Compliance
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-5 max-w-6xl mx-auto">
+            {buildChecks.map((item, i) => (
+              <div
+                key={item.title}
+                className="group relative w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] bg-white border border-gray-200 hover:border-primary hover:shadow-lg p-7 transition-all duration-300 overflow-hidden"
+              >
+                <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
+                <div className="flex items-start justify-between mb-6">
+                  <div className="w-12 h-12 bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors duration-300">
+                    <item.icon size={22} />
+                  </div>
+                  <span className="text-4xl font-black leading-none text-gray-300 group-hover:text-primary transition-colors duration-300">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <h3 className="text-base md:text-lg font-black uppercase tracking-tight text-black mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Hidden: DC, Maryland, Virginia code sections
+      -- ─── DC CODES ──────────────────────────────────────────── --
       <section id="dc-codes" className="py-24 bg-[#0a0a0a] text-white">
         <Container>
           <div className="flex flex-col lg:flex-row gap-16">
@@ -150,7 +259,7 @@ export default async function ComplianceHub() {
               </div>
             </div>
             <div className="lg:w-2/3 space-y-8">
-              {/* Requirement Cards */}
+              -- Requirement Cards --
               <div className="bg-[#111] border border-[#222] p-8 hover:border-primary/50 transition-colors">
                 <h3 className="text-xl font-black uppercase tracking-tight flex items-center gap-3 mb-4">
                   <Droplets className="text-primary" size={20} /> Water Capacity Ratios
@@ -201,7 +310,7 @@ export default async function ComplianceHub() {
         </Container>
       </section>
 
-      {/* ─── MARYLAND CODES ────────────────────────────────────── */}
+      -- ─── MARYLAND CODES ────────────────────────────────────── --
       <section id="md-codes" className="py-24 bg-white text-black border-y border-gray-200">
         <Container>
           <div className="flex flex-col lg:flex-row gap-16">
@@ -257,7 +366,7 @@ export default async function ComplianceHub() {
         </Container>
       </section>
 
-      {/* ─── VIRGINIA CODES ────────────────────────────────────── */}
+      -- ─── VIRGINIA CODES ────────────────────────────────────── --
       <section id="va-codes" className="py-24 bg-[#050505] text-white">
         <Container>
           <div className="flex flex-col lg:flex-row gap-16">
@@ -307,12 +416,13 @@ export default async function ComplianceHub() {
           </div>
         </Container>
       </section>
+      */}
 
       {/* ─── CTA ───────────────────────────────────────────────── */}
       <CTASection 
-        title="Stop Guessing. Build With The Experts."
-        subtitle="Don't risk your capital on a builder who doesn't understand your local codes. We guarantee compliance."
-        buttonText="Get a Free Consultation"
+        title="Ready to Plan Your Build With the Right Compliance?"
+        subtitle="Build With Confidence. Start With Right Compliance."
+        buttonText="Request a Free Quote"
         buttonHref="/quote"
       />
     </>
