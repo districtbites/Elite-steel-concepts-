@@ -55,7 +55,7 @@ export default async function ComplianceHub() {
   const considerations = [
     { icon: Droplets, bg: "bg-blue-50", fg: "text-blue-500", title: "Plumbing & Water Systems", desc: "We plan water, sinks, wastewater, and related plumbing around the requirements of your mobile kitchen and intended food operation." },
     { icon: Zap, bg: "bg-yellow-50", fg: "text-yellow-600", title: "Electrical Systems", desc: "We plan your electrical layout and power needs around the equipment used in your mobile kitchen." },
-    { icon: Wind, bg: "bg-white", fg: "text-gray-600", title: "Ventilation & Exhaust", desc: "We consider your cooking equipment, menu, and kitchen layout when planning ventilation and exhaust." },
+    { icon: Wind, bg: "bg-gray-100", fg: "text-gray-600", title: "Ventilation & Exhaust", desc: "We consider your cooking equipment, menu, and kitchen layout when planning ventilation and exhaust." },
     { icon: Flame, bg: "bg-orange-50", fg: "text-orange-500", title: "Gas & Fire Safety Considerations", desc: "We consider gas systems, equipment placement, and applicable fire-safety requirements throughout the build." },
   ];
 
@@ -100,7 +100,7 @@ export default async function ComplianceHub() {
       </section>
 
       {/* ─── WHY COMPLIANCE MATTERS ────────────────────────────── */}
-      <section className="bg-white py-10 md:py-14 border-b border-gray-100">
+      <section className="bg-white py-10 md:py-14">
         <Container>
           <div className="text-center max-w-4xl mx-auto space-y-4">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight">
@@ -117,7 +117,7 @@ export default async function ComplianceHub() {
       </section>
 
       {/* ─── WHAT ESC CONSIDERS ────────────────────────────────── */}
-      <section className="bg-gray-50 py-10 md:py-14 border-b border-gray-100">
+      <section className="bg-white py-10 md:py-14">
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
@@ -145,7 +145,7 @@ export default async function ComplianceHub() {
       </section>
 
       {/* ─── COMPLIANCE STARTS WITH YOUR LOCATION ─────────────── */}
-      <section className="bg-white py-10 md:py-14 border-b border-gray-100">
+      <section className="bg-white py-10 md:py-14">
         <Container>
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
@@ -170,7 +170,7 @@ export default async function ComplianceHub() {
               {["Virginia", "Maryland", "Washington, DC"].map((region) => (
                 <div
                   key={region}
-                  className="group flex items-center gap-4 bg-gray-50 border border-gray-200 hover:border-primary px-5 py-4 transition-colors duration-300"
+                  className="group flex items-center gap-4 bg-white border border-gray-200 hover:border-primary px-5 py-4 transition-colors duration-300"
                 >
                   <div className="w-11 h-11 bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-black transition-colors duration-300">
                     <MapPin size={20} />
