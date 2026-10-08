@@ -72,19 +72,18 @@ export default async function PortfolioPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Elite Steel Concept"
+        eyebrow="Portfolio of ECS"
         className="!pb-10 md:!pb-12"
-        title="Portfolio"
-        // subtitle="Take a look at our completed custom food truck and trailer projects, built by an experienced custom food truck builder and designed around each business’s unique needs."
+        title="Elite Steel Concept Work Portfolio"
+        normalCaseSubtitle
+        subtitle="Take a look at our completed custom food truck and trailer projects, built by an experienced custom food truck builder and designed around each business’s unique needs."
       >
-        {/* Hidden: "Get a free quote today!" button
         <Link
           href="/quote"
           className="inline-flex items-center justify-center gap-3 mt-8 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shadow-[0_0_40px_rgba(247,147,30,0.25)]"
         >
           Get a free quote today! <ArrowRight size={14} />
         </Link>
-        */}
       </PageHeader>
 
       {/* Hidden: Featured Spotlight, Stats Divider
