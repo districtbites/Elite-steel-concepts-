@@ -273,11 +273,7 @@ export default async function CustomFoodTrailersPage() {
                 Why Entrepreneurs Pick Elite Steel Concepts for Custom Food Trailer Builder
               </h2>
               <p className="text-gray-500 text-lg font-light leading-relaxed max-w-3xl mx-auto">
-                Elite Steel Concepts makes it simple to turn your idea into a real mobile kitchen. As{" "}
-                <Link href="/about" className="text-primary font-semibold underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors">
-                  experienced concession trailer manufacturers
-                </Link>
-                , we create custom trailers customized to your menu, equipment, space, and brand, so your trailer works the way you need it to.
+                Elite Steel Concepts makes it simple to turn your idea into a real mobile kitchen. As experienced concession trailer manufacturers, we create custom trailers customized to your menu, equipment, space, and brand, so your trailer works the way you need it to.
               </p>
           </div>
 
@@ -316,8 +312,7 @@ export default async function CustomFoodTrailersPage() {
 
         <Container className="relative z-10 text-center max-w-4xl">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tighter leading-[0.95] mb-5">
-            Ready to Build Your{" "}
-            <span className="text-primary">Custom Food Trailer?</span>
+            Ready to Build Your Custom Food Trailer?
           </h2>
 
           <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mb-8">

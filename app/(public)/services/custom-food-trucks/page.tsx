@@ -207,8 +207,7 @@ export default async function CustomFoodTrucksPage() {
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-3">
-              Custom Food Truck Types{" "}
-              <span className="text-primary">ESC Build</span>
+              Custom Food Truck Types ESC Build
             </h2>
             <p className="text-gray-500 text-base md:text-lg font-medium leading-relaxed">
               Build a Food Truck That Fits Your Business
@@ -296,20 +295,12 @@ export default async function CustomFoodTrucksPage() {
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase text-black tracking-tight leading-tight mb-4">
-              Why Entrepreneurs Choose{" "}
-              <span className="text-primary">Elite Steel Concepts</span> for
-              Custom Food Truck Builds
+              Why Entrepreneurs Choose Elite Steel Concepts for Custom Food
+              Truck Builds
             </h2>
             <p className="text-gray-600 text-base md:text-lg font-medium leading-relaxed">
               Elite Steel Concepts makes it simple to turn your idea into a real
-              mobile kitchen. As{" "}
-              <Link
-                href="/about"
-                className="text-primary font-semibold underline underline-offset-2 hover:text-orange-600 transition-colors"
-              >
-                experienced food truck builders
-              </Link>
-              , we create custom trucks around your menu, equipment, space, and
+              mobile kitchen. As experienced food truck builders, we create custom trucks around your menu, equipment, space, and
               brand so your truck works the way you need it to.
             </p>
           </div>
@@ -358,8 +349,7 @@ export default async function CustomFoodTrucksPage() {
           </div>
 
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tighter leading-[0.95] mb-5">
-            Ready to Build Your{" "}
-            <span className="text-primary">Custom Food Truck?</span>
+            Ready to Build Your Custom Food Truck?
           </h2>
 
           <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mb-8">
@@ -571,7 +561,7 @@ export default async function CustomFoodTrucksPage() {
       )}
 
       {/* FAQ Integration */}
-      <FAQSection faqs={truckFaqs} />
+      <FAQSection faqs={truckFaqs} plainHeading />
     </>
   );
 }
