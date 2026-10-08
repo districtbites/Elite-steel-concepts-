@@ -56,9 +56,9 @@ const WhyChooseSection: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-primary" />
-            <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+            <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
               The Elite Advantage
-            </span>
+            </h1>
             <div className="h-px w-8 bg-primary" />
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black uppercase tracking-tight leading-tight">

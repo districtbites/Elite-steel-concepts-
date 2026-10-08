@@ -37,9 +37,9 @@ const NewsletterSection = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     {/* Text Column */}
                     <div className="space-y-4">
-                        <p className="text-primary font-medium uppercase tracking-[0.3em] text-sm">
+                        <h1 className="text-primary font-medium uppercase tracking-[0.3em] text-sm">
                             Be The First To Find Out About Our Announcements!
-                        </p>
+                        </h1>
                         <h2 className="text-6xl md:text-8xl font-black text-white uppercase tracking-tighter leading-none">
                             JOIN THE <br />
                             <span className="text-white/90">CLUB</span>

@@ -31,12 +31,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       <Container className="relative z-10 text-center">
         <div className="inline-flex items-center gap-3 mb-4">
            <div className="w-2 h-2 bg-primary" />
-           <span className="text-primary font-black uppercase tracking-[0.2em] text-[10px]">{eyebrow}</span>
+           <h1 className="text-primary font-black uppercase tracking-[0.2em] text-[10px]">{eyebrow}</h1>
            <div className="w-2 h-2 bg-primary" />
         </div>
-        <h1 className={`${titleClassName} font-black uppercase text-white mb-4 tracking-tighter leading-none`}>
+        <h2 className={`${titleClassName} font-black uppercase text-white mb-4 tracking-tighter leading-none`}>
           {title}
-        </h1>
+        </h2>
         {subtitle && (
           <p className={`text-gray-400 max-w-2xl mx-auto leading-relaxed ${normalCaseSubtitle ? "text-base md:text-lg font-medium" : "text-sm md:text-base font-bold uppercase tracking-widest"}`}>
             {subtitle}

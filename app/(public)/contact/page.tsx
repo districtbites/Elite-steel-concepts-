@@ -53,7 +53,7 @@ export default async function ContactPage() {
               <div className="relative">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-1.5 h-1.5 bg-primary" />
-                  <span className="text-black font-black tracking-[0.2em] uppercase text-[10px]">Primary Channels</span>
+                  <h1 className="text-black font-black tracking-[0.2em] uppercase text-[10px]">Primary Channels</h1>
                 </div>
                 <h2 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase text-black tracking-tighter leading-[0.9] mb-6">
                   Elite Steel <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Direct Access</span>
@@ -249,7 +249,7 @@ export default async function ContactPage() {
               <div className="relative z-10 max-w-3xl">
                  <div className="flex items-center gap-3 mb-6">
                     <Factory size={16} className="text-primary" />
-                    <span className="text-primary font-black tracking-[0.2em] uppercase text-[10px]">Visual Confirmation</span>
+                    <h1 className="text-primary font-black tracking-[0.2em] uppercase text-[10px]">Visual Confirmation</h1>
                  </div>
                  <h2 className="text-5xl md:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8 text-white">
                     Schedule Your <br/> <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Factory Tour</span>

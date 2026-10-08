@@ -13,9 +13,11 @@ interface FAQ {
 interface FAQSectionProps {
   faqs: FAQ[];
   plainHeading?: boolean;
+  eyebrowAsH1?: boolean;
 }
 
-const FAQSection = ({ faqs, plainHeading = false }: FAQSectionProps) => {
+const FAQSection = ({ faqs, plainHeading = false, eyebrowAsH1 = true }: FAQSectionProps) => {
+  const EyebrowTag = eyebrowAsH1 ? "h1" : "span";
   const [openId, setOpenId] = useState<string | null>(faqs[0]?.id || null);
 
   if (!faqs || faqs.length === 0) return null;
@@ -26,7 +28,7 @@ const FAQSection = ({ faqs, plainHeading = false }: FAQSectionProps) => {
         <div className="flex flex-col lg:flex-row gap-16">
           <div className="w-full lg:w-1/3">
             <div className="sticky top-24">
-              <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Got Questions?</span>
+              <EyebrowTag className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Got Questions?</EyebrowTag>
               <h2 className="text-4xl font-black uppercase text-secondary tracking-tight mb-6 leading-tight">
                 Frequently Asked <span className={plainHeading ? "" : "text-primary"}>Questions</span>
               </h2>

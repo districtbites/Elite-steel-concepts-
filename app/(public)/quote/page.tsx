@@ -6,7 +6,7 @@ import QuoteForm from "@/components/QuoteForm";
 import FAQSection from "@/components/FAQSection";
 import { ShieldCheck, Zap, Factory, Award, CheckCircle2, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { getSEO, getPageSEO, getFAQs } from "@/lib/db";
+import { getSEO, getPageSEO, getFAQs, getLocations } from "@/lib/db";
 import type { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
@@ -25,7 +25,16 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function QuotePage() {
-  const faqs = await getFAQs();
+  const [faqs, locations] = await Promise.all([getFAQs(), getLocations()]);
+
+  // Cities we serve, grouped by state code — powers the City suggestions in the form
+  const citiesByState: Record<string, string[]> = {};
+  for (const loc of locations) {
+    if (loc.published === false || !loc.state || !loc.city) continue;
+    const list = (citiesByState[loc.state] ||= []);
+    if (!list.includes(loc.city.trim())) list.push(loc.city.trim());
+  }
+  Object.values(citiesByState).forEach((list) => list.sort());
 
   const advantages = [
     { title: "Precision TIG Welding", text: "Structural integrity that exceeds industrial kitchen standards.", icon: Zap },
@@ -45,6 +54,8 @@ export default async function QuotePage() {
         eyebrow="Elite Steel Concept"
         title="Get Your Free Food Truck & Trailer Quote"
         subtitle="Start Your Build With Trusted Custom Food Truck & Trailer Builders!"
+        titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
+        normalCaseSubtitle
         className="!pb-10 md:!pb-12"
       />
 
@@ -55,20 +66,7 @@ export default async function QuotePage() {
             
             {/* Form */}
             <div className="flex flex-col gap-8">
-               <div className="mb-2 text-center">
-                   <div className="flex items-center justify-center gap-3 mb-4">
-                     <div className="w-1.5 h-1.5 bg-primary" />
-                     <span className="text-black font-black tracking-[0.2em] uppercase text-[10px]">Fabrication Request</span>
-                   </div>
-                   <h2 className="text-3xl md:text-5xl font-black uppercase text-black tracking-tighter leading-tight mb-4">
-                      Build <span className="text-primary">Specifications</span>
-                   </h2>
-                   <p className="text-gray-500 text-sm font-bold uppercase tracking-widest leading-relaxed max-w-2xl mx-auto">
-                      To provide an accurate engineering estimate, please be as specific as possible regarding your equipment needs and menu concept.
-                   </p>
-               </div>
-               
-               <QuoteForm />
+               <QuoteForm citiesByState={citiesByState} />
                
                {/* Hidden: Authorized Systems
                <div className="mt-2 flex flex-wrap items-center justify-center gap-6 opacity-80 hover:opacity-100 transition-opacity">

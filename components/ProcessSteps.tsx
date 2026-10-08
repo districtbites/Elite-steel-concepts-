@@ -61,6 +61,7 @@ interface ProcessStepsProps {
   steps?: ProcessStep[];
   showFullProcessLink?: boolean;
   ctaText?: React.ReactNode;
+  eyebrowAsH1?: boolean;
 }
 
 const ProcessSteps = ({
@@ -68,13 +69,15 @@ const ProcessSteps = ({
   title = (
     <>
       Our Build
-      <span className="block text-primary">Process</span>
+      <span className="block">Process</span>
     </>
   ),
   steps = defaultSteps,
   showFullProcessLink = true,
   ctaText = "Ready to start? Begin with a free quote.",
+  eyebrowAsH1 = true,
 }: ProcessStepsProps) => {
+  const EyebrowTag = eyebrowAsH1 ? "h1" : "span";
   return (
     <section id="our-process" className="bg-white border-y border-gray-100 py-8 md:py-12">
       <Container>
@@ -83,9 +86,9 @@ const ProcessSteps = ({
           <div>
             <div className="flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-12 bg-primary" />
-              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <EyebrowTag className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 {eyebrow}
-              </span>
+              </EyebrowTag>
               <div className="h-px w-12 bg-primary" />
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight">

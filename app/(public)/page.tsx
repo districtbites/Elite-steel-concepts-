@@ -138,7 +138,7 @@ export default async function Home() {
     "Washington DC",
     "Northern Virginia",
     "Maryland",
-    "Nationwide",
+    "Pennsylvania",
   ];
 
   return (
@@ -183,9 +183,9 @@ export default async function Home() {
           <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
-              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 What We Build
-              </span>
+              </h1>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black uppercase tracking-tight leading-tight">
@@ -248,7 +248,7 @@ export default async function Home() {
       <QuoteStartSection />
 
       {/* ═══ PROCESS ═════════════════════════════════════════ */}
-      <ProcessSteps />
+      <ProcessSteps eyebrowAsH1 />
 
       {/* ═══ WHY CHOOSE SECTION (CARDS) ══════════════════════ */}
       <WhyChooseSection />
@@ -374,9 +374,9 @@ export default async function Home() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
-              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 {sections.localcoverage?.subtitle || "Service Area"}
-              </span>
+              </h1>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight mb-6">
@@ -395,12 +395,13 @@ export default async function Home() {
             {coverageAreas.map((area, i) => (
               <div
                 key={area}
-                className={`group hover:bg-[#0a0a0a] p-6 md:p-8 transition-all duration-300 cursor-default border-gray-100 ${
+                className={`group relative hover:bg-primary/[0.06] p-6 md:p-8 transition-all duration-300 cursor-default border-gray-100 ${
                   i % 2 === 0 ? "border-r" : ""
                 } ${i < 2 ? "border-b lg:border-b-0" : ""} ${
                   i === 1 ? "lg:border-r" : ""
                 }`}
               >
+                <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
                 <div className="size-12 bg-primary/10 border border-primary/30 group-hover:bg-primary group-hover:border-primary flex items-center justify-center mb-6 transition-colors">
                   <MapPin
                     size={22}
@@ -408,11 +409,11 @@ export default async function Home() {
                     className="text-primary group-hover:text-white transition-colors"
                   />
                 </div>
-                <div className="text-sm font-black text-black group-hover:text-white uppercase tracking-tight transition-colors">
+                <div className="text-sm font-black text-black group-hover:text-primary uppercase tracking-tight transition-colors">
                   {area}
                 </div>
-                <div className="text-[10px] font-bold text-gray-500 group-hover:text-gray-400 uppercase tracking-widest mt-1 transition-colors">
-                  {i === 3 ? "48 States" : "Full Coverage"}
+                <div className="text-[10px] font-bold text-gray-500 group-hover:text-gray-700 uppercase tracking-widest mt-1 transition-colors">
+                  Full Coverage
                 </div>
               </div>
             ))}
@@ -445,7 +446,7 @@ export default async function Home() {
       {/* <NewsletterSection /> */}
 
       {/* ═══ FAQ ═════════════════════════════════════════════ */}
-      {faqs.length > 0 && <FAQSection faqs={faqs.slice(0, 5)} />}
+      {faqs.length > 0 && <FAQSection faqs={faqs.slice(0, 5)} eyebrowAsH1 />}
 
       {/* ═══ FINAL CTA — hidden for now ═══════════════════════
       <CTASection

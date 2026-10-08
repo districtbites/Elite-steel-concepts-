@@ -4,13 +4,11 @@ import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
-import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import Image from "next/image";
 import { Truck, Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X, Award, MapPin, Zap } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
 
-import { getSEO, getPageSEO, getFAQs, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
 import type { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
@@ -29,22 +27,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ServicesPage() {
-  const [faqs, pageSeo, rules, linkSettings, servicesHero, truckImage, trailerImage] = await Promise.all([
+  const [faqs, pageSeo, servicesHero, truckImage, trailerImage] = await Promise.all([
     getFAQs(),
     getPageSEO("services"),
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
     getMediaAsset("services", "hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_1", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_2", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800"),
   ]);
-  const activeRules = rules.filter(r => r.enabled !== false);
   const sections = pageSeo.sections || {};
 
   const introRaw = typeof sections.intro?.content === 'string'
     ? sections.intro.content
     : "At Elite Steel Concepts, we don't just build boxes with kitchens. We engineer high-performance commercial environments designed to maximize flow, sanitation, and safety while projecting a premium brand image.";
-  const introLinked = autoLinkMarkdown(introRaw, activeRules, linkSettings).updatedContent;
 
   const services = [
     {
@@ -81,9 +75,9 @@ export default async function ServicesPage() {
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3">
               <div className="h-px w-10 bg-primary" />
-              <h2 className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
+              <h1 className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
                 What We Manufacture
-              </h2>
+              </h1>
               <div className="h-px w-10 bg-primary" />
             </div>
           </div>
@@ -138,9 +132,9 @@ export default async function ServicesPage() {
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
-              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 {sections.intro?.subtitle || "Precision Builds"}
-              </span>
+              </h1>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight">
@@ -156,12 +150,9 @@ export default async function ServicesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
             <div className="order-2 lg:order-1 lg:col-span-6 flex items-center">
               <div className="w-full max-w-xl">
-                <div className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed border-l-2 border-primary pl-5 md:pl-6 mb-7">
-                  <AutoLinkedText
-                    text={introLinked}
-                    linkClassName="text-primary font-semibold underline underline-offset-2 hover:text-orange-600 transition-colors"
-                  />
-                </div>
+                <p className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed border-l-2 border-primary pl-5 md:pl-6 mb-7">
+                  {introRaw}
+                </p>
                 <Link
                   href="/quote"
                   className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"
@@ -315,7 +306,7 @@ export default async function ServicesPage() {
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 md:mb-10 gap-5 md:gap-8">
             <div className="max-w-3xl">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight mb-3 md:mb-4 leading-tight">
-                ECS Building <span className="text-primary">Process</span>
+                ECS Building Process
               </h2>
               <p className="text-gray-500 text-sm sm:text-base md:text-lg font-medium leading-relaxed border-l-2 border-primary pl-4 md:pl-6">
                 At ESC, we work with you from the first idea to the final handover, keeping every step clear and focused on your food business needs.

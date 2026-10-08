@@ -105,7 +105,7 @@ export default async function TestimonialsPage() {
                  </div>
               </div>
               <div className="w-full lg:w-1/2">
-                 <span className="text-primary font-black uppercase tracking-widest text-xs mb-4 block underline decoration-secondary decoration-4 underline-offset-8">Featured Story</span>
+                 <h1 className="text-primary font-black uppercase tracking-widest text-xs mb-4 block underline decoration-secondary decoration-4 underline-offset-8">Featured Story</h1>
                  <h2 className="text-4xl md:text-5xl font-black uppercase text-secondary tracking-tighter mb-8 leading-[0.9]">
                     "They didn't just build a truck, they built a <span className="text-primary italic">scalable business</span>."
                  </h2>

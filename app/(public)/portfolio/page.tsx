@@ -1,4 +1,6 @@
 import React from "react";
+import fs from "fs";
+import path from "path";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
@@ -12,6 +14,16 @@ import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+// Serve pre-generated WebP files (full + "-thumb") when they exist next to the original.
+function webpVariants(src: string): { image: string; thumb?: string } {
+  if (!src.startsWith("/")) return { image: src };
+  const base = src.replace(/\.(png|jpe?g|webp)$/i, "");
+  const exists = (p: string) => fs.existsSync(path.join(process.cwd(), "public", p));
+  const full = exists(`${base}.webp`) ? `${base}.webp` : src;
+  const thumb = exists(`${base}-thumb.webp`) ? `${base}-thumb.webp` : undefined;
+  return { image: full, thumb };
+}
 
 const workGallery = [
   { image: "/uploads/media/1771962759953-screenshot-2024-08-14-at-16-55-57-elite-steel-concepts-–-elite-steel-concepts.png", title: "Stainless Steel Kitchen Line" },
@@ -193,10 +205,6 @@ export default async function PortfolioPage() {
       <Section className="!py-10 md:!py-14 bg-white">
         <Container>
           <div className="text-center mb-8 md:mb-10">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="w-1.5 h-1.5 bg-black" />
-              <span className="text-black font-black tracking-[0.2em] uppercase text-[10px]">The Gallery</span>
-            </div>
             <h2 className="text-4xl md:text-6xl font-black uppercase text-black tracking-tighter mb-4 leading-none">
               Our Diverse <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Fleet</span>
             </h2>
@@ -207,8 +215,8 @@ export default async function PortfolioPage() {
           </div>
           <PortfolioGallery
             items={[
-              ...allProjects.map((p) => ({ image: p.image, title: p.title })),
-              ...workGallery,
+              ...allProjects.map((p) => ({ ...webpVariants(p.image), title: p.title })),
+              ...workGallery.map((g) => ({ ...webpVariants(g.image), title: g.title })),
             ]}
           />
         </Container>

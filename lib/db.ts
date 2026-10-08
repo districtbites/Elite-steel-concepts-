@@ -50,6 +50,10 @@ export interface Quote {
     powerRequirements?: string;
     services?: string[]; // e.g., ["Design", "Permits", "Fabrication"]
 
+    // Where the client plans to vend
+    vendingState?: string;
+    vendingCity?: string;
+
     date: string;
     status: "New" | "Contacted" | "Designing" | "Quoted" | "In Production" | "Delivered" | "Closed";
 }

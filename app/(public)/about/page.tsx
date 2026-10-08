@@ -4,12 +4,10 @@ import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
-import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import ProcessSteps, { aboutBuildingProcessSteps } from "@/components/ProcessSteps";
 import Image from "next/image";
 import { Award, Calendar, Package, PenTool, Shield, MapPin, Wrench, Handshake } from "lucide-react";
-import { getPageSEO, getSEO, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
@@ -28,18 +26,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const [pageSeo, rules, linkSettings] = await Promise.all([
-    getPageSEO("about"),
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
-  ]);
-  const activeRules = rules.filter(r => r.enabled !== false);
-  const alts = pageSeo.imageAlts || {};
-  const sections = pageSeo.sections || {};
+  const pageSeo = await getPageSEO("about");
 
   const storyRaw =
     "Our mission is to build high-quality custom food trailers and trucks using durable, commercial-grade materials, reliable equipment, expert construction, and practical kitchen layouts. Every build is carefully designed around the client's menu, workflow, and business needs, with a strong focus on durability, functionality, professional finishing, and applicable code requirements. We use quality materials and thoughtful designs to create dependable mobile kitchen solutions that support entrepreneurs from their first launch through long-term business growth.";
-  const storyLinked = autoLinkMarkdown(storyRaw, activeRules, linkSettings).updatedContent;
   
   const chooseReasons = [
     { title: "14+ Years of Industry Experience", icon: Calendar },
@@ -61,7 +51,7 @@ export default async function AboutPage() {
         />
       )}
       <PageHeader
-        title={sections.header?.title || "Operational History"}
+        title="About Us"
         subtitle="With 14+ years of experience, Elite Steel Concepts builds custom food trucks, trailers & mobile kitchens designed for food businesses. Based in Manassas, Virginia, we proudly serve entrepreneurs nationwide."
         normalCaseSubtitle
         titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
@@ -74,9 +64,9 @@ export default async function AboutPage() {
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
-              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 Our Mission
-              </span>
+              </h1>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black uppercase tracking-tight leading-tight">
@@ -105,12 +95,9 @@ export default async function AboutPage() {
 
             <div className="lg:col-span-7 flex items-center justify-center lg:justify-start">
               <div className="max-w-xl w-full">
-                <div className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed">
-                  <AutoLinkedText
-                    text={storyLinked}
-                    linkClassName="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
-                  />
-                </div>
+                <p className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed">
+                  {storyRaw}
+                </p>
               </div>
             </div>
           </div>
@@ -123,9 +110,9 @@ export default async function AboutPage() {
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3">
               <div className="h-px w-10 bg-primary" />
-              <h2 className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
+              <h1 className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
                 What We Manufacture
-              </h2>
+              </h1>
               <div className="h-px w-10 bg-primary" />
             </div>
           </div>
@@ -180,7 +167,7 @@ export default async function AboutPage() {
         title={
           <>
             Our Building
-            <span className="block text-primary">Process</span>
+            <span className="block">Process</span>
           </>
         }
         steps={aboutBuildingProcessSteps}
@@ -222,45 +209,32 @@ export default async function AboutPage() {
           <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
-              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 Why Choose Us
-              </span>
+              </h1>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-5">
-              Why Entrepreneurs Choose{" "}
-              <span className="text-primary">Elite Steel Concepts</span>
+              Why Entrepreneurs Choose Elite Steel Concepts
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed font-medium">
-              Entrepreneurs choose ECS as their trusted{" "}
-              <Link
-                href="/services/custom-food-trucks"
-                className="text-primary font-semibold underline underline-offset-2 hover:text-orange-600 transition-colors"
-              >
-                custom food truck builder
-              </Link>{" "}
-              for quality craftsmanship, durable builds, and mobile kitchens designed to support long-term business success.
+              Entrepreneurs choose ECS as their trusted custom food truck builder for quality craftsmanship, durable builds, and mobile kitchens designed to support long-term business success.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-gray-200 border border-gray-200">
-            {chooseReasons.map((reason, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 max-w-6xl mx-auto">
+            {chooseReasons.map((reason) => (
               <div
                 key={reason.title}
-                className="group relative bg-white hover:bg-gray-50 transition-colors p-7 md:p-8 flex flex-col"
+                className="group relative bg-white border border-gray-200 hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-300 px-6 py-8 flex flex-col items-center text-center overflow-hidden"
               >
-                <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+                <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
 
-                <div className="flex items-center justify-between mb-5">
-                  <div className="w-12 h-12 bg-primary/10 border border-primary/20 group-hover:bg-primary group-hover:border-primary flex items-center justify-center transition-colors">
-                    <reason.icon
-                      size={20}
-                      className="text-primary group-hover:text-white transition-colors"
-                    />
-                  </div>
-                  <span className="text-[48px] md:text-[56px] font-black text-gray-900 group-hover:text-primary leading-none select-none transition-colors">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                <div className="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 group-hover:bg-primary group-hover:border-primary flex items-center justify-center mb-5 transition-colors duration-300">
+                  <reason.icon
+                    size={26}
+                    className="text-primary group-hover:text-white transition-colors duration-300"
+                  />
                 </div>
 
                 <h3 className="text-sm md:text-base font-black text-black uppercase tracking-wide leading-snug group-hover:text-primary transition-colors">
@@ -274,6 +248,7 @@ export default async function AboutPage() {
 
       <CTASection
         title="Ready to Build Your Custom Food Business?"
+        titleClassName="text-2xl md:text-4xl tracking-tight leading-tight"
         subtitle="Your food business starts with the right build. Elite Steel Concepts is ready to help bring your idea to reality. Contact us today!"
         buttonText="Get a free quote today!"
         buttonHref="/quote"

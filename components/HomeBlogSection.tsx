@@ -20,9 +20,9 @@ const HomeBlogSection = async () => {
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
-            <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">
+            <h1 className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">
               News & Insights
-            </span>
+            </h1>
             <h2 className="text-3xl md:text-4xl font-black text-secondary uppercase tracking-tight">
               Latest from the Blog
             </h2>

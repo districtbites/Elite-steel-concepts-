@@ -54,17 +54,17 @@ export default async function LocationsPage() {
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-8">
                 <div className="h-px w-12 bg-primary" />
-                <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                   Service Area
-                </span>
+                </h1>
               </div>
 
-              <h1 className="text-5xl md:text-6xl xl:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
+              <h2 className="text-5xl md:text-6xl xl:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
                 Custom Food Truck Builder
                 <span className="block text-primary mt-2">
                   DC · Virginia · Maryland
                 </span>
-              </h1>
+              </h2>
 
               <p className="text-lg text-gray-400 leading-relaxed max-w-xl mb-10">
                 <AutoLinkedText text={heroDescLinked} />
@@ -124,9 +124,9 @@ export default async function LocationsPage() {
             <div className="flex items-start gap-6">
               <div className="w-1 shrink-0 self-stretch bg-primary" />
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-3">
+                <h1 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-3">
                   Quick Answer
-                </p>
+                </h1>
                 <h2 className="text-2xl md:text-3xl font-black text-black uppercase tracking-tight mb-4">
                   Where does Elite Steel Concepts build food trucks?
                 </h2>
@@ -164,9 +164,9 @@ export default async function LocationsPage() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <div className="h-px w-12 bg-primary" />
-                <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                   Regional & Surrounding State Directory
-                </span>
+                </h1>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter leading-tight">
                 Virginia & Surrounding
@@ -197,9 +197,9 @@ export default async function LocationsPage() {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-px w-12 bg-primary" />
-                <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                   Nationwide
-                </span>
+                </h1>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight mb-6">
                 We Deliver to
@@ -321,9 +321,9 @@ export default async function LocationsPage() {
             <div className="text-center mb-16">
               <div className="flex items-center justify-center gap-3 mb-6">
                 <div className="h-px w-12 bg-primary" />
-                <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                   Industry Experts
-                </span>
+                </h1>
                 <div className="h-px w-12 bg-primary" />
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight mb-8">

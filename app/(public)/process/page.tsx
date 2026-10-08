@@ -186,7 +186,7 @@ export default async function ProcessPage() {
          <Container>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
                <div className="sticky top-32">
-                  <span className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-6 block">Beyond The Build</span>
+                  <h1 className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-6 block">Beyond The Build</h1>
                   <h2 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-8 leading-[0.9]">
                      What to <br/> <span className="text-primary italic">Expect</span> <br/> From Us
                   </h2>

@@ -54,15 +54,15 @@ const SizeSelection = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-px w-12 bg-primary" />
-            <span className="text-primary text-xs font-black uppercase tracking-[0.25em] text-center">
+            <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em] text-center">
               Which Food Truck Size Is Right for You?
-            </span>
+            </h1>
             <div className="h-px w-12 bg-primary" />
           </div>
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[1.05] text-black mb-6">
             Choose Your Ideal Food Truck Size
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
             We&apos;ll help you choose the right size and layout for your menu, equipment, staff, storage, and operating needs.
           </p>
         </div>

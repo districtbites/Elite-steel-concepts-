@@ -1,19 +1,10 @@
 import React from "react";
 import Container from "./ui/Container";
 import Section from "./ui/Section";
-import ReelCard from "./ui/ReelCard";
+import ReelSlider, { type Reel } from "./ui/ReelSlider";
 import { getTestimonials } from "@/lib/db";
 
-interface VideoReel {
-  id: string;
-  title: string;
-  client: string;
-  location: string;
-  videoUrl: string;
-  views: string;
-}
-
-const sampleReels: VideoReel[] = [
+const sampleReels: Reel[] = [
   {
     id: "reel-1",
     title: "Inside Taco Fiesta 24ft Custom Food Truck Build",
@@ -37,7 +28,15 @@ const sampleReels: VideoReel[] = [
     location: "Baltimore, MD",
     videoUrl: "/videos/reels/reel-3.mp4",
     views: "19.5K",
-  }
+  },
+  {
+    id: "reel-4",
+    title: "Client Testimonial: Custom Food Truck Build",
+    client: "ESC Client",
+    location: "Client Testimonial",
+    videoUrl: "/videos/reels/reel-4.mp4",
+    views: "",
+  },
 ];
 
 const Testimonials = async () => {
@@ -53,27 +52,16 @@ const Testimonials = async () => {
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center gap-3">
             <div className="h-px w-8 bg-primary" />
-            <span className="text-primary text-base md:text-lg font-black uppercase tracking-[0.25em]">
+            <h1 className="text-primary text-base md:text-lg font-black uppercase tracking-[0.25em]">
               Client Testimonials
-            </span>
+            </h1>
             <div className="h-px w-8 bg-primary" />
           </div>
         </div>
 
         {/* ═══ VIDEO TESTIMONIALS & REELS SECTION ════════════════ */}
         <div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sampleReels.map((reel) => (
-              <ReelCard
-                key={reel.id}
-                title={reel.title}
-                client={reel.client}
-                location={reel.location}
-                videoUrl={reel.videoUrl}
-                views={reel.views}
-              />
-            ))}
-          </div>
+          <ReelSlider reels={sampleReels} />
         </div>
 
         {/* ═══ TEXT WRITTEN TESTIMONIALS — hidden for now ═══════

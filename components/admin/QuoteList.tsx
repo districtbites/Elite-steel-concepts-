@@ -277,6 +277,13 @@ export default function QuoteList({ initialQuotes }: QuoteListProps) {
                     <div className="text-[9px] font-black uppercase text-admin-muted tracking-widest">Sourcing</div>
                     <div className="text-xs font-black text-admin-text leading-tight mt-1 uppercase">{selectedQuote.sourcing}</div>
                   </div>
+                  <div className="col-span-2 p-5 bg-admin-surface border border-admin-border shadow-sm">
+                    <div className="text-primary mb-2"><MapPin size={20} /></div>
+                    <div className="text-[9px] font-black uppercase text-admin-muted tracking-widest">Vending Location</div>
+                    <div className="text-sm font-black text-admin-text leading-tight mt-1">
+                      {[selectedQuote.vendingCity, selectedQuote.vendingState].filter(Boolean).join(", ") || "Not provided"}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

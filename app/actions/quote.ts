@@ -23,8 +23,10 @@ export async function submitQuoteForm(formData: FormData) {
     const brandingNeeds = formData.get("brandingNeeds") as string;
     const powerRequirements = formData.get("powerRequirements") as string;
     const services = formData.getAll("services") as string[];
+    const vendingState = ((formData.get("vendingState") as string) || "").trim();
+    const vendingCity = ((formData.get("vendingCity") as string) || "").trim();
 
-    if (!name || !email) {
+    if (!name || !email || !vendingState || !vendingCity || !menuType?.trim()) {
         return { error: "Missing required fields" };
     }
 
@@ -43,7 +45,9 @@ export async function submitQuoteForm(formData: FormData) {
         equipment,
         brandingNeeds,
         powerRequirements,
-        services
+        services,
+        vendingState,
+        vendingCity,
     });
 
     // Send email notification (non-blocking — errors won't fail the request)

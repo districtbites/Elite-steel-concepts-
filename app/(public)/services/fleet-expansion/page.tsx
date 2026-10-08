@@ -45,7 +45,7 @@ export default async function FleetExpansionPage() {
         <Container>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
-              <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Scale With Confidence</span>
+              <h1 className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Scale With Confidence</h1>
               <h2 className="text-3xl md:text-4xl font-black uppercase text-secondary mb-6 tracking-tight">
                 Consistent Quality at Scale
               </h2>

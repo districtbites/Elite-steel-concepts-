@@ -41,10 +41,8 @@ export default async function ComplianceHub() {
   const heroDescLinked = autoLinkMarkdown(heroDescRaw, activeRules, linkSettings).updatedContent;
 
   const whyDescRaw = "The right requirements start with the design compliance, which can affect almost every part of a mobile kitchen, from handwashing and dishwashing sinks to water systems, wastewater, equipment placement, food-preparation areas, and electrical systems.";
-  const whyDescLinked = autoLinkMarkdown(whyDescRaw, activeRules, linkSettings).updatedContent;
 
   const whyDesc2Raw = "Understanding these requirements before fabrication can help you plan the right layout and avoid unnecessary design changes later. As a custom food truck builder, Elite Steel Concepts considers the requirements that may apply to your project based on your planned operation and location.";
-  const whyDesc2Linked = autoLinkMarkdown(whyDesc2Raw, activeRules, linkSettings).updatedContent;
 
   const locationDescRaw = "Custom food truck starts with knowing where you plan to operate. Health, safety, plumbing, fire, and mobile food requirements can vary between states, counties, cities, and local authorities.";
   const locationDescLinked = autoLinkMarkdown(locationDescRaw, activeRules, linkSettings).updatedContent;
@@ -75,18 +73,18 @@ export default async function ComplianceHub() {
         <div className="absolute top-0 right-0 w-[40%] h-full bg-primary/5 skew-x-[-12deg] origin-top-right pointer-events-none" />
         
         <Container>
-          <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <div className="relative z-10 max-w-5xl mx-auto text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-px w-12 bg-primary" />
-              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 Smart Compliance Planning
-              </span>
+              </h1>
               <div className="h-px w-12 bg-primary" />
             </div>
-            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.95] mb-8">
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight mb-6 max-w-5xl mx-auto">
               Food Truck & Trailer Compliance &{" "}
-              <span className="text-primary">Custom Build Requirements</span>
-            </h1>
+              Custom Build Requirements
+            </h2>
             <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-10 max-w-2xl mx-auto font-light">
               <AutoLinkedText text={heroDescLinked} />
             </p>
@@ -105,13 +103,13 @@ export default async function ComplianceHub() {
         <Container>
           <div className="text-center max-w-4xl mx-auto space-y-4">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight">
-              Why Food Truck <span className="text-primary">Compliance Matters</span>
+              Why Food Truck Compliance Matters
             </h2>
             <p className="text-gray-600 text-base leading-relaxed max-w-3xl mx-auto">
-              <AutoLinkedText text={whyDescLinked} />
+              {whyDescRaw}
             </p>
             <p className="text-gray-600 text-base leading-relaxed max-w-3xl mx-auto">
-              <AutoLinkedText text={whyDesc2Linked} />
+              {whyDesc2Raw}
             </p>
           </div>
         </Container>
@@ -122,7 +120,7 @@ export default async function ComplianceHub() {
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
-              What ESC Considers in <span className="text-primary">Mobile Kitchen Compliances</span>
+              What ESC Considers in Mobile Kitchen Compliances
             </h2>
             <p className="text-gray-500 text-base leading-relaxed">
               We consider key health, safety, plumbing, electrical, and food-service requirements when designing your custom mobile kitchen.
@@ -150,9 +148,9 @@ export default async function ComplianceHub() {
         <Container>
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
-              Food Truck Compliance Starts With <span className="text-primary">Your Location</span>
+              Food Truck Compliance Starts With Your Location
             </h2>
-            <p className="text-gray-500 text-sm md:text-base font-bold uppercase tracking-widest">
+            <p className="text-gray-500 text-base md:text-lg font-medium">
               Different Locations, Different Requirements
             </p>
           </div>
@@ -192,7 +190,7 @@ export default async function ComplianceHub() {
         <Container className="relative z-10">
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
-              What Elite Steel Concept Checks <span className="text-primary">Before Building Your Trailer</span>
+              What Elite Steel Concept Checks Before Building Your Trailer
             </h2>
             <p className="text-gray-500 text-sm md:text-base font-bold uppercase tracking-widest">
               Key Details We Consider for Your Mobile Kitchen Compliance

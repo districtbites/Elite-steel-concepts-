@@ -53,14 +53,14 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
             <div className="hero-badge flex items-center gap-3 mb-8">
               <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                   Based in Manassas, VA
-                </span>
+                </h1>
               </div>
             </div>
 
             {/* Headline */}
-            <h1 className="text-[clamp(2.5rem,4.6vw,4.25rem)] font-black uppercase tracking-tighter leading-[0.92] mb-8">
+            <h2 className="text-[clamp(2.5rem,4.6vw,4.25rem)] font-black uppercase tracking-tighter leading-[0.92] mb-8">
               <span className="hero-line-1 block text-white">Custom</span>
               <span className="hero-line-2 block">
                 <span
@@ -76,7 +76,7 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
               <span className="hero-line-3 block text-white">
                 Built to Perform.
               </span>
-            </h1>
+            </h2>
 
             {/* Subheading */}
             <div className="hero-sub max-w-xl mb-8">

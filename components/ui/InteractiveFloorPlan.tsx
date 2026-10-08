@@ -204,9 +204,9 @@ export default function InteractiveFloorPlan() {
         {/* Section header */}
         <div className="flex items-center justify-center gap-3 mb-12 relative z-10">
           <div className="h-px w-12 bg-primary" />
-          <h2 className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
+          <h1 className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
             Our Services
-          </h2>
+          </h1>
           <div className="h-px w-12 bg-primary" />
         </div>
 

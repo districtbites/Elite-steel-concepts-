@@ -201,9 +201,9 @@ export default async function CustomFoodTrucksPage() {
           <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3 mb-3">
               <div className="h-px w-8 bg-primary" />
-              <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 Food Truck Concepts
-              </span>
+              </h1>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-3">
@@ -351,9 +351,9 @@ export default async function CustomFoodTrucksPage() {
         <Container className="relative z-10 text-center max-w-4xl">
           <div className="inline-flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-primary" />
-            <span className="text-primary text-[10px] font-black uppercase tracking-[0.3em]">
+            <h1 className="text-primary text-[10px] font-black uppercase tracking-[0.3em]">
               Start Your Build
-            </span>
+            </h1>
             <div className="h-px w-8 bg-primary" />
           </div>
 

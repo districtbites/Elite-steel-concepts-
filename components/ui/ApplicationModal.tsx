@@ -168,9 +168,9 @@ export default function ApplicationModal({
               </div>
 
               <div className="md:py-8">
-                <p className="text-primary font-black uppercase tracking-[0.2em] text-[10px] mb-2 md:mb-3">
+                <h1 className="text-primary font-black uppercase tracking-[0.2em] text-[10px] mb-2 md:mb-3">
                   Free Quote
-                </p>
+                </h1>
                 <h2
                   id="application-modal-title"
                   className="text-xl md:text-4xl font-black tracking-tight uppercase leading-tight md:leading-[0.92] text-white"
@@ -217,13 +217,13 @@ export default function ApplicationModal({
               <div className="mb-5 md:mb-6 md:pr-8">
                 <div className="hidden md:flex items-center gap-3 mb-3">
                   <div className="h-px w-8 bg-primary" />
-                  <span className="text-primary text-[10px] font-black uppercase tracking-[0.25em]">
+                  <h1 className="text-primary text-[10px] font-black uppercase tracking-[0.25em]">
                     Free Quote
-                  </span>
+                  </h1>
                 </div>
-                <h3 className="hidden md:block text-2xl sm:text-3xl font-black text-black uppercase tracking-tight leading-tight mb-2">
+                <h2 className="hidden md:block text-2xl sm:text-3xl font-black text-black uppercase tracking-tight leading-tight mb-2">
                   Let&apos;s Discuss Your Build
-                </h3>
+                </h2>
                 <p className="text-sm text-gray-600 md:text-gray-500 leading-relaxed">
                   Tell us about your vision — we&apos;ll help you plan the right
                   custom food truck or trailer.

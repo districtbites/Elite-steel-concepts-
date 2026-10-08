@@ -217,21 +217,30 @@ export async function sendQuoteNotification(settings: GlobalSettings, quote: Quo
         ${infoRow("Company",    quote.company || "—")}
       </table>
 
+      <!-- Section: Vending Location -->
+      <p style="margin:0 0 14px;font-size:9px;font-weight:800;color:${BRAND.primary};letter-spacing:3px;text-transform:uppercase;">
+        Where Will You Be Vending?
+      </p>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+        ${infoRow("State", quote.vendingState || "—")}
+        ${infoRow("City",  quote.vendingCity  || "—")}
+      </table>
+
       <!-- Section: Project Specs -->
       <p style="margin:0 0 14px;font-size:9px;font-weight:800;color:${BRAND.primary};letter-spacing:3px;text-transform:uppercase;">
         02 &nbsp;/ &nbsp;Project Specifications
       </p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
-        ${infoRow("Project Type",       quote.projectType)}
-        ${infoRow("Budget Range",       quote.budget)}
-        ${infoRow("Timeline",           quote.timeline)}
-        ${infoRow("Sourcing",           quote.sourcing)}
-        ${infoRow("Menu Type",          quote.menuType          || "—")}
-        ${infoRow("Dimensions",         quote.dimensions        || "—")}
+        ${infoRow("Looking For",        quote.projectType)}
+        ${infoRow("Food Type",          quote.menuType          || "—")}
+        ${infoRow("Budget",             quote.budget            || "—")}
+        ${infoRow("Timeline",           quote.timeline          || "—")}
+        ${infoRow("Vehicle",            quote.sourcing          || "—")}
+        ${infoRow("Preferred Size",     quote.dimensions        || "—")}
+        ${infoRow("Power Source",       quote.powerRequirements || "—")}
         ${infoRow("Equipment",          quote.equipment         || "—")}
-        ${infoRow("Branding Needs",     quote.brandingNeeds     || "—")}
-        ${infoRow("Power Requirements", quote.powerRequirements || "—")}
-        ${infoRow("Services Needed",    servicesList)}
+        ${quote.brandingNeeds ? infoRow("Branding Needs", quote.brandingNeeds) : ""}
+        ${infoRow("Add-Ons",            servicesList)}
       </table>
 
       ${quote.message ? `
