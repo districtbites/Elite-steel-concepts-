@@ -42,7 +42,7 @@ export default async function ServicesPage() {
 
   const services = [
     {
-      title: "Custom Food Trailers, Concession Trailers & Mobile Kitchens Services",
+      title: "Custom Food Trailers, Concession Trailers & Mobile\u00A0Kitchens Services", // non-breaking space keeps "Mobile Kitchens" on one line
       icon: Truck,
       image: truckImage.url,
       description:
