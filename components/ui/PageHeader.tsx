@@ -8,6 +8,7 @@ interface PageHeaderProps {
   className?: string;
   children?: React.ReactNode;
   normalCaseSubtitle?: boolean;
+  titleClassName?: string;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -17,6 +18,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   className = "",
   children,
   normalCaseSubtitle = false,
+  titleClassName = "text-4xl md:text-6xl",
 }) => {
   return (
     <div className={`relative bg-[#0a0a0a] pt-32 pb-12 md:pt-40 md:pb-16 overflow-hidden border-b border-[#1a1a1a] ${className}`}>
@@ -32,7 +34,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
            <span className="text-primary font-black uppercase tracking-[0.2em] text-[10px]">{eyebrow}</span>
            <div className="w-2 h-2 bg-primary" />
         </div>
-        <h1 className="text-4xl md:text-6xl font-black uppercase text-white mb-4 tracking-tighter leading-none">
+        <h1 className={`${titleClassName} font-black uppercase text-white mb-4 tracking-tighter leading-none`}>
           {title}
         </h1>
         {subtitle && (

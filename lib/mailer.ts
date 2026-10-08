@@ -17,17 +17,46 @@ const BRAND = {
     info:       "#3b82f6",
 };
 
+// ─── SMTP Config ─────────────────────────────────────────────────────────────
+// .env SMTP_* values take priority over the admin-panel settings stored in the DB.
+function withEnvSmtp(settings: GlobalSettings): GlobalSettings {
+    const env = process.env;
+    const port = env.SMTP_PORT ? Number(env.SMTP_PORT) : settings.smtpPort || 587;
+    const secure = env.SMTP_SECURE
+        ? env.SMTP_SECURE.toLowerCase() === "true"
+        : settings.smtpSecure ?? port === 465;
+    return {
+        ...settings,
+        smtpHost:          env.SMTP_HOST          || settings.smtpHost,
+        smtpPort:          port,
+        smtpSecure:        secure,
+        smtpUser:          env.SMTP_USER          || settings.smtpUser,
+        smtpPassword:      env.SMTP_PASSWORD      || settings.smtpPassword,
+        smtpFrom:          env.SMTP_FROM          || settings.smtpFrom,
+        notificationEmail: env.NOTIFICATION_EMAIL || settings.notificationEmail,
+    };
+}
+
 // ─── Transporter ─────────────────────────────────────────────────────────────
-function createTransporter(settings: GlobalSettings) {
-    return nodemailer.createTransport({
-        host:   settings.smtpHost     || "smtp.gmail.com",
-        port:   settings.smtpPort     || 587,
-        secure: settings.smtpSecure   ?? false,
+// secure=true  → implicit SSL/TLS (port 465)
+// secure=false → STARTTLS upgrade, required (port 587)
+function transportOptions(settings: GlobalSettings) {
+    const secure = settings.smtpSecure ?? false;
+    return {
+        host:       settings.smtpHost || "smtp.gmail.com",
+        port:       settings.smtpPort || 587,
+        secure,
+        requireTLS: !secure,
+        tls:        { minVersion: "TLSv1.2" as const },
         auth: {
             user: settings.smtpUser     || "",
             pass: settings.smtpPassword || "",
         },
-    });
+    };
+}
+
+function createTransporter(settings: GlobalSettings) {
+    return nodemailer.createTransport(transportOptions(settings));
 }
 
 // ─── Shared Utilities ─────────────────────────────────────────────────────────
@@ -140,6 +169,7 @@ function emailWrapper(content: string, accentColor: string = BRAND.primary) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export async function sendQuoteNotification(settings: GlobalSettings, quote: Quote) {
+    settings = withEnvSmtp(settings);
     const to   = settings.notificationEmail || "esteelquotes@gmail.com";
     const from = settings.smtpFrom || `Elite Steel Concepts <${settings.smtpUser || "noreply@esteelconcepts.com"}>`;
 
@@ -246,6 +276,7 @@ export async function sendQuoteNotification(settings: GlobalSettings, quote: Quo
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export async function sendContactNotification(settings: GlobalSettings, contact: Contact) {
+    settings = withEnvSmtp(settings);
     const to   = settings.notificationEmail || "esteelquotes@gmail.com";
     const from = settings.smtpFrom || `Elite Steel Concepts <${settings.smtpUser || "noreply@esteelconcepts.com"}>`;
 
@@ -334,6 +365,7 @@ export async function sendContactNotification(settings: GlobalSettings, contact:
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export async function sendTestEmail(settings: GlobalSettings) {
+    settings = withEnvSmtp(settings);
     const to   = settings.notificationEmail || "esteelquotes@gmail.com";
     const from = settings.smtpFrom || `Elite Steel Concepts <${settings.smtpUser || "noreply@esteelconcepts.com"}>`;
 
@@ -412,6 +444,7 @@ export async function sendNewsletterBlast(
     message: string, 
     subscribers: string[]
 ) {
+    settings = withEnvSmtp(settings);
     const from = settings.smtpFrom || `Elite Steel Concepts <${settings.smtpUser || "noreply@esteelconcepts.com"}>`;
 
     if (!settings.smtpUser || !settings.smtpPassword) {
@@ -467,16 +500,10 @@ export async function sendNewsletterBlast(
 
     // Use connection pooling for bulk sending
     const transporter = nodemailer.createTransport({
-        host:   settings.smtpHost     || "smtp.gmail.com",
-        port:   settings.smtpPort     || 587,
-        secure: settings.smtpSecure   ?? false,
+        ...transportOptions(settings),
         pool:   true,
         maxConnections: 5,
         maxMessages: 100,
-        auth: {
-            user: settings.smtpUser     || "",
-            pass: settings.smtpPassword || "",
-        },
     });
 
     const htmlContent = emailWrapper(bodyContent, BRAND.info);
@@ -514,7 +541,7 @@ export async function sendNewsletterBlast(
 
 export async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
     const { getSettings } = await import("@/lib/db");
-    const settings = await getSettings();
+    const settings = withEnvSmtp(await getSettings());
     const from = settings.smtpFrom || `Elite Steel Concepts <${settings.smtpUser || "noreply@esteelconcepts.com"}>`;
 
     if (!settings.smtpUser || !settings.smtpPassword) {

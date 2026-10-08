@@ -71,6 +71,7 @@ export default async function ServicesPage() {
         title="Expert Food Truck, Food Trailer & Mobile Kitchen Services Nationwide"
         subtitle="We build custom food trucks and trailers designed around your menu, equipment, and business goals."
         normalCaseSubtitle
+        titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
         className="!pb-10 md:!pb-12"
       />
 

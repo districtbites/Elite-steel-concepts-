@@ -63,6 +63,8 @@ export default async function AboutPage() {
       <PageHeader
         title={sections.header?.title || "Operational History"}
         subtitle="With 14+ years of experience, Elite Steel Concepts builds custom food trucks, trailers & mobile kitchens designed for food businesses. Based in Manassas, Virginia, we proudly serve entrepreneurs nationwide."
+        normalCaseSubtitle
+        titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
       />
 
       {/* Intro Section */}
