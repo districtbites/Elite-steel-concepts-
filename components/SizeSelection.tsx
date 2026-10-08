@@ -59,8 +59,8 @@ const SizeSelection = () => {
             </h1>
             <div className="h-px w-12 bg-primary" />
           </div>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight leading-[1.05] text-black mb-6">
-            Choose Your Ideal Food Truck Size
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-tight text-black mb-5">
+            Choose Your Ideal Food <span className="whitespace-nowrap">Truck Size</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
             We&apos;ll help you choose the right size and layout for your menu, equipment, staff, storage, and operating needs.
