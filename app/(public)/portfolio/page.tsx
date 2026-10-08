@@ -207,7 +207,7 @@ export default async function PortfolioPage() {
         <Container>
           <div className="text-center mb-8 md:mb-10">
             <h2 className="text-4xl md:text-6xl font-black uppercase text-black tracking-tighter mb-4 leading-none">
-              Our Diverse <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-600">Fleet</span>
+              Our Diverse Fleet
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed text-sm md:text-base border-l-2 border-black pl-4 text-left">
               Browse our completed builds. Each project showcases our
