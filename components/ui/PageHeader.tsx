@@ -7,6 +7,7 @@ interface PageHeaderProps {
   eyebrow?: string;
   className?: string;
   children?: React.ReactNode;
+  normalCaseSubtitle?: boolean;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -15,6 +16,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   eyebrow = "Elite Steel Concepts",
   className = "",
   children,
+  normalCaseSubtitle = false,
 }) => {
   return (
     <div className={`relative bg-[#0a0a0a] pt-32 pb-12 md:pt-40 md:pb-16 overflow-hidden border-b border-[#1a1a1a] ${className}`}>
@@ -34,7 +36,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           {title}
         </h1>
         {subtitle && (
-          <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto font-bold uppercase tracking-widest leading-relaxed">
+          <p className={`text-gray-400 max-w-2xl mx-auto leading-relaxed ${normalCaseSubtitle ? "text-base md:text-lg font-medium" : "text-sm md:text-base font-bold uppercase tracking-widest"}`}>
             {subtitle}
           </p>
         )}

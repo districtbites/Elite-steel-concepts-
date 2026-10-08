@@ -70,6 +70,7 @@ export default async function ServicesPage() {
         eyebrow="ECS Services"
         title="Expert Food Truck, Food Trailer & Mobile Kitchen Services Nationwide"
         subtitle="We build custom food trucks and trailers designed around your menu, equipment, and business goals."
+        normalCaseSubtitle
         className="!pb-10 md:!pb-12"
       />
 

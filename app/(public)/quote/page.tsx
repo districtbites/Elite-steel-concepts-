@@ -42,44 +42,49 @@ export default async function QuotePage() {
   return (
     <>
       <PageHeader
-        title="Engineering Your Vision"
-        subtitle="The blueprint for your culinary empire starts here. Provide your project specifications for a comprehensive fabrication analysis."
+        eyebrow="Elite Steel Concept"
+        title="Get Your Free Food Truck & Trailer Quote"
+        subtitle="Start Your Build With Trusted Custom Food Truck & Trailer Builders!"
+        className="!pb-10 md:!pb-12"
       />
 
-      <Section className="bg-[#0a0a0a] overflow-hidden pb-32 pt-20 border-b border-[#1a1a1a] relative">
+      <Section className="bg-[#0a0a0a] overflow-hidden !py-10 md:!py-14 border-b border-[#1a1a1a] relative">
         <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }} />
         <Container className="relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+          <div className="max-w-4xl mx-auto">
             
-            {/* Left Column: Form (7 Cols) */}
-            <div className="lg:col-span-7 flex flex-col gap-8">
-               <div className="mb-2">
-                   <div className="flex items-center gap-3 mb-6">
+            {/* Form */}
+            <div className="flex flex-col gap-8">
+               <div className="mb-2 text-center">
+                   <div className="flex items-center justify-center gap-3 mb-4">
                      <div className="w-1.5 h-1.5 bg-primary" />
-                     <span className="text-white font-black tracking-[0.2em] uppercase text-[10px]">Fabrication Request</span>
+                     <span className="text-black font-black tracking-[0.2em] uppercase text-[10px]">Fabrication Request</span>
                    </div>
-                   <h2 className="text-4xl md:text-5xl lg:text-7xl font-black uppercase text-white tracking-tighter leading-[0.85] mb-6">
-                      Build <br/><span className="text-primary">Specifications</span>
+                   <h2 className="text-3xl md:text-5xl font-black uppercase text-black tracking-tighter leading-tight mb-4">
+                      Build <span className="text-primary">Specifications</span>
                    </h2>
-                   <p className="text-gray-400 text-sm font-bold uppercase tracking-widest leading-relaxed max-w-md border-l-2 border-primary pl-4">
+                   <p className="text-gray-500 text-sm font-bold uppercase tracking-widest leading-relaxed max-w-2xl mx-auto">
                       To provide an accurate engineering estimate, please be as specific as possible regarding your equipment needs and menu concept.
                    </p>
                </div>
                
                <QuoteForm />
                
-               <div className="mt-4 flex flex-wrap items-center gap-6 opacity-80 hover:opacity-100 transition-opacity">
+               {/* Hidden: Authorized Systems
+               <div className="mt-2 flex flex-wrap items-center justify-center gap-6 opacity-80 hover:opacity-100 transition-opacity">
                   <span className="font-black text-[10px] uppercase tracking-[0.2em] text-gray-500 border border-[#1a1a1a] px-3 py-2 bg-black">Authorized Systems</span>
-                  <span className="font-black text-xs uppercase text-white tracking-tighter">NFPA 96</span>
-                  <span className="font-black text-xs uppercase text-white tracking-tighter">NSF</span>
-                  <span className="font-black text-xs uppercase text-white tracking-tighter">ANSI</span>
+                  <span className="font-black text-xs uppercase text-black tracking-tighter">NFPA 96</span>
+                  <span className="font-black text-xs uppercase text-black tracking-tighter">NSF</span>
+                  <span className="font-black text-xs uppercase text-black tracking-tighter">ANSI</span>
                </div>
+               */}
             </div>
 
-            {/* Right Column: High-Value Sidebar (5 Cols) */}
+            {/* Hidden: Right sidebar (Elite Advantage, Fabrication Metrics, Road To Handover)
+            -- Right Column: High-Value Sidebar (5 Cols) --
             <div className="lg:col-span-5 space-y-12 mt-8 lg:mt-0 lg:sticky lg:top-32 h-fit">
                
-               {/* Elite Advantage */}
+               -- Elite Advantage --
                <div className="space-y-6">
                   <div className="inline-flex items-center gap-3 bg-primary border border-primary text-black px-5 py-3 text-[10px] font-black uppercase tracking-[0.2em]">
                      <div className="w-2 h-2 bg-black animate-pulse"></div>
@@ -101,7 +106,7 @@ export default async function QuotePage() {
                   </div>
                </div>
 
-               {/* Metrics Snapshot */}
+               -- Metrics Snapshot --
                <div className="bg-black p-10 border-2 border-[#1a1a1a] text-white relative overflow-hidden group">
                   <div className="relative z-10 space-y-10">
                      <h3 className="text-3xl md:text-5xl font-black uppercase tracking-tighter leading-none">
@@ -127,7 +132,7 @@ export default async function QuotePage() {
                   </div>
                </div>
 
-               {/* Guided Path */}
+               -- Guided Path --
                <div className="bg-black p-10 border-2 border-[#1a1a1a] space-y-8 relative group hover:border-primary transition-colors">
                   <h4 className="text-[10px] font-black uppercase text-white tracking-[0.2em] flex items-center gap-3">
                      <Factory size={16} className="text-primary" /> The Road To Handover
@@ -144,11 +149,13 @@ export default async function QuotePage() {
                </div>
 
             </div>
+            */}
           </div>
         </Container>
       </Section>
 
-      {/* Preparation Guide Card */}
+      {/* Hidden: Before You Apply
+      -- Preparation Guide Card --
       <Section className="bg-white py-32 border-b border-gray-100">
         <Container>
           <div className="border-4 border-black p-12 md:p-16 text-black relative bg-gray-50">
@@ -181,9 +188,10 @@ export default async function QuotePage() {
           </div>
         </Container>
       </Section>
+      */}
 
       {/* Sticky Support CTA */}
-      <section className="bg-primary border-y border-black py-16">
+      <section className="bg-primary border-y border-black py-10 md:py-12">
          <Container>
             <div className="flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
                <div>

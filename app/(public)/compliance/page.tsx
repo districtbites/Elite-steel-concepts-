@@ -75,18 +75,19 @@ export default async function ComplianceHub() {
         <div className="absolute top-0 right-0 w-[40%] h-full bg-primary/5 skew-x-[-12deg] origin-top-right pointer-events-none" />
         
         <Container>
-          <div className="relative z-10 max-w-4xl">
-            <div className="flex items-center gap-3 mb-6">
+          <div className="relative z-10 max-w-4xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-px w-12 bg-primary" />
               <span className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 Smart Compliance Planning
               </span>
+              <div className="h-px w-12 bg-primary" />
             </div>
             <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-[0.95] mb-8">
-              Food Truck & Trailer Compliance & <br className="hidden md:block" />
+              Food Truck & Trailer Compliance &{" "}
               <span className="text-primary">Custom Build Requirements</span>
             </h1>
-            <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-10 max-w-2xl font-light">
+            <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-10 max-w-2xl mx-auto font-light">
               <AutoLinkedText text={heroDescLinked} />
             </p>
             <Link
