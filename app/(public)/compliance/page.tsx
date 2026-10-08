@@ -192,7 +192,7 @@ export default async function ComplianceHub() {
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
               What Elite Steel Concept Checks Before Building Your Trailer
             </h2>
-            <p className="text-gray-500 text-sm md:text-base font-bold uppercase tracking-widest">
+            <p className="text-gray-500 text-base md:text-lg font-medium">
               Key Details We Consider for Your Mobile Kitchen Compliance
             </p>
           </div>
