@@ -33,7 +33,7 @@ const sampleReels: Reel[] = [
     id: "reel-4",
     title: "Client Testimonial: Custom Food Truck Build",
     client: "ESC Client",
-    location: "Client Testimonial",
+    location: "Fairfax, VA",
     videoUrl: "/videos/reels/reel-4.mp4",
     views: "",
   },

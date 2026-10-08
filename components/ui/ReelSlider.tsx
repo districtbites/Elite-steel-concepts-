@@ -16,17 +16,26 @@ export interface Reel {
 const ReelSlider = ({ reels }: { reels: Reel[] }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
-  const [canPrev, setCanPrev] = useState(false);
-  const [canNext, setCanNext] = useState(true);
+  // Number of scroll positions: on desktop 3 cards are visible, so 4 reels give 2 positions
+  const [pages, setPages] = useState(reels.length);
+
+  const getStep = () => {
+    const track = trackRef.current;
+    const slide = track?.children[0] as HTMLElement | undefined;
+    if (!track || !slide) return 1;
+    return slide.offsetWidth + parseFloat(getComputedStyle(track).columnGap || "0");
+  };
 
   const update = useCallback(() => {
     const track = trackRef.current;
     if (!track) return;
-    const slide = track.children[0] as HTMLElement | undefined;
-    const step = slide ? slide.offsetWidth + parseFloat(getComputedStyle(track).columnGap || "0") : 1;
-    setActive(Math.min(reels.length - 1, Math.round(track.scrollLeft / step)));
-    setCanPrev(track.scrollLeft > 4);
-    setCanNext(track.scrollLeft + track.clientWidth < track.scrollWidth - 4);
+    const step = getStep();
+    const visible = Math.max(1, Math.round((track.clientWidth + parseFloat(getComputedStyle(track).columnGap || "0")) / step));
+    const total = Math.max(1, reels.length - visible + 1);
+    setPages(total);
+    // At the far end the last position may sit less than a full step from the previous one
+    const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+    setActive(atEnd ? total - 1 : Math.min(total - 1, Math.round(track.scrollLeft / step)));
   }, [reels.length]);
 
   useEffect(() => {
@@ -37,26 +46,21 @@ const ReelSlider = ({ reels }: { reels: Reel[] }) => {
 
   const scrollToIndex = (index: number) => {
     const track = trackRef.current;
-    const slide = track?.children[index] as HTMLElement | undefined;
-    if (!track || !slide) return;
-    track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior: "smooth" });
+    if (!track) return;
+    track.scrollTo({ left: index * getStep(), behavior: "smooth" });
   };
 
-  const scrollByPage = (dir: 1 | -1) => {
-    const track = trackRef.current;
-    if (!track) return;
-    track.scrollBy({ left: dir * track.clientWidth * 0.9, behavior: "smooth" });
-  };
+  // One card per click; wraps around so the arrows never dead-end
+  const move = (dir: 1 | -1) => scrollToIndex((active + dir + pages) % pages);
 
   const arrowClass =
-    "hidden md:flex absolute top-1/2 -translate-y-1/2 z-20 size-12 items-center justify-center rounded-full bg-white border border-gray-200 text-black shadow-lg hover:bg-primary hover:border-primary hover:text-white transition-all disabled:opacity-0 disabled:pointer-events-none";
+    "hidden md:flex absolute top-1/2 -translate-y-1/2 z-20 size-12 items-center justify-center rounded-full bg-white border border-gray-200 text-black shadow-lg hover:bg-primary hover:border-primary hover:text-white transition-all";
 
   return (
     <div className="relative">
       <button
         type="button"
-        onClick={() => scrollByPage(-1)}
-        disabled={!canPrev}
+        onClick={() => move(-1)}
         aria-label="Previous videos"
         className={`${arrowClass} -left-4 lg:-left-6`}
       >
@@ -86,8 +90,7 @@ const ReelSlider = ({ reels }: { reels: Reel[] }) => {
 
       <button
         type="button"
-        onClick={() => scrollByPage(1)}
-        disabled={!canNext}
+        onClick={() => move(1)}
         aria-label="Next videos"
         className={`${arrowClass} -right-4 lg:-right-6`}
       >
@@ -95,15 +98,15 @@ const ReelSlider = ({ reels }: { reels: Reel[] }) => {
       </button>
 
       {/* Dots */}
-      <div className="flex justify-center gap-2 mt-6">
-        {reels.map((reel, i) => (
+      <div className="flex justify-center items-center gap-2.5 mt-8 md:mt-10">
+        {Array.from({ length: pages }, (_, i) => (
           <button
-            key={reel.id}
+            key={i}
             type="button"
             onClick={() => scrollToIndex(i)}
             aria-label={`Go to video ${i + 1}`}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              i === active ? "w-8 bg-primary" : "w-2 bg-gray-300 hover:bg-primary/50"
+            className={`h-2.5 rounded-full transition-all duration-300 ${
+              i === active ? "w-10 bg-primary" : "w-2.5 bg-gray-300 hover:bg-primary/50"
             }`}
           />
         ))}
