@@ -68,9 +68,10 @@ export default async function ComplianceHub() {
   return (
     <>
       {/* ─── HERO ──────────────────────────────────────────────── */}
-      <section className="relative bg-[#0a0a0a] text-white pt-32 pb-12 md:pt-40 md:pb-16 overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }} />
-        <div className="absolute top-0 right-0 w-[40%] h-full bg-primary/5 skew-x-[-12deg] origin-top-right pointer-events-none" />
+      <section className="relative bg-[#0a0a0a] text-white pt-32 pb-12 md:pt-40 md:pb-16 overflow-hidden border-b border-[#1a1a1a]">
+        {/* Same grid background + top accent line as PageHeader */}
+        <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 40px)" }} />
+        <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
         
         <Container>
           <div className="relative z-10 max-w-5xl mx-auto text-center">
