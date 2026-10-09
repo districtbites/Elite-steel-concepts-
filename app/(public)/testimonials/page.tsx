@@ -46,8 +46,8 @@ export default async function TestimonialsPage() {
         />
       )}
       <PageHeader
-        title={sections.header?.title || "Elite Success Stories"}
-        subtitle={sections.header?.subtitle || "Hear from the entrepreneurs and culinary visionaries who built their dreams on a foundation of Elite Steel."}
+        eyebrow="Elite Steel Concept"
+        title="Customer Testimonials"
       />
 
       {/* Stats / Proof Section */}
