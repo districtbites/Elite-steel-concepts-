@@ -142,7 +142,7 @@ export default async function TestimonialsPage() {
            </div>
 
             {testimonials.length > 0 ? (
-                <div className="columns-1 md:columns-2 lg:columns-3 gap-5 md:gap-6 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 max-w-6xl mx-auto">
                     {testimonials.map((testimonial, idx) => {
                         // Every 4th card gets a warm orange tint to break the rhythm
                         const accent = idx % 4 === 1;
@@ -157,7 +157,7 @@ export default async function TestimonialsPage() {
                         return (
                         <figure
                            key={testimonial.id}
-                           className={`break-inside-avoid mb-5 md:mb-6 relative overflow-hidden rounded-2xl border p-7 md:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group ${
+                           className={`h-full flex flex-col relative overflow-hidden rounded-2xl border p-7 md:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group ${
                              accent
                                ? "bg-gradient-to-br from-orange-50 via-white to-white border-primary/40 hover:border-primary"
                                : "bg-white border-gray-200 hover:border-primary"
@@ -176,7 +176,7 @@ export default async function TestimonialsPage() {
                                 </span>
                             </div>
 
-                            <blockquote className="text-base leading-relaxed mb-7 text-gray-600">
+                            <blockquote className="flex-grow text-base leading-relaxed mb-7 text-gray-600">
                                 &ldquo;{text}&rdquo;
                             </blockquote>
 
