@@ -13,7 +13,7 @@ const Footer = ({ settings }: FooterProps) => {
   return (
     <footer className="bg-secondary text-white pt-0 pb-8">
       {/* Gradient separator */}
-      <div className="h-1 bg-gradient-to-r from-transparent via-primary to-transparent mb-16" />
+      <div className="h-1 bg-primary mb-16" />
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand Column */}

@@ -7,7 +7,7 @@ import Button from "@/components/ui/Button";
 import { getTestimonials, getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
-import { Star, Quote as QuoteIcon, Play, CheckCircle, ShieldCheck, Award, MessageSquare } from "lucide-react";
+import { Star, Quote as QuoteIcon, Play, CheckCircle, ShieldCheck, Award, MessageSquare, Truck, CalendarCheck } from "lucide-react";
 import type { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
@@ -51,33 +51,45 @@ export default async function TestimonialsPage() {
       />
 
       {/* Stats / Proof Section */}
-      <Section className="bg-white pb-0">
-         <Container>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 bg-secondary rounded-[3rem] p-12 text-white items-center shadow-2xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px] rounded-full -mr-32 -mt-32"></div>
-               <div className="text-center space-y-2 relative z-10">
-                  <div className="text-4xl md:text-5xl font-black text-primary">350+</div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Trucks Built</div>
-               </div>
-               <div className="text-center space-y-2 relative z-10 border-l border-white/10">
-                  <div className="text-4xl md:text-5xl font-black text-primary">14+</div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Years Exp</div>
-               </div>
-               <div className="text-center space-y-2 relative z-10 border-l border-white/10">
-                  <div className="text-4xl md:text-5xl font-black text-primary">100%</div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Pass Rate</div>
-               </div>
-               <div className="text-center space-y-2 relative z-10 border-l border-white/10">
-                  <div className="text-4xl md:text-5xl font-black text-primary">4.9/5</div>
-                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Avg Rating</div>
-               </div>
-            </div>
-         </Container>
+      <Section className="!pt-10 md:!pt-14 !pb-10 md:!pb-14 bg-white">
+        <Container>
+          <div className="text-center max-w-5xl mx-auto mb-8 md:mb-10">
+            <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tight leading-tight">
+              Why Businesses Trust Elite Steel Concepts For Custom Food Trucks &amp; Trailer Builds
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 max-w-6xl mx-auto">
+            {[
+              { value: "350+", label: "Trucks Built", icon: Truck },
+              { value: "14+", label: "Years Experience", icon: CalendarCheck },
+              { value: "100%", label: "Inspection Pass Rate", icon: ShieldCheck },
+              { value: "4.9/5", label: "Average Rating", icon: Star },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="group relative bg-white border border-gray-200 hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-300 px-4 py-8 md:px-6 md:py-10 flex flex-col items-center text-center overflow-hidden"
+              >
+                <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
+                <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 group-hover:bg-primary group-hover:border-primary flex items-center justify-center mb-5 transition-colors duration-300">
+                  <stat.icon size={24} className="text-primary group-hover:text-white transition-colors duration-300" />
+                </div>
+                <div className="text-4xl md:text-5xl font-black text-primary leading-none mb-3">
+                  {stat.value}
+                </div>
+                <div className="text-xs md:text-sm font-black uppercase tracking-wide text-black">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Container>
       </Section>
 
       {/* Video Testimonials / Featured Story */}
-      <Section className="bg-white overflow-hidden">
+      <Section className="!pt-0 !pb-10 md:!pb-14 bg-white overflow-hidden">
         <Container>
+           {/* Hidden: Featured Story (video + "They didn't just build a truck" quote)
            <div className="flex flex-col lg:flex-row items-center gap-16 mb-24">
               <div className="w-full lg:w-1/2 relative group">
                  <div className="absolute -inset-4 bg-primary/20 rounded-[2.5rem] rotate-3 group-hover:rotate-0 transition-transform duration-500"></div>
@@ -122,51 +134,74 @@ export default async function TestimonialsPage() {
                  </div>
               </div>
            </div>
+           */}
 
            {/* Grid Layout for Others */}
-           <div className="text-center mb-16">
-              <h3 className="text-2xl font-black uppercase text-secondary tracking-tight">Verified <span className="text-primary italic">Owner</span> Reviews</h3>
-              <p className="text-gray-400 text-xs font-black uppercase tracking-[0.3em] mt-2">Authentic Experiences from the DMV & Nationwide</p>
+           <div className="text-center mb-8 md:mb-10">
+              <h3 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tight leading-tight">Testimonials From Our Customers</h3>
+              <p className="text-gray-600 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mt-3">See why entrepreneurs choose ECS as the best food truck and trailer builder in USA for custom builds.</p>
            </div>
 
             {testimonials.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-                    {testimonials.map((testimonial, idx) => (
-                        <div 
-                           key={testimonial.id} 
-                           className={`bg-white border border-gray-100 p-10 rounded-[2.5rem] relative flex flex-col shadow-sm hover:shadow-2xl transition-all duration-500 group ${idx % 2 === 0 ? 'md:translate-y-8' : ''}`}
+                <div className="columns-1 md:columns-2 lg:columns-3 gap-5 md:gap-6 max-w-6xl mx-auto">
+                    {testimonials.map((testimonial, idx) => {
+                        // Every 4th card gets a warm orange tint to break the rhythm
+                        const accent = idx % 4 === 1;
+                        // Stored content sometimes already carries its own quote marks
+                        const text = testimonial.content.trim().replace(/^["“”]+|["“”]+$/g, "");
+                        const initials = testimonial.clientName
+                          .split(/\s+/)
+                          .map((w) => w[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase();
+                        return (
+                        <figure
+                           key={testimonial.id}
+                           className={`break-inside-avoid mb-5 md:mb-6 relative overflow-hidden rounded-2xl border p-7 md:p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl group ${
+                             accent
+                               ? "bg-gradient-to-br from-orange-50 via-white to-white border-primary/40 hover:border-primary"
+                               : "bg-white border-gray-200 hover:border-primary"
+                           }`}
                         >
-                            <div className="absolute top-8 right-8 text-gray-100 group-hover:text-primary/10 transition-colors">
-                               <QuoteIcon size={48} />
+                            <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
+
+                            <div className="flex items-center justify-between mb-5">
+                                <div className="flex gap-1 text-primary">
+                                    {[...Array(testimonial.rating || 5)].map((_, i) => (
+                                    <Star key={i} size={16} fill="currentColor" />
+                                    ))}
+                                </div>
+                                <span className={`flex size-10 items-center justify-center rounded-full ${accent ? "bg-primary text-white" : "bg-primary/10 text-primary"}`}>
+                                   <QuoteIcon size={18} fill="currentColor" />
+                                </span>
                             </div>
 
-                            <div className="flex gap-1 mb-6 text-primary">
-                                {[...Array(testimonial.rating || 5)].map((_, i) => (
-                                <Star key={i} size={16} fill="currentColor" />
-                                ))}
-                            </div>
+                            <blockquote className="text-base leading-relaxed mb-7 text-gray-600">
+                                &ldquo;{text}&rdquo;
+                            </blockquote>
 
-                            <p className="text-gray-600 mb-10 text-md leading-relaxed flex-grow font-light">
-                                &ldquo;<AutoLinkedText text={autoLinkMarkdown(testimonial.content, activeRules, linkSettings).updatedContent} />&rdquo;
-                            </p>
-
-                            <div className="pt-8 border-t border-gray-50 flex items-center justify-between">
-                                <div>
-                                   <h4 className="font-black text-secondary uppercase tracking-tight text-lg mb-1 leading-none">
+                            <figcaption className={`flex items-center gap-3 pt-5 border-t ${accent ? "border-primary/20" : "border-gray-100"}`}>
+                                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-black text-black">
+                                   {initials}
+                                </span>
+                                <div className="min-w-0">
+                                   <div className="font-black uppercase tracking-tight leading-tight text-black">
                                       {testimonial.clientName}
-                                   </h4>
+                                   </div>
                                    {(testimonial.role || testimonial.company) && (
-                                       <p className="text-primary text-[10px] uppercase tracking-widest font-black leading-none">
+                                       <div className="text-xs font-semibold mt-0.5 text-gray-500">
                                           {testimonial.company || testimonial.role}
-                                       </p>
+                                       </div>
                                    )}
                                 </div>
-                                <div className="w-10 h-10 bg-secondary/5 rounded-full flex items-center justify-center text-primary border border-primary/10">
-                                   <Award size={20} />
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                                <span className="ml-auto inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-primary">
+                                   <CheckCircle size={14} /> Verified
+                                </span>
+                            </figcaption>
+                        </figure>
+                        );
+                    })}
                 </div>
             ) : (
                 <div className="text-center py-24 bg-gray-50 rounded-[3rem] border border-dashed border-gray-200">
@@ -177,8 +212,8 @@ export default async function TestimonialsPage() {
         </Container>
       </Section>
 
-      {/* Proof / Brands Bar */}
-      <div className="bg-gray-50 py-12 border-y border-gray-100">
+      {/* Hidden: Proof / Brands Bar (Metro DC Health, NSF Certified, ...)
+      <div className="bg-gray-50 py-8 md:py-10 border-y border-gray-100">
          <Container>
             <div className="flex flex-wrap justify-center items-center gap-12 grayscale opacity-40">
                <div className="text-xl font-black text-secondary tracking-tighter">METRO DC HEALTH</div>
@@ -189,11 +224,13 @@ export default async function TestimonialsPage() {
             </div>
          </Container>
       </div>
+      */}
 
       <CTASection
-        title={sections.cta?.title || "Ready to Start Your Success Story?"}
-        subtitle={sections.cta?.subtitle || "Join hundreds of successful entrepreneurs who started their journey with Elite Steel Concepts."}
-        buttonText={sections.cta?.ctaText || "Get Custom Quote"}
+        title="Ready to Build Your Dream Food Truck & Trailer?"
+        subtitle="Tell us about your concept, and we’ll help you plan the right custom truck or trailer for your business."
+        buttonText="Get a Free Quote Now!"
+        titleClassName="text-2xl md:text-4xl tracking-tight leading-tight"
         buttonHref="/quote"
       />
     </>
