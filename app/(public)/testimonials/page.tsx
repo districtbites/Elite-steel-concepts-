@@ -35,7 +35,6 @@ export default async function TestimonialsPage() {
     getMediaAsset("testimonials", "hero", "https://images.pexels.com/photos/1766686/pexels-photo-1766686.jpeg?auto=compress&cs=tinysrgb&w=1200"),
   ]);
   const activeRules = rules.filter(r => r.enabled !== false);
-  const sections = pageSeo.sections || {};
 
   return (
     <>
