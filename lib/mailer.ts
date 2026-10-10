@@ -61,6 +61,25 @@ function createTransporter(settings: GlobalSettings) {
 
 // ─── Shared Utilities ─────────────────────────────────────────────────────────
 
+function escapeHtml(text: string) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+/** Returns a copy of a quote with every user-supplied text field HTML-escaped. */
+function escapeQuote(quote: Quote): Quote {
+    const escaped: Record<string, unknown> = { ...quote };
+    for (const [key, value] of Object.entries(quote)) {
+        if (typeof value === "string") escaped[key] = escapeHtml(value);
+    }
+    if (Array.isArray(quote.services)) escaped.services = quote.services.map(escapeHtml);
+    return escaped as unknown as Quote;
+}
+
 function pill(text: string, color: string) {
     return `<span style="display:inline-block;background:${color}22;color:${color};border:1px solid ${color}44;padding:4px 14px;border-radius:100px;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;font-family:'Helvetica Neue',Arial,sans-serif;">${text}</span>`;
 }
@@ -82,7 +101,9 @@ function infoRow(label: string, value: string) {
 
 // ─── Master Wrapper ───────────────────────────────────────────────────────────
 
-function emailWrapper(content: string, accentColor: string = BRAND.primary) {
+const ADMIN_FOOTER_NOTE = "This is an automated notification. Do not reply to this email.";
+
+function emailWrapper(content: string, accentColor: string = BRAND.primary, footerNote: string = ADMIN_FOOTER_NOTE) {
     return `<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -147,7 +168,7 @@ function emailWrapper(content: string, accentColor: string = BRAND.primary) {
                       ELITE STEEL CONCEPTS &nbsp;·&nbsp; 11200 Bertalice Ct, Manassas, VA 20110 &nbsp;·&nbsp; (571) 651-0337
                     </p>
                     <p style="margin:8px 0 0;font-size:10px;color:#444444;">
-                      This is an automated notification. Do not reply to this email.
+                      ${footerNote}
                     </p>
                   </td>
                 </tr>
@@ -178,6 +199,8 @@ export async function sendQuoteNotification(settings: GlobalSettings, quote: Quo
         return;
     }
 
+    const rawEmail = quote.email;
+    quote = escapeQuote(quote);
     const servicesList = Array.isArray(quote.services) && quote.services.length > 0
         ? quote.services.join(" &nbsp;·&nbsp; ")
         : "—";
@@ -274,6 +297,7 @@ export async function sendQuoteNotification(settings: GlobalSettings, quote: Quo
     await transporter.sendMail({
         from,
         to,
+        replyTo: rawEmail,
         subject: `🔔 New Quote Request — ${quote.name} | Elite Steel Concepts`,
         html: emailWrapper(bodyContent, BRAND.primary),
     });
@@ -294,6 +318,11 @@ export async function sendContactNotification(settings: GlobalSettings, contact:
         return;
     }
 
+    const name    = escapeHtml(contact.name);
+    const email   = escapeHtml(contact.email);
+    const phone   = contact.phone ? escapeHtml(contact.phone) : "—";
+    const message = escapeHtml(contact.message).replace(/\n/g, "<br>");
+
     const bodyContent = `
 
       <!-- Alert tag -->
@@ -305,7 +334,7 @@ export async function sendContactNotification(settings: GlobalSettings, contact:
 
       <!-- Headline -->
       <h1 style="margin:0 0 6px;font-size:30px;font-weight:900;color:${BRAND.white};letter-spacing:-1px;line-height:1.15;">
-        Message from <span style="color:${BRAND.primary};">${contact.name}</span>
+        Message from <span style="color:${BRAND.primary};">${name}</span>
       </h1>
       <p style="margin:0 0 36px;font-size:12px;color:${BRAND.muted};font-weight:500;letter-spacing:0.5px;">
         Received on ${contact.date}
@@ -323,9 +352,9 @@ export async function sendContactNotification(settings: GlobalSettings, contact:
         01 &nbsp;/ &nbsp;Sender Details
       </p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
-        ${infoRow("Full Name", contact.name)}
-        ${infoRow("Email",     `<a href="mailto:${contact.email}" style="color:${BRAND.primary};text-decoration:none;">${contact.email}</a>`)}
-        ${infoRow("Phone",     contact.phone || "—")}
+        ${infoRow("First Name", name)}
+        ${infoRow("Email",     `<a href="mailto:${email}" style="color:${BRAND.primary};text-decoration:none;">${email}</a>`)}
+        ${infoRow("Phone",     phone)}
       </table>
 
       <!-- Section: Message -->
@@ -335,7 +364,7 @@ export async function sendContactNotification(settings: GlobalSettings, contact:
       <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
         <tr>
           <td style="background:${BRAND.mid};border-left:3px solid ${BRAND.primary};border-radius:0 10px 10px 0;padding:20px 22px;">
-            <p style="margin:0;color:${BRAND.text};font-size:13px;line-height:1.85;">${contact.message.replace(/\n/g, "<br>")}</p>
+            <p style="margin:0;color:${BRAND.text};font-size:13px;line-height:1.85;">${message}</p>
           </td>
         </tr>
       </table>
@@ -344,9 +373,9 @@ export async function sendContactNotification(settings: GlobalSettings, contact:
       <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:12px;">
         <tr>
           <td style="padding-right:12px;">
-            <a href="mailto:${contact.email}?subject=Re: Your inquiry — Elite Steel Concepts"
+            <a href="mailto:${email}?subject=Re: Your inquiry — Elite Steel Concepts"
                style="display:inline-block;background:${BRAND.primary};color:${BRAND.black};font-weight:900;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;padding:15px 28px;border-radius:10px;text-decoration:none;">
-              Reply to ${contact.name} &nbsp;→
+              Reply to ${name} &nbsp;→
             </a>
           </td>
           <td>
@@ -363,10 +392,223 @@ export async function sendContactNotification(settings: GlobalSettings, contact:
     await transporter.sendMail({
         from,
         to,
+        replyTo: contact.email,
         subject: `💬 New Contact Message — ${contact.name} | Elite Steel Concepts`,
         html: emailWrapper(bodyContent, BRAND.primary),
     });
     console.log(`[Mailer] Contact notification sent to ${to}`);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CUSTOMER CONFIRMATION TEMPLATES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const CUSTOMER_FOOTER_NOTE = "You're receiving this email because you contacted Elite Steel Concepts. Reply to this email to reach our team.";
+
+function siteUrl() {
+    return (process.env.NEXT_PUBLIC_SITE_URL || "https://www.esteelconcepts.com").replace(/\/$/, "");
+}
+
+function sectionLabel(text: string) {
+    return `<p style="margin:0 0 14px;font-size:9px;font-weight:800;color:${BRAND.primary};letter-spacing:3px;text-transform:uppercase;">${text}</p>`;
+}
+
+/** "What happens next" list — a numbered orange badge per step. */
+function nextSteps(steps: { title: string; text: string }[]) {
+    const rows = steps.map((step, i) => `
+        <tr>
+          <td style="width:44px;vertical-align:top;padding:0 0 18px;">
+            <div style="width:30px;height:30px;border-radius:8px;background:${BRAND.primary};color:${BRAND.black};font-size:13px;font-weight:900;text-align:center;line-height:30px;">${i + 1}</div>
+          </td>
+          <td style="vertical-align:top;padding:4px 0 18px;">
+            <div style="font-size:14px;font-weight:800;color:${BRAND.white};margin-bottom:4px;">${step.title}</div>
+            <div style="font-size:13px;color:${BRAND.muted};line-height:1.7;">${step.text}</div>
+          </td>
+        </tr>`).join("");
+    return `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;">${rows}</table>`;
+}
+
+/** Contact details card with phone, email, address and hours. */
+function contactCard(settings: GlobalSettings) {
+    const phone = settings.phone || "(571) 651-0337";
+    const email = settings.email || "esteelquotes@gmail.com";
+    const tel = phone.replace(/[^\d+]/g, "");
+    const telHref = tel.startsWith("+") ? tel : `+1${tel}`;
+    return `
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BRAND.darkCard};border:1px solid ${BRAND.border};border-radius:12px;margin-bottom:32px;">
+        <tr>
+          <td style="padding:22px 24px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              ${infoRow("Phone",   `<a href="tel:${telHref}" style="color:${BRAND.primary};text-decoration:none;">${escapeHtml(phone)}</a>`)}
+              ${infoRow("Email",   `<a href="mailto:${escapeHtml(email)}" style="color:${BRAND.primary};text-decoration:none;">${escapeHtml(email)}</a>`)}
+              ${settings.address ? infoRow("Visit Us", escapeHtml(settings.address)) : ""}
+              ${settings.businessHours ? infoRow("Hours", escapeHtml(settings.businessHours)) : ""}
+            </table>
+          </td>
+        </tr>
+      </table>`;
+}
+
+function customerCtas(settings: GlobalSettings, secondary: { label: string; href: string }) {
+    const tel = (settings.phone || "(571) 651-0337").replace(/[^\d+]/g, "");
+    const telHref = tel.startsWith("+") ? tel : `+1${tel}`;
+    return `
+      <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
+        <tr>
+          <td style="padding:0 12px 12px 0;">
+            <a href="tel:${telHref}"
+               style="display:inline-block;background:${BRAND.primary};color:${BRAND.black};font-weight:900;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;padding:15px 28px;border-radius:10px;text-decoration:none;">
+              Call Us Now &nbsp;→
+            </a>
+          </td>
+          <td style="padding:0 0 12px;">
+            <a href="${secondary.href}"
+               style="display:inline-block;background:transparent;color:${BRAND.white};border:1px solid ${BRAND.border};font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:15px 24px;border-radius:10px;text-decoration:none;">
+              ${secondary.label}
+            </a>
+          </td>
+        </tr>
+      </table>`;
+}
+
+function divider() {
+    return `
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+        <tr>
+          <td style="height:1px;background:${BRAND.border};font-size:0;line-height:0;">&nbsp;</td>
+        </tr>
+      </table>`;
+}
+
+/** Confirmation sent to the customer after they submit the Contact Us form. */
+export async function sendContactConfirmation(settings: GlobalSettings, contact: Contact) {
+    settings = withEnvSmtp(settings);
+    const from = settings.smtpFrom || `Elite Steel Concepts <${settings.smtpUser || "noreply@esteelconcepts.com"}>`;
+    const replyTo = settings.notificationEmail || settings.email || "esteelquotes@gmail.com";
+
+    if (!settings.smtpUser || !settings.smtpPassword) {
+        console.warn("[Mailer] SMTP not configured — skipping contact confirmation.");
+        return;
+    }
+
+    const name    = escapeHtml(contact.name);
+    const message = escapeHtml(contact.message).replace(/\n/g, "<br>");
+
+    const bodyContent = `
+      <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+        <tr>
+          <td>${pill("Message Received", BRAND.success)}</td>
+        </tr>
+      </table>
+
+      <h1 style="margin:0 0 12px;font-size:30px;font-weight:900;color:${BRAND.white};letter-spacing:-1px;line-height:1.15;">
+        Thanks for reaching out, <span style="color:${BRAND.primary};">${name}</span>!
+      </h1>
+      <p style="margin:0 0 36px;font-size:15px;color:${BRAND.text};line-height:1.75;">
+        We've received your message. A member of our team will get back to you shortly to discuss your custom food truck or trailer.
+      </p>
+
+      ${divider()}
+
+      ${sectionLabel("01 &nbsp;/ &nbsp;Your Message")}
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+        <tr>
+          <td style="background:${BRAND.mid};border-left:3px solid ${BRAND.primary};border-radius:0 10px 10px 0;padding:20px 22px;">
+            <p style="margin:0;color:${BRAND.text};font-size:13px;line-height:1.85;">${message}</p>
+          </td>
+        </tr>
+      </table>
+
+      ${sectionLabel("02 &nbsp;/ &nbsp;What Happens Next")}
+      ${nextSteps([
+          { title: "We review your message", text: "Our team reads every inquiry personally — no bots, no auto-routing." },
+          { title: "We get in touch", text: "Expect a call or email from us, usually within one business day." },
+          { title: "We plan your build", text: "Ready to go further? We'll walk you through design, pricing and timeline." },
+      ])}
+
+      ${sectionLabel("03 &nbsp;/ &nbsp;Need Us Sooner?")}
+      ${contactCard(settings)}
+
+      ${customerCtas(settings, { label: "Request a Quote", href: `${siteUrl()}/quote` })}
+    `;
+
+    const transporter = createTransporter(settings);
+    await transporter.sendMail({
+        from,
+        to: contact.email,
+        replyTo,
+        subject: `We received your message — Elite Steel Concepts`,
+        html: emailWrapper(bodyContent, BRAND.primary, CUSTOMER_FOOTER_NOTE),
+    });
+    console.log(`[Mailer] Contact confirmation sent to ${contact.email}`);
+}
+
+/** Confirmation sent to the customer after they submit the Quote form. */
+export async function sendQuoteConfirmation(settings: GlobalSettings, quote: Quote) {
+    settings = withEnvSmtp(settings);
+    const from = settings.smtpFrom || `Elite Steel Concepts <${settings.smtpUser || "noreply@esteelconcepts.com"}>`;
+    const replyTo = settings.notificationEmail || settings.email || "esteelquotes@gmail.com";
+
+    if (!settings.smtpUser || !settings.smtpPassword) {
+        console.warn("[Mailer] SMTP not configured — skipping quote confirmation.");
+        return;
+    }
+
+    const to = quote.email;
+    const q = escapeQuote(quote);
+    const location = [q.vendingCity, q.vendingState].filter(Boolean).join(", ");
+    const services = Array.isArray(q.services) && q.services.length > 0 ? q.services.join(" &nbsp;·&nbsp; ") : "";
+
+    const bodyContent = `
+      <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+        <tr>
+          <td>${pill("Quote Request Received", BRAND.success)}</td>
+        </tr>
+      </table>
+
+      <h1 style="margin:0 0 12px;font-size:30px;font-weight:900;color:${BRAND.white};letter-spacing:-1px;line-height:1.15;">
+        Your build request is in, <span style="color:${BRAND.primary};">${q.name}</span>!
+      </h1>
+      <p style="margin:0 0 36px;font-size:15px;color:${BRAND.text};line-height:1.75;">
+        Thank you for choosing Elite Steel Concepts. Our team is reviewing your project details and will contact you shortly to schedule your free consultation.
+      </p>
+
+      ${divider()}
+
+      ${sectionLabel("01 &nbsp;/ &nbsp;Your Request Summary")}
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+        ${q.projectType ? infoRow("Looking For", q.projectType) : ""}
+        ${q.menuType ? infoRow("Food Type", q.menuType) : ""}
+        ${location ? infoRow("Vending In", location) : ""}
+        ${q.budget ? infoRow("Budget", q.budget) : ""}
+        ${q.timeline ? infoRow("Timeline", q.timeline) : ""}
+        ${q.dimensions ? infoRow("Preferred Size", q.dimensions) : ""}
+        ${services ? infoRow("Add-Ons", services) : ""}
+        ${infoRow("Submitted", q.date)}
+      </table>
+
+      ${sectionLabel("02 &nbsp;/ &nbsp;What Happens Next")}
+      ${nextSteps([
+          { title: "Project review", text: "Our fabrication team reviews your concept, menu and equipment needs." },
+          { title: "Free consultation call", text: "We'll reach out — usually within one business day — to talk through your build." },
+          { title: "Custom design & quote", text: "You get a floor plan built around your menu and a real number based on your actual spec." },
+      ])}
+
+      ${sectionLabel("03 &nbsp;/ &nbsp;Questions In The Meantime?")}
+      ${contactCard(settings)}
+
+      ${customerCtas(settings, { label: "See Our Builds", href: `${siteUrl()}/portfolio` })}
+    `;
+
+    const transporter = createTransporter(settings);
+    await transporter.sendMail({
+        from,
+        to,
+        replyTo,
+        subject: `Your quote request is in — Elite Steel Concepts`,
+        html: emailWrapper(bodyContent, BRAND.primary, CUSTOMER_FOOTER_NOTE),
+    });
+    console.log(`[Mailer] Quote confirmation sent to ${to}`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

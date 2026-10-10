@@ -2,15 +2,15 @@
 
 import { createContact, getSettings } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { sendContactNotification } from "@/lib/mailer";
+import { sendContactNotification, sendContactConfirmation } from "@/lib/mailer";
 
 export async function submitContactForm(formData: FormData) {
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const phone = formData.get("phone") as string;
-    const message = formData.get("message") as string;
+    const name = (formData.get("name") as string | null)?.trim();
+    const email = (formData.get("email") as string | null)?.trim();
+    const phone = (formData.get("phone") as string | null)?.trim();
+    const message = (formData.get("message") as string | null)?.trim();
 
-    if (!name || !email || !message) {
+    if (!name || !email || !phone || !message) {
         return { error: "Missing required fields" };
     }
 
@@ -21,12 +21,20 @@ export async function submitContactForm(formData: FormData) {
         message
     });
 
-    // Send email notification (non-blocking — errors won't fail the request)
+    // Notify the team and confirm to the customer (errors are logged, never fail the request)
     try {
         const settings = await getSettings();
-        await sendContactNotification(settings, newContact);
+        const results = await Promise.allSettled([
+            sendContactNotification(settings, newContact),
+            sendContactConfirmation(settings, newContact),
+        ]);
+        results.forEach((result, i) => {
+            if (result.status === "rejected") {
+                console.error(`[Contact] ${i === 0 ? "Team notification" : "Customer confirmation"} email failed:`, result.reason);
+            }
+        });
     } catch (err) {
-        console.error("[Contact] Email notification failed:", err);
+        console.error("[Contact] Email sending failed:", err);
     }
 
     revalidatePath("/admin");

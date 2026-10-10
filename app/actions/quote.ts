@@ -2,7 +2,7 @@
 
 import { createQuote, Quote, getSettings } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { sendQuoteNotification } from "@/lib/mailer";
+import { sendQuoteNotification, sendQuoteConfirmation } from "@/lib/mailer";
 
 export async function submitQuoteForm(formData: FormData) {
     const name = formData.get("name") as string;
@@ -50,12 +50,20 @@ export async function submitQuoteForm(formData: FormData) {
         vendingCity,
     });
 
-    // Send email notification (non-blocking — errors won't fail the request)
+    // Notify the team and confirm to the customer (errors are logged, never fail the request)
     try {
         const settings = await getSettings();
-        await sendQuoteNotification(settings, newQuote);
+        const results = await Promise.allSettled([
+            sendQuoteNotification(settings, newQuote),
+            sendQuoteConfirmation(settings, newQuote),
+        ]);
+        results.forEach((result, i) => {
+            if (result.status === "rejected") {
+                console.error(`[Quote] ${i === 0 ? "Team notification" : "Customer confirmation"} email failed:`, result.reason);
+            }
+        });
     } catch (err) {
-        console.error("[Quote] Email notification failed:", err);
+        console.error("[Quote] Email sending failed:", err);
     }
 
     revalidatePath("/admin");
