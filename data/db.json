@@ -1,6 +1,79 @@
 {
   "quotes": [
     {
+      "name": "NICOLE SEYMOUR",
+      "email": "info@seymorespice.com",
+      "phone": "9545528859",
+      "company": "Sey more Spice",
+      "projectType": "Concession Trailer",
+      "sourcing": "Have Vehicle",
+      "budget": "30k-50k",
+      "timeline": "1-3 Months",
+      "menuType": "Jerk, jamaican Cuisine",
+      "message": "Left wall - hot line & right wall - Cold line with window in the middle so beverage cooler can be underneath, and other cooler next to it. Rear wall - 3 comp sink and hand wash, entry will be at the back not side",
+      "dimensions": "8x16",
+      "equipment": "24\" Grill, 1 double basket fryer, 4 serving steam well, 1 hot box, 15\" flat top, 36\" sandwich station with top wells, under counter beverage fridge, 1 floor to ceiling cooler",
+      "brandingNeeds": null,
+      "powerRequirements": "Standard Gas",
+      "services": [
+        "Fire Suppression System",
+        "Health Dept Consultation",
+        "Generator Install"
+      ],
+      "id": "1791595984758",
+      "date": "Oct 10, 2026",
+      "status": "New"
+    },
+    {
+      "name": "Garry McCain",
+      "email": "sgmccain07@yahoo.com",
+      "phone": "6467525266",
+      "company": "Garry’s Concoctions",
+      "projectType": "Concession Trailer",
+      "sourcing": "Need Vehicle",
+      "budget": "Under 30k",
+      "timeline": "1-3 Months",
+      "menuType": "Juices and smoothies",
+      "message": "ada accessible/accomodations, electrical outlets for blenders, etc. ",
+      "dimensions": "13 ft trailer",
+      "equipment": "refridgerator, ice maker, prep counter & storage space, 3 section sink, lights, Dot certified,  ",
+      "brandingNeeds": null,
+      "powerRequirements": "All Electric",
+      "services": [
+        "Full Wrap / Graphics",
+        "Generator Install"
+      ],
+      "id": "1791505897169",
+      "date": "Oct 9, 2026",
+      "status": "New"
+    },
+    {
+      "name": "Moazzam Ali",
+      "email": "smoazzam435@gmail.com",
+      "phone": "+17094148491",
+      "company": "Boone Pierce Plc",
+      "projectType": "Custom Food Trailer",
+      "sourcing": "Have Vehicle",
+      "budget": "80k-120k",
+      "timeline": "ASAP",
+      "menuType": "Nostrum sint pariatu",
+      "message": "Explicabo Dolore qu",
+      "dimensions": "Amet commodo soluta",
+      "equipment": "Fugit veniam accus",
+      "brandingNeeds": null,
+      "powerRequirements": "Quiet Diesel",
+      "services": [
+        "Full Wrap / Graphics",
+        "Health Dept Consultation",
+        "Custom Porch Fab"
+      ],
+      "vendingState": "Minnesota (MN)",
+      "vendingCity": "Adipisci suscipit cu",
+      "id": "1791487803884",
+      "date": "Oct 8, 2026",
+      "status": "Quoted"
+    },
+    {
       "name": "Moazzam Ali",
       "email": "smoazzam435@gmail.com",
       "phone": "+1 (568) 791-8591",
@@ -402,7 +475,7 @@
       "message": "Commodi tempora dolo",
       "id": "1791472344441",
       "date": "Oct 8, 2026",
-      "status": "New"
+      "status": "Read"
     },
     {
       "name": "Aaron Hill",

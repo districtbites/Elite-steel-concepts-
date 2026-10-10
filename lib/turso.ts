@@ -36,6 +36,50 @@ export function getTursoClient(): Client | null {
     return cachedClient;
 }
 
+const TRANSIENT_ERROR_CODES = new Set([
+    'UND_ERR_SOCKET',
+    'UND_ERR_CONNECT_TIMEOUT',
+    'UND_ERR_HEADERS_TIMEOUT',
+    'ECONNRESET',
+    'ECONNREFUSED',
+    'ETIMEDOUT',
+    'EPIPE',
+    'EAI_AGAIN',
+]);
+
+/**
+ * Returns whether an error (or any error in its cause chain) is a transient network failure.
+ */
+function isTransientError(error: unknown): boolean {
+    let current: any = error;
+    for (let depth = 0; current && depth < 5; depth++) {
+        if (TRANSIENT_ERROR_CODES.has(current.code)) return true;
+        if (current instanceof TypeError && current.message === 'fetch failed') return true;
+        current = current.cause;
+    }
+    return false;
+}
+
+/**
+ * Runs a Turso operation, retrying with backoff on transient network errors
+ * (e.g. "other side closed" from a stale keep-alive socket).
+ */
+async function withRetry<T>(operation: (client: Client) => Promise<T>, attempts = 3): Promise<T> {
+    for (let attempt = 1; ; attempt++) {
+        const client = getTursoClient();
+        if (!client) throw new Error('Turso is not configured');
+
+        try {
+            return await operation(client);
+        } catch (error) {
+            if (attempt >= attempts || !isTransientError(error)) throw error;
+            // Drop the cached client so the next attempt opens a fresh connection.
+            if (cachedClient === client) cachedClient = null;
+            await new Promise(resolve => setTimeout(resolve, 250 * 2 ** (attempt - 1)));
+        }
+    }
+}
+
 /**
  * Ensures the required tables exist in the Turso database.
  */
@@ -45,7 +89,7 @@ export async function initTursoTables(): Promise<boolean> {
     if (!client) return false;
 
     try {
-        await client.batch([
+        await withRetry(c => c.batch([
             `CREATE TABLE IF NOT EXISTS kv_store (
                 key TEXT PRIMARY KEY,
                 value TEXT NOT NULL,
@@ -60,7 +104,7 @@ export async function initTursoTables(): Promise<boolean> {
                 updated_at TEXT NOT NULL
             );`,
             `CREATE INDEX IF NOT EXISTS idx_media_filename ON media_files(filename);`
-        ], 'write');
+        ], 'write'));
 
         tablesInitialized = true;
         return true;
@@ -78,10 +122,10 @@ export async function tursoGet<T = any>(key: string): Promise<T | null> {
     if (!client) return null;
 
     try {
-        const res = await client.execute({
+        const res = await withRetry(c => c.execute({
             sql: `SELECT value FROM kv_store WHERE key = ? LIMIT 1;`,
             args: [key],
-        });
+        }));
 
         if (res.rows.length === 0) return null;
         const raw = res.rows[0].value as string;
@@ -103,12 +147,12 @@ export async function tursoSet(key: string, value: any): Promise<boolean> {
         const jsonStr = JSON.stringify(value);
         const now = new Date().toISOString();
 
-        await client.execute({
+        await withRetry(c => c.execute({
             sql: `INSERT INTO kv_store (key, value, updated_at) 
                   VALUES (?, ?, ?) 
                   ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at;`,
             args: [key, jsonStr, now],
-        });
+        }));
 
         return true;
     } catch (error) {
@@ -125,7 +169,7 @@ export async function tursoGetAllKV(): Promise<Record<string, any>> {
     if (!client) return {};
 
     try {
-        const res = await client.execute("SELECT key, value FROM kv_store;");
+        const res = await withRetry(c => c.execute("SELECT key, value FROM kv_store;"));
         const result: Record<string, any> = {};
         for (const row of res.rows) {
             const key = row.key as string;
@@ -158,7 +202,7 @@ export async function tursoBatchSet(entries: { key: string; value: any }[]): Pro
                   ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at;`,
             args: [e.key, JSON.stringify(e.value), now]
         }));
-        await client.batch(statements, 'write');
+        await withRetry(c => c.batch(statements, 'write'));
         return true;
     } catch (error) {
         console.error("Error in tursoBatchSet:", error);
@@ -174,10 +218,10 @@ export async function tursoDelete(key: string): Promise<boolean> {
     if (!client) return false;
 
     try {
-        await client.execute({
+        await withRetry(c => c.execute({
             sql: `DELETE FROM kv_store WHERE key = ?;`,
             args: [key],
-        });
+        }));
         return true;
     } catch (error) {
         console.error(`Error deleting key "${key}" from Turso:`, error);
@@ -207,7 +251,7 @@ export async function tursoSaveMedia(
             : Buffer.from(base64Data, 'base64').length;
         const now = new Date().toISOString();
 
-        await client.execute({
+        await withRetry(c => c.execute({
             sql: `INSERT INTO media_files (path, filename, mime_type, data, size, updated_at)
                   VALUES (?, ?, ?, ?, ?, ?)
                   ON CONFLICT(path) DO UPDATE SET 
@@ -217,7 +261,7 @@ export async function tursoSaveMedia(
                       size = excluded.size,
                       updated_at = excluded.updated_at;`,
             args: [normalizedPath, filename, mimeType, base64Data, size, now],
-        });
+        }));
 
         return true;
     } catch (error) {
@@ -245,13 +289,13 @@ export async function tursoGetMedia(mediaPath: string): Promise<TursoMediaRecord
     try {
         const normalizedPath = mediaPath.startsWith('/') ? mediaPath : `/${mediaPath}`;
 
-        const res = await client.execute({
+        const res = await withRetry(c => c.execute({
             sql: `SELECT path, filename, mime_type, data, size, updated_at 
                   FROM media_files 
                   WHERE path = ? OR filename = ? 
                   LIMIT 1;`,
             args: [normalizedPath, path.basename(normalizedPath)],
-        });
+        }));
 
         if (res.rows.length === 0) return null;
         const row = res.rows[0];
@@ -280,10 +324,10 @@ export async function tursoDeleteMedia(mediaPath: string): Promise<boolean> {
     try {
         await initTursoTables();
         const normalizedPath = mediaPath.startsWith('/') ? mediaPath : `/${mediaPath}`;
-        await client.execute({
+        await withRetry(c => c.execute({
             sql: `DELETE FROM media_files WHERE path = ? OR filename = ?;`,
             args: [normalizedPath, path.basename(normalizedPath)],
-        });
+        }));
         return true;
     } catch (error) {
         console.error(`Error deleting media "${mediaPath}" from Turso:`, error);
@@ -300,7 +344,7 @@ export async function tursoGetAllMedia(): Promise<Omit<TursoMediaRecord, 'dataBa
 
     try {
         await initTursoTables();
-        const res = await client.execute(`SELECT path, filename, mime_type, size, updated_at FROM media_files ORDER BY updated_at DESC;`);
+        const res = await withRetry(c => c.execute(`SELECT path, filename, mime_type, size, updated_at FROM media_files ORDER BY updated_at DESC;`));
         return res.rows.map(row => ({
             path: row.path as string,
             filename: row.filename as string,
