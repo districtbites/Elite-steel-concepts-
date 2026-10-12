@@ -139,6 +139,7 @@ export default async function RepairsAndUpgradesPage() {
       <PageHeader
         title="Repairs & Upgrades for Food Trucks & Trailers"
         subtitle="Repair. Upgrade. We’ve Got You Covered."
+        normalCaseSubtitle
       />
 
       {/* What ESC Fixes */}
