@@ -403,81 +403,214 @@ export async function sendContactNotification(settings: GlobalSettings, contact:
 // CUSTOMER CONFIRMATION TEMPLATES
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const CUSTOMER_FOOTER_NOTE = "You're receiving this email because you contacted Elite Steel Concepts. Reply to this email to reach our team.";
+// Light, client-facing palette (admin emails keep the dark theme above).
+const CLIENT = {
+    page:    "#f2f2f0",
+    card:    "#ffffff",
+    ink:     "#111111",
+    body:    "#4a4a4a",
+    muted:   "#8a8a8a",
+    line:    "#ececec",
+    soft:    "#f8f8f7",
+    font:    "'Helvetica Neue',Helvetica,Arial,sans-serif",
+};
 
 function siteUrl() {
     return (process.env.NEXT_PUBLIC_SITE_URL || "https://www.esteelconcepts.com").replace(/\/$/, "");
 }
 
-function sectionLabel(text: string) {
-    return `<p style="margin:0 0 14px;font-size:9px;font-weight:800;color:${BRAND.primary};letter-spacing:3px;text-transform:uppercase;">${text}</p>`;
+function telHref(phone: string) {
+    const digits = phone.replace(/[^\d+]/g, "");
+    return digits.startsWith("+") ? digits : `+1${digits}`;
 }
 
-/** "What happens next" list — a numbered orange badge per step. */
-function nextSteps(steps: { title: string; text: string }[]) {
-    const rows = steps.map((step, i) => `
+function clientSection(label: string, content: string) {
+    return `
+      <tr>
+        <td style="padding:0 48px 36px;" class="px">
+          ${label ? `<p style="margin:0 0 16px;font-family:${CLIENT.font};font-size:11px;font-weight:800;color:${BRAND.primary};letter-spacing:2.5px;text-transform:uppercase;">${label}</p>` : ""}
+          ${content}
+        </td>
+      </tr>`;
+}
+
+/** Numbered "what happens next" timeline. */
+function clientSteps(steps: { title: string; text: string }[]) {
+    return `<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">${steps.map((step, i) => `
         <tr>
-          <td style="width:44px;vertical-align:top;padding:0 0 18px;">
-            <div style="width:30px;height:30px;border-radius:8px;background:${BRAND.primary};color:${BRAND.black};font-size:13px;font-weight:900;text-align:center;line-height:30px;">${i + 1}</div>
+          <td width="48" style="vertical-align:top;padding:0 0 ${i === steps.length - 1 ? 0 : 22}px;">
+            <table cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
+              <td width="32" height="32" align="center" style="width:32px;height:32px;border-radius:16px;background:${BRAND.primary};font-family:${CLIENT.font};font-size:14px;font-weight:900;color:${BRAND.black};">${i + 1}</td>
+            </tr></table>
           </td>
-          <td style="vertical-align:top;padding:4px 0 18px;">
-            <div style="font-size:14px;font-weight:800;color:${BRAND.white};margin-bottom:4px;">${step.title}</div>
-            <div style="font-size:13px;color:${BRAND.muted};line-height:1.7;">${step.text}</div>
+          <td style="vertical-align:top;padding:5px 0 ${i === steps.length - 1 ? 0 : 22}px;font-family:${CLIENT.font};">
+            <div style="font-size:15px;font-weight:700;color:${CLIENT.ink};margin-bottom:4px;">${step.title}</div>
+            <div style="font-size:14px;color:${CLIENT.body};line-height:1.6;">${step.text}</div>
           </td>
-        </tr>`).join("");
-    return `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;">${rows}</table>`;
+        </tr>`).join("")}
+      </table>`;
 }
 
-/** Contact details card with phone, email, address and hours. */
-function contactCard(settings: GlobalSettings) {
+/** Two-column label/value list, used for the request summary. */
+function clientDetails(rows: [string, string | undefined][]) {
+    const filled = rows.filter(([, value]) => value);
+    return `<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border:1px solid ${CLIENT.line};border-radius:10px;border-collapse:separate;">${filled.map(([label, value], i) => `
+        <tr>
+          <td width="38%" style="padding:14px 18px;${i ? `border-top:1px solid ${CLIENT.line};` : ""}background:${CLIENT.soft};font-family:${CLIENT.font};font-size:12px;font-weight:700;color:${CLIENT.muted};text-transform:uppercase;letter-spacing:1px;vertical-align:top;">${label}</td>
+          <td style="padding:14px 18px;${i ? `border-top:1px solid ${CLIENT.line};` : ""}font-family:${CLIENT.font};font-size:14px;font-weight:600;color:${CLIENT.ink};vertical-align:top;">${value}</td>
+        </tr>`).join("")}
+      </table>`;
+}
+
+/** 2×2 grid of contact channels; stacks on mobile. */
+function clientContactGrid(settings: GlobalSettings) {
     const phone = settings.phone || "(571) 651-0337";
     const email = settings.email || "esteelquotes@gmail.com";
-    const tel = phone.replace(/[^\d+]/g, "");
-    const telHref = tel.startsWith("+") ? tel : `+1${tel}`;
+    const mapsHref = settings.googleMapsLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address || "")}`;
+    const link = `color:${CLIENT.ink};text-decoration:none;`;
+
+    const cell = (label: string, value: string, side: "left" | "right") => `
+        <td class="stack" width="50%" style="width:50%;padding:0 ${side === "left" ? 6 : 0}px 12px ${side === "right" ? 6 : 0}px;vertical-align:top;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+            <tr><td style="background:${CLIENT.soft};border:1px solid ${CLIENT.line};border-radius:10px;padding:16px 18px;font-family:${CLIENT.font};">
+              <div style="font-size:11px;font-weight:800;color:${CLIENT.muted};letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;">${label}</div>
+              <div style="font-size:14px;font-weight:700;color:${CLIENT.ink};line-height:1.5;">${value}</div>
+            </td></tr>
+          </table>
+        </td>`;
+
     return `
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${BRAND.darkCard};border:1px solid ${BRAND.border};border-radius:12px;margin-bottom:32px;">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
         <tr>
-          <td style="padding:22px 24px;">
-            <table width="100%" cellpadding="0" cellspacing="0" border="0">
-              ${infoRow("Phone",   `<a href="tel:${telHref}" style="color:${BRAND.primary};text-decoration:none;">${escapeHtml(phone)}</a>`)}
-              ${infoRow("Email",   `<a href="mailto:${escapeHtml(email)}" style="color:${BRAND.primary};text-decoration:none;">${escapeHtml(email)}</a>`)}
-              ${settings.address ? infoRow("Visit Us", escapeHtml(settings.address)) : ""}
-              ${settings.businessHours ? infoRow("Hours", escapeHtml(settings.businessHours)) : ""}
-            </table>
-          </td>
+          ${cell("Call Us", `<a href="tel:${telHref(phone)}" style="${link}">${escapeHtml(phone)}</a>`, "left")}
+          ${cell("Email Us", `<a href="mailto:${escapeHtml(email)}" style="${link}">${escapeHtml(email)}</a>`, "right")}
+        </tr>
+        <tr>
+          ${cell("Visit Our Shop", `<a href="${escapeHtml(mapsHref)}" style="${link}">${escapeHtml(settings.address || "11200 Bertalice Ct, Manassas, VA 20110")}</a>`, "left")}
+          ${cell("Business Hours", escapeHtml(settings.businessHours || "Mon–Sat | 9:00 AM – 5:00 PM"), "right")}
         </tr>
       </table>`;
 }
 
-function customerCtas(settings: GlobalSettings, secondary: { label: string; href: string }) {
-    const tel = (settings.phone || "(571) 651-0337").replace(/[^\d+]/g, "");
-    const telHref = tel.startsWith("+") ? tel : `+1${tel}`;
+function clientButtons(settings: GlobalSettings, secondary: { label: string; href: string }) {
+    const phone = settings.phone || "(571) 651-0337";
+    const button = (href: string, label: string, primary: boolean) => `
+        <td class="stack" style="padding:0 12px 12px 0;">
+          <a href="${href}" style="display:inline-block;background:${primary ? BRAND.primary : CLIENT.card};color:${BRAND.black};border:2px solid ${primary ? BRAND.primary : CLIENT.ink};border-radius:8px;padding:14px 28px;font-family:${CLIENT.font};font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;">${label}</a>
+        </td>`;
     return `
-      <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:8px;">
+      <table cellpadding="0" cellspacing="0" border="0" role="presentation">
         <tr>
-          <td style="padding:0 12px 12px 0;">
-            <a href="tel:${telHref}"
-               style="display:inline-block;background:${BRAND.primary};color:${BRAND.black};font-weight:900;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;padding:15px 28px;border-radius:10px;text-decoration:none;">
-              Call Us Now &nbsp;→
-            </a>
-          </td>
-          <td style="padding:0 0 12px;">
-            <a href="${secondary.href}"
-               style="display:inline-block;background:transparent;color:${BRAND.white};border:1px solid ${BRAND.border};font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:15px 24px;border-radius:10px;text-decoration:none;">
-              ${secondary.label}
-            </a>
-          </td>
+          ${button(`tel:${telHref(phone)}`, "Call Us Now", true)}
+          ${button(secondary.href, secondary.label, false)}
         </tr>
       </table>`;
 }
 
-function divider() {
-    return `
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
-        <tr>
-          <td style="height:1px;background:${BRAND.border};font-size:0;line-height:0;">&nbsp;</td>
-        </tr>
-      </table>`;
+/** Client-facing email shell: white logo header, dark hero band, light body, dark footer. */
+function clientEmail(opts: {
+    settings: GlobalSettings;
+    preheader: string;
+    badge: string;
+    heading: string;
+    intro: string;
+    sections: string;
+}) {
+    const { settings } = opts;
+    const site = siteUrl();
+    const logo = settings.logoUrl?.startsWith("http") ? settings.logoUrl : `${site}${settings.logoUrl || "/logo.png"}`;
+    const socials = [
+        ["Instagram", settings.instagram],
+        ["Facebook", settings.facebook],
+        ["YouTube", settings.youtube],
+    ].filter(([, href]) => href) as [string, string][];
+
+    return `<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="color-scheme" content="light only" />
+  <title>Elite Steel Concepts</title>
+  <style>
+    @media only screen and (max-width: 620px) {
+      .px { padding-left: 24px !important; padding-right: 24px !important; }
+      .stack { display: block !important; width: 100% !important; box-sizing: border-box; padding-left: 0 !important; padding-right: 0 !important; }
+      .h1 { font-size: 26px !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background:${CLIENT.page};-webkit-font-smoothing:antialiased;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">${opts.preheader}</div>
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:${CLIENT.page};">
+    <tr>
+      <td align="center" style="padding:40px 12px;">
+        <table width="600" cellpadding="0" cellspacing="0" border="0" role="presentation" style="max-width:600px;width:100%;background:${CLIENT.card};border-radius:14px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+
+          <!-- Brand stripe + logo -->
+          <tr><td style="background:${BRAND.primary};height:5px;font-size:0;line-height:0;">&nbsp;</td></tr>
+          <tr>
+            <td align="center" style="padding:28px 48px 24px;" class="px">
+              <a href="${site}" style="text-decoration:none;">
+                <img src="${logo}" width="96" height="96" alt="Elite Steel Concepts" style="display:block;width:96px;height:96px;border:0;outline:none;font-family:${CLIENT.font};font-size:18px;font-weight:900;color:${CLIENT.ink};" />
+              </a>
+            </td>
+          </tr>
+
+          <!-- Hero -->
+          <tr>
+            <td style="background:${BRAND.dark};padding:40px 48px;" class="px">
+              <table cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
+                <td style="background:rgba(247,147,30,0.15);border:1px solid rgba(247,147,30,0.45);border-radius:100px;padding:6px 14px;font-family:${CLIENT.font};font-size:11px;font-weight:800;color:${BRAND.primary};letter-spacing:2px;text-transform:uppercase;">✓&nbsp; ${opts.badge}</td>
+              </tr></table>
+              <h1 class="h1" style="margin:20px 0 14px;font-family:${CLIENT.font};font-size:32px;font-weight:900;line-height:1.2;color:${BRAND.white};letter-spacing:-0.5px;">${opts.heading}</h1>
+              <p style="margin:0;font-family:${CLIENT.font};font-size:16px;line-height:1.7;color:#cfcfcf;">${opts.intro}</p>
+            </td>
+          </tr>
+
+          <tr><td style="height:40px;font-size:0;line-height:0;">&nbsp;</td></tr>
+          ${opts.sections}
+
+          <!-- Sign-off -->
+          <tr>
+            <td style="padding:4px 48px 44px;" class="px">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
+                <td style="border-top:1px solid ${CLIENT.line};padding-top:28px;font-family:${CLIENT.font};font-size:15px;line-height:1.7;color:${CLIENT.body};">
+                  Talk soon,<br />
+                  <strong style="color:${CLIENT.ink};">The Elite Steel Concepts Team</strong><br />
+                  <span style="font-size:13px;color:${CLIENT.muted};">Custom Food Trucks &amp; Mobile Kitchens · Built in Manassas, VA</span>
+                </td>
+              </tr></table>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="background:${BRAND.dark};padding:30px 48px;" class="px">
+              <p style="margin:0 0 6px;font-family:${CLIENT.font};font-size:14px;font-weight:900;color:${BRAND.white};letter-spacing:2px;text-transform:uppercase;">Elite Steel Concepts</p>
+              <p style="margin:0 0 14px;font-family:${CLIENT.font};font-size:12px;line-height:1.7;color:#9a9a9a;">
+                <a href="${escapeHtml(settings.googleMapsLink || site)}" style="color:#9a9a9a;text-decoration:none;">${escapeHtml(settings.address || "11200 Bertalice Ct, Manassas, VA 20110")}</a>
+                &nbsp;·&nbsp;
+                <a href="tel:${telHref(settings.phone || "(571) 651-0337")}" style="color:#9a9a9a;text-decoration:none;">${escapeHtml(settings.phone || "(571) 651-0337")}</a>
+              </p>
+              <p style="margin:0 0 18px;font-family:${CLIENT.font};font-size:12px;">
+                <a href="${site}" style="color:${BRAND.primary};text-decoration:none;font-weight:700;">esteelconcepts.com</a>
+                ${socials.map(([name, href]) => `&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${escapeHtml(href)}" style="color:${BRAND.primary};text-decoration:none;font-weight:700;">${name}</a>`).join("")}
+              </p>
+              <p style="margin:0;font-family:${CLIENT.font};font-size:11px;line-height:1.6;color:#6b6b6b;">
+                You're receiving this email because you contacted Elite Steel Concepts.<br />Just reply to this email to reach our team.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
 }
 
 /** Confirmation sent to the customer after they submit the Contact Us form. */
@@ -494,43 +627,19 @@ export async function sendContactConfirmation(settings: GlobalSettings, contact:
     const name    = escapeHtml(contact.name);
     const message = escapeHtml(contact.message).replace(/\n/g, "<br>");
 
-    const bodyContent = `
-      <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
-        <tr>
-          <td>${pill("Message Received", BRAND.success)}</td>
-        </tr>
-      </table>
-
-      <h1 style="margin:0 0 12px;font-size:30px;font-weight:900;color:${BRAND.white};letter-spacing:-1px;line-height:1.15;">
-        Thanks for reaching out, <span style="color:${BRAND.primary};">${name}</span>!
-      </h1>
-      <p style="margin:0 0 36px;font-size:15px;color:${BRAND.text};line-height:1.75;">
-        We've received your message. A member of our team will get back to you shortly to discuss your custom food truck or trailer.
-      </p>
-
-      ${divider()}
-
-      ${sectionLabel("01 &nbsp;/ &nbsp;Your Message")}
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
-        <tr>
-          <td style="background:${BRAND.mid};border-left:3px solid ${BRAND.primary};border-radius:0 10px 10px 0;padding:20px 22px;">
-            <p style="margin:0;color:${BRAND.text};font-size:13px;line-height:1.85;">${message}</p>
-          </td>
-        </tr>
-      </table>
-
-      ${sectionLabel("02 &nbsp;/ &nbsp;What Happens Next")}
-      ${nextSteps([
-          { title: "We review your message", text: "Our team reads every inquiry personally — no bots, no auto-routing." },
-          { title: "We get in touch", text: "Expect a call or email from us, usually within one business day." },
-          { title: "We plan your build", text: "Ready to go further? We'll walk you through design, pricing and timeline." },
-      ])}
-
-      ${sectionLabel("03 &nbsp;/ &nbsp;Need Us Sooner?")}
-      ${contactCard(settings)}
-
-      ${customerCtas(settings, { label: "Request a Quote", href: `${siteUrl()}/quote` })}
-    `;
+    const sections = [
+        clientSection("Your Message", `
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
+            <td style="background:${CLIENT.soft};border-left:4px solid ${BRAND.primary};border-radius:0 10px 10px 0;padding:18px 22px;font-family:${CLIENT.font};font-size:15px;line-height:1.7;color:${CLIENT.ink};">${message}</td>
+          </tr></table>`),
+        clientSection("What Happens Next", clientSteps([
+            { title: "We review your message", text: "A real member of our team reads every inquiry personally." },
+            { title: "We get in touch", text: "Expect a call or email from us, usually within one business day." },
+            { title: "We plan your build", text: "Ready to go further? We'll walk you through design, pricing and timeline." },
+        ])),
+        clientSection("Need Us Sooner?", clientContactGrid(settings)),
+        clientSection("", clientButtons(settings, { label: "Request a Quote", href: `${siteUrl()}/quote` })),
+    ].join("");
 
     const transporter = createTransporter(settings);
     await transporter.sendMail({
@@ -538,7 +647,14 @@ export async function sendContactConfirmation(settings: GlobalSettings, contact:
         to: contact.email,
         replyTo,
         subject: `We received your message — Elite Steel Concepts`,
-        html: emailWrapper(bodyContent, BRAND.primary, CUSTOMER_FOOTER_NOTE),
+        html: clientEmail({
+            settings,
+            preheader: "Thanks for reaching out — our team will get back to you shortly.",
+            badge: "Message Received",
+            heading: `Thanks for reaching out, <span style="color:${BRAND.primary};">${name}</span>!`,
+            intro: "We've received your message. A member of our team will get back to you shortly to discuss your custom food truck or trailer.",
+            sections,
+        }),
     });
     console.log(`[Mailer] Contact confirmation sent to ${contact.email}`);
 }
@@ -557,48 +673,27 @@ export async function sendQuoteConfirmation(settings: GlobalSettings, quote: Quo
     const to = quote.email;
     const q = escapeQuote(quote);
     const location = [q.vendingCity, q.vendingState].filter(Boolean).join(", ");
-    const services = Array.isArray(q.services) && q.services.length > 0 ? q.services.join(" &nbsp;·&nbsp; ") : "";
+    const services = Array.isArray(q.services) && q.services.length > 0 ? q.services.join(", ") : "";
 
-    const bodyContent = `
-      <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
-        <tr>
-          <td>${pill("Quote Request Received", BRAND.success)}</td>
-        </tr>
-      </table>
-
-      <h1 style="margin:0 0 12px;font-size:30px;font-weight:900;color:${BRAND.white};letter-spacing:-1px;line-height:1.15;">
-        Your build request is in, <span style="color:${BRAND.primary};">${q.name}</span>!
-      </h1>
-      <p style="margin:0 0 36px;font-size:15px;color:${BRAND.text};line-height:1.75;">
-        Thank you for choosing Elite Steel Concepts. Our team is reviewing your project details and will contact you shortly to schedule your free consultation.
-      </p>
-
-      ${divider()}
-
-      ${sectionLabel("01 &nbsp;/ &nbsp;Your Request Summary")}
-      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
-        ${q.projectType ? infoRow("Looking For", q.projectType) : ""}
-        ${q.menuType ? infoRow("Food Type", q.menuType) : ""}
-        ${location ? infoRow("Vending In", location) : ""}
-        ${q.budget ? infoRow("Budget", q.budget) : ""}
-        ${q.timeline ? infoRow("Timeline", q.timeline) : ""}
-        ${q.dimensions ? infoRow("Preferred Size", q.dimensions) : ""}
-        ${services ? infoRow("Add-Ons", services) : ""}
-        ${infoRow("Submitted", q.date)}
-      </table>
-
-      ${sectionLabel("02 &nbsp;/ &nbsp;What Happens Next")}
-      ${nextSteps([
-          { title: "Project review", text: "Our fabrication team reviews your concept, menu and equipment needs." },
-          { title: "Free consultation call", text: "We'll reach out — usually within one business day — to talk through your build." },
-          { title: "Custom design & quote", text: "You get a floor plan built around your menu and a real number based on your actual spec." },
-      ])}
-
-      ${sectionLabel("03 &nbsp;/ &nbsp;Questions In The Meantime?")}
-      ${contactCard(settings)}
-
-      ${customerCtas(settings, { label: "See Our Builds", href: `${siteUrl()}/portfolio` })}
-    `;
+    const sections = [
+        clientSection("Your Request Summary", clientDetails([
+            ["Looking For", q.projectType],
+            ["Food Type", q.menuType],
+            ["Vending In", location],
+            ["Budget", q.budget],
+            ["Timeline", q.timeline],
+            ["Preferred Size", q.dimensions],
+            ["Add-Ons", services],
+            ["Submitted", q.date],
+        ])),
+        clientSection("What Happens Next", clientSteps([
+            { title: "Project review", text: "Our fabrication team reviews your concept, menu and equipment needs." },
+            { title: "Free consultation call", text: "We'll reach out, usually within one business day, to talk through your build." },
+            { title: "Custom design & quote", text: "You get a floor plan built around your menu and a real price based on your exact spec." },
+        ])),
+        clientSection("Questions In The Meantime?", clientContactGrid(settings)),
+        clientSection("", clientButtons(settings, { label: "See Our Builds", href: `${siteUrl()}/portfolio` })),
+    ].join("");
 
     const transporter = createTransporter(settings);
     await transporter.sendMail({
@@ -606,7 +701,14 @@ export async function sendQuoteConfirmation(settings: GlobalSettings, quote: Quo
         to,
         replyTo,
         subject: `Your quote request is in — Elite Steel Concepts`,
-        html: emailWrapper(bodyContent, BRAND.primary, CUSTOMER_FOOTER_NOTE),
+        html: clientEmail({
+            settings,
+            preheader: "We've received your build request. Here's what happens next.",
+            badge: "Quote Request Received",
+            heading: `Your build request is in, <span style="color:${BRAND.primary};">${q.name}</span>!`,
+            intro: "Thank you for choosing Elite Steel Concepts. Our team is reviewing your project details and will contact you shortly to schedule your free consultation.",
+            sections,
+        }),
     });
     console.log(`[Mailer] Quote confirmation sent to ${to}`);
 }

@@ -1940,6 +1940,32 @@
   ],
   "quotes": [
     {
+      "name": "Moazzam Ali",
+      "email": "smoazzam435@gmail.com",
+      "phone": "+17094148491",
+      "company": "Intelsys",
+      "projectType": "Custom Food Truck",
+      "sourcing": "Need Vehicle",
+      "budget": "50k-80k",
+      "timeline": "3-6 Months",
+      "menuType": "In vero at ipsa qui",
+      "message": "Incidunt dolor impe",
+      "dimensions": "Ea at est omnis odio",
+      "equipment": "Nihil natus neque to",
+      "brandingNeeds": null,
+      "powerRequirements": "Standard Gas",
+      "services": [
+        "Fire Suppression System",
+        "Health Dept Consultation",
+        "Custom Porch Fab"
+      ],
+      "vendingState": "South Dakota (SD)",
+      "vendingCity": "Malmö",
+      "id": "1791813905737",
+      "date": "Oct 12, 2026",
+      "status": "New"
+    },
+    {
       "name": "NICOLE SEYMOUR",
       "email": "info@seymorespice.com",
       "phone": "9545528859",
@@ -2407,6 +2433,15 @@
     }
   ],
   "contacts": [
+    {
+      "name": "Moazzam",
+      "email": "smoazzam435@gmail.com",
+      "phone": "6307061180",
+      "message": "asdfasdsdfasdf",
+      "id": "1791661152229",
+      "date": "Oct 11, 2026",
+      "status": "New"
+    },
     {
       "name": "Moazzam",
       "email": "smoazzam435@gmail.com",
