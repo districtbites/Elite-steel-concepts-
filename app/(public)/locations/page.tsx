@@ -189,10 +189,12 @@ export default async function LocationsPage() {
               <Link
                 href="/quote"
                 id="shop-address-quote-btn"
-                className="inline-flex items-center gap-2 bg-black text-white hover:bg-white hover:text-black font-black uppercase tracking-wider text-xs px-6 py-3 transition-all"
+                className="group inline-flex items-center justify-center gap-4 bg-white text-black pl-8 pr-3 py-3 font-black uppercase tracking-wider text-sm shadow-xl shadow-black/10 hover:-translate-y-0.5 hover:shadow-2xl transition-all whitespace-nowrap"
               >
-                Free Quote
-                <ArrowRight size={14} />
+                Get a Free Quote
+                <span className="w-10 h-10 rounded-full bg-black text-primary flex items-center justify-center group-hover:translate-x-1 transition-transform">
+                  <ArrowRight size={16} />
+                </span>
               </Link>
             </div>
           </div>
