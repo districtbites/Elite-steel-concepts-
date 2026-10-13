@@ -233,7 +233,7 @@ export default async function RepairsAndUpgradesPage() {
       <CTASection
         title="Ready to Upgrade Your Food Truck?"
         subtitle="Tell us about your food truck or trailer, the problems you're experiencing, and the upgrades you're considering. Our expert team will assess the project and help determine the next steps."
-        buttonText="Request a Free Quote"
+        buttonText="Get a Free Quote"
         buttonHref="/quote"
       />
     </>

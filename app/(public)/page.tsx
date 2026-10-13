@@ -355,7 +355,7 @@ export default async function Home() {
                   id="why-esc-quote-btn"
                   className="inline-flex items-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-xs px-5 py-3 transition-all"
                 >
-                  Quote <ArrowRight size={12} />
+                  Get a Free Quote <ArrowRight size={12} />
                 </Link>
               </div>
             </div>

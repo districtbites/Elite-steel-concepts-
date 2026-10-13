@@ -284,7 +284,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                     href="/quote"
                     className="block w-full text-center bg-primary text-secondary py-4 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-secondary hover:text-white transition-all shadow-xl"
                   >
-                    Request Custom Quote
+                    Get a Free Quote
                   </Link>
                 </div>
               </div>
@@ -369,7 +369,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                   href="/quote"
                   className="bg-primary text-secondary px-12 py-5 rounded-full font-black uppercase tracking-widest text-xs hover:bg-white transition-all shadow-2xl"
                 >
-                  Get Custom Quote
+                  Get a Free Quote
                 </Link>
                 <Link
                   href="/portfolio"

@@ -82,7 +82,7 @@ export default async function PortfolioPage() {
           href="/quote"
           className="inline-flex items-center justify-center gap-3 mt-8 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shadow-[0_0_40px_rgba(247,147,30,0.25)]"
         >
-          Get a free quote today! <ArrowRight size={14} />
+          Get a Free Quote <ArrowRight size={14} />
         </Link>
       </PageHeader>
 
@@ -276,7 +276,7 @@ export default async function PortfolioPage() {
                 href="/quote"
                 className="bg-black text-white px-12 py-6 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white hover:text-black transition-colors shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none hover:translate-x-2 hover:translate-y-2 min-w-[260px]"
               >
-                Get A Custom Quote
+                Get a Free Quote
               </Link>
               <Link
                 href="/contact"

@@ -48,7 +48,7 @@ export default async function ServicesPage() {
       description:
         "At ESC, we build custom food trailers, concession trailers, and mobile kitchens designed around your menu, equipment, workflow, and business needs, with durable construction, practical layouts, quality materials, and compliance-focused designs.",
       href: "/quote",
-      ctaText: "Get Your Free Quote",
+      ctaText: "Get a Free Quote",
     },
   ];
 
@@ -158,7 +158,7 @@ export default async function ServicesPage() {
                   href="/quote"
                   className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"
                 >
-                  Get Your Free Quote <ArrowRight size={14} />
+                  Get a Free Quote <ArrowRight size={14} />
                 </Link>
               </div>
             </div>

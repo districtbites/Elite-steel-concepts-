@@ -638,7 +638,7 @@ export async function sendContactConfirmation(settings: GlobalSettings, contact:
             { title: "We plan your build", text: "Ready to go further? We'll walk you through design, pricing and timeline." },
         ])),
         clientSection("Need Us Sooner?", clientContactGrid(settings)),
-        clientSection("", clientButtons(settings, { label: "Request a Quote", href: `${siteUrl()}/quote` })),
+        clientSection("", clientButtons(settings, { label: "Get a Free Quote", href: `${siteUrl()}/quote` })),
     ].join("");
 
     const transporter = createTransporter(settings);

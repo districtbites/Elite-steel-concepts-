@@ -78,17 +78,14 @@ export default async function LocationsPage() {
             id="locations-hero-quote-btn"
             className="inline-flex items-center gap-3 border-2 border-white/30 hover:border-primary hover:text-primary text-white font-black uppercase tracking-wider text-sm px-8 py-4 transition-all"
           >
-            Get Your Free Quote
+            Get a Free Quote
             <ArrowRight size={16} />
           </Link>
         </div>
       </PageHeader>
 
-      {/* ─── FAQS ───────────────────────────────────────────────── */}
-      <FAQSection faqs={faqs} plainHeading eyebrowAsH1={false} />
-
       {/* ─── REGIONAL LOCATIONS DIRECTORY ────────────────────────── */}
-      <section className="bg-gray-50 py-14 md:py-20 border-t border-gray-200" id="directory">
+      <section className="bg-[#faf9f7] py-16 md:py-24 border-t border-gray-200" id="directory">
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-10 md:mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
@@ -157,6 +154,9 @@ export default async function LocationsPage() {
           </div>
         </Container>
       </section>
+
+      {/* ─── FAQS ───────────────────────────────────────────────── */}
+      <FAQSection faqs={faqs} plainHeading eyebrowAsH1={false} />
 
       {/* ─── SHOP ADDRESS CALLOUT ──────────────────────────────── */}
       <section className="bg-[#0a0a0a] py-20 border-t border-[#1a1a1a]">

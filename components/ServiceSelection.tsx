@@ -93,7 +93,7 @@ const ServiceSelection = ({
               id="service-get-quote-btn"
               className="inline-flex items-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-xs px-6 py-3.5 transition-all shadow-sm shrink-0"
             >
-              Get a free quote <ArrowRight size={14} />
+              Get a Free Quote <ArrowRight size={14} />
             </Link>
           </div>
           */}

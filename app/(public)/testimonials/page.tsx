@@ -228,7 +228,7 @@ export default async function TestimonialsPage() {
       <CTASection
         title="Ready to Build Your Dream Food Truck & Trailer?"
         subtitle="Tell us about your concept, and we’ll help you plan the right custom truck or trailer for your business."
-        buttonText="Get a Free Quote Now!"
+        buttonText="Get a Free Quote"
         titleClassName="text-2xl md:text-4xl tracking-tight leading-tight"
         buttonHref="/quote"
       />

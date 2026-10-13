@@ -93,7 +93,7 @@ export default async function ComplianceHub() {
               href="/quote"
               className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shadow-[0_0_40px_rgba(247,147,30,0.25)]"
             >
-              Start Your Custom Build <ArrowRight size={14} />
+              Get a Free Quote <ArrowRight size={14} />
             </Link>
           </div>
         </Container>
@@ -409,7 +409,7 @@ export default async function ComplianceHub() {
       <CTASection 
         title="Ready to Plan Your Build With the Right Compliance?"
         subtitle="Build With Confidence. Start With Right Compliance."
-        buttonText="Request a Free Quote"
+        buttonText="Get a Free Quote"
         buttonHref="/quote"
       />
     </>

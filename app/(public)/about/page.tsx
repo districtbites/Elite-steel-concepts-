@@ -250,7 +250,7 @@ export default async function AboutPage() {
         title="Ready to Build Your Custom Food Business?"
         titleClassName="text-2xl md:text-4xl tracking-tight leading-tight"
         subtitle="Your food business starts with the right build. Elite Steel Concepts is ready to help bring your idea to reality. Contact us today!"
-        buttonText="Get a free quote today!"
+        buttonText="Get a Free Quote"
         buttonHref="/quote"
       />
     </>

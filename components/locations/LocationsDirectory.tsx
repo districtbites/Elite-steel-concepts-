@@ -9,12 +9,12 @@ import {
   Navigation,
   LayoutGrid,
   ListFilter,
-  Sparkles,
   RotateCcw,
   SlidersHorizontal,
   Flame,
   ChevronDown,
   ChevronUp,
+  ArrowUpRight,
 } from "lucide-react";
 import { LocationEntry } from "@/lib/db";
 
@@ -182,22 +182,22 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
   const chipClass = (active: boolean) =>
     `shrink-0 whitespace-nowrap px-3.5 py-2 text-xs font-black uppercase tracking-wider transition-all duration-200 border flex items-center gap-2 ${
       active
-        ? "bg-primary text-black border-primary shadow-md shadow-primary/20"
-        : "bg-white text-gray-700 border-gray-200 hover:border-primary hover:text-black"
+        ? "bg-[#0a0a0a] text-white border-[#0a0a0a]"
+        : "bg-white text-gray-600 border-gray-200 hover:border-black hover:text-black"
     }`;
 
   const chipCountClass = (active: boolean) =>
-    `px-1.5 py-0.5 text-[10px] font-bold ${active ? "bg-black/15 text-black" : "bg-gray-100 text-gray-500"}`;
+    `text-[10px] font-black ${active ? "text-primary" : "text-gray-400"}`;
 
   const toggleClass = (active: boolean) =>
     `px-3 py-1.5 text-[11px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 ${
-      active ? "bg-primary text-black shadow-sm" : "text-gray-500 hover:text-black"
+      active ? "bg-[#0a0a0a] text-white" : "text-gray-500 hover:text-black"
     }`;
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-14 md:space-y-20">
       {/* ─── DIRECTORY CONTROLS ───────────────────────────────── */}
-      <div className="bg-white border border-gray-200 shadow-sm p-5 md:p-7">
+      <div className="bg-white border border-gray-200 shadow-[0_24px_60px_-35px_rgba(0,0,0,0.35)] p-5 md:p-8">
         {/* Search & View Controls */}
         <div className="flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
           <div className="relative flex-1 max-w-2xl">
@@ -209,7 +209,7 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
               placeholder="Search by city or state (e.g. Richmond, Raleigh)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 focus:border-primary focus:bg-white text-black text-sm pl-11 pr-20 py-3.5 placeholder-gray-400 font-medium transition-all outline-none"
+              className="w-full bg-[#faf9f7] border border-gray-200 focus:border-black focus:bg-white text-black text-sm pl-11 pr-20 py-4 placeholder-gray-400 font-medium transition-all outline-none"
             />
             {searchQuery && (
               <button
@@ -233,10 +233,10 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
               </button>
             </div>
             <div className="flex items-center bg-gray-50 border border-gray-200 p-1">
-              <button onClick={() => setViewMode("grid")} title="Card view" className={`p-1.5 transition-all ${viewMode === "grid" ? "bg-primary text-black" : "text-gray-500 hover:text-black"}`}>
+              <button onClick={() => setViewMode("grid")} title="Card view" className={`p-1.5 transition-all ${viewMode === "grid" ? "bg-[#0a0a0a] text-primary" : "text-gray-500 hover:text-black"}`}>
                 <LayoutGrid size={16} />
               </button>
-              <button onClick={() => setViewMode("compact")} title="List view" className={`p-1.5 transition-all ${viewMode === "compact" ? "bg-primary text-black" : "text-gray-500 hover:text-black"}`}>
+              <button onClick={() => setViewMode("compact")} title="List view" className={`p-1.5 transition-all ${viewMode === "compact" ? "bg-[#0a0a0a] text-primary" : "text-gray-500 hover:text-black"}`}>
                 <ListFilter size={16} />
               </button>
             </div>
@@ -283,12 +283,12 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
           <span className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-500 shrink-0 flex items-center gap-1.5">
             <Flame size={12} className="text-primary" /> Major Hubs:
           </span>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             {FEATURED_HUBS.map((hub) => (
               <Link
                 key={hub.slug}
                 href={`/locations/${hub.slug}`}
-                className="text-xs font-bold text-gray-600 hover:text-black hover:border-primary bg-gray-50 border border-gray-200 px-3 py-1.5 transition-all"
+                className="text-sm font-semibold text-gray-600 hover:text-black border-b border-transparent hover:border-primary pb-0.5 transition-colors"
               >
                 {hub.name}
               </Link>
@@ -298,7 +298,7 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
       </div>
 
       {/* Results count */}
-      <p className="text-sm text-gray-500 -mt-6">
+      <p className="text-sm text-gray-500 -mt-8 md:-mt-12">
         Showing <strong className="text-black">{filteredLocations.length}</strong>{" "}
         {filteredLocations.length === 1 ? "location" : "locations"}
         {selectedState !== "ALL" && <> in <strong className="text-black">{STATE_META[selectedState]?.name || selectedState}</strong></>}
@@ -327,14 +327,14 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
               href="/quote"
               className="inline-flex items-center gap-2 bg-primary text-black font-black uppercase tracking-wider text-xs px-8 py-3.5 transition-all shadow-lg shadow-primary/20 hover:-translate-y-0.5"
             >
-              Request City Quote <ArrowRight size={14} />
+              Get a Free Quote <ArrowRight size={14} />
             </Link>
           </div>
         </div>
       )}
 
       {/* ─── STATE SECTIONS ───────────────────────────────────── */}
-      {sortedStateKeys.map((stateCode) => {
+      {sortedStateKeys.map((stateCode, stateIndex) => {
         const stateLocs = groupedByState[stateCode];
         const meta = STATE_META[stateCode] || { name: stateCode, dept: `${stateCode} Health Dept`, highlight: "Regional Coverage" };
         const canCollapse = viewMode === "grid" && !searchQuery && stateLocs.length > INITIAL_CITIES_PER_STATE;
@@ -344,24 +344,30 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
         return (
           <div key={stateCode}>
             {/* State header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-3 pb-4 mb-6 border-b-2 border-black">
+            <div className="grid md:grid-cols-[1fr_auto] md:items-end gap-4 md:gap-8 pb-6 mb-8 border-b border-gray-300">
               <div>
-                <div className="flex flex-wrap items-center gap-3 mb-1.5">
-                  <h3 className="text-2xl md:text-3xl font-black text-black uppercase tracking-tight">{meta.name}</h3>
-                  <span className="text-[11px] font-black uppercase tracking-widest bg-primary text-black px-2.5 py-0.5">{stateCode}</span>
-                  <span className="text-[11px] font-bold uppercase tracking-wider bg-gray-100 text-gray-600 px-2.5 py-0.5">
-                    {stateLocs.length} {stateLocs.length === 1 ? "City" : "Cities"}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-500">
-                  {meta.highlight} &middot; <span className="text-gray-400">{meta.dept}</span>
+                <p className="flex items-center gap-3 text-primary text-[11px] font-black uppercase tracking-[0.3em] mb-3">
+                  <span className="h-px w-8 bg-primary" />
+                  State {String(stateIndex + 1).padStart(2, "0")} &middot; {stateCode}
                 </p>
+                <h3 className="text-3xl md:text-5xl font-black text-black uppercase tracking-tighter leading-none">{meta.name}</h3>
+                <p className="mt-3 text-sm text-gray-500 max-w-2xl leading-relaxed">
+                  {meta.highlight}
+                  <span className="hidden sm:inline text-gray-300 mx-2">|</span>
+                  <span className="block sm:inline text-gray-400">{meta.dept}</span>
+                </p>
+              </div>
+              <div className="flex items-baseline gap-2 md:justify-end">
+                <span className="text-5xl md:text-6xl font-black text-black leading-none tracking-tighter">{stateLocs.length}</span>
+                <span className="text-[11px] font-black uppercase tracking-[0.25em] text-gray-400">
+                  {stateLocs.length === 1 ? "City" : "Cities"}
+                </span>
               </div>
             </div>
 
             {/* ═══ VIEW MODE: CARD GRID ═══ */}
             {viewMode === "grid" && (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
                 {visibleLocs.map((location) => {
                   const isHome = location.distance.startsWith("0 miles");
                   return (
@@ -369,27 +375,40 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
                       key={location.slug}
                       href={`/locations/${location.slug}`}
                       id={`location-card-${location.slug}`}
-                      className="group relative bg-white border border-gray-200 hover:border-primary p-3.5 md:p-5 flex items-center justify-between gap-2 md:gap-4 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                      className={`group relative flex flex-col justify-between min-h-[118px] md:min-h-[140px] p-4 md:p-6 border transition-colors duration-500 ${
+                        isHome
+                          ? "bg-[#0a0a0a] border-[#0a0a0a]"
+                          : "bg-white border-gray-200 hover:bg-[#0a0a0a] hover:border-[#0a0a0a]"
+                      }`}
                     >
-                      <div className="absolute top-0 left-0 h-0.5 w-full bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
+                      <div className="flex items-start justify-between gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">
+                          {isHome ? <><span className="md:hidden">HQ</span><span className="hidden md:inline">Fabrication HQ</span></> : location.state}
+                        </span>
+                        <ArrowUpRight
+                          size={18}
+                          className={`shrink-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
+                            isHome ? "text-primary" : "text-gray-300 group-hover:text-primary"
+                          }`}
+                        />
+                      </div>
                       <div className="min-w-0">
-                        <h4 className="text-sm md:text-base font-black text-black uppercase tracking-tight leading-snug truncate group-hover:text-primary transition-colors">
+                        <h4
+                          className={`text-sm md:text-lg font-black uppercase tracking-tight leading-tight truncate transition-colors duration-500 ${
+                            isHome ? "text-white" : "text-black group-hover:text-white"
+                          }`}
+                        >
                           {location.city}
                         </h4>
-                        {isHome ? (
-                          <span className="mt-1.5 inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-primary">
-                            <Sparkles size={11} /> Fabrication HQ
-                          </span>
-                        ) : (
-                          <span className="mt-1.5 inline-flex items-center gap-1 text-[11px] md:text-xs text-gray-500">
-                            <Navigation size={11} className="text-primary shrink-0" />
-                            {location.distance}<span className="hidden md:inline">&nbsp;from HQ</span>
-                          </span>
-                        )}
+                        <div className="mt-2.5 h-px w-8 bg-primary transition-all duration-500 group-hover:w-14" />
+                        <p
+                          className={`mt-2.5 text-[11px] md:text-xs transition-colors duration-500 ${
+                            isHome ? "text-gray-400" : "text-gray-500 group-hover:text-gray-400"
+                          }`}
+                        >
+                          {isHome ? "Our shop & showroom" : <>{location.distance}<span className="hidden md:inline"> from HQ</span></>}
+                        </p>
                       </div>
-                      <span className="hidden sm:flex w-9 h-9 shrink-0 rounded-full bg-primary/10 text-primary items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors">
-                        <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
-                      </span>
                     </Link>
                   );
                 })}
@@ -426,10 +445,10 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
             )}
 
             {canCollapse && (
-              <div className="mt-6 text-center">
+              <div className="mt-8 text-center">
                 <button
                   onClick={() => toggleState(stateCode)}
-                  className="inline-flex items-center gap-2 border-2 border-black text-black hover:bg-black hover:text-white font-black uppercase tracking-wider text-xs px-6 py-3 transition-colors"
+                  className="inline-flex items-center gap-3 border border-black text-black hover:bg-black hover:text-white font-black uppercase tracking-[0.2em] text-[11px] px-8 py-4 transition-colors duration-300"
                 >
                   {isExpanded ? (
                     <>Show Less <ChevronUp size={14} /></>

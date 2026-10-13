@@ -258,7 +258,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
                       href="/quote"
                       className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-[10px] px-6 py-4 transition-colors"
                     >
-                      Free Quote <ArrowRight size={14} />
+                      Get a Free Quote <ArrowRight size={14} />
                     </Link>
                   </div>
                 </div>
@@ -312,7 +312,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
                        href="/quote"
                        className="flex items-center justify-center gap-3 bg-[#0a0a0a] text-white px-10 py-5 font-black uppercase text-[10px] tracking-[0.2em] hover:bg-black transition-colors"
                      >
-                       Request a Quote <ArrowRight size={14} />
+                       Get a Free Quote <ArrowRight size={14} />
                      </Link>
                   </div>
                 </div>
@@ -348,7 +348,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
                          href="/quote"
                          className="flex items-center justify-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-[10px] px-5 py-4 transition-colors w-full shadow-lg shadow-primary/20"
                        >
-                         Start Online Quote <ArrowRight size={14} />
+                         Get a Free Quote <ArrowRight size={14} />
                        </Link>
                     </div>
                   </div>
