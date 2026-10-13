@@ -375,36 +375,26 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
                       key={location.slug}
                       href={`/locations/${location.slug}`}
                       id={`location-card-${location.slug}`}
-                      className={`group relative flex flex-col justify-between min-h-[118px] md:min-h-[140px] p-4 md:p-6 border transition-colors duration-500 ${
-                        isHome
-                          ? "bg-primary border-primary shadow-[0_18px_40px_-22px_rgba(247,147,30,0.8)]"
-                          : "bg-white border-gray-200 hover:bg-primary/5 hover:border-primary hover:shadow-[0_18px_40px_-26px_rgba(247,147,30,0.6)]"
-                      }`}
+                      className="group relative flex flex-col justify-between min-h-[118px] md:min-h-[140px] p-4 md:p-6 border transition-colors duration-500 bg-white border-gray-200 hover:bg-primary/5 hover:border-primary hover:shadow-[0_18px_40px_-26px_rgba(247,147,30,0.6)]"
                     >
                       <div className="flex items-start justify-between gap-2">
-                        <span className={`text-[10px] font-black uppercase tracking-[0.25em] ${isHome ? "text-black/70" : "text-primary"}`}>
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em] text-primary">
                           {isHome ? <><span className="md:hidden">HQ</span><span className="hidden md:inline">Fabrication HQ</span></> : location.state}
                         </span>
                         <ArrowUpRight
                           size={18}
-                          className={`shrink-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 ${
-                            isHome ? "text-black" : "text-gray-300 group-hover:text-primary"
-                          }`}
+                          className="shrink-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 text-gray-300 group-hover:text-primary"
                         />
                       </div>
                       <div className="min-w-0">
                         <h4
-                          className={`text-sm md:text-lg font-black uppercase tracking-tight leading-tight truncate transition-colors duration-500 ${
-                            isHome ? "text-black" : "text-black group-hover:text-primary"
-                          }`}
+                          className="text-sm md:text-lg font-black uppercase tracking-tight leading-tight truncate transition-colors duration-500 text-black group-hover:text-primary"
                         >
                           {location.city}
                         </h4>
-                        <div className={`mt-2.5 h-px w-8 transition-all duration-500 group-hover:w-14 ${isHome ? "bg-black" : "bg-primary"}`} />
+                        <div className="mt-2.5 h-px w-8 bg-primary transition-all duration-500 group-hover:w-14" />
                         <p
-                          className={`mt-2.5 text-[11px] md:text-xs transition-colors duration-500 ${
-                            isHome ? "text-black/75" : "text-gray-500"
-                          }`}
+                          className="mt-2.5 text-[11px] md:text-xs transition-colors duration-500 text-gray-500"
                         >
                           {isHome ? "Our shop & showroom" : <>{location.distance}<span className="hidden md:inline"> from HQ</span></>}
                         </p>
