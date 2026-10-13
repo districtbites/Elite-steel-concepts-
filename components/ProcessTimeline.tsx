@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { FileText, PenTool, Handshake, Hammer, KeyRound, Lightbulb, Check } from "lucide-react";
-import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { FileText, PenTool, Handshake, Hammer, KeyRound, ArrowDown } from "lucide-react";
 
 const ICONS = { FileText, PenTool, Handshake, Hammer, KeyRound };
 
@@ -11,92 +10,78 @@ export interface ProcessPhase {
   title: string;
   tagline: string;
   icon: keyof typeof ICONS;
-  /** Description with internal links already applied (markdown link syntax). */
-  description: string;
-  items: string[];
-  proTip: string;
 }
 
+const EASE_OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
+const EASE_POP = "cubic-bezier(0.34, 1.56, 0.64, 1)";
+/** Gap between phases that come into view at the same moment, so they still open one by one. */
+const STAGGER_MS = 210;
+/** Multiplier for every duration/delay below — lower is faster. */
+const SPEED = 0.8;
+
 /**
- * Vertical build-process timeline. As the visitor scrolls, the rail fills with
- * orange, each phase card opens (fades/slides in) when it reaches the viewport,
- * and the phase in the middle of the screen is highlighted.
- * All content is in the server-rendered HTML; only its reveal is animated.
+ * Vertical build-process timeline. Phases are separate cards joined by an arrow
+ * connector. Each phase plays its opening sequence once, when it scrolls ~12% into
+ * the screen: the connector line draws down, the arrow pops in, the card rises
+ * into place and its content follows in a short stagger. All text is in the HTML.
  */
 export default function ProcessTimeline({ phases }: { phases: ProcessPhase[] }) {
-  const listRef = useRef<HTMLOListElement>(null);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const [revealed, setRevealed] = useState<Set<number>>(new Set());
-  const [active, setActive] = useState(-1);
-  const [progress, setProgress] = useState(0);
+  // index → start delay (ms) of its opening sequence; absent = not opened yet.
+  const [openDelay, setOpenDelay] = useState<Record<number, number>>({});
+  const [reduceMotion, setReduceMotion] = useState(false);
 
-  // Open each phase the first time it scrolls into view.
   useEffect(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduceMotion || !("IntersectionObserver" in window)) {
-      setRevealed(new Set(phases.map((_, i) => i)));
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+      setReduceMotion(true);
+      setOpenDelay(Object.fromEntries(phases.map((_, i) => [i, 0])));
       return;
     }
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const index = Number((entry.target as HTMLElement).dataset.index);
-          setRevealed((prev) => (prev.has(index) ? prev : new Set(prev).add(index)));
-          observer.unobserve(entry.target);
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .map((e) => Number((e.target as HTMLElement).dataset.index))
+          .sort((a, b) => a - b);
+        if (!visible.length) return;
+        visible.forEach((i) => observer.unobserve(itemRefs.current[i]!));
+        setOpenDelay((prev) => {
+          const next = { ...prev };
+          visible.forEach((i, k) => {
+            if (!(i in next)) next[i] = k * STAGGER_MS;
+          });
+          return next;
         });
       },
-      { rootMargin: "0px 0px -15% 0px", threshold: 0.1 },
+      // Open once the phase's top has moved 12% up from the bottom of the screen.
+      { rootMargin: "0px 0px -12% 0px", threshold: 0 },
     );
     itemRefs.current.forEach((el) => el && observer.observe(el));
     return () => observer.disconnect();
   }, [phases]);
 
-  // Fill the rail and track the phase at the middle of the viewport.
-  useEffect(() => {
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const list = listRef.current;
-      if (!list) return;
-      const focusLine = window.innerHeight * 0.55;
-      const rect = list.getBoundingClientRect();
-      setProgress(Math.min(1, Math.max(0, (focusLine - rect.top) / rect.height)));
-
-      let current = -1;
-      itemRefs.current.forEach((el, i) => {
-        if (el && el.getBoundingClientRect().top <= focusLine) current = i;
-      });
-      setActive(current);
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, []);
+  /** Inline transition for one animated element, `offset` ms into its phase's sequence. */
+  const anim = (isOpen: boolean, base: number, offset: number, duration = 700, ease = EASE_OUT): React.CSSProperties =>
+    reduceMotion
+      ? {}
+      : {
+          transitionProperty: "opacity, transform",
+          transitionDuration: `${duration * SPEED}ms`,
+          transitionTimingFunction: ease,
+          transitionDelay: isOpen ? `${base + offset * SPEED}ms` : "0ms",
+        };
 
   return (
-    <ol ref={listRef} className="relative max-w-4xl mx-auto space-y-8 md:space-y-10">
-      {/* Rail: grey track with an orange fill that follows the scroll */}
-      <div className="absolute left-5 md:left-7 top-5 md:top-7 bottom-7 w-0.5 -ml-px bg-gray-200" aria-hidden="true">
-        <div
-          className="w-full bg-primary origin-top transition-transform duration-150 ease-out"
-          style={{ height: "100%", transform: `scaleY(${progress})` }}
-        />
-      </div>
-
+    <ol className="max-w-3xl mx-auto">
       {phases.map((phase, i) => {
         const Icon = ICONS[phase.icon];
-        const isOpen = revealed.has(i);
-        const isActive = active === i;
-        const isPassed = active >= i;
+        const isOpen = i in openDelay;
+        const base = openDelay[i] ?? 0;
+        const dark = i % 2 === 0;
+        // Card starts after the connector has drawn (first card has no connector).
+        const card = i === 0 ? 0 : 620;
+        const hidden = (transform: string): React.CSSProperties =>
+          isOpen ? { opacity: 1, transform: "none" } : { opacity: 0, transform };
 
         return (
           <li
@@ -105,79 +90,79 @@ export default function ProcessTimeline({ phases }: { phases: ProcessPhase[] }) 
               itemRefs.current[i] = el;
             }}
             data-index={i}
-            className="relative pl-14 md:pl-24"
           >
-            {/* Phase node on the rail */}
-            <div
-              className={`absolute left-0 top-0 z-10 w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center text-sm md:text-lg font-black ring-4 md:ring-8 ring-white transition-colors duration-500 ${
-                isPassed ? "bg-primary text-black" : "bg-white text-gray-400 border-2 border-gray-200"
-              }`}
-            >
-              {phase.number}
-              {isActive && <span className="absolute inset-0 rounded-full border-2 border-primary animate-ping opacity-40" aria-hidden="true" />}
-            </div>
+            {/* Arrow connector from the previous phase */}
+            {i > 0 && (
+              <div className="flex flex-col items-center" aria-hidden="true">
+                <div
+                  className="w-0.5 h-10 md:h-12 bg-gradient-to-b from-primary/30 to-primary origin-top"
+                  style={{ ...anim(isOpen, base, 0, 450), ...hidden("scaleY(0)") }}
+                />
+                <div
+                  className="w-11 h-11 rounded-full bg-primary text-black flex items-center justify-center shadow-lg shadow-primary/30 ring-4 ring-primary/15"
+                  style={{ ...anim(isOpen, base, 330, 500, EASE_POP), ...hidden("scale(0.3) translateY(-10px)") }}
+                >
+                  <ArrowDown size={20} strokeWidth={2.5} />
+                </div>
+                <div
+                  className="w-0.5 h-6 bg-primary origin-top"
+                  style={{ ...anim(isOpen, base, 520, 250), ...hidden("scaleY(0)") }}
+                />
+              </div>
+            )}
 
             {/* Phase card */}
-            <article
-              className={`relative bg-white border transition-all duration-700 ease-out ${
-                isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-              } ${isActive ? "border-primary shadow-[0_24px_60px_-30px_rgba(247,147,30,0.45)]" : "border-gray-200 shadow-sm"}`}
+            <div
+              className={`relative overflow-hidden flex flex-col md:flex-row items-center gap-4 md:gap-8 text-center md:text-left px-6 py-8 md:px-12 md:py-10 shadow-[0_20px_50px_-25px_rgba(0,0,0,0.45)] ${
+                dark ? "bg-[#0a0a0a] text-white" : "bg-primary text-black"
+              }`}
+              style={{ ...anim(isOpen, base, card, 850), ...hidden("translateY(40px) scale(0.96)") }}
             >
-              <div
-                className={`absolute top-0 left-0 h-1 bg-primary transition-all duration-700 ${isActive ? "w-full" : "w-0"}`}
+              {/* Accent bar fills down the left edge */}
+              <span
+                className={`absolute left-0 top-0 bottom-0 w-1.5 origin-top ${dark ? "bg-primary" : "bg-black"}`}
+                style={{ ...anim(isOpen, base, card + 250, 700), ...hidden("scaleY(0)") }}
                 aria-hidden="true"
               />
 
-              {/* Header */}
-              <header className="flex items-start gap-4 md:gap-5 p-5 md:p-8 border-b border-gray-100">
-                <div className="hidden sm:flex w-12 h-12 md:w-14 md:h-14 shrink-0 bg-primary/10 text-primary items-center justify-center">
-                  <Icon size={24} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-primary font-black uppercase tracking-[0.25em] text-[11px] mb-2">
-                    Phase {phase.number} <span className="text-gray-300">/ {String(phases.length).padStart(2, "0")}</span>
-                  </p>
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tighter text-black leading-none mb-2">
-                    {phase.title}
-                  </h3>
-                  <p className="text-sm sm:text-base md:text-lg font-semibold text-gray-500">{phase.tagline}</p>
-                </div>
-              </header>
-
-              {/* Body: opens with a slight delay after the card */}
-              <div
-                className={`grid md:grid-cols-[1.25fr_1fr] gap-6 md:gap-8 p-5 md:p-8 transition-all duration-700 delay-200 ${
-                  isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                }`}
-              >
-                <div className="space-y-5">
-                  <p className="text-gray-600 leading-relaxed">
-                    <AutoLinkedText text={phase.description} />
-                  </p>
-                  <div className="bg-primary/5 border-l-4 border-primary p-4 flex gap-3">
-                    <Lightbulb size={18} className="text-primary shrink-0 mt-0.5" />
-                    <div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-primary block mb-1">Elite Pro-Tip</span>
-                      <p className="text-sm text-gray-600 leading-relaxed">{phase.proTip}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4">What&apos;s Included</p>
-                  <ul className="space-y-3">
-                    {phase.items.map((item) => (
-                      <li key={item} className="flex items-start gap-3 text-sm font-medium text-gray-800">
-                        <span className="mt-0.5 w-5 h-5 shrink-0 rounded-full bg-primary/15 text-primary flex items-center justify-center">
-                          <Check size={12} strokeWidth={3} />
-                        </span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <div className="flex items-center gap-3 shrink-0 md:w-44">
+                <span
+                  className={`text-5xl md:text-6xl font-black leading-none tracking-tighter ${dark ? "text-primary" : "text-black"}`}
+                  style={{ ...anim(isOpen, base, card + 200), ...hidden("translateX(-24px)") }}
+                >
+                  {phase.number}
+                </span>
+                <span
+                  className={`w-11 h-11 flex items-center justify-center rounded-full ${
+                    dark ? "bg-primary/15 text-primary" : "bg-black/10 text-black"
+                  }`}
+                  style={{ ...anim(isOpen, base, card + 380, 500, EASE_POP), ...hidden("scale(0.4) rotate(-45deg)") }}
+                >
+                  <Icon size={20} />
+                </span>
               </div>
-            </article>
+
+              <div className="min-w-0">
+                <p
+                  className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${dark ? "text-gray-400" : "text-black/60"}`}
+                  style={{ ...anim(isOpen, base, card + 300), ...hidden("translateY(12px)") }}
+                >
+                  Phase {phase.number} <span className="opacity-60">/ {String(phases.length).padStart(2, "0")}</span>
+                </p>
+                <h3
+                  className="text-xl md:text-2xl font-black uppercase tracking-tight leading-tight mb-2"
+                  style={{ ...anim(isOpen, base, card + 380), ...hidden("translateY(14px)") }}
+                >
+                  {phase.title}
+                </h3>
+                <p
+                  className={`text-sm md:text-base leading-relaxed ${dark ? "text-gray-300" : "text-black/75"}`}
+                  style={{ ...anim(isOpen, base, card + 460), ...hidden("translateY(14px)") }}
+                >
+                  {phase.tagline}
+                </p>
+              </div>
+            </div>
           </li>
         );
       })}
