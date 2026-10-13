@@ -67,7 +67,7 @@ export default async function DesignAndConsultationPage() {
                 <div className="w-16 h-16 bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
                   <Icon size={28} />
                 </div>
-                <h3 className="text-lg font-black uppercase tracking-tight text-black leading-tight">{title}</h3>
+                <h3 className="text-lg font-bold text-black leading-snug">{title}</h3>
               </div>
             ))}
           </div>
@@ -83,13 +83,13 @@ export default async function DesignAndConsultationPage() {
             </h2>
           </div>
 
-          <ol className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
+          <ol className="relative grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-12 xl:gap-8">
             {/* Connector line + arrows between steps (desktop) */}
-            <div className="hidden lg:block absolute top-10 left-[12.5%] right-[12.5%] border-t-2 border-dashed border-primary/50" aria-hidden="true" />
+            <div className="hidden xl:block absolute top-10 left-[12.5%] right-[12.5%] border-t-2 border-dashed border-primary/50" aria-hidden="true" />
             {[25, 50, 75].map((pos) => (
               <div
                 key={pos}
-                className="hidden lg:flex absolute top-10 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white border border-primary/50 text-primary shadow-sm items-center justify-center"
+                className="hidden xl:flex absolute top-10 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white border border-primary/50 text-primary shadow-sm items-center justify-center"
                 style={{ left: `${pos}%` }}
                 aria-hidden="true"
               >
@@ -108,7 +108,7 @@ export default async function DesignAndConsultationPage() {
                   </span>
                 </div>
                 <p className="text-primary font-black uppercase tracking-[0.25em] text-[11px] mb-2">Step {i + 1}</p>
-                <h3 className="text-xl font-black uppercase tracking-tight text-black leading-tight mb-3">{step.title}</h3>
+                <h3 className="text-xl xl:text-base font-black uppercase tracking-tight text-black leading-tight mb-3 xl:whitespace-nowrap">{step.title}</h3>
                 <p className="text-sm text-gray-600 leading-relaxed max-w-[260px] mx-auto">{step.text}</p>
               </li>
             ))}
