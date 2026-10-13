@@ -11,6 +11,8 @@ const sampleReels: Reel[] = [
     client: "Carlos & Maria R.",
     location: "Washington, DC",
     videoUrl: "/videos/reels/reel-1.mp4",
+    poster: "/videos/reels/reel-1-poster.webp",
+    durationSeconds: 39,
     views: "14.2K",
   },
   {
@@ -19,6 +21,8 @@ const sampleReels: Reel[] = [
     client: "Chef Marcus Vance",
     location: "Richmond, VA",
     videoUrl: "/videos/reels/reel-2.mp4",
+    poster: "/videos/reels/reel-2-poster.webp",
+    durationSeconds: 20,
     views: "28.9K",
   },
   {
@@ -27,6 +31,8 @@ const sampleReels: Reel[] = [
     client: "Sarah's Artisan Coffee",
     location: "Baltimore, MD",
     videoUrl: "/videos/reels/reel-3.mp4",
+    poster: "/videos/reels/reel-3-poster.webp",
+    durationSeconds: 14,
     views: "19.5K",
   },
   {
@@ -35,6 +41,8 @@ const sampleReels: Reel[] = [
     client: "ESC Client",
     location: "Fairfax, VA",
     videoUrl: "/videos/reels/reel-4.mp4",
+    poster: "/videos/reels/reel-4-poster.webp",
+    durationSeconds: 25,
     views: "",
   },
 ];

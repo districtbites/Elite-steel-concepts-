@@ -4,8 +4,18 @@ const nextConfig: NextConfig = {
   // Let `next dev` serve dev assets/HMR when viewed through an ngrok tunnel
   allowedDevOrigins: ['*.ngrok-free.app', '*.ngrok.app', '*.ngrok.io'],
   images: {
-    unoptimized: true,
+    // Serve resized AVIF/WebP instead of the original PNG/JPEG uploads (requires `sharp`, installed with Next).
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.esteelconcepts.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'esteelconcepts.com',
+      },
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
@@ -27,6 +37,15 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     },
+  },
+  async headers() {
+    // Browser caching for static media in /public: one week, then revalidate in the background.
+    const mediaCache = [{ key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' }];
+    return [
+      { source: '/uploads/:path*', headers: mediaCache },
+      { source: '/videos/:path*', headers: mediaCache },
+      { source: '/:file(.+\\.(?:png|jpg|jpeg|jfif|webp|avif|svg|ico|woff2))', headers: mediaCache },
+    ];
   },
   async redirects() {
     return [

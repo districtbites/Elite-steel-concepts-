@@ -159,7 +159,8 @@ export default async function BlogDetailsPage({ params }: PageProps) {
           <div className="absolute inset-0 z-0">
              <Image
                src={post.image}
-               unoptimized
+               unoptimized={post.image.startsWith("http")}
+               sizes="100vw"
                alt={post.imageAlt || post.title}
                fill
                className="object-cover opacity-40 scale-105"
@@ -370,7 +371,8 @@ export default async function BlogDetailsPage({ params }: PageProps) {
                                 <div className="relative aspect-video overflow-hidden mb-4 bg-black">
                                   <Image
                                     src={related.image}
-                                    unoptimized
+                                    unoptimized={related.image.startsWith("http")}
+                                    sizes="(max-width: 1024px) 100vw, 33vw"
                                     alt={related.title}
                                     fill
                                     className="object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"

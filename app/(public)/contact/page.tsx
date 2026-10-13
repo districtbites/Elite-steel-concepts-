@@ -3,12 +3,13 @@ import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import ContactForm from "@/components/ContactForm";
+import LazyMap from "@/components/ui/LazyMap";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { getSettings, getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -66,19 +67,13 @@ export default async function ContactPage() {
 
           {/* Map + Form */}
           <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 bg-white border border-gray-200 shadow-xl overflow-hidden">
-            <div className="relative min-h-[350px] lg:min-h-full bg-gray-100">
-              <iframe
-                src={mapEmbedUrl}
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Elite Steel Concepts Location"
-                className="absolute inset-0 w-full h-full"
-              />
-            </div>
+            <LazyMap
+              src={mapEmbedUrl}
+              title="Elite Steel Concepts Location"
+              address={settings.address}
+              mapsLink={settings.googleMapsLink}
+              className="min-h-[350px] lg:min-h-full bg-gray-100"
+            />
             <div className="p-8 md:p-12">
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-black mb-8 leading-none">
                 Let&apos;s Discuss Your <span className="text-primary">Build</span>

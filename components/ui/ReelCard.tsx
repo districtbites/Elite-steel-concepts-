@@ -9,6 +9,8 @@ interface ReelCardProps {
   location: string;
   videoUrl: string;
   views: string;
+  poster?: string;
+  durationSeconds?: number;
 }
 
 const formatDuration = (seconds: number) => {
@@ -23,10 +25,12 @@ const pauseOtherReels = (current: HTMLVideoElement) => {
   });
 };
 
-const ReelCard = ({ title, location, videoUrl }: ReelCardProps) => {
+const ReelCard = ({ title, location, videoUrl, poster, durationSeconds }: ReelCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
-  const [duration, setDuration] = useState<string | null>(null);
+  const [duration, setDuration] = useState<string | null>(
+    durationSeconds ? formatDuration(durationSeconds) : null,
+  );
 
   // Metadata can finish loading before hydration attaches onLoadedMetadata
   useEffect(() => {
@@ -46,12 +50,14 @@ const ReelCard = ({ title, location, videoUrl }: ReelCardProps) => {
   return (
     <div className="group relative bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-primary/50">
       <div className="relative aspect-[9/16] w-full overflow-hidden bg-black">
-        {/* Video — "#t=0.1" makes browsers paint the first frame as a poster */}
+        {/* With a poster image the video is not downloaded until it is played.
+            Without one, "#t=0.1" makes browsers paint the first frame as a poster. */}
         <video
           ref={videoRef}
           data-reel
-          src={`${videoUrl}#t=0.1`}
-          preload="metadata"
+          src={poster ? videoUrl : `${videoUrl}#t=0.1`}
+          poster={poster}
+          preload={poster ? "none" : "metadata"}
           playsInline
           controls={playing}
           onLoadedMetadata={(e) => setDuration(formatDuration(e.currentTarget.duration))}

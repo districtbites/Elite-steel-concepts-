@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 
+// Variable font: one file covers every weight used on the site (300–900).
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"], 
+  display: "swap",
 });
 
 import { getSEO } from "@/lib/db";
@@ -19,7 +20,11 @@ export async function generateMetadata(): Promise<Metadata> {
     description: seo.description,
     keywords: seo.keywords,
     icons: {
-      icon: "/logo.png",
+      icon: [
+        { url: "/favicon.ico", sizes: "48x48" },
+        { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      ],
+      apple: "/apple-touch-icon.png",
     },
     openGraph: {
       images: [seo.ogImage],

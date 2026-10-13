@@ -10,8 +10,8 @@ import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import { Star, Quote as QuoteIcon, Play, CheckCircle, ShieldCheck, Award, MessageSquare, Truck, CalendarCheck } from "lucide-react";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 import Image from "next/image";
 
 export async function generateMetadata(): Promise<Metadata> {

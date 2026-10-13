@@ -5,7 +5,7 @@ import WhyChooseSection from "@/components/WhyChooseSection";
 import SizeSelection from "@/components/SizeSelection";
 import Testimonials from "@/components/Testimonials";
 import HomeBlogSection from "@/components/HomeBlogSection";
-import ApplicationModal from "@/components/ui/ApplicationModal";
+import DeferredApplicationModal from "@/components/ui/DeferredApplicationModal";
 import CTASection from "@/components/ui/CTASection";
 import FAQSection from "@/components/FAQSection";
 import InteractiveFloorPlan from "@/components/ui/InteractiveFloorPlan";
@@ -31,8 +31,8 @@ import {
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -461,7 +461,7 @@ export default async function Home() {
       */}
 
       {/* ═══ APPLICATION MODAL (ONE-TIME PER SESSION) ═══════ */}
-      <ApplicationModal />
+      <DeferredApplicationModal />
     </>
   );
 }

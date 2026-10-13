@@ -18,8 +18,10 @@ import {
 } from "lucide-react";
 import { LocationEntry } from "@/lib/db";
 
+type DirectoryLocation = Pick<LocationEntry, "slug" | "city" | "state" | "distance">;
+
 interface LocationsDirectoryProps {
-  locations: LocationEntry[];
+  locations: DirectoryLocation[];
 }
 
 const STATE_META: Record<string, { name: string; dept: string; highlight: string }> = {
@@ -135,7 +137,7 @@ export default function LocationsDirectory({ locations }: LocationsDirectoryProp
 
   // Group and sort filtered locations by state
   const groupedByState = useMemo(() => {
-    const groups: Record<string, LocationEntry[]> = {};
+    const groups: Record<string, DirectoryLocation[]> = {};
     filteredLocations.forEach((loc) => {
       if (!groups[loc.state]) groups[loc.state] = [];
       groups[loc.state].push(loc);

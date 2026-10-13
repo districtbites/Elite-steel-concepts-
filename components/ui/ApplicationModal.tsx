@@ -37,7 +37,8 @@ export default function ApplicationModal({
     setMounted(true);
     const hasSeen = sessionStorage.getItem(storageKey);
     if (!hasSeen) {
-      const timer = setTimeout(() => setIsOpen(true), 600);
+      // The page-level delay lives in DeferredApplicationModal; open right after mounting.
+      const timer = setTimeout(() => setIsOpen(true), 300);
       return () => clearTimeout(timer);
     }
   }, [storageKey]);

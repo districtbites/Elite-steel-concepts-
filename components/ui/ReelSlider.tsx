@@ -11,6 +11,10 @@ export interface Reel {
   location: string;
   videoUrl: string;
   views: string;
+  /** Poster image shown until the reel is played (the video itself is not downloaded before that). */
+  poster?: string;
+  /** Length in seconds, shown as a badge without loading the video. */
+  durationSeconds?: number;
 }
 
 const ReelSlider = ({ reels }: { reels: Reel[] }) => {
@@ -83,6 +87,8 @@ const ReelSlider = ({ reels }: { reels: Reel[] }) => {
               location={reel.location}
               videoUrl={reel.videoUrl}
               views={reel.views}
+              poster={reel.poster}
+              durationSeconds={reel.durationSeconds}
             />
           </div>
         ))}

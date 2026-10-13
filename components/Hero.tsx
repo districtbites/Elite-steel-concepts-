@@ -1,11 +1,10 @@
-"use client";
-
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { Phone, ArrowRight, MapPin, Truck, Shield, Star } from "lucide-react";
 import Container from "./ui/Container";
 import ReadMore from "./ui/ReadMore";
-import HeroSlider, { HeroSlide } from "./ui/HeroSlider";
+import HeroSlider, { type HeroSlide } from "./ui/HeroSlider";
+import CyclingWord from "./ui/CyclingWord";
 import { PageSection } from "@/lib/db";
 
 interface HeroProps {
@@ -24,24 +23,8 @@ const STATS = [
   { value: "48", label: "States Served", icon: MapPin },
 ];
 
+// Server component — only the cycling word, Read More and the slider are client islands.
 const Hero = ({ content, slides = [] }: HeroProps) => {
-  const [wordIndex, setWordIndex] = useState(0);
-  const [animating, setAnimating] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    timerRef.current = setInterval(() => {
-      setAnimating(true);
-      setTimeout(() => {
-        setWordIndex((prev) => (prev + 1) % CYCLING_WORDS.length);
-        setAnimating(false);
-      }, 350);
-    }, 3200);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
-
   return (
     <section className="relative flex flex-col bg-gradient-to-b from-[#1c1c1c] to-[#0a0a0a] overflow-hidden">
       {/* ── Main Content ── */}
@@ -62,17 +45,10 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
             {/* Headline */}
             <h2 className="text-[clamp(2.5rem,4.6vw,4.25rem)] font-black uppercase tracking-tighter leading-[0.92] mb-8">
               <span className="hero-line-1 block text-white">Custom</span>
-              <span className="hero-line-2 block">
-                <span
-                  className="text-primary inline-block transition-all duration-300"
-                  style={{
-                    opacity: animating ? 0 : 1,
-                    transform: animating ? "translateY(-10px)" : "translateY(0)",
-                  }}
-                >
-                  {CYCLING_WORDS[wordIndex]}
-                </span>
-              </span>
+              <CyclingWord
+                words={CYCLING_WORDS}
+                className="hero-line-2 text-primary text-[min(1em,7.8vw)]"
+              />
               <span className="hero-line-3 block text-white">
                 Built to Perform.
               </span>

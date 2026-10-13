@@ -36,7 +36,7 @@ const QuoteStartSection = () => {
 
           <div className="relative w-full max-w-[280px] md:max-w-[320px] aspect-[1167/494] mb-10">
             <Image
-              src="/logo-horizontal-white.png"
+              src="/logo-horizontal-white.webp"
               alt="Elite Steel Concepts"
               fill
               sizes="(max-width: 640px) 280px, 320px"

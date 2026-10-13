@@ -96,6 +96,7 @@ export async function addFAQ(formData: FormData) {
     await createFAQ({ question, answer, category, order });
     revalidatePath("/admin/faqs");
     revalidateAllPublicPages();
+    revalidateAllPublicPages();
     return { success: true };
 }
 
@@ -110,6 +111,7 @@ export async function editFAQ(formData: FormData) {
     await updateFAQ(id, { question, answer, category, order });
     revalidatePath("/admin/faqs");
     revalidateAllPublicPages();
+    revalidateAllPublicPages();
     return { success: true };
 }
 
@@ -117,6 +119,7 @@ export async function removeFAQ(id: string) {
     const { deleteFAQ } = await import("@/lib/db");
     await deleteFAQ(id);
     revalidatePath("/admin/faqs");
+    revalidateAllPublicPages();
     revalidateAllPublicPages();
     return { success: true };
 }
@@ -138,6 +141,7 @@ export async function saveGlobalSEO(formData: FormData) {
 
     await updateSEO(updates);
     revalidatePath("/admin/seo");
+    revalidateAllPublicPages();
     revalidateAllPublicPages();
     return { success: true, message: "Global SEO Master Config Synchronized!" };
 }
@@ -178,6 +182,7 @@ export async function savePageSEO(pageId: string, formData: FormData) {
 
     await updateSEO({ ...currentSEO, pages });
     revalidatePath("/admin/seo");
+    revalidateAllPublicPages();
     revalidateAllPublicPages();
     return { success: true, message: `SEO Config for "${pageId}" deployed to live site!` };
 }
@@ -230,6 +235,7 @@ export async function saveSEO(formData: FormData) {
 
     await updateSEO(updates);
     revalidatePath("/admin/seo");
+    revalidateAllPublicPages();
     revalidateAllPublicPages();
     return { success: true, message: "SEO Master Config Synchronized Successfully!" };
 }

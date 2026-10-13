@@ -7,13 +7,13 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Phone } from "lucide-react";
 import Container from "./ui/Container";
 import Button from "./ui/Button";
-import { GlobalSettings } from "@/lib/db";
 
 interface HeaderProps {
-  settings: GlobalSettings;
+  /** Only the public phone number — never pass the full settings object to this client component. */
+  phone: string;
 }
 
-const Header = ({ settings }: HeaderProps) => {
+const Header = ({ phone }: HeaderProps) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -107,7 +107,7 @@ const Header = ({ settings }: HeaderProps) => {
             <Link href="/" className="relative z-[110] flex items-center group shrink-0">
               <div className="relative w-36 h-9 sm:w-40 sm:h-10 md:w-44 md:h-11 transition-transform duration-300 group-hover:scale-[1.02]">
                 <Image
-                  src="/logo-horizontal-white.png"
+                  src="/logo-horizontal-white.webp"
                   alt="Elite Steel Concepts"
                   fill
                   sizes="(max-width: 640px) 144px, (max-width: 1024px) 176px, 176px"
@@ -257,10 +257,10 @@ const Header = ({ settings }: HeaderProps) => {
               }`}
             >
               <a
-                href={`tel:${settings.phone}`}
+                href={`tel:${phone}`}
                 className="flex items-center mb-4 font-black text-white hover:text-primary transition-colors text-lg sm:text-xl tracking-tight"
               >
-                <Phone className="w-5 h-5 mr-3 text-primary" /> {settings.phone}
+                <Phone className="w-5 h-5 mr-3 text-primary" /> {phone}
               </a>
               <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] border border-primary px-3 py-1">
                 Manassas HQ | Nationwide Delivery

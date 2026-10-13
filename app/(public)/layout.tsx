@@ -12,7 +12,7 @@ export default async function PublicLayout({
 
   return (
     <>
-      <Header settings={settings} />
+      <Header phone={settings.phone} />
       <main className="flex-grow">
         {children}
       </main>

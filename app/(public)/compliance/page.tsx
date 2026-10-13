@@ -21,8 +21,8 @@ import { getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "DMV Food Truck Compliance Hub | Health & Fire Codes",

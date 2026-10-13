@@ -6,8 +6,8 @@ import PageHeader from "@/components/ui/PageHeader";
 import FAQSection from "@/components/FAQSection";
 import { getSEO, getPageSEO, getLocations, getSettings, getFAQs } from "@/lib/db";
 import LocationsDirectory from "@/components/locations/LocationsDirectory";
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -51,6 +51,8 @@ export default async function LocationsPage() {
     getFAQs(),
   ]);
   const publishedLocations = locations.filter(l => l.published);
+  // The directory is a client component — send only the fields it renders, not the full page content of 330 cities.
+  const directoryLocations = publishedLocations.map(({ slug, city, state, distance }) => ({ slug, city, state, distance }));
 
   return (
     <>
@@ -102,7 +104,7 @@ export default async function LocationsPage() {
             </p>
           </div>
 
-          <LocationsDirectory locations={publishedLocations} />
+          <LocationsDirectory locations={directoryLocations} />
         </Container>
       </section>
 

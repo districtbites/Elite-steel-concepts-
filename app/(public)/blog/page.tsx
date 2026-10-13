@@ -11,8 +11,8 @@ import { Calendar, Clock, ArrowRight, TrendingUp, Sparkles, BookOpen, Search, Sh
 import { getPosts, getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -81,6 +81,9 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
                          src={featuredPost.image} 
                          alt={featuredPost.title}
                          fill
+                         priority
+                         sizes="(max-width: 1024px) 100vw, 58vw"
+                         unoptimized={featuredPost.image.startsWith("http")}
                          className="object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] lg:bg-gradient-to-r lg:from-transparent lg:to-[#0a0a0a] to-transparent pointer-events-none" />

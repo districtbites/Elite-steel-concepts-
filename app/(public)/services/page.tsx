@@ -11,8 +11,8 @@ import FAQSection from "@/components/FAQSection";
 import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -97,6 +97,7 @@ export default async function ServicesPage() {
                   src="/uploads/about/about-manufacture-truck.jpg"
                   alt="Custom white food truck built by Elite Steel Concepts"
                   fill
+                  priority
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -174,7 +175,6 @@ export default async function ServicesPage() {
                   fill
                   sizes="(max-width: 1024px) 90vw, 50vw"
                   className="object-cover opacity-95 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-                  priority
                 />
               </div>
             </div>

@@ -12,8 +12,8 @@ import { ArrowRight, Star, Award, Zap, Camera, Sparkles, Shield, CheckCircle2 } 
 import { getProjects, getFAQs, getSEO, getPageSEO, getSettings } from "@/lib/db";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 
 // Serve pre-generated WebP files (full + "-thumb") when they exist next to the original.
 function webpVariants(src: string): { image: string; thumb?: string } {
@@ -101,7 +101,8 @@ export default async function PortfolioPage() {
                     alt={featuredProject.title}
                     fill
                     className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 grayscale group-hover:grayscale-0"
-                    unoptimized
+                    unoptimized={featuredProject.image.startsWith("http")}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
                   />
                   <div className="absolute top-4 left-4 flex items-center gap-2">
                     <span className="bg-primary text-black px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] border border-black flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">

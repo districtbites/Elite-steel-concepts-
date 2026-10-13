@@ -17,12 +17,23 @@ const INTERVAL_MS = 5000;
 
 const HeroSlider = ({ slides }: { slides: HeroSlide[] }) => {
   const [index, setIndex] = useState(0);
+  // Only the first slide loads with the page; the others load once the slider first moves.
+  const [loadAll, setLoadAll] = useState(false);
   const [paused, setPaused] = useState(false);
 
   const go = useCallback(
-    (next: number) => setIndex((next + slides.length) % slides.length),
+    (next: number) => {
+      setLoadAll(true);
+      setIndex((next + slides.length) % slides.length);
+    },
     [slides.length],
   );
+
+  // Preload the remaining slides after the page has finished its first paint.
+  useEffect(() => {
+    const t = setTimeout(() => setLoadAll(true), 2500);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     if (paused || slides.length < 2) return;
@@ -57,16 +68,18 @@ const HeroSlider = ({ slides }: { slides: HeroSlide[] }) => {
               i === index ? "opacity-100 z-10" : "opacity-0 z-0"
             }`}
           >
-            <Image
-              src={slide.url}
-              alt={slide.alt}
-              fill
-              priority={i === 0}
-              sizes="(max-width: 1024px) 100vw, 42vw"
-              className={`object-cover transition-transform duration-[6000ms] ease-out ${
-                i === index ? "scale-105" : "scale-100"
-              }`}
-            />
+            {(i === 0 || loadAll) && (
+              <Image
+                src={slide.url}
+                alt={slide.alt}
+                fill
+                priority={i === 0}
+                sizes="(max-width: 1024px) 100vw, 42vw"
+                className={`object-cover transition-transform duration-[6000ms] ease-out ${
+                  i === index ? "scale-105" : "scale-100"
+                }`}
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
 
             {/* Caption */}

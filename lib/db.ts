@@ -344,100 +344,108 @@ const DEFAULT_SEO: SEOSettings = {
     pages: {}
 };
 
-// ─── High-Speed In-Memory Cache ───
+// ─── High-Speed In-Memory Cache (stale-while-revalidate) ───
+// Pages are always served from memory. Once the cache is older than the TTL,
+// the next read returns the cached copy immediately and refreshes it from Turso
+// in the background, so visitors never wait on a full database fetch.
 let memoryDbCache: DatabaseSchema | null = null;
 let lastCacheTime = 0;
-const CACHE_TTL_MS = 30 * 1000; // 30s cache TTL for instant sub-millisecond page loads
+const CACHE_TTL_MS = 60 * 1000;
+
+// Shared in-flight load, so concurrent cache misses trigger a single Turso fetch.
+let inflightLoad: Promise<DatabaseSchema | null> | null = null;
+// Bumped on every write; a background refresh that started before a write is discarded
+// so it can never overwrite newer data with an older snapshot.
+let writeVersion = 0;
 
 export function invalidateDbCache() {
     memoryDbCache = null;
     lastCacheTime = 0;
 }
 
-// Helper to read DB
-async function readDb(): Promise<DatabaseSchema> {
-    const now = Date.now();
-    // 1. Return from memory cache if fresh (0ms response)
-    if (memoryDbCache && (now - lastCacheTime < CACHE_TTL_MS)) {
-        return memoryDbCache;
-    }
+function toSchema(raw: Record<string, any>): DatabaseSchema {
+    return {
+        posts: raw.posts || [],
+        quotes: raw.quotes || [],
+        contacts: raw.contacts || [],
+        settings: raw.settings || DEFAULT_SETTINGS,
+        seo: raw.seo || DEFAULT_SEO,
+        testimonials: raw.testimonials || [],
+        projects: raw.projects || [],
+        faqs: raw.faqs || [],
+        newsletters: raw.newsletters || [],
+        assets: raw.assets || [],
+        users: raw.users || [],
+        locations: raw.locations || [],
+        internalLinkRules: raw.internalLinkRules && raw.internalLinkRules.length > 0 ? raw.internalLinkRules : DEFAULT_INTERNAL_LINK_RULES,
+        internalLinkSettings: raw.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS
+    };
+}
+
+/**
+ * Loads the database from Turso (or local db.json when Turso is unavailable and
+ * nothing is cached yet). Returns null when Turso fails but a cached copy exists —
+ * the cache is kept rather than replaced by the possibly outdated local file.
+ */
+async function loadDb(): Promise<DatabaseSchema | null> {
+    const startedAtVersion = writeVersion;
 
     if (isTursoConfigured()) {
-        try {
-            // High-speed single query fetching all keys at once
-            const kvMap = await tursoGetAllKV();
-            if (Object.keys(kvMap).length > 0) {
-                const schema: DatabaseSchema = {
-                    posts: kvMap.posts || [],
-                    quotes: kvMap.quotes || [],
-                    contacts: kvMap.contacts || [],
-                    settings: kvMap.settings || DEFAULT_SETTINGS,
-                    seo: kvMap.seo || DEFAULT_SEO,
-                    testimonials: kvMap.testimonials || [],
-                    projects: kvMap.projects || [],
-                    faqs: kvMap.faqs || [],
-                    newsletters: kvMap.newsletters || [],
-                    assets: kvMap.assets || [],
-                    users: kvMap.users || [],
-                    locations: kvMap.locations || [],
-                    internalLinkRules: kvMap.internalLinkRules && kvMap.internalLinkRules.length > 0 ? kvMap.internalLinkRules : DEFAULT_INTERNAL_LINK_RULES,
-                    internalLinkSettings: kvMap.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS
-                };
+        const kvMap = await tursoGetAllKV();
+        if (Object.keys(kvMap).length > 0) {
+            const schema = toSchema(kvMap);
+            if (writeVersion === startedAtVersion) {
                 memoryDbCache = schema;
-                lastCacheTime = now;
-                return schema;
+                lastCacheTime = Date.now();
             }
-        } catch (tursoErr) {
-            console.error("Turso read error, falling back to local db.json:", tursoErr);
+            return memoryDbCache ?? schema;
         }
+        if (memoryDbCache) {
+            console.error("Turso read failed — keeping the cached database.");
+            return null;
+        }
+        console.error("Turso read failed, falling back to local db.json");
     }
 
     // Local JSON fallback
     try {
         const data = await fs.readFile(DB_PATH, 'utf-8');
-        const parsed = JSON.parse(data);
-        const schema: DatabaseSchema = {
-            posts: parsed.posts || [],
-            quotes: parsed.quotes || [],
-            contacts: parsed.contacts || [],
-            settings: parsed.settings || DEFAULT_SETTINGS,
-            seo: parsed.seo || DEFAULT_SEO,
-            testimonials: parsed.testimonials || [],
-            projects: parsed.projects || [],
-            faqs: parsed.faqs || [],
-            newsletters: parsed.newsletters || [],
-            assets: parsed.assets || [],
-            users: parsed.users || [],
-            locations: parsed.locations || [],
-            internalLinkRules: parsed.internalLinkRules && parsed.internalLinkRules.length > 0 ? parsed.internalLinkRules : DEFAULT_INTERNAL_LINK_RULES,
-            internalLinkSettings: parsed.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS
-        };
-        memoryDbCache = schema;
-        lastCacheTime = now;
-        return schema;
-    } catch (error) {
-        return {
-            posts: [],
-            quotes: [],
-            contacts: [],
-            settings: DEFAULT_SETTINGS,
-            seo: DEFAULT_SEO,
-            testimonials: [],
-            projects: [],
-            faqs: [],
-            newsletters: [],
-            assets: [],
-            users: [],
-            locations: [],
-            internalLinkRules: DEFAULT_INTERNAL_LINK_RULES,
-            internalLinkSettings: DEFAULT_INTERNAL_LINK_SETTINGS
-        };
+        const schema = toSchema(JSON.parse(data));
+        if (writeVersion === startedAtVersion) {
+            memoryDbCache = schema;
+            lastCacheTime = Date.now();
+        }
+        return memoryDbCache ?? schema;
+    } catch {
+        return memoryDbCache ?? toSchema({});
     }
+}
+
+function loadDbOnce(): Promise<DatabaseSchema | null> {
+    if (!inflightLoad) {
+        inflightLoad = loadDb().finally(() => { inflightLoad = null; });
+    }
+    return inflightLoad;
+}
+
+// Helper to read DB
+async function readDb(): Promise<DatabaseSchema> {
+    if (memoryDbCache) {
+        if (Date.now() - lastCacheTime >= CACHE_TTL_MS) {
+            // Stale: serve the cached copy now, refresh in the background.
+            loadDbOnce().catch((err) => console.error("[DB] Background refresh failed:", err));
+        }
+        return memoryDbCache;
+    }
+
+    // Cold start: nothing cached yet, so this request has to wait for the load.
+    return (await loadDbOnce()) ?? memoryDbCache ?? toSchema({});
 }
 
 // Helper to write DB — always writes to BOTH Turso and local db.json in parallel
 async function writeDb(data: DatabaseSchema): Promise<void> {
     // Instantly update memory cache
+    writeVersion++;
     memoryDbCache = data;
     lastCacheTime = Date.now();
 

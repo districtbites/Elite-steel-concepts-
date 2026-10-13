@@ -21,7 +21,7 @@ const Footer = ({ settings }: FooterProps) => {
             <Link href="/" className="inline-block group">
               <div className="relative w-36 h-9 sm:w-40 sm:h-10 md:w-44 md:h-11 transition-transform duration-300 group-hover:scale-[1.02]">
                 <Image
-                  src="/logo-horizontal-white.png"
+                  src="/logo-horizontal-white.webp"
                   alt="Elite Steel Concepts"
                   fill
                   sizes="(max-width: 640px) 144px, 176px"

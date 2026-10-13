@@ -28,8 +28,8 @@ interface PageProps {
   }>;
 }
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
@@ -73,7 +73,8 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
       <div className="relative h-[55vh] md:h-[65vh] bg-secondary overflow-hidden">
         <Image
           src={project.image}
-          unoptimized
+          unoptimized={project.image.startsWith("http")}
+          sizes="100vw"
           alt={project.title}
           fill
           className="object-cover opacity-70 scale-105"
@@ -148,7 +149,8 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                           alt={`${project.title} - View ${i + 1}`}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-700"
-                          unoptimized
+                          unoptimized={img.startsWith("http")}
+                          sizes="(max-width: 768px) 50vw, 25vw"
                         />
                         <div className="absolute inset-0 bg-secondary/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <span className="text-white text-[9px] font-black uppercase tracking-widest">
@@ -317,7 +319,8 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                       alt={rp.title}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
-                      unoptimized
+                      unoptimized={rp.image.startsWith("http")}
+                      sizes="(max-width: 768px) 100vw, 33vw"
                     />
                     <div className="absolute top-4 left-4">
                       <span className="bg-primary text-secondary text-[7px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full shadow-lg">

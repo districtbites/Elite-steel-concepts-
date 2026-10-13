@@ -156,9 +156,12 @@ const ProcessSteps = ({
           <Link
             href="/quote"
             id="process-start-quote-btn"
-            className="inline-flex items-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-xs px-6 py-3 transition-all"
+            className="group inline-flex items-center gap-4 bg-primary text-black pl-8 pr-3 py-3 font-black uppercase tracking-wider text-sm shadow-lg shadow-primary/25 hover:-translate-y-0.5 hover:shadow-xl transition-all whitespace-nowrap"
           >
-            Start With a Quote <ArrowRight size={14} />
+            Get a Free Quote
+            <span className="w-10 h-10 rounded-full bg-black text-primary flex items-center justify-center group-hover:translate-x-1 transition-transform">
+              <ArrowRight size={16} />
+            </span>
           </Link>
         </div>
       </Container>

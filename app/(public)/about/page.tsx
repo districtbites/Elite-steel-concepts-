@@ -10,8 +10,8 @@ import { Award, Calendar, Package, PenTool, Shield, MapPin, Wrench, Handshake } 
 import { getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();

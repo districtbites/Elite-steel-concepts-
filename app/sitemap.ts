@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next'
 import { getPosts, getProjects, getSEO, getLocations } from '@/lib/db'
 
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
+// Regenerated hourly, or when content changes (revalidatePath("/sitemap.xml")).
+export const revalidate = 3600
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const seo = await getSEO()
