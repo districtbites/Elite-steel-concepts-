@@ -96,10 +96,15 @@ const SizeSelection = () => {
               </div>
 
               {/* Size label */}
-              <div className="flex items-center justify-center text-center px-4 py-4 md:py-5 bg-black/20">
+              <div className="flex flex-col items-center justify-center text-center px-3 py-5 md:py-6 bg-black/20">
                 <h3 className="text-lg md:text-xl font-black tracking-tight text-white uppercase group-hover:text-primary transition-colors">
                   {item.label}
                 </h3>
+                <div className="h-px w-8 bg-primary/60 my-3" />
+                <div className="flex flex-col gap-1.5 text-[11px] md:text-xs font-bold uppercase tracking-wider">
+                  <span className="text-primary">{item.kitchen}</span>
+                  <span className="text-gray-400">{item.truck}</span>
+                </div>
               </div>
             </div>
           ))}
