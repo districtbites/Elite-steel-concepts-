@@ -41,8 +41,10 @@ export default async function ComplianceHub() {
   const heroDescLinked = autoLinkMarkdown(heroDescRaw, activeRules, linkSettings).updatedContent;
 
   const whyDescRaw = "The right requirements start with the design compliance, which can affect almost every part of a mobile kitchen, from handwashing and dishwashing sinks to water systems, wastewater, equipment placement, food-preparation areas, and electrical systems.";
+  const whyDescLinked = autoLinkMarkdown(whyDescRaw, activeRules, linkSettings).updatedContent;
 
   const whyDesc2Raw = "Understanding these requirements before fabrication can help you plan the right layout and avoid unnecessary design changes later. As a custom food truck builder, Elite Steel Concepts considers the requirements that may apply to your project based on your planned operation and location.";
+  const whyDesc2Linked = autoLinkMarkdown(whyDesc2Raw, activeRules, linkSettings).updatedContent;
 
   const locationDescRaw = "Custom food truck starts with knowing where you plan to operate. Health, safety, plumbing, fire, and mobile food requirements can vary between states, counties, cities, and local authorities.";
   const locationDescLinked = autoLinkMarkdown(locationDescRaw, activeRules, linkSettings).updatedContent;
@@ -107,10 +109,10 @@ export default async function ComplianceHub() {
               Why Food Truck Compliance Matters
             </h2>
             <p className="text-gray-600 text-base leading-relaxed max-w-3xl mx-auto">
-              {whyDescRaw}
+              <AutoLinkedText text={whyDescLinked} />
             </p>
             <p className="text-gray-600 text-base leading-relaxed max-w-3xl mx-auto">
-              {whyDesc2Raw}
+              <AutoLinkedText text={whyDesc2Linked} />
             </p>
           </div>
         </Container>

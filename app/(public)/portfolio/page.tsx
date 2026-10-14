@@ -76,7 +76,18 @@ export default async function PortfolioPage() {
         className="!pb-10 md:!pb-12"
         title="Elite Steel Concept Work Portfolio"
         normalCaseSubtitle
-        subtitle="Take a look at our completed custom food truck and trailer projects, built by an experienced custom food truck builder and designed around each business’s unique needs."
+        subtitle={
+          <>
+            Take a look at our completed custom food truck and trailer projects, built by an experienced{" "}
+            <Link
+              href="/services/custom-food-trucks"
+              className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
+            >
+              custom food truck builder
+            </Link>{" "}
+            and designed around each business’s unique needs.
+          </>
+        }
       >
         <Link
           href="/quote"

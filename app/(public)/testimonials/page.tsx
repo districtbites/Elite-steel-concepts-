@@ -177,7 +177,7 @@ export default async function TestimonialsPage() {
                             </div>
 
                             <blockquote className="flex-grow text-base leading-relaxed mb-7 text-gray-600">
-                                &ldquo;{text}&rdquo;
+                                &ldquo;<AutoLinkedText text={autoLinkMarkdown(text, activeRules, linkSettings).updatedContent} />&rdquo;
                             </blockquote>
 
                             <figcaption className={`flex items-center gap-3 pt-5 border-t ${accent ? "border-primary/20" : "border-gray-100"}`}>

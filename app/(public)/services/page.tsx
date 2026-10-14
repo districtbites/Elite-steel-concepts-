@@ -7,8 +7,10 @@ import Button from "@/components/ui/Button";
 import Image from "next/image";
 import { Truck, Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X, Award, MapPin, Zap } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { autoLinkMarkdown } from "@/lib/internalLinks";
 
-import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
+import { getSEO, getPageSEO, getFAQs, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import type { Metadata } from "next";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
@@ -27,9 +29,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ServicesPage() {
-  const [faqs, pageSeo, servicesHero, truckImage, trailerImage] = await Promise.all([
+  const [faqs, pageSeo, rules, linkSettings, servicesHero, truckImage, trailerImage] = await Promise.all([
     getFAQs(),
     getPageSEO("services"),
+    getInternalLinkRules(),
+    getInternalLinkSettings(),
     getMediaAsset("services", "hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_1", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_2", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800"),
@@ -39,6 +43,8 @@ export default async function ServicesPage() {
   const introRaw = typeof sections.intro?.content === 'string'
     ? sections.intro.content
     : "At Elite Steel Concepts, we don't just build boxes with kitchens. We engineer high-performance commercial environments designed to maximize flow, sanitation, and safety while projecting a premium brand image.";
+  const activeRules = rules.filter(r => r.enabled !== false);
+  const introLinked = autoLinkMarkdown(introRaw, activeRules, linkSettings).updatedContent;
 
   const services = [
     {
@@ -151,9 +157,12 @@ export default async function ServicesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
             <div className="order-2 lg:order-1 lg:col-span-6 flex items-center">
               <div className="w-full max-w-xl">
-                <p className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed border-l-2 border-primary pl-5 md:pl-6 mb-7">
-                  {introRaw}
-                </p>
+                <div className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed border-l-2 border-primary pl-5 md:pl-6 mb-7">
+                  <AutoLinkedText
+                    text={introLinked}
+                    linkClassName="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
+                  />
+                </div>
                 <Link
                   href="/quote"
                   className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"

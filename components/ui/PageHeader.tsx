@@ -3,7 +3,7 @@ import Container from "./Container";
 
 interface PageHeaderProps {
   title: string;
-  subtitle?: string;
+  subtitle?: React.ReactNode;
   eyebrow?: string;
   className?: string;
   children?: React.ReactNode;

@@ -4,7 +4,7 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import QuoteForm from "@/components/QuoteForm";
 import FAQSection from "@/components/FAQSection";
-import { ShieldCheck, Zap, Factory, Award, CheckCircle2, ChevronRight } from "lucide-react";
+import { ShieldCheck, Zap, Factory, Award, CheckCircle2, ChevronRight, Calendar, MapPin } from "lucide-react";
 import Link from "next/link";
 import { getSEO, getPageSEO, getFAQs, getLocations } from "@/lib/db";
 import type { Metadata } from "next";
@@ -42,6 +42,13 @@ export default async function QuotePage() {
     { title: "Custom CAD Planning", text: "Optimize your workflow with 3D floor plans designed for speed.", icon: Award },
   ];
 
+  const trustBadges = [
+    { label: "14+ Years Experience", icon: Calendar },
+    { label: "350+ Custom Builds", icon: Award },
+    { label: "Delivered to 48 States", icon: MapPin },
+    { label: "Health Code Focused", icon: ShieldCheck },
+  ];
+
   const processMetrics = [
     { label: "Engineering Quality", value: "A++" },
     { label: "Design Blueprinting", value: "Included" },
@@ -53,11 +60,34 @@ export default async function QuotePage() {
       <PageHeader
         eyebrow="Elite Steel Concept"
         title="Get Your Free Food Truck & Trailer Quote"
-        subtitle="Start Your Build With Trusted Custom Food Truck & Trailer Builders!"
+        subtitle={
+          <>
+            Start Your Build With{" "}
+            <Link
+              href="/services"
+              className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
+            >
+              Trusted Custom Food Truck &amp; Trailer Builders
+            </Link>
+            !
+          </>
+        }
         titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
         normalCaseSubtitle
         className="!pb-10 md:!pb-12"
-      />
+      >
+        <ul className="mt-8 flex flex-wrap items-center justify-center gap-3 max-w-4xl mx-auto">
+          {trustBadges.map(({ label, icon: Icon }) => (
+            <li
+              key={label}
+              className="inline-flex items-center gap-2 border border-[#262626] bg-white/[0.03] px-4 py-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] text-gray-300"
+            >
+              <Icon size={14} className="text-primary shrink-0" />
+              {label}
+            </li>
+          ))}
+        </ul>
+      </PageHeader>
 
       <Section className="bg-[#0a0a0a] overflow-hidden !py-10 md:!py-14 border-b border-[#1a1a1a] relative">
         <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 10px)" }} />

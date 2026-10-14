@@ -118,8 +118,14 @@ export default async function LocationsPage() {
               We Deliver to All 48 States
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              While we&apos;re based in Manassas, VA, Elite Steel Concepts has delivered custom food trucks and
-              concession trailers to entrepreneurs across 48 states. Distance is not a barrier — we handle
+              While we&apos;re based in Manassas, VA, Elite Steel Concepts has delivered custom food trucks and{" "}
+              <Link
+                href="/services/custom-food-trailers"
+                className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
+              >
+                concession trailers
+              </Link>{" "}
+              to entrepreneurs across 48 states. Distance is not a barrier — we handle
               logistics, coordinate delivery, and ensure your truck arrives ready for inspection.
             </p>
           </div>

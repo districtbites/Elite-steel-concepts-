@@ -300,7 +300,14 @@ export default async function CustomFoodTrucksPage() {
             </h2>
             <p className="text-gray-600 text-base md:text-lg font-medium leading-relaxed">
               Elite Steel Concepts makes it simple to turn your idea into a real
-              mobile kitchen. As experienced food truck builders, we create custom trucks around your menu, equipment, space, and
+              mobile kitchen. As{" "}
+              <Link
+                href="/about"
+                className="text-primary font-semibold underline underline-offset-2 hover:text-orange-600 transition-colors"
+              >
+                experienced food truck builders
+              </Link>
+              , we create custom trucks around your menu, equipment, space, and
               brand so your truck works the way you need it to.
             </p>
           </div>
