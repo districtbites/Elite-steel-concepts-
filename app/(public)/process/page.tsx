@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
@@ -73,7 +74,14 @@ export default async function ProcessPage() {
               ESC Custom Food Truck & Trailer Building Process
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              Create a mobile kitchen that works for you with a custom food truck manufacturer you can trust.
+              Create a mobile kitchen that works for you with a{" "}
+              <Link
+                href="/"
+                className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
+              >
+                custom food truck manufacturer
+              </Link>{" "}
+              you can trust.
             </p>
           </div>
 

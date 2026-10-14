@@ -80,7 +80,7 @@ export default async function PortfolioPage() {
           <>
             Take a look at our completed custom food truck and trailer projects, built by an experienced{" "}
             <Link
-              href="/services/custom-food-trucks"
+              href="/"
               className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
             >
               custom food truck builder

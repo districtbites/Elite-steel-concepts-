@@ -302,7 +302,7 @@ export default async function CustomFoodTrucksPage() {
               Elite Steel Concepts makes it simple to turn your idea into a real
               mobile kitchen. As{" "}
               <Link
-                href="/about"
+                href="/"
                 className="text-primary font-semibold underline underline-offset-2 hover:text-orange-600 transition-colors"
               >
                 experienced food truck builders

@@ -64,7 +64,7 @@ export default async function QuotePage() {
           <>
             Start Your Build With{" "}
             <Link
-              href="/services"
+              href="/"
               className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
             >
               Trusted Custom Food Truck &amp; Trailer Builders

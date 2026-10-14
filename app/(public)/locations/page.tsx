@@ -120,7 +120,7 @@ export default async function LocationsPage() {
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
               While we&apos;re based in Manassas, VA, Elite Steel Concepts has delivered custom food trucks and{" "}
               <Link
-                href="/services/custom-food-trailers"
+                href="/"
                 className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
               >
                 concession trailers
