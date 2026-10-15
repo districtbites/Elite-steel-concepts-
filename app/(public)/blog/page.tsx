@@ -10,6 +10,7 @@ import { Calendar, Clock, ArrowRight, TrendingUp, Sparkles, BookOpen, Search, Sh
 
 import { getPosts, getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -63,6 +64,7 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
 
   return (
     <>
+      <PageJsonLd pageId="blog" />
       <PageHeader
         title="Intelligence & Insights"
         subtitle="Exclusive blueprints for success in the mobile kitchen industry. Expert analysis, maintenance guides, and entrepreneur success stories."

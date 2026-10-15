@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 import Link from "next/link";
 import { MapPin, Phone, ArrowRight, Shield, Clock, Star, Truck } from "lucide-react";
 import Container from "@/components/ui/Container";
@@ -56,6 +57,7 @@ export default async function LocationsPage() {
 
   return (
     <>
+      <PageJsonLd pageId="locations" />
       {/* ─── HERO ──────────────────────────────────────────────── */}
       <PageHeader
         eyebrow="States ESC Serve"

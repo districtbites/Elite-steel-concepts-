@@ -30,6 +30,7 @@ import {
 } from "@/lib/db";
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -143,12 +144,7 @@ export default async function Home() {
 
   return (
     <>
-      {pageSeo.structuredData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: pageSeo.structuredData }}
-        />
-      )}
+      <PageJsonLd pageId="home" />
 
       {/* ═══ HERO ════════════════════════════════════════════ */}
       <Hero

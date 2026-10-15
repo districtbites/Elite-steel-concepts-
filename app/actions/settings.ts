@@ -2,6 +2,8 @@
 
 import { getSettings, updateSettings, updateSEO } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { generatePageSchemas, pagePath } from "@/lib/pageSchemas";
+import { checkSchemaJson } from "@/lib/schemaValidation";
 
 // Helper to revalidate ALL public-facing pages so changes show up immediately
 function revalidateAllPublicPages() {
@@ -148,6 +150,13 @@ export async function saveGlobalSEO(formData: FormData) {
 
 export async function savePageSEO(pageId: string, formData: FormData) {
     const { getSEO, updateSEO } = await import("@/lib/db");
+    // Schema is stored normalized: duplicates removed, Google's required fields checked
+    const schemaRaw = (formData.get(`page_${pageId}_structuredData`) as string) || "";
+    const schemaCheck = checkSchemaJson(schemaRaw);
+    if (schemaCheck.errors.length > 0) {
+        return { success: false, message: `Schema not saved — ${schemaCheck.errors[0]}` };
+    }
+    const structuredData = schemaCheck.schemas.length > 0 ? JSON.stringify(schemaCheck.schemas, null, 2) : "";
     const currentSEO = await getSEO();
     const pages = { ...(currentSEO.pages || {}) };
 
@@ -157,7 +166,7 @@ export async function savePageSEO(pageId: string, formData: FormData) {
         keywords: (formData.get(`page_${pageId}_keywords`) as string) || "",
         imageAlts: {},
         sections: {},
-        structuredData: (formData.get(`page_${pageId}_structuredData`) as string) || ""
+        structuredData
     };
 
     // Extract image alts and sections
@@ -270,4 +279,9 @@ export async function updateSitemap() {
     revalidatePath("/sitemap.ts");
     revalidatePath("/", "layout");
     return { success: true, message: "Sitemap updated successfully with all new links!" };
+}
+
+/** Schema generated from a page's current content — fills the admin Schema editor. */
+export async function generatePageSchemaJson(pageId: string) {
+    return { path: pagePath(pageId), json: JSON.stringify(await generatePageSchemas(pageId), null, 2) };
 }

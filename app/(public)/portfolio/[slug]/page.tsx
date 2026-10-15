@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbSchema } from "@/lib/schema";
 
 interface PageProps {
   params: Promise<{
@@ -69,6 +71,13 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Portfolio", path: "/portfolio" },
+          { name: project.title, path: `/portfolio/${project.slug}` },
+        ])}
+      />
       {/* ═══════ HERO IMAGE ═══════ */}
       <div className="relative h-[55vh] md:h-[65vh] bg-secondary overflow-hidden">
         <Image

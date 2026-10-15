@@ -9,6 +9,7 @@ import { autoLinkMarkdown } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import { Star, Quote as QuoteIcon, Play, CheckCircle, ShieldCheck, Award, MessageSquare, Truck, CalendarCheck } from "lucide-react";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -27,9 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TestimonialsPage() {
-  const [testimonials, pageSeo, rules, linkSettings, testimonialsHero] = await Promise.all([
+  const [testimonials, rules, linkSettings, testimonialsHero] = await Promise.all([
     getTestimonials(),
-    getPageSEO("testimonials"),
     getInternalLinkRules(),
     getInternalLinkSettings(),
     getMediaAsset("testimonials", "hero", "https://images.pexels.com/photos/1766686/pexels-photo-1766686.jpeg?auto=compress&cs=tinysrgb&w=1200"),
@@ -38,12 +38,7 @@ export default async function TestimonialsPage() {
 
   return (
     <>
-      {pageSeo.structuredData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: pageSeo.structuredData }}
-        />
-      )}
+      <PageJsonLd pageId="testimonials" />
       <PageHeader
         eyebrow="Elite Steel Concept"
         title="Customer Testimonials"

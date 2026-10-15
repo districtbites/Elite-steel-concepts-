@@ -11,6 +11,7 @@ import Link from "next/link";
 import { ArrowRight, Star, Award, Zap, Camera, Sparkles, Shield, CheckCircle2 } from "lucide-react";
 import { getProjects, getFAQs, getSEO, getPageSEO, getSettings } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -71,6 +72,7 @@ export default async function PortfolioPage() {
 
   return (
     <>
+      <PageJsonLd pageId="portfolio" />
       <PageHeader
         eyebrow="Portfolio of ECS"
         className="!pb-10 md:!pb-12"

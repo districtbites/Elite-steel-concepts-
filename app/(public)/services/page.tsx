@@ -12,6 +12,7 @@ import { autoLinkMarkdown } from "@/lib/internalLinks";
 
 import { getSEO, getPageSEO, getFAQs, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -60,12 +61,7 @@ export default async function ServicesPage() {
 
   return (
     <>
-      {pageSeo.structuredData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: pageSeo.structuredData }}
-        />
-      )}
+      <PageJsonLd pageId="services" />
       <PageHeader
         eyebrow="ECS Services"
         title="Expert Food Truck, Food Trailer & Mobile Kitchen Services Nationwide"

@@ -8,6 +8,7 @@ import { getSEO, getPageSEO, getInternalLinkRules, getInternalLinkSettings } fro
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -36,6 +37,7 @@ export default async function FleetExpansionPage() {
 
   return (
     <>
+      <PageJsonLd pageId="fleet-expansion" />
       <PageHeader
         title="Fleet Expansion"
         subtitle="Scaling your mobile food empire? We offer standardized build processes for multi-unit operators and franchises."

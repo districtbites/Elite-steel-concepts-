@@ -8,6 +8,7 @@ import { ShieldCheck, Zap, Factory, Award, CheckCircle2, ChevronRight, Calendar,
 import Link from "next/link";
 import { getSEO, getPageSEO, getFAQs, getLocations } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -57,6 +58,7 @@ export default async function QuotePage() {
 
   return (
     <>
+      <PageJsonLd pageId="quote" />
       <PageHeader
         eyebrow="Elite Steel Concept"
         title="Get Your Free Food Truck & Trailer Quote"

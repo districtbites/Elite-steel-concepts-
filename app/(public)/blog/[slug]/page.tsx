@@ -1,6 +1,8 @@
 import React from "react";
 import { getPostBySlug, getPosts, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { absoluteUrl, businessRef, toIsoDate, breadcrumbSchema, faqSchema } from "@/lib/schema";
+import JsonLd from "@/components/JsonLd";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import Image from "next/image";
@@ -116,41 +118,28 @@ export default async function BlogDetailsPage({ params }: PageProps) {
     "@type": "Article",
     headline: post.title,
     description: post.metaDescription || post.subtitle || post.excerpt,
-    image: post.image,
-    datePublished: post.date,
-    author: {
-      "@type": "Organization",
-      name: "Elite Steel Concepts",
-      url: "https://www.esteelconcepts.com",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Elite Steel Concepts",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://www.esteelconcepts.com/logo.png",
-      },
-    },
+    image: absoluteUrl(post.image),
+    datePublished: toIsoDate(post.date),
+    url: absoluteUrl(`/blog/${post.slug}`),
+    mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
+    articleSection: post.category,
+    author: businessRef(),
+    publisher: { ...businessRef(), logo: { "@type": "ImageObject", url: absoluteUrl("/logo.png") } },
   };
 
-  const faqSchema = faqs.length > 0
-    ? {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: faqs.map(f => ({
-          "@type": "Question",
-          name: f.question,
-          acceptedAnswer: { "@type": "Answer", text: f.answer },
-        })),
-      }
-    : null;
+  const pageSchemas = [
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "Blog", path: "/blog" },
+      { name: post.title, path: `/blog/${post.slug}` },
+    ]),
+    articleSchema,
+    ...(faqs.length > 0 ? [faqSchema(faqs)] : []),
+  ];
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
-      {faqSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-      )}
+      {pageSchemas.map((s, i) => <JsonLd key={i} data={s} />)}
 
       <article className="bg-white">
         {/* ═══ HERO ════════════════════════════════════════════ */}

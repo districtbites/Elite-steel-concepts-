@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 import Link from "next/link";
 import { 
   ShieldCheck, 
@@ -69,6 +70,7 @@ export default async function ComplianceHub() {
 
   return (
     <>
+      <PageJsonLd pageId="compliance" />
       {/* ─── HERO ──────────────────────────────────────────────── */}
       <section className="relative bg-[#0a0a0a] text-white pt-32 pb-12 md:pt-40 md:pb-16 overflow-hidden border-b border-[#1a1a1a]">
         {/* Same grid background + top accent line as PageHeader */}

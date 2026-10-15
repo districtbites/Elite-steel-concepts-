@@ -6,6 +6,7 @@ import CTASection from "@/components/ui/CTASection";
 import { Wrench, Zap, Droplets, Wind, Flame, CookingPot, Hammer, Paintbrush, Check, ClipboardCheck, ScanSearch, Lightbulb, ArrowRight } from "lucide-react";
 import { getSEO, getPageSEO } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 const repairServices = [
   {
@@ -136,6 +137,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RepairsAndUpgradesPage() {
   return (
     <>
+      <PageJsonLd pageId="repairs-and-upgrades" />
       <PageHeader
         title="Repairs & Upgrades for Food Trucks & Trailers"
         subtitle="Repair. Upgrade. We’ve Got You Covered."

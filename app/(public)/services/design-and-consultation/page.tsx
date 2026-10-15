@@ -6,6 +6,7 @@ import CTASection from "@/components/ui/CTASection";
 import { Workflow, FileCode, ShieldCheck, CookingPot, MessagesSquare, ClipboardList, PencilRuler, RefreshCw, ArrowRight } from "lucide-react";
 import { getSEO, getPageSEO } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 const designServices = [
   { icon: Workflow, title: "Workflow & Kitchen Layout Planning" },
@@ -39,6 +40,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DesignAndConsultationPage() {
   return (
     <>
+      <PageJsonLd pageId="design-and-consultation" />
       <PageHeader
         title="Design & Consultation Service"
         subtitle="Smart Custom Food Truck & Trailer Design Starts With the Right Plan Consultation"

@@ -38,6 +38,8 @@ import { getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLin
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
+import { TRUCK_FAQS } from "@/lib/serviceFaqs";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -60,44 +62,6 @@ export default async function CustomFoodTrucksPage() {
     getInternalLinkSettings(),
   ]);
   const activeRules = rules.filter(r => r.enabled !== false);
-  const truckFaqs = [
-    {
-      id: "cft-faq-1",
-      question: "How long does it take to build a custom food truck?",
-      answer:
-        "ECS typical build time is around 8–12 weeks, depending on the design, equipment, and customization required for your project.",
-    },
-    {
-      id: "cft-faq-2",
-      question: "Can I add my own cooking equipment?",
-      answer:
-        "Yes. Your food truck can be designed around the equipment you already have or the equipment you plan to install.",
-    },
-    {
-      id: "cft-faq-3",
-      question: "Do you build food trucks for new businesses?",
-      answer:
-        "Yes. Whether you're launching your first food truck or expanding an established food business, we can build a mobile kitchen around your business needs.",
-    },
-    {
-      id: "cft-faq-4",
-      question: "Can you help with the food truck design?",
-      answer:
-        "Yes. The Elite Steel Concepts expert team can help create a practical layout that makes it easier to prepare, cook, store, and serve food while using your available space efficiently.",
-    },
-    {
-      id: "cft-faq-5",
-      question: "Do you offer custom branding and exterior designs?",
-      answer:
-        "Yes. ESC can customize your truck with exterior finishes and branding elements to help create a professional look for your food business.",
-    },
-    {
-      id: "cft-faq-6",
-      question: "What makes a custom food truck different from a standard food truck?",
-      answer:
-        "A custom food truck is designed around your specific business needs. You can select the layout, equipment, storage, serving setup, branding, and other features instead of working with a one-size-fits-all design.",
-    },
-  ];
 
   const introDescRaw = "A custom food truck from Elite Steel Concepts is a precision tool. We focus on commercial kitchen design, ergonomic safety, and health code compliance. Every weld and every corner is designed to withstand the rigors of 24/7 commercial operation. You can also explore our custom concession trailers or request a custom quote.";
   const introDescLinked = autoLinkMarkdown(introDescRaw, activeRules, linkSettings).updatedContent;
@@ -188,6 +152,7 @@ export default async function CustomFoodTrucksPage() {
 
   return (
     <>
+      <PageJsonLd pageId="custom-food-trucks" />
       <PageHeader
         eyebrow="Food Truck Services"
         title="Custom Food Trucks"
@@ -568,7 +533,7 @@ export default async function CustomFoodTrucksPage() {
       )}
 
       {/* FAQ Integration */}
-      <FAQSection faqs={truckFaqs} plainHeading />
+      <FAQSection faqs={TRUCK_FAQS} plainHeading />
     </>
   );
 }

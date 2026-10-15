@@ -4,6 +4,7 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import { getPageSEO, getSEO, getSettings } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -33,6 +34,7 @@ export default async function TermsPage() {
 
   return (
     <>
+      <PageJsonLd pageId="terms" />
       <PageHeader
         title={sections.header?.title || "Legal Architecture"}
         subtitle={sections.header?.subtitle || "The legal terms and conditions for working with Elite Steel Concepts."}

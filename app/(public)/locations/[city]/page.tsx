@@ -17,6 +17,7 @@ import Container from "@/components/ui/Container";
 import { getLocations, getLocationBySlug, getSEO, getPageSEO, getSettings, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import PageJsonLd from "@/components/PageJsonLd";
 
 interface PageProps {
   params: Promise<{ city: string }>;
@@ -66,72 +67,6 @@ export default async function LocationPage({ params }: PageProps) {
   ]);
   const activeRules = rules.filter(r => r.enabled !== false);
 
-  const addressParts = settings.address.split(',');
-  const streetAddress = addressParts[0] || settings.address;
-  const addressRegionLocality = addressParts.slice(1).join(',').trim() || '';
-
-  const localBusinessSchema = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: "Elite Steel Concepts",
-    description: `Custom food truck and concession trailer builder serving ${location.city}, ${location.state}.`,
-    url: `https://www.esteelconcepts.com/locations/${location.slug}`,
-    telephone: "+15716510337",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: streetAddress,
-      addressLocality: addressRegionLocality,
-      addressRegion: "VA",
-      postalCode: "20110",
-      addressCountry: "US",
-    },
-    areaServed: { "@type": "City", name: location.city },
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "Food Truck Building Services",
-      itemListElement: [
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Custom Food Truck Fabrication",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Concession Trailer Building",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Food Truck Repair & Maintenance",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Fire Suppression System Installation",
-          },
-        },
-      ],
-    },
-  };
-
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: location.faq.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: { "@type": "Answer", text: item.answer },
-    })),
-  };
-
   // Nearby locations: prioritize same state, then regional neighbors
   const allLocations = await getLocations();
   const sameState = allLocations.filter(
@@ -171,14 +106,7 @@ export default async function LocationPage({ params }: PageProps) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <PageJsonLd pageId={`location-${location.slug}`} />
 
       {/* ─── HERO ──────────────────────────────────────────────── */}
       <section className="relative bg-[#0a0a0a] text-white overflow-hidden">

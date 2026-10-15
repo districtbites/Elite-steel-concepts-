@@ -7,6 +7,7 @@ import LazyMap from "@/components/ui/LazyMap";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { getSettings, getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -38,6 +39,7 @@ export default async function ContactPage() {
 
   return (
     <>
+      <PageJsonLd pageId="contact" />
       <PageHeader
         title="Contact Us"
         subtitle="Discuss your custom food truck or trailer. Fill out the form below. Our team member will get back to you shortly."

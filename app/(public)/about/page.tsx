@@ -9,6 +9,7 @@ import Image from "next/image";
 import { Award, Calendar, Package, PenTool, Shield, MapPin, Wrench, Handshake } from "lucide-react";
 import { getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -26,8 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const pageSeo = await getPageSEO("about");
-
   const storyRaw =
     "Our mission is to build high-quality custom food trailers and trucks using durable, commercial-grade materials, reliable equipment, expert construction, and practical kitchen layouts. Every build is carefully designed around the client's menu, workflow, and business needs, with a strong focus on durability, functionality, professional finishing, and applicable code requirements. We use quality materials and thoughtful designs to create dependable mobile kitchen solutions that support entrepreneurs from their first launch through long-term business growth.";
   
@@ -44,12 +43,7 @@ export default async function AboutPage() {
 
   return (
     <>
-      {pageSeo.structuredData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: pageSeo.structuredData }}
-        />
-      )}
+      <PageJsonLd pageId="about" />
       <PageHeader
         title="About Us"
         subtitle="With 14+ years of experience, Elite Steel Concepts builds custom food trucks, trailers & mobile kitchens designed for food businesses. Based in Manassas, Virginia, we proudly serve entrepreneurs nationwide."

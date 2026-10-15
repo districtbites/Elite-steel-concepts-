@@ -38,6 +38,8 @@ import { getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLin
 import { autoLinkMarkdown } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
+import { TRAILER_FAQS } from "@/lib/serviceFaqs";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -60,32 +62,6 @@ export default async function CustomFoodTrailersPage() {
     getInternalLinkSettings(),
   ]);
   const activeRules = rules.filter(r => r.enabled !== false);
-  const trailerFaqs = [
-    {
-      id: "cftr-faq-1",
-      question: "What is a custom food trailer?",
-      answer:
-        "A custom food trailer is a mobile kitchen designed and built around your menu, equipment, workflow, and business needs.",
-    },
-    {
-      id: "cftr-faq-2",
-      question: "Do you build concession trailers for different types of businesses?",
-      answer:
-        "Yes. We build custom concession trailers for businesses such as coffee, BBQ, dessert, catering, and other mobile food concepts.",
-    },
-    {
-      id: "cftr-faq-3",
-      question: "Are your food trailers designed with health and safety requirements in mind?",
-      answer:
-        "Yes. We consider applicable health, electrical, plumbing, ventilation, gas, and fire-safety requirements during the design and build process.",
-    },
-    {
-      id: "cftr-faq-4",
-      question: "How long does a custom food truck build take?",
-      answer:
-        "A typical ground-up build takes between 8 to 12 weeks, depending on the complexity of the design and equipment lead times. We prioritize quality fabrication to ensure your kitchen is built to last.",
-    },
-  ];
 
   const introDescRaw = "A custom concession trailer from Elite Steel Concepts offers the highest ROI in the mobile food industry. More square footage for equipment and staff, without the engine maintenance of a truck. Learn about our custom food truck conversions or request an itemized build quote.";
   const introDescLinked = autoLinkMarkdown(introDescRaw, activeRules, linkSettings).updatedContent;
@@ -170,6 +146,7 @@ export default async function CustomFoodTrailersPage() {
 
   return (
     <>
+      <PageJsonLd pageId="custom-food-trailers" />
       <PageHeader
         eyebrow="Food Trailer Services"
         title="Custom Food Trailer"
@@ -520,7 +497,7 @@ export default async function CustomFoodTrailersPage() {
       */}
 
       {/* Trailer specific FAQs */}
-      <FAQSection faqs={trailerFaqs} plainHeading />
+      <FAQSection faqs={TRAILER_FAQS} plainHeading />
 
       {/* Hidden: CTA Section
       -- CTA Section --

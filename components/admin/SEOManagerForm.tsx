@@ -20,7 +20,6 @@ import {
  ChevronRight,
  CheckCircle2,
  XCircle,
- ExternalLink,
  Copy,
  RotateCcw,
  Sparkles,
@@ -30,6 +29,8 @@ import {
  PanelLeftOpen,
 } from"lucide-react";
 import Toast from"@/components/ui/Toast";
+import SchemaEditor from"@/components/admin/SchemaEditor";
+import { pagePath } from"@/lib/schema";
 import { SEOSettings } from"@/lib/db";
 
 interface SEOManagerFormProps {
@@ -282,7 +283,7 @@ const SEOManagerForm = ({ seo, pages }: SEOManagerFormProps) => {
  const formData = new FormData(e.currentTarget);
  const { saveGlobalSEO } = await import("@/app/actions/settings");
  const result = await saveGlobalSEO(formData);
- if (result?.success) {
+ if (result?.message) {
  setToastMsg(result.message);
  setShowToast(true);
  }
@@ -1077,51 +1078,13 @@ const SEOManagerForm = ({ seo, pages }: SEOManagerFormProps) => {
  {/* ═══ SCHEMA / TECHNICAL TAB ═══ */}
  {activeSubTab ==="tech" && (
  <div className="space-y-6 animate-in fade-in duration-300">
- <div className="bg-admin-surface p-6 md:p-8 text-admin-text shadow-xl">
- <div className="flex items-center justify-between mb-6">
- <div className="flex items-center gap-4">
- <div className="p-2 bg-admin-surface/10">
- <Code2 size={20} className="text-primary" />
- </div>
- <div>
- <h3 className="text-base font-black uppercase tracking-tight">
- Structured Data (JSON-LD)
- </h3>
- <p className="text-[10px] text-admin-muted font-medium uppercase tracking-wider mt-0.5">
- Rich snippets for enhanced SERP visibility
- </p>
- </div>
- </div>
- <a
- href="https://search.google.com/test/rich-results"
- target="_blank"
- rel="noopener noreferrer"
- className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-primary hover:text-admin-text transition-colors"
- >
- <ExternalLink size={12} />
- Validate
- </a>
- </div>
- <textarea
- rows={14}
+ <SchemaEditor
+ pageId={page.id}
+ path={pagePath(page.id)}
  value={structuredDataState[page.id] ||""}
- onChange={(e) =>
- handleStructuredDataChange(
- page.id,
- e.target.value
- )
- }
- placeholder={`{\n"@context":"https://schema.org",\n"@type":"LocalBusiness",\n"name":"Elite Steel Concepts",\n"description":"Custom food truck & trailer fabrication"\n}`}
- className="w-full bg-admin-bg/30 border border-white/10 p-5 outline-none focus:border-primary font-mono text-xs text-primary placeholder:text-gray-700 resize-none transition-all leading-relaxed"
+ savedValue={seo.pages?.[page.id]?.structuredData ||""}
+ onChange={(v) => handleStructuredDataChange(page.id, v)}
  />
- <div className="mt-4 flex items-center gap-2 text-primary/70">
- <AlertCircle size={12} />
- <span className="text-[10px] font-bold uppercase tracking-widest">
- Validate JSON at Google Rich Results Test before
- deploying
- </span>
- </div>
- </div>
  </div>
  )}
 

@@ -8,6 +8,7 @@ import ProcessTimeline, { type ProcessPhase } from "@/components/ProcessTimeline
 
 import { getSEO, getPageSEO } from "@/lib/db";
 import type { Metadata } from "next";
+import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -60,6 +61,7 @@ export default async function ProcessPage() {
 
   return (
     <>
+      <PageJsonLd pageId="process" />
       <PageHeader
         title="Our Process"
         subtitle="Building Your Custom Food Truck or Trailer, Step by Step"
