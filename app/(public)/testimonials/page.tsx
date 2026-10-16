@@ -40,7 +40,7 @@ export default async function TestimonialsPage() {
     <>
       <PageJsonLd pageId="testimonials" />
       <PageHeader
-        eyebrow="Elite Steel Concept"
+        eyebrow="Elite Steel Concepts"
         title="Customer Testimonials"
       />
 
@@ -111,7 +111,7 @@ export default async function TestimonialsPage() {
                  </div>
               </div>
               <div className="w-full lg:w-1/2">
-                 <h1 className="text-primary font-black uppercase tracking-widest text-xs mb-4 block underline decoration-secondary decoration-4 underline-offset-8">Featured Story</h1>
+                 <p className="text-primary font-black uppercase tracking-widest text-xs mb-4 block underline decoration-secondary decoration-4 underline-offset-8">Featured Story</p>
                  <h2 className="text-4xl md:text-5xl font-black uppercase text-secondary tracking-tighter mb-8 leading-[0.9]">
                     "They didn't just build a truck, they built a <span className="text-primary italic">scalable business</span>."
                  </h2>

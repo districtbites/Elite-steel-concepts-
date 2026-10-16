@@ -54,9 +54,9 @@ const SizeSelection = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-px w-12 bg-primary" />
-            <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em] text-center">
+            <p className="text-primary text-xs font-black uppercase tracking-[0.25em] text-center">
               Which Food Truck Size Is Right for You?
-            </h1>
+            </p>
             <div className="h-px w-12 bg-primary" />
           </div>
           <h2 className="text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-tight text-black mb-5">

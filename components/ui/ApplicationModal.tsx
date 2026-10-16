@@ -169,9 +169,9 @@ export default function ApplicationModal({
               </div>
 
               <div className="md:py-8">
-                <h1 className="text-primary font-black uppercase tracking-[0.2em] text-[10px] mb-2 md:mb-3">
+                <p className="text-primary font-black uppercase tracking-[0.2em] text-[10px] mb-2 md:mb-3">
                   Free Quote
-                </h1>
+                </p>
                 <h2
                   id="application-modal-title"
                   className="text-xl md:text-4xl font-black tracking-tight uppercase leading-tight md:leading-[0.92] text-white"
@@ -218,9 +218,9 @@ export default function ApplicationModal({
               <div className="mb-5 md:mb-6 md:pr-8">
                 <div className="hidden md:flex items-center gap-3 mb-3">
                   <div className="h-px w-8 bg-primary" />
-                  <h1 className="text-primary text-[10px] font-black uppercase tracking-[0.25em]">
+                  <p className="text-primary text-[10px] font-black uppercase tracking-[0.25em]">
                     Free Quote
-                  </h1>
+                  </p>
                 </div>
                 <h2 className="hidden md:block text-2xl sm:text-3xl font-black text-black uppercase tracking-tight leading-tight mb-2">
                   Let&apos;s Discuss Your Build

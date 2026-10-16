@@ -179,9 +179,9 @@ export default async function Home() {
           <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
-              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 What We Build
-              </h1>
+              </p>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black uppercase tracking-tight leading-tight">
@@ -244,7 +244,7 @@ export default async function Home() {
       <QuoteStartSection />
 
       {/* ═══ PROCESS ═════════════════════════════════════════ */}
-      <ProcessSteps eyebrowAsH1 />
+      <ProcessSteps />
 
       {/* ═══ WHY CHOOSE SECTION (CARDS) ══════════════════════ */}
       <WhyChooseSection />
@@ -370,13 +370,13 @@ export default async function Home() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
-              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 {sections.localcoverage?.subtitle || "Service Area"}
-              </h1>
+              </p>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight mb-6">
-              {sections.localcoverage?.title || "USA Area ESC Cover"}
+              {sections.localcoverage?.title || "Where We Build and Deliver"}
             </h2>
             <div className="text-gray-500 text-lg leading-relaxed text-center">
               <AutoLinkedText
@@ -442,7 +442,7 @@ export default async function Home() {
       {/* <NewsletterSection /> */}
 
       {/* ═══ FAQ ═════════════════════════════════════════════ */}
-      {faqs.length > 0 && <FAQSection faqs={faqs.slice(0, 5)} eyebrowAsH1 />}
+      {faqs.length > 0 && <FAQSection faqs={faqs.slice(0, 5)} />}
 
       {/* ═══ FINAL CTA — hidden for now ═══════════════════════
       <CTASection

@@ -76,7 +76,7 @@ export default async function PortfolioPage() {
       <PageHeader
         eyebrow="Portfolio of ECS"
         className="!pb-10 md:!pb-12"
-        title="Elite Steel Concept Work Portfolio"
+        title="Elite Steel Concepts Work Portfolio"
         normalCaseSubtitle
         subtitle={
           <>

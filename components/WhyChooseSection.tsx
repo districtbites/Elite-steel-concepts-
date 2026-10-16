@@ -3,7 +3,7 @@ import Container from "./ui/Container";
 import {
   PenTool,
   Utensils,
-  Headset,
+  ShieldCheck,
   PlugZap,
   Flame,
   Truck,
@@ -23,10 +23,10 @@ const whyChooseFeatures = [
       "We install commercial-grade kitchen equipment built for heavy daily operations, meeting NSF standards and safety codes where required.",
   },
   {
-    icon: Headset,
-    title: "24/7 support + 1-year warranty",
+    icon: ShieldCheck,
+    title: "1-Year Limited Electrical & Plumbing Warranty",
     description:
-      "Our team is available around the clock, and every build is backed by a 1-year warranty for complete peace of mind on the road.",
+      "Equipment covered by applicable manufacturer warranties. Exclusions apply.",
   },
   {
     icon: PlugZap,
@@ -56,9 +56,9 @@ const WhyChooseSection: React.FC = () => {
         <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-primary" />
-            <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+            <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
               The Elite Advantage
-            </h1>
+            </p>
             <div className="h-px w-8 bg-primary" />
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black uppercase tracking-tight leading-tight">

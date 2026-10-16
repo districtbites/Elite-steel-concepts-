@@ -274,9 +274,9 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
             <div className="max-w-2xl mx-auto flex flex-col items-center">
                <div className="flex items-center gap-3 mb-6">
                   <div className="h-px w-8 bg-primary" />
-                  <h1 className="text-primary font-black tracking-[0.2em] uppercase text-[10px]">
+                  <p className="text-primary font-black tracking-[0.2em] uppercase text-[10px]">
                      Got a Story?
-                  </h1>
+                  </p>
                   <div className="h-px w-8 bg-primary" />
                </div>
                <h2 className="text-4xl md:text-5xl font-black uppercase text-white tracking-tighter leading-[0.9] mb-6">

@@ -146,7 +146,7 @@ export default async function CustomFoodTrucksPage() {
     { title: "Quality Craftsmanship", icon: Award },
     { title: "Built to Code", icon: ShieldCheck },
     { title: "8–12 Week Build Time", icon: Clock },
-    { title: "1-Year Structural Warranty", icon: HardHat },
+    { title: "1-Year Limited Electrical & Plumbing Warranty", icon: HardHat },
     { title: "Shipping Across 48 States", icon: MapPin },
   ];
 
@@ -166,9 +166,9 @@ export default async function CustomFoodTrucksPage() {
           <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3 mb-3">
               <div className="h-px w-8 bg-primary" />
-              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 Food Truck Concepts
-              </h1>
+              </p>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-3">
@@ -314,9 +314,9 @@ export default async function CustomFoodTrucksPage() {
         <Container className="relative z-10 text-center max-w-4xl">
           <div className="inline-flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-primary" />
-            <h1 className="text-primary text-[10px] font-black uppercase tracking-[0.3em]">
+            <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em]">
               Start Your Build
-            </h1>
+            </p>
             <div className="h-px w-8 bg-primary" />
           </div>
 
@@ -361,7 +361,7 @@ export default async function CustomFoodTrucksPage() {
                     <CheckCircle2 size={14} className="text-primary" /> NFPA COMPLIANT
                  </div>
                  <div className="flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl text-[10px] font-black uppercase text-secondary border border-gray-100">
-                    <CheckCircle2 size={14} className="text-primary" /> 2-YEAR WARRANTY
+                    <CheckCircle2 size={14} className="text-primary" /> 1-Year Limited Electrical & Plumbing Warranty
                  </div>
               </div>
             </div>

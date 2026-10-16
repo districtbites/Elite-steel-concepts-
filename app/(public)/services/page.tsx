@@ -77,9 +77,9 @@ export default async function ServicesPage() {
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3">
               <div className="h-px w-10 bg-primary" />
-              <h1 className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
+              <p className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
                 What We Manufacture
-              </h1>
+              </p>
               <div className="h-px w-10 bg-primary" />
             </div>
           </div>
@@ -135,9 +135,9 @@ export default async function ServicesPage() {
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
-              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 {sections.intro?.subtitle || "Precision Builds"}
-              </h1>
+              </p>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight">

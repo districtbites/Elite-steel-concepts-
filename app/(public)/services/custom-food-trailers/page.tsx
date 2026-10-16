@@ -140,7 +140,7 @@ export default async function CustomFoodTrailersPage() {
     { icon: Hammer, title: "Quality Craftsmanship" },
     { icon: BadgeCheck, title: "Built to Code" },
     { icon: Clock, title: "8–12 Week Build Time" },
-    { icon: Award, title: "1-Year Structural Warranty" },
+    { icon: Award, title: "1-Year Limited Electrical & Plumbing Warranty" },
     { icon: Truck, title: "Shipping Across 48 States" },
   ];
 

@@ -60,7 +60,7 @@ export default async function QuotePage() {
     <>
       <PageJsonLd pageId="quote" />
       <PageHeader
-        eyebrow="Elite Steel Concept"
+        eyebrow="Elite Steel Concepts"
         title="Get Your Free Food Truck & Trailer Quote"
         subtitle={
           <>

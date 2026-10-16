@@ -164,7 +164,7 @@ export default async function LocationsPage() {
       </section>
 
       {/* ─── FAQS ───────────────────────────────────────────────── */}
-      <FAQSection faqs={faqs} plainHeading eyebrowAsH1={false} />
+      <FAQSection faqs={faqs} plainHeading />
 
       {/* ─── SHOP ADDRESS CALLOUT ──────────────────────────────── */}
       <section className="bg-[#0a0a0a] py-20 border-t border-[#1a1a1a]">

@@ -81,15 +81,15 @@ export default async function ComplianceHub() {
           <div className="relative z-10 max-w-5xl mx-auto text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-px w-12 bg-primary" />
-              <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+              <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                 Smart Compliance Planning
-              </h1>
+              </p>
               <div className="h-px w-12 bg-primary" />
             </div>
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight mb-6 max-w-5xl mx-auto">
+            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight mb-6 max-w-5xl mx-auto">
               Food Truck & Trailer Compliance &{" "}
               Custom Build Requirements
-            </h2>
+            </h1>
             <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-10 max-w-2xl mx-auto font-light">
               <AutoLinkedText text={heroDescLinked} />
             </p>
@@ -195,7 +195,7 @@ export default async function ComplianceHub() {
         <Container className="relative z-10">
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
-              What Elite Steel Concept Checks Before Building Your Trailer
+              What Elite Steel Concepts Checks Before Building Your Trailer
             </h2>
             <p className="text-gray-500 text-base md:text-lg font-medium">
               Key Details We Consider for Your Mobile Kitchen Compliance

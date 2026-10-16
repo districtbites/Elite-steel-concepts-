@@ -60,9 +60,9 @@ const Testimonials = async () => {
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center gap-3">
             <div className="h-px w-8 bg-primary" />
-            <h1 className="text-primary text-base md:text-lg font-black uppercase tracking-[0.25em]">
+            <p className="text-primary text-base md:text-lg font-black uppercase tracking-[0.25em]">
               Client Testimonials
-            </h1>
+            </p>
             <div className="h-px w-8 bg-primary" />
           </div>
         </div>

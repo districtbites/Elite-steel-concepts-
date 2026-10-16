@@ -104,15 +104,15 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
               {project.category}
             </span>
             {project.featured && (
-              <h1 className="bg-white/10 backdrop-blur-md text-primary text-[8px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-white/20 flex items-center gap-1">
+              <p className="bg-white/10 backdrop-blur-md text-primary text-[8px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-white/20 flex items-center gap-1">
                 <Sparkles size={10} /> Featured Build
-              </h1>
+              </p>
             )}
           </div>
 
-          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black uppercase text-white tracking-tighter leading-[0.9] mb-3">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black uppercase text-white tracking-tighter leading-[0.9] mb-3">
             {project.title}
-          </h2>
+          </h1>
           {project.tagline && (
             <p className="text-lg text-white/50 font-light italic">&ldquo;{project.tagline}&rdquo;</p>
           )}
@@ -127,9 +127,9 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
             <div className="lg:col-span-7 space-y-10">
               {/* Project Overview */}
               <div>
-                <h1 className="text-primary font-bold tracking-widest uppercase text-[10px] mb-3 block">
+                <p className="text-primary font-bold tracking-widest uppercase text-[10px] mb-3 block">
                   Project Overview
-                </h1>
+                </p>
                 <h2 className="text-3xl md:text-4xl font-black uppercase text-secondary tracking-tighter mb-6 leading-tight">
                   About This Build
                 </h2>
@@ -141,9 +141,9 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
               {/* Gallery */}
               {project.gallery && project.gallery.length > 0 && (
                 <div>
-                  <h1 className="text-primary font-bold tracking-widest uppercase text-[10px] mb-3 block">
+                  <p className="text-primary font-bold tracking-widest uppercase text-[10px] mb-3 block">
                     Build Gallery
-                  </h1>
+                  </p>
                   <h2 className="text-2xl font-black uppercase text-secondary tracking-tighter mb-6">
                     Detailed Views
                   </h2>
@@ -307,9 +307,9 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
         <Section className="bg-gray-50">
           <Container>
             <div className="text-center mb-12">
-              <h1 className="text-primary font-bold tracking-widest uppercase text-[10px] mb-3 block">
+              <p className="text-primary font-bold tracking-widest uppercase text-[10px] mb-3 block">
                 Similar Builds
-              </h1>
+              </p>
               <h2 className="text-3xl md:text-4xl font-black uppercase text-secondary tracking-tighter">
                 More <span className="text-primary italic">{project.category}</span> Projects
               </h2>

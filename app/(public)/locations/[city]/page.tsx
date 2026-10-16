@@ -138,14 +138,14 @@ export default async function LocationPage({ params }: PageProps) {
               <div>
                 <div className="flex items-center gap-3 mb-6">
                   <MapPin size={16} className="text-primary" />
-                  <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                  <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                     Serving {location.city}, {location.state}
-                  </h1>
+                  </p>
                 </div>
 
-                <h2 className="text-5xl md:text-6xl xl:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
+                <h1 className="text-5xl md:text-6xl xl:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
                   {location.h1}
-                </h2>
+                </h1>
 
                 <p className="text-gray-400 text-lg leading-relaxed max-w-xl mb-10">
                   {location.intro}
@@ -283,9 +283,9 @@ export default async function LocationPage({ params }: PageProps) {
             <div className="flex items-start gap-6">
               <div className="w-1 shrink-0 self-stretch bg-primary" />
               <div>
-                <h1 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-3">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-3">
                   Quick Answer
-                </h1>
+                </p>
                 <h2 className="text-2xl md:text-3xl font-black text-black uppercase tracking-tight mb-4">
                   Is Elite Steel Concepts the right food truck builder for{" "}
                   {location.city}?
@@ -326,9 +326,9 @@ export default async function LocationPage({ params }: PageProps) {
               <div>
                 <div className="flex items-center gap-3 mb-6">
                   <div className="h-px w-12 bg-primary" />
-                  <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                  <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                     Market Analysis
-                  </h1>
+                  </p>
                 </div>
                 <h2 className="text-3xl md:text-4xl font-black text-black uppercase tracking-tighter leading-tight mb-6">
                   Dominating the {location.city} <br/>
@@ -394,9 +394,9 @@ export default async function LocationPage({ params }: PageProps) {
         <Container>
           <div className="flex items-center gap-3 mb-16">
             <div className="h-px w-12 bg-primary" />
-            <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+            <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
               Services & Expertise
-            </h1>
+            </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-[#1a1a1a]">
@@ -444,9 +444,9 @@ export default async function LocationPage({ params }: PageProps) {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-px w-12 bg-primary" />
-                <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                   Why Choose ESC
-                </h1>
+                </p>
               </div>
 
               <h2 className="text-4xl font-black text-black uppercase tracking-tighter leading-tight mb-8">
@@ -482,9 +482,9 @@ export default async function LocationPage({ params }: PageProps) {
             <div className="bg-[#0a0a0a] p-10">
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-px w-12 bg-primary" />
-                <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                   Local {location.city} Details
-                </h1>
+                </p>
               </div>
 
               <h2 className="text-2xl font-black text-white uppercase tracking-tight leading-tight mb-8">
@@ -598,9 +598,9 @@ export default async function LocationPage({ params }: PageProps) {
             <div>
               <div className="flex items-center gap-3 mb-6">
                 <div className="h-px w-12 bg-primary" />
-                <h1 className="text-primary text-xs font-black uppercase tracking-[0.25em]">
+                <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
                   FAQ
-                </h1>
+                </p>
               </div>
               <h2 className="text-3xl font-black text-white uppercase tracking-tighter leading-tight">
                 {location.city}
@@ -692,9 +692,9 @@ export default async function LocationPage({ params }: PageProps) {
         <Container>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10">
             <div>
-              <h1 className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-2">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-2">
                 We Also Serve
-              </h1>
+              </p>
               <h2 className="text-2xl font-black text-black uppercase tracking-tighter">
                 Other Service Areas
               </h2>

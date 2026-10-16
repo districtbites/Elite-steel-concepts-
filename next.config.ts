@@ -74,6 +74,13 @@ const nextConfig: NextConfig = {
       { source: '/get-a-quote',               destination: '/quote',      permanent: true },
       { source: '/get-a-quote.php',           destination: '/quote',      permanent: true },
 
+      // ── Renamed blog posts ───────────────────────────────────────────
+      {
+        source: '/blog/food-truck-equipment-layout-where-shwhy-food-truck-equipment-layout-mattersould-every-appliance-go',
+        destination: '/blog/food-truck-equipment-layout-where-should-every-appliance-go',
+        permanent: true,
+      },
+
       // ── Non-www → www canonical (fixes GSC split-authority issue) ────
       {
         source: '/:path*',
