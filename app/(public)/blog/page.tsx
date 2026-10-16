@@ -68,6 +68,7 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
       <PageHeader
         title="Intelligence & Insights"
         subtitle="Exclusive blueprints for success in the mobile kitchen industry. Expert analysis, maintenance guides, and entrepreneur success stories."
+        normalCaseSubtitle
       />
 
       {/* ═══ FEATURED INSIGHT ════════════════════════════════ */}
