@@ -127,6 +127,26 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Newsletter popup: bottom sheet on mobile, pop-in on desktop */
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #newsletter-modal-portal, #newsletter-modal-portal > [role="dialog"] { animation: none !important; }
+}
+
 @keyframes slowZoom {
   0% { transform: scale(1); }
   100% { transform: scale(1.12); }

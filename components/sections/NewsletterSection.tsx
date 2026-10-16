@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ChevronRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { submitNewsletter } from "@/app/actions/newsletter";
+import { markNewsletterSubscribed } from "@/lib/newsletterStorage";
 
 const NewsletterSection = () => {
     const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ const NewsletterSection = () => {
         if (result.error) {
             setStatus({ type: 'error', message: result.error });
         } else {
+            markNewsletterSubscribed();
             setStatus({ type: 'success', message: result.message || "Email submitted successfully!" });
             setEmail("");
         }
