@@ -515,6 +515,7 @@ function clientEmail(opts: {
     heading: string;
     intro: string;
     sections: string;
+    footerReason?: string;
 }) {
     const { settings } = opts;
     const site = siteUrl();
@@ -600,7 +601,7 @@ function clientEmail(opts: {
                 ${socials.map(([name, href]) => `&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${escapeHtml(href)}" style="color:${BRAND.primary};text-decoration:none;font-weight:700;">${name}</a>`).join("")}
               </p>
               <p style="margin:0;font-family:${CLIENT.font};font-size:11px;line-height:1.6;color:#6b6b6b;">
-                You're receiving this email because you contacted Elite Steel Concepts.<br />Just reply to this email to reach our team.
+                ${opts.footerReason || "You're receiving this email because you contacted Elite Steel Concepts.<br />Just reply to this email to reach our team."}
               </p>
             </td>
           </tr>
@@ -711,6 +712,140 @@ export async function sendQuoteConfirmation(settings: GlobalSettings, quote: Quo
         }),
     });
     console.log(`[Mailer] Quote confirmation sent to ${to}`);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NEWSLETTER SUBSCRIPTION TEMPLATES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/** Icon + title + text rows for the "what you'll get" list. */
+function clientFeatureList(items: { icon: string; title: string; text: string }[]) {
+    return `<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">${items.map((item, i) => `
+        <tr>
+          <td style="padding:0 0 ${i === items.length - 1 ? 0 : 12}px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background:${CLIENT.soft};border:1px solid ${CLIENT.line};border-radius:10px;border-collapse:separate;">
+              <tr>
+                <td width="64" align="center" style="width:64px;padding:18px 0 18px 18px;vertical-align:top;">
+                  <table cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
+                    <td width="44" height="44" align="center" style="width:44px;height:44px;border-radius:10px;background:${BRAND.dark};font-size:20px;line-height:44px;">${item.icon}</td>
+                  </tr></table>
+                </td>
+                <td style="padding:18px 20px 18px 14px;vertical-align:top;font-family:${CLIENT.font};">
+                  <div style="font-size:15px;font-weight:800;color:${CLIENT.ink};margin-bottom:4px;">${item.title}</div>
+                  <div style="font-size:14px;color:${CLIENT.body};line-height:1.6;">${item.text}</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>`).join("")}
+      </table>`;
+}
+
+/** Welcome email sent to someone who joins the newsletter ("Join the Club"). */
+export async function sendNewsletterWelcome(settings: GlobalSettings, subscriberEmail: string) {
+    settings = withEnvSmtp(settings);
+    const from = settings.smtpFrom || `Elite Steel Concepts <${settings.smtpUser || "noreply@esteelconcepts.com"}>`;
+    const replyTo = settings.notificationEmail || settings.email || "esteelquotes@gmail.com";
+
+    if (!settings.smtpUser || !settings.smtpPassword) {
+        console.warn("[Mailer] SMTP not configured — skipping newsletter welcome.");
+        return;
+    }
+
+    const site = siteUrl();
+    const button = (href: string, label: string, primary: boolean) => `
+        <td class="stack" style="padding:0 12px 12px 0;">
+          <a href="${href}" style="display:inline-block;background:${primary ? BRAND.primary : CLIENT.card};color:${BRAND.black};border:2px solid ${primary ? BRAND.primary : CLIENT.ink};border-radius:8px;padding:14px 28px;font-family:${CLIENT.font};font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;">${label}</a>
+        </td>`;
+
+    const sections = [
+        clientSection("What You'll Get", clientFeatureList([
+            { icon: "🚚", title: "New Build Reveals", text: "Be the first to see our latest custom food trucks, trailers and mobile kitchens before they hit the road." },
+            { icon: "📘", title: "Expert Guides", text: "Practical advice on equipment layout, permits, health &amp; fire code compliance and maintenance." },
+            { icon: "🔥", title: "Announcements &amp; Offers", text: "Early access to news, events and special offers from the Elite Steel Concepts shop." },
+        ])),
+        clientSection("Start Exploring", `
+          <p style="margin:0 0 20px;font-family:${CLIENT.font};font-size:15px;line-height:1.7;color:${CLIENT.body};">
+            While you wait for our next update, browse recent builds or catch up on the blog.
+          </p>
+          <table cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
+            ${button(`${site}/portfolio`, "See Our Builds", true)}
+            ${button(`${site}/blog`, "Read the Blog", false)}
+          </tr></table>`),
+        clientSection("Planning a Build?", `
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
+            <td style="background:${BRAND.dark};border-radius:10px;padding:24px 26px;font-family:${CLIENT.font};">
+              <div style="font-size:18px;font-weight:900;color:${BRAND.white};margin-bottom:6px;">Ready to start your food business?</div>
+              <div style="font-size:14px;line-height:1.6;color:#bdbdbd;margin-bottom:18px;">Get a free, no-obligation quote for a custom food truck or trailer designed around your menu.</div>
+              <a href="${site}/quote" style="display:inline-block;background:${BRAND.primary};color:${BRAND.black};border-radius:8px;padding:12px 24px;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;">Get a Free Quote →</a>
+            </td>
+          </tr></table>`),
+    ].join("");
+
+    const transporter = createTransporter(settings);
+    await transporter.sendMail({
+        from,
+        to: subscriberEmail,
+        replyTo,
+        subject: `Welcome to the Club — Elite Steel Concepts`,
+        html: clientEmail({
+            settings,
+            preheader: "You're in! Here's what to expect from the Elite Steel Concepts newsletter.",
+            badge: "Subscription Confirmed",
+            heading: `Welcome to the <span style="color:${BRAND.primary};">Club!</span>`,
+            intro: "Thanks for subscribing. You'll be the first to hear about our new builds, expert guides and announcements from the Elite Steel Concepts shop in Manassas, VA.",
+            sections,
+            footerReason: `You're receiving this email because <strong style="color:#9a9a9a;">${escapeHtml(subscriberEmail)}</strong> subscribed on esteelconcepts.com.<br />Didn't sign up, or want to unsubscribe? Just reply to this email and we'll remove you.`,
+        }),
+    });
+    console.log(`[Mailer] Newsletter welcome sent to ${subscriberEmail}`);
+}
+
+/** Lets the team know someone joined the newsletter. */
+export async function sendNewsletterNotification(settings: GlobalSettings, subscriberEmail: string, totalSubscribers: number) {
+    settings = withEnvSmtp(settings);
+    const to   = settings.notificationEmail || "esteelquotes@gmail.com";
+    const from = settings.smtpFrom || `Elite Steel Concepts <${settings.smtpUser || "noreply@esteelconcepts.com"}>`;
+
+    if (!settings.smtpUser || !settings.smtpPassword) {
+        console.warn("[Mailer] SMTP not configured — skipping newsletter notification.");
+        return;
+    }
+
+    const email = escapeHtml(subscriberEmail);
+    const date = new Date().toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "America/New_York" });
+
+    const bodyContent = `
+      <table cellpadding="0" cellspacing="0" border="0" style="margin-bottom:28px;">
+        <tr><td>${pill("New Subscriber", BRAND.success)}</td></tr>
+      </table>
+
+      <h1 style="margin:0 0 6px;font-size:30px;font-weight:900;color:${BRAND.white};letter-spacing:-1px;line-height:1.15;">
+        Someone joined <span style="color:${BRAND.primary};">the Club</span>
+      </h1>
+      <p style="margin:0 0 32px;font-size:12px;color:${BRAND.muted};font-weight:500;letter-spacing:0.5px;">
+        Subscribed on ${date} (ET)
+      </p>
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:32px;">
+        ${infoRow("Email", `<a href="mailto:${email}" style="color:${BRAND.primary};text-decoration:none;">${email}</a>`)}
+        ${infoRow("Total Subscribers", String(totalSubscribers))}
+      </table>
+
+      <a href="${siteUrl()}/admin/newsletter"
+         style="display:inline-block;background:${BRAND.primary};color:${BRAND.black};font-weight:900;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;padding:15px 28px;border-radius:10px;text-decoration:none;">
+        View Subscribers &nbsp;→
+      </a>
+    `;
+
+    const transporter = createTransporter(settings);
+    await transporter.sendMail({
+        from,
+        to,
+        subject: `📬 New Newsletter Subscriber — ${subscriberEmail} | Elite Steel Concepts`,
+        html: emailWrapper(bodyContent, BRAND.primary),
+    });
+    console.log(`[Mailer] Newsletter notification sent to ${to}`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════

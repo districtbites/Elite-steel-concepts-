@@ -1,20 +1,46 @@
 "use server";
 
-import { createNewsletter } from "@/lib/db";
+import { createNewsletter, getNewsletters, getSettings } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { sendNewsletterWelcome, sendNewsletterNotification } from "@/lib/mailer";
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export async function submitNewsletter(formData: FormData) {
-    const email = formData.get("email") as string;
+    const email = ((formData.get("email") as string | null) || "").trim().toLowerCase();
 
-    if (!email || !email.includes("@")) {
+    if (!EMAIL_PATTERN.test(email)) {
         return { error: "Please provide a valid email address." };
     }
 
     try {
+        const existing = await getNewsletters();
+        if (existing.some(n => n.email.toLowerCase() === email)) {
+            return { success: true, message: "You're already subscribed — thanks for being part of the club!" };
+        }
+
         await createNewsletter(email);
         revalidatePath("/admin/newsletter");
-        return { success: true, message: "Welcome to the club! Your email has been submitted." };
+
+        // Welcome the subscriber and notify the team (errors are logged, never fail the request)
+        try {
+            const settings = await getSettings();
+            const results = await Promise.allSettled([
+                sendNewsletterWelcome(settings, email),
+                sendNewsletterNotification(settings, email, existing.length + 1),
+            ]);
+            results.forEach((result, i) => {
+                if (result.status === "rejected") {
+                    console.error(`[Newsletter] ${i === 0 ? "Welcome" : "Team notification"} email failed:`, result.reason);
+                }
+            });
+        } catch (err) {
+            console.error("[Newsletter] Email sending failed:", err);
+        }
+
+        return { success: true, message: "Welcome to the club! Check your inbox for a confirmation email." };
     } catch (error) {
+        console.error("[Newsletter] Subscription failed:", error);
         return { error: "Something went wrong. Please try again later." };
     }
 }
