@@ -1,4 +1,7 @@
 import { BlogPost } from "./db";
+import { normalizeInternalTarget } from "./linkTarget";
+
+export { normalizeInternalTarget };
 
 export interface InternalLinkRule {
     id: string;
@@ -736,7 +739,7 @@ export function autoLinkMarkdown(
     for (const rule of activeRules) {
         if (totalLinksAdded >= maxLinksTotal) break;
 
-        const cleanTarget = rule.targetUrl.trim().toLowerCase();
+        const cleanTarget = normalizeInternalTarget(rule.targetUrl).toLowerCase();
         if (preventDuplicateTargets && (targetCounts[cleanTarget] || 0) >= 1) {
             continue;
         }
@@ -761,7 +764,7 @@ export function autoLinkMarkdown(
             addedLinks.push({ keyword: matchedText, targetUrl: rule.targetUrl });
 
             const placeholderIdx = placeholders.length;
-            placeholders.push(`[${matchedText}](${rule.targetUrl})`);
+            placeholders.push(`[${matchedText}](${normalizeInternalTarget(rule.targetUrl)})`);
             return `___ESC_NEW_LINK_${placeholderIdx}___`;
         });
     }

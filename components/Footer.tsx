@@ -34,12 +34,12 @@ const Footer = ({ settings }: FooterProps) => {
             </p>
             <div className="flex space-x-4">
               {settings.facebook && (
-                <a href={settings.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
+                <a href={settings.facebook} target="_blank" rel="noopener noreferrer" aria-label="Elite Steel Concepts on Facebook" className="text-gray-400 hover:text-primary transition-colors">
                   <Facebook className="w-5 h-5" />
                 </a>
               )}
               {settings.instagram && (
-                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
+                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" aria-label="Elite Steel Concepts on Instagram" className="text-gray-400 hover:text-primary transition-colors">
                   <Instagram className="w-5 h-5" />
                 </a>
               )}

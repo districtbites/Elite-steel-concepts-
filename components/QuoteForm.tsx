@@ -73,7 +73,7 @@ const SectionTitle = ({ step, title, hint }: { step: string; title: string; hint
       {step}
     </span>
     <div>
-      <h3 className="text-lg md:text-xl font-black text-black tracking-tight">{title}</h3>
+      <h2 className="text-lg md:text-xl font-black text-black tracking-tight">{title}</h2>
       <p className="text-sm text-gray-500">{hint}</p>
     </div>
   </div>
@@ -172,9 +172,9 @@ const QuoteForm = ({ citiesByState = {} }: { citiesByState?: Record<string, stri
         <div className="mx-auto mb-8 flex size-20 items-center justify-center rounded-full bg-primary/10 ring-8 ring-primary/5">
           <CheckCircle2 className="size-10 text-primary" strokeWidth={2.25} />
         </div>
-        <h3 className="mb-4 text-3xl md:text-4xl font-black uppercase tracking-tight text-black">
+        <h2 className="mb-4 text-3xl md:text-4xl font-black uppercase tracking-tight text-black">
           Request Received
-        </h3>
+        </h2>
         <p className="mx-auto mb-10 max-w-lg text-base leading-relaxed text-gray-600">
           Thank you! Our team is reviewing your project details and will contact you shortly with your free quote.
         </p>

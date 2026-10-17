@@ -55,7 +55,7 @@ export default async function ContactPage() {
                 <div className="w-16 h-16 rounded-full bg-primary text-black flex items-center justify-center mb-5">
                   <card.icon size={26} />
                 </div>
-                <h3 className="text-lg font-black uppercase tracking-tight text-black mb-2">{card.title}</h3>
+                <h2 className="text-lg font-black uppercase tracking-tight text-black mb-2">{card.title}</h2>
                 {card.href ? (
                   <a href={card.href} className="text-gray-600 hover:text-primary transition-colors break-words">
                     {card.value}

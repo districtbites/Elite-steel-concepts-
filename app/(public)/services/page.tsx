@@ -90,9 +90,9 @@ export default async function ServicesPage() {
               className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
             >
               <div className="px-6 pt-6 pb-2 text-center">
-                <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
+                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
                   Truck
-                </h3>
+                </h2>
               </div>
               <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
                 <Image
@@ -111,9 +111,9 @@ export default async function ServicesPage() {
               className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
             >
               <div className="px-6 pt-6 pb-2 text-center">
-                <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
+                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
                   Trailer
-                </h3>
+                </h2>
               </div>
               <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
                 <Image
@@ -266,7 +266,7 @@ export default async function ServicesPage() {
                        <cap.icon size={48} className="group-hover:scale-110 transition-transform" />
                     </div>
                     <div>
-                      <h4 className="text-2xl font-black uppercase tracking-tighter text-white mb-4">{cap.title}</h4>
+                      <h3 className="text-2xl font-black uppercase tracking-tighter text-white mb-4">{cap.title}</h3>
                       <p className="text-sm text-gray-400 leading-relaxed font-bold uppercase tracking-wider">{cap.desc}</p>
                     </div>
                  </div>
@@ -344,9 +344,9 @@ export default async function ServicesPage() {
                   </span>
                 </div>
 
-                <h4 className="text-xs sm:text-sm md:text-base font-black uppercase text-black tracking-wide group-hover:text-primary transition-colors">
+                <h3 className="text-xs sm:text-sm md:text-base font-black uppercase text-black tracking-wide group-hover:text-primary transition-colors">
                   {item.title}
-                </h4>
+                </h3>
               </div>
             ))}
           </div>

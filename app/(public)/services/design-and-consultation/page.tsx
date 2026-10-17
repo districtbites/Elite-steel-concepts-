@@ -30,8 +30,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSEO("design-and-consultation");
   
   return {
-    title: pageSeo?.title || `Design & Consultation | ${seo.siteTitle}`,
-    description: pageSeo?.description || seo.description,
+    title: pageSeo?.title || "Food Truck Design & Consultation | Elite Steel Concepts",
+    description: pageSeo?.description || "Plan your food truck or trailer with expert layout design, equipment planning and health-code guidance before the build starts. Book a free consultation.",
     keywords: pageSeo?.keywords || seo.keywords,
     alternates: { canonical: '/services/design-and-consultation' },
   };

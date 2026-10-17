@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { normalizeInternalTarget } from "@/lib/linkTarget";
 
 interface AutoLinkedTextProps {
   text: string;
@@ -33,7 +34,7 @@ export default function AutoLinkedText({
     }
 
     const anchorText = match[1];
-    const targetUrl = match[2];
+    const targetUrl = normalizeInternalTarget(match[2]);
 
     const isExternal = targetUrl.startsWith("http://") || targetUrl.startsWith("https://");
 

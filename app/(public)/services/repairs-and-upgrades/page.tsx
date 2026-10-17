@@ -127,8 +127,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSEO("repairs-and-upgrades");
   
   return {
-    title: pageSeo?.title || `Repairs & Upgrades | ${seo.siteTitle}`,
-    description: pageSeo?.description || seo.description,
+    title: pageSeo?.title || "Food Truck Repairs & Upgrades | Elite Steel Concepts",
+    description: pageSeo?.description || "Food truck and trailer repairs, equipment upgrades, electrical, plumbing and fire-safety work from our Manassas, VA shop. Code-compliant. Free quote.",
     keywords: pageSeo?.keywords || seo.keywords,
     alternates: { canonical: '/services/repairs-and-upgrades' },
   };

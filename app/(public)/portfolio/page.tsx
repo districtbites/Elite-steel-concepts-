@@ -11,6 +11,7 @@ import Link from "next/link";
 import { ArrowRight, Star, Award, Zap, Camera, Sparkles, Shield, CheckCircle2 } from "lucide-react";
 import { getProjects, getFAQs, getSEO, getPageSEO, getSettings } from "@/lib/db";
 import type { Metadata } from "next";
+import { projectImageAlt } from "@/lib/projectAlt";
 import PageJsonLd from "@/components/PageJsonLd";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
@@ -230,8 +231,8 @@ export default async function PortfolioPage() {
           </div>
           <PortfolioGallery
             items={[
-              ...allProjects.map((p) => ({ ...webpVariants(p.image), title: p.title })),
-              ...workGallery.map((g) => ({ ...webpVariants(g.image), title: g.title })),
+              ...allProjects.map((p) => ({ ...webpVariants(p.image), title: p.title, alt: projectImageAlt(p) })),
+              ...workGallery.map((g) => ({ ...webpVariants(g.image), title: g.title, alt: `${g.title} – food trailer build by Elite Steel Concepts` })),
             ]}
           />
         </Container>

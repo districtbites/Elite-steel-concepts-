@@ -18,8 +18,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const pageSeo = await getPageSEO("fleet-expansion");
   
   return {
-    title: pageSeo?.title || `Fleet Expansion | ${seo.siteTitle}`,
-    description: pageSeo?.description || seo.description,
+    title: pageSeo?.title || "Food Truck Fleet Builds | Elite Steel Concepts",
+    description: pageSeo?.description || "Scale from one truck to a fleet with standardized custom food truck and trailer builds, dedicated project management and consistent quality. Free quote.",
     keywords: pageSeo?.keywords || seo.keywords,
     alternates: { canonical: '/services/fleet-expansion' },
   };

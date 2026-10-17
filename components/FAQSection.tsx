@@ -38,7 +38,7 @@ const FAQSection = ({ faqs, plainHeading = false }: FAQSectionProps) => {
                   <div className="bg-white p-3 rounded-xl text-primary shadow-sm">
                     <HelpCircle size={24} />
                   </div>
-                  <h4 className="font-bold text-secondary">Need Help?</h4>
+                  <p className="font-bold text-secondary">Need Help?</p>
                 </div>
                 <p className="text-sm text-gray-500 mb-4">Our fabrication consultants are ready to discuss your project specifics.</p>
                 <a 

@@ -7,6 +7,8 @@ import { X, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 export interface GalleryItem {
   image: string;
   title: string;
+  /** Descriptive alt text; falls back to the title. */
+  alt?: string;
   /** Smaller image used in the grid; the full `image` loads only in the lightbox. */
   thumb?: string;
 }
@@ -55,7 +57,7 @@ const PortfolioGallery = ({ items }: PortfolioGalleryProps) => {
             <div className="relative aspect-[4/3] overflow-hidden border-b-2 border-black bg-black">
               <Image
                 src={item.thumb || item.image}
-                alt={item.title}
+                alt={item.alt || item.title}
                 fill
                 loading={index < 6 ? "eager" : "lazy"}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -118,7 +120,7 @@ const PortfolioGallery = ({ items }: PortfolioGalleryProps) => {
             <div className="relative w-full h-[70vh]">
               <Image
                 src={active.image}
-                alt={active.title}
+                alt={active.alt || active.title}
                 fill
                 sizes="100vw"
                 className="object-contain"

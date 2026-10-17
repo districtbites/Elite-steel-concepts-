@@ -18,7 +18,8 @@ import {
     autoLinkMarkdown,
     generateLinkAuditReport,
     scanPostLinks,
-    stripInternalLinks
+    stripInternalLinks,
+    normalizeInternalTarget,
 } from "@/lib/internalLinks";
 import { revalidatePath } from "next/cache";
 
@@ -33,7 +34,7 @@ export async function getInternalLinkSettingsAction() {
 export async function saveInternalLinkRuleAction(formData: FormData) {
     const id = formData.get("id") as string;
     const keyword = (formData.get("keyword") as string)?.trim();
-    const targetUrl = (formData.get("targetUrl") as string)?.trim();
+    const targetUrl = normalizeInternalTarget((formData.get("targetUrl") as string) || "");
     const categoryFilter = (formData.get("categoryFilter") as string) || "All";
     const maxPerPost = parseInt(formData.get("maxPerPost") as string) || 1;
     const priority = parseInt(formData.get("priority") as string) || 0;

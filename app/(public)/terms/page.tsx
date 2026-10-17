@@ -73,7 +73,7 @@ export default async function TermsPage() {
                   { title: "Governing Law", desc: "Agreement is governed by and construed in accordance with the laws of the Commonwealth of Virginia." }
                ].map((pillar, i) => (
                   <div key={i} className="p-8 rounded-[2rem] border border-gray-100 hover:border-primary/20 hover:bg-gray-50 transition-all group">
-                     <h4 className="text-sm font-black uppercase text-secondary mb-3 tracking-widest group-hover:text-primary transition-colors">{pillar.title}</h4>
+                     <h3 className="text-sm font-black uppercase text-secondary mb-3 tracking-widest group-hover:text-primary transition-colors">{pillar.title}</h3>
                      <p className="text-sm font-light leading-relaxed">{pillar.desc}</p>
                   </div>
                ))}

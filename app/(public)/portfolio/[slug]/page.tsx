@@ -22,6 +22,7 @@ import {
 import Link from "next/link";
 import type { Metadata } from "next";
 import JsonLd from "@/components/JsonLd";
+import { projectImageAlt } from "@/lib/projectAlt";
 import { breadcrumbSchema } from "@/lib/schema";
 
 interface PageProps {
@@ -84,7 +85,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
           src={project.image}
           unoptimized={project.image.startsWith("http")}
           sizes="100vw"
-          alt={project.title}
+          alt={projectImageAlt(project)}
           fill
           className="object-cover opacity-70 scale-105"
           priority
@@ -155,7 +156,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                       >
                         <Image
                           src={img}
-                          alt={`${project.title} - View ${i + 1}`}
+                          alt={projectImageAlt(project, i + 1)}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-700"
                           unoptimized={img.startsWith("http")}
@@ -325,7 +326,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                   <div className="relative aspect-[4/3] overflow-hidden">
                     <Image
                       src={rp.image}
-                      alt={rp.title}
+                      alt={projectImageAlt(rp)}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
                       unoptimized={rp.image.startsWith("http")}

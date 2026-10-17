@@ -1,6 +1,6 @@
 import React from "react";
 import { getPostBySlug, getPosts, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { autoLinkMarkdown, normalizeInternalTarget } from "@/lib/internalLinks";
 import { absoluteUrl, businessRef, toIsoDate, breadcrumbSchema, faqSchema } from "@/lib/schema";
 import JsonLd from "@/components/JsonLd";
 import Container from "@/components/ui/Container";
@@ -22,7 +22,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const description = post.metaDescription || post.subtitle || post.excerpt;
   return {
-    title: `${post.title} | Elite Steel Concepts`,
+    // Keep the brand suffix only when it still fits in a search-result title (~60 chars)
+    title: post.title.length <= 38 ? `${post.title} | Elite Steel Concepts` : post.title,
     description,
     alternates: {
       canonical: `/blog/${post.slug}`,
@@ -73,15 +74,17 @@ function splitContentAtMidpoint(content: string): [string, string] {
   ];
 }
 
-function parseContent(content: string) {
+function parseContent(content: string, fallbackAlt = "") {
   if (!content) return "";
   return content
     .replace(/### (.*)/g, '<h3 class="text-xl md:text-2xl font-black uppercase text-secondary mt-10 mb-4 tracking-tight">$1</h3>')
     .replace(/## (.*)/g, '<h2 class="text-2xl md:text-3xl font-black uppercase text-secondary mt-12 mb-6 border-l-[3px] border-primary pl-4 tracking-tighter leading-tight">$1</h2>')
-    .replace(/!\[(.*?)\]\((.*?)\)/g, '<div class="my-10 overflow-hidden border border-gray-200"><img src="$2" alt="$1" class="w-full object-cover" /><p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 p-3 text-center bg-gray-50 border-t border-gray-200">$1</p></div>')
-    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors">$1</a>')
+    .replace(/!\[(.*?)\]\((.*?)\)/g, (_m, alt: string, src: string) => `<div class="my-10 overflow-hidden border border-gray-200"><img src="${src}" alt="${(alt.trim() || fallbackAlt).replace(/"/g, "&quot;")}" class="w-full object-cover" /><p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 p-3 text-center bg-gray-50 border-t border-gray-200">${alt}</p></div>`)
+    .replace(/\[(.*?)\]\((.*?)\)/g, (_m, text: string, href: string) => `<a href="${normalizeInternalTarget(href)}" class="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors">${text}</a>`)
     .replace(/\n\n/g, '</p><p class="mb-6 leading-relaxed text-gray-600">')
-    .replace(/^- (.*)/gm, '<li class="flex items-start gap-3 mb-3"><div class="w-1 h-1 bg-primary mt-2.5 shrink-0"></div><span class="text-gray-600">$1</span></li>');
+    .replace(/^- (.*)/gm, '<li class="flex items-start gap-3 mb-3"><span class="w-1 h-1 bg-primary mt-2.5 shrink-0"></span><span class="text-gray-600">$1</span></li>')
+    // Group consecutive bullet items into a real list
+    .replace(/(?:<li class="flex[^\n]*<\/li>\r?\n?)+/g, (items) => `<ul class="mb-6">${items}</ul>`);
 }
 
 export default async function BlogDetailsPage({ params }: PageProps) {
@@ -108,8 +111,8 @@ export default async function BlogDetailsPage({ params }: PageProps) {
 
   const faqs = extractFAQs(updatedContent);
   const [firstHalf, secondHalf] = splitContentAtMidpoint(updatedContent);
-  const firstHalfHtml = parseContent(firstHalf);
-  const secondHalfHtml = parseContent(secondHalf);
+  const firstHalfHtml = parseContent(firstHalf, post.title);
+  const secondHalfHtml = parseContent(secondHalf, post.title);
   const quickAnswer = post.metaDescription || post.excerpt || "";
 
   // Article + FAQ JSON-LD schema
@@ -291,7 +294,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
                        <ShieldAlert size={20} className="text-black" />
                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-black">Start Your Build</span>
                     </div>
-                    <h4 className="text-3xl font-black uppercase tracking-tighter text-black mb-2 leading-none">Ready to Execute?</h4>
+                    <p className="text-3xl font-black uppercase tracking-tighter text-black mb-2 leading-none">Ready to Execute?</p>
                     <p className="text-black/80 text-xs font-black uppercase tracking-widest">
                       14+ years · 350+ builds · Manassas, VA
                     </p>
