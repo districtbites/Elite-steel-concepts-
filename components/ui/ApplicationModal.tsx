@@ -101,7 +101,7 @@ export default function ApplicationModal({
       <div
         role="dialog"
         aria-labelledby="newsletter-banner-title"
-        className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[9999] bg-[#0a0a0a] text-white border border-[#1a1a1a] shadow-2xl shadow-black/40 overflow-hidden animate-[sheetUp_0.4s_cubic-bezier(0.22,1,0.36,1)]"
+        className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[90] bg-[#0a0a0a] text-white border border-[#1a1a1a] shadow-2xl shadow-black/40 overflow-hidden animate-[sheetUp_0.4s_cubic-bezier(0.22,1,0.36,1)]"
       >
         <div className="hazard-stripe h-1" aria-hidden />
         <button
@@ -172,7 +172,8 @@ export default function ApplicationModal({
   const modalContent = (
     <div
       id="newsletter-modal-portal"
-      className="fixed inset-0 z-[9999] flex items-end md:items-center justify-center p-0 md:p-6 bg-black/75 backdrop-blur-sm animate-[overlayIn_0.25s_ease-out]"
+      // Sits below the fixed header (z-[100]) so the header nav and "Get a Free Quote" stay clickable while it is open
+      className="fixed inset-0 z-[90] flex items-end md:items-center justify-center p-0 md:p-6 md:pt-28 bg-black/75 backdrop-blur-sm animate-[overlayIn_0.25s_ease-out]"
       onClick={handleClose}
     >
       <div
@@ -180,7 +181,7 @@ export default function ApplicationModal({
         aria-modal="true"
         aria-labelledby="newsletter-modal-title"
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full md:max-w-3xl md:grid md:grid-cols-12 bg-white md:border border-[#1a1a1a] shadow-2xl max-h-[92dvh] md:max-h-[90vh] overflow-y-auto overscroll-contain md:overflow-hidden rounded-t-3xl md:rounded-none animate-[sheetUp_0.35s_cubic-bezier(0.22,1,0.36,1)] md:animate-[popIn_0.3s_ease-out]"
+        className="relative w-full md:max-w-3xl md:grid md:grid-cols-12 bg-white md:border border-[#1a1a1a] shadow-2xl max-h-[92dvh] md:max-h-[calc(100dvh-9rem)] overflow-y-auto overscroll-contain md:overflow-hidden rounded-t-3xl md:rounded-none animate-[sheetUp_0.35s_cubic-bezier(0.22,1,0.36,1)] md:animate-[popIn_0.3s_ease-out]"
       >
         {/* Close */}
         <button

@@ -143,10 +143,16 @@ const QuoteForm = ({ citiesByState = {} }: { citiesByState?: Record<string, stri
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
-    const result = await submitQuoteForm(formData);
-    setLoading(false);
+    let result: Awaited<ReturnType<typeof submitQuoteForm>> | undefined;
+    try {
+      result = await submitQuoteForm(formData);
+    } catch (err) {
+      console.error("[QuoteForm] Submit failed:", err);
+    } finally {
+      setLoading(false);
+    }
 
-    if (result && result.success) {
+    if (result && "success" in result && result.success) {
       setSuccess(true);
     } else {
       alert("Something went wrong while sending your request. Please try again.");

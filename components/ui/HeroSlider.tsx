@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
@@ -20,6 +20,8 @@ const HeroSlider = ({ slides }: { slides: HeroSlide[] }) => {
   // Only the first slide loads with the page; the others load once the slider first moves.
   const [loadAll, setLoadAll] = useState(false);
   const [paused, setPaused] = useState(false);
+  // Horizontal swipe on touch screens moves to the previous / next slide
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const go = useCallback(
     (next: number) => {
@@ -46,8 +48,9 @@ const HeroSlider = ({ slides }: { slides: HeroSlide[] }) => {
   return (
     <div
       className="relative"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      // Pause on hover for mouse only — touch browsers fire a lingering mouseenter on tap that would stop autoplay
+      onPointerEnter={(e) => e.pointerType === "mouse" && setPaused(true)}
+      onPointerLeave={(e) => e.pointerType === "mouse" && setPaused(false)}
     >
       {/* Offset orange frame behind the slider */}
       <div
@@ -59,7 +62,21 @@ const HeroSlider = ({ slides }: { slides: HeroSlide[] }) => {
         className="absolute -bottom-4 -left-4 w-1/3 h-1/3 border-b-4 border-l-4 border-primary/40 hidden md:block"
       />
 
-      <div className="relative aspect-[4/3] lg:aspect-square overflow-hidden bg-[#141414] border border-white/10 shadow-2xl shadow-black/60">
+      <div
+        className="relative aspect-[4/3] lg:aspect-square overflow-hidden bg-[#141414] border border-white/10 shadow-2xl shadow-black/60 touch-pan-y"
+        onTouchStart={(e) => {
+          const t = e.touches[0];
+          touchStart.current = { x: t.clientX, y: t.clientY };
+        }}
+        onTouchEnd={(e) => {
+          const start = touchStart.current;
+          touchStart.current = null;
+          if (!start || slides.length < 2) return;
+          const t = e.changedTouches[0];
+          const dx = t.clientX - start.x;
+          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(t.clientY - start.y)) go(dx < 0 ? index + 1 : index - 1);
+        }}
+      >
         {slides.map((slide, i) => (
           <div
             key={slide.url + i}

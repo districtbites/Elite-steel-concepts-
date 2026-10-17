@@ -49,7 +49,13 @@ const Button: React.FC<ButtonProps> = ({
 
   if (href) {
     return (
-      <Link href={href} className={classes}>
+      <Link
+        href={href}
+        className={classes}
+        id={props.id}
+        aria-label={props["aria-label"]}
+        onClick={props.onClick as unknown as React.MouseEventHandler<HTMLAnchorElement>}
+      >
         {content}
       </Link>
     );
