@@ -1,25 +1,30 @@
 {
   "quotes": [
     {
-      "name": "Rabia mumtaz",
-      "email": "rabiamumtaz828@gmail.com",
-      "phone": "030",
-      "company": "",
-      "projectType": "Custom Food Truck",
-      "sourcing": "Need Vehicle",
-      "budget": "",
-      "timeline": "",
-      "menuType": "BBQ",
-      "message": "N/A",
-      "dimensions": "",
-      "equipment": "",
+      "name": "Moazzam Ali",
+      "email": "smoazzam435@gmail.com",
+      "phone": "+17094148491",
+      "company": "Knox and Mathews Co",
+      "projectType": "Custom Food Trailer",
+      "sourcing": "Have Vehicle",
+      "budget": "50k-80k",
+      "timeline": "ASAP",
+      "menuType": "Dolor sit tenetur a",
+      "message": "Saepe ducimus excep",
+      "dimensions": "Dolor lorem ex labor",
+      "equipment": "Consequat Adipisici",
       "brandingNeeds": null,
-      "powerRequirements": "Standard Gas",
-      "services": [],
-      "vendingState": "Alabama (AL)",
-      "vendingCity": "manasas",
-      "id": "1792261172280",
-      "date": "Oct 17, 2026",
+      "powerRequirements": "Quiet Diesel",
+      "services": [
+        "Full Wrap / Graphics",
+        "Fire Suppression System",
+        "Health Dept Consultation",
+        "Generator Install"
+      ],
+      "vendingState": "Mississippi (MS)",
+      "vendingCity": "Adipisci suscipit cu",
+      "id": "1792438712354",
+      "date": "Oct 19, 2026",
       "status": "New"
     },
     {
@@ -584,6 +589,15 @@
     }
   ],
   "contacts": [
+    {
+      "name": "Cherrylee Samson",
+      "email": "hello@galileo.hibarri.com",
+      "phone": "435 417 3197",
+      "message": "Hello,\r\n\r\nWe supply B2B leads to companies for about $0.0061 per lead. 🔭☁️\r\nWe also have other useful prospecting and outreach tools available.\r\n\r\nWould you be open to a demo meeting? \r\n\r\nIf you're interested you can book a date & time that suits you here: https://cal.com/cherrylee-samson/20min",
+      "id": "1792404435325",
+      "date": "Oct 19, 2026",
+      "status": "New"
+    },
     {
       "name": "Moazzam",
       "email": "smoazzam435@gmail.com",

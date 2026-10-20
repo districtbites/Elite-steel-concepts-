@@ -57,18 +57,32 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
    setAutoLinking(false);
  };
 
- const handleInsert = (text: string) => {
- if (textareaRef.current) {
+ // Remember the last caret position so inserts from toolbar/sidebar buttons land where the user was typing
+ const selectionRef = useRef({ start: 0, end: 0 });
+ const saveSelection = () => {
  const textarea = textareaRef.current;
- const start = textarea.selectionStart;
- const end = textarea.selectionEnd;
- const newContent = content.substring(0, start) + text + content.substring(end);
- setContent(newContent);
- setTimeout(() => {
- textarea.focus();
- textarea.setSelectionRange(start + text.length, start + text.length);
- }, 0);
- }
+ if (textarea) selectionRef.current = { start: textarea.selectionStart, end: textarea.selectionEnd };
+ };
+
+ const handleInsert = (text: string) => {
+ const textarea = textareaRef.current;
+ if (!textarea) return;
+ const isFocused = document.activeElement === textarea;
+ const start = Math.min(isFocused ? textarea.selectionStart : selectionRef.current.start, textarea.value.length);
+ const end = Math.min(isFocused ? textarea.selectionEnd : selectionRef.current.end, textarea.value.length);
+ const caret = start + text.length;
+ // Preserve scroll positions so the editor and page don't jump after re-render
+ const scrollTop = textarea.scrollTop;
+ const winX = window.scrollX;
+ const winY = window.scrollY;
+ setContent((prev: string) => prev.substring(0, start) + text + prev.substring(end));
+ selectionRef.current = { start: caret, end: caret };
+ requestAnimationFrame(() => {
+ textarea.focus({ preventScroll: true });
+ textarea.setSelectionRange(caret, caret);
+ textarea.scrollTop = scrollTop;
+ window.scrollTo(winX, winY);
+ });
  };
 
  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,8 +131,8 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-black uppercase text-admin-text mt-12 mb-6 border-l-[3px] border-primary pl-4 leading-tight">$1</h2>')
  .replace(/\*\*(.+?)\*\*/g, '<strong class="font-black text-admin-text">$1</strong>')
  .replace(/\*(.+?)\*/g, '<em class="italic">$1</em>')
- .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-primary font-bold underline hover:text-orange-600">$1</a>')
  .replace(/!\[(.+?)\]\((.+?)\)/g, '<div class="my-8 border border-admin-border overflow-hidden"><img src="$2" alt="$1" class="w-full object-cover" /></div>')
+ .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-primary font-bold underline hover:text-orange-600">$1</a>')
  .replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-primary pl-4 py-2 my-6 italic text-admin-muted bg-admin-bg">$1</blockquote>')
  .replace(/^---$/gm, '<hr class="my-10 border-admin-border" />')
  .replace(/^- (.+)$/gm, '<li class="flex items-start gap-3 mb-2"><div class="w-1 h-1 bg-primary mt-2 shrink-0"></div><span class="text-admin-muted">$1</span></li>')
@@ -204,6 +218,8 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  name="content"
  value={content}
  onChange={(e) => setContent(e.target.value)}
+ onSelect={saveSelection}
+ onBlur={saveSelection}
  required
  className="w-full h-full p-8 outline-none text-gray-700 leading-relaxed font-mono text-sm resize-none bg-admin-surface"
  placeholder="Write your markdown content here..."

@@ -21,11 +21,28 @@ import {
 import { getPosts } from"@/lib/db";
 import { deleteBlogPost } from"@/app/actions/blog";
 
-export default async function AdminBlogPage() {
- const posts = await getPosts();
- const publishedCount = posts.filter((p) => p.status ==="Published").length;
- const draftCount = posts.filter((p) => p.status ==="Draft").length;
- const categories = Array.from(new Set(posts.map((p) => p.category)));
+const UNCATEGORIZED ="uncategorized";
+const categoryKey = (cat?: string) => cat?.trim() || UNCATEGORIZED;
+
+export default async function AdminBlogPage({
+ searchParams,
+}: {
+ searchParams: Promise<{ category?: string }>;
+}) {
+ const { category: activeCategory } = await searchParams;
+ const allPosts = await getPosts();
+ const publishedCount = allPosts.filter((p) => p.status ==="Published").length;
+ const draftCount = allPosts.filter((p) => p.status ==="Draft").length;
+ const categories = Array.from(new Set(allPosts.map((p) => categoryKey(p.category))));
+ const posts = activeCategory
+ ? allPosts.filter((p) => categoryKey(p.category) === activeCategory)
+ : allPosts;
+ const tabClass = (active: boolean) =>
+ `px-5 py-2 text-[10px] font-black uppercase tracking-widest border transition-all ${
+ active
+ ?"bg-primary text-black border-primary shadow-md"
+ :"bg-admin-surface text-admin-muted border-admin-border hover:border-primary hover:text-primary"
+ }`;
 
  return (
  <div className="space-y-8 pb-12">
@@ -59,7 +76,7 @@ export default async function AdminBlogPage() {
  Total
  </div>
  <div className="text-3xl font-black text-admin-text">
- {posts.length}
+ {allPosts.length}
  </div>
  </div>
  <div className="h-10 w-px bg-admin-surface/10" />
@@ -97,22 +114,30 @@ export default async function AdminBlogPage() {
  {/* ═══════ CATEGORY TAGS ═══════ */}
  {categories.length > 0 && (
  <div className="flex flex-wrap gap-2">
- <span className="bg-admin-surface text-admin-text px-5 py-2 -full text-[10px] font-black uppercase tracking-widest">
- All ({posts.length})
- </span>
+ <Link href="/admin/blog" className={tabClass(!activeCategory)}>
+ All ({allPosts.length})
+ </Link>
  {categories.map((cat) => (
- <span
+ <Link
  key={cat}
- className="bg-admin-surface text-admin-muted border border-admin-border px-5 py-2 -full text-[10px] font-black uppercase tracking-widest hover:border-primary hover:text-primary transition-all cursor-pointer"
+ href={`/admin/blog?category=${encodeURIComponent(cat)}`}
+ className={tabClass(activeCategory === cat)}
  >
- {cat} ({posts.filter((p) => p.category === cat).length})
- </span>
+ {cat === UNCATEGORIZED ?"Uncategorized" : cat} ({allPosts.filter((p) => categoryKey(p.category) === cat).length})
+ </Link>
  ))}
  </div>
  )}
 
  {/* ═══════ POSTS LIST ═══════ */}
- {posts.length === 0 ? (
+ {posts.length === 0 && activeCategory ? (
+ <div className="bg-admin-surface border border-admin-border shadow-sm p-16 text-center">
+ <p className="text-admin-muted text-sm font-medium mb-6">No articles in this category.</p>
+ <Link href="/admin/blog" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
+ View all articles
+ </Link>
+ </div>
+ ) : posts.length === 0 ? (
  <div className="bg-admin-surface border border-admin-border shadow-sm p-16 text-center">
  <div className="w-20 h-20 bg-admin-bg flex items-center justify-center mx-auto mb-6">
  <BookOpen size={32} className="text-gray-300" />
