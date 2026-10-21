@@ -18,8 +18,7 @@ import {
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import CTASection from "@/components/ui/CTASection";
-import { getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
@@ -32,26 +31,12 @@ export const metadata: Metadata = {
 };
 
 export default async function ComplianceHub() {
-  const [rules, linkSettings] = await Promise.all([
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
-  ]);
-  const activeRules = getSiteWideRules(rules);
-
-  const heroDescRaw = "Building a custom food truck or trailer requires more than installing kitchen equipment. Your mobile kitchen may need to meet applicable health, plumbing, electrical, sanitation, fire-safety, and local food-service requirements before it can operate.";
-  const heroDescLinked = autoLinkMarkdown(heroDescRaw, activeRules, linkSettings).updatedContent;
-
-  const whyDescRaw = "The right requirements start with the design compliance, which can affect almost every part of a mobile kitchen, from handwashing and dishwashing sinks to water systems, wastewater, equipment placement, food-preparation areas, and electrical systems.";
-  const whyDescLinked = autoLinkMarkdown(whyDescRaw, activeRules, linkSettings).updatedContent;
-
-  const whyDesc2Raw = "Understanding these requirements before fabrication can help you plan the right layout and avoid unnecessary design changes later. As a custom food truck builder, Elite Steel Concepts considers the requirements that may apply to your project based on your planned operation and location.";
-  const whyDesc2Linked = autoLinkMarkdown(whyDesc2Raw, activeRules, linkSettings).updatedContent;
-
-  const locationDescRaw = "Custom food truck starts with knowing where you plan to operate. Health, safety, plumbing, fire, and mobile food requirements can vary between states, counties, cities, and local authorities.";
-  const locationDescLinked = autoLinkMarkdown(locationDescRaw, activeRules, linkSettings).updatedContent;
-
-  const locationDesc2Raw = "Your location, menu, equipment, and type of food operation can all affect the requirements that apply to your mobile kitchen. A food truck operating in Virginia may have different requirements from one operating in Maryland or Washington, DC. At Elite Steel Concepts, we build custom food trucks and trailers throughout the DMV region with applicable location-specific requirements in mind.";
-  const locationDesc2Linked = autoLinkMarkdown(locationDesc2Raw, activeRules, linkSettings).updatedContent;
+  const linked = await getLinkedPageSections("compliance");
+  const heroDescLinked = linked.hero;
+  const whyDescLinked = linked["why-1"];
+  const whyDesc2Linked = linked["why-2"];
+  const locationDescLinked = linked["location-1"];
+  const locationDesc2Linked = linked["location-2"];
 
   const considerations = [
     { icon: Droplets, bg: "bg-blue-50", fg: "text-blue-500", title: "Plumbing & Water Systems", desc: "We plan water, sinks, wastewater, and related plumbing around the requirements of your mobile kitchen and intended food operation." },

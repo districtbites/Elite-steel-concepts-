@@ -4,8 +4,8 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import Button from "@/components/ui/Button";
-import { getTestimonials, getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
+import { getTestimonials, getSEO, getPageSEO, getMediaAsset } from "@/lib/db";
+import { getLinkedPageSections, cleanTestimonialText, FEATURED_TESTIMONIAL_TEXT } from "@/lib/linkablePages";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import { Star, Quote as QuoteIcon, Play, CheckCircle, ShieldCheck, Award, MessageSquare, Truck, CalendarCheck } from "lucide-react";
 import type { Metadata } from "next";
@@ -28,13 +28,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TestimonialsPage() {
-  const [testimonials, rules, linkSettings, testimonialsHero] = await Promise.all([
+  const [testimonials, linked, testimonialsHero] = await Promise.all([
     getTestimonials(),
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
+    getLinkedPageSections("testimonials"),
     getMediaAsset("testimonials", "hero", "https://images.pexels.com/photos/1766686/pexels-photo-1766686.jpeg?auto=compress&cs=tinysrgb&w=1200"),
   ]);
-  const activeRules = getSiteWideRules(rules);
 
   return (
     <>
@@ -116,7 +114,7 @@ export default async function TestimonialsPage() {
                     "They didn't just build a truck, they built a <span className="text-primary italic">scalable business</span>."
                  </h2>
                  <p className="text-gray-600 text-lg leading-relaxed mb-8 font-light italic">
-                    &ldquo;<AutoLinkedText text={autoLinkMarkdown("When I first came to Elite Steel Concepts, I had a vision but no idea about technical specs or flow. They took my menu and designed a kitchen that allows our team to serve 200 portions an hour without breaking a sweat.", activeRules, linkSettings).updatedContent} />&rdquo;
+                    &ldquo;<AutoLinkedText text={linked.featured ?? FEATURED_TESTIMONIAL_TEXT} />&rdquo;
                  </p>
                  <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2 text-secondary font-bold text-xs uppercase tracking-widest bg-gray-50 px-5 py-3 rounded-full border border-gray-100">
@@ -142,7 +140,7 @@ export default async function TestimonialsPage() {
                         // Every 4th card gets a warm orange tint to break the rhythm
                         const accent = idx % 4 === 1;
                         // Stored content sometimes already carries its own quote marks
-                        const text = testimonial.content.trim().replace(/^["“”]+|["“”]+$/g, "");
+                        const text = cleanTestimonialText(testimonial.content);
                         const initials = testimonial.clientName
                           .split(/\s+/)
                           .map((w) => w[0])
@@ -172,7 +170,7 @@ export default async function TestimonialsPage() {
                             </div>
 
                             <blockquote className="flex-grow text-base leading-relaxed mb-7 text-gray-600">
-                                &ldquo;<AutoLinkedText text={autoLinkMarkdown(text, activeRules, linkSettings).updatedContent} />&rdquo;
+                                &ldquo;<AutoLinkedText text={linked[`t-${testimonial.id}`] ?? text} />&rdquo;
                             </blockquote>
 
                             <figcaption className={`flex items-center gap-3 pt-5 border-t ${accent ? "border-primary/20" : "border-gray-100"}`}>

@@ -8,13 +8,33 @@ export interface InternalLinkRule {
     keyword: string;
     targetUrl: string;
     categoryFilter?: string; // "All" or specific category e.g. "Maintenance", "Business", "Guide"
-    targetPostIds?: string[]; // when set, the rule ONLY runs inside these blog posts (nowhere else on the site)
+    targetPostIds?: string[]; // when set (or targetPages), the rule ONLY runs on the selected targets
+    targetPages?: string[];   // static page keys from the linkable page registry, e.g. "home", "location:arlington-va"
+    placements?: LinkPlacement[]; // pin the link to specific keyword occurrences on a target
     maxPerPost?: number;     // max times this keyword links per post (default 1)
     priority?: number;       // higher priority rules get processed first (default 0)
     enabled: boolean;
     caseSensitive?: boolean;
     notes?: string;
     createdAt: string;
+}
+
+/**
+ * Pins a rule to one occurrence of its keyword on a specific target.
+ * Once a rule has any placement on a target, ONLY its pinned occurrences are linked there.
+ */
+export interface LinkPlacement {
+    target: string;     // "post:<id>" or a static page key
+    section: string;    // section id inside the target ("content" for blog posts)
+    occurrence: number; // 1-based occurrence of the keyword inside that section
+    context?: string;   // text snippet captured when pinned, used to detect content drift
+}
+
+export interface KeywordOccurrence {
+    occurrence: number;
+    before: string;
+    match: string;
+    after: string;
 }
 
 export interface InternalLinkSettings {
@@ -619,17 +639,24 @@ export const DEFAULT_INTERNAL_LINK_RULES: InternalLinkRule[] = [
 
 // ─── RULE SCOPING ───
 
+export const postTargetKey = (postId: string) => `post:${postId}`;
+
+/** True when the rule was limited to hand-picked blog posts and/or static pages. */
+export function hasExplicitTargets(rule: InternalLinkRule): boolean {
+    return (rule.targetPostIds?.length ?? 0) > 0 || (rule.targetPages?.length ?? 0) > 0;
+}
+
 /**
- * A rule is "scoped" when it is limited to specific blog posts or to a single blog category.
- * Scoped rules only ever run inside matching blog posts — never on static site pages.
+ * A rule is "scoped" when it is limited to selected posts/pages or to a single blog category.
+ * Scoped rules never run anywhere outside their scope.
  */
 export function isScopedRule(rule: InternalLinkRule): boolean {
-    return (rule.targetPostIds?.length ?? 0) > 0 || (!!rule.categoryFilter && rule.categoryFilter !== "All");
+    return hasExplicitTargets(rule) || (!!rule.categoryFilter && rule.categoryFilter !== "All");
 }
 
 /**
  * Enabled rules that apply to a specific blog post.
- * Selected posts take precedence over the category scope.
+ * Hand-picked targets take precedence over the category scope.
  */
 export function getRulesForPost(
     rules: InternalLinkRule[],
@@ -637,15 +664,22 @@ export function getRulesForPost(
 ): InternalLinkRule[] {
     return rules.filter(r => {
         if (r.enabled === false) return false;
-        if (r.targetPostIds && r.targetPostIds.length > 0) return r.targetPostIds.includes(post.id);
+        if (hasExplicitTargets(r)) return (r.targetPostIds || []).includes(post.id);
         if (r.categoryFilter && r.categoryFilter !== "All") return r.categoryFilter === post.category;
         return true;
     });
 }
 
-/**
- * Enabled rules allowed on non-blog pages (homepage, services, locations, ...).
- */
+/** Enabled rules that apply to a static page from the linkable page registry. */
+export function getRulesForPage(rules: InternalLinkRule[], pageKey: string): InternalLinkRule[] {
+    return rules.filter(r => {
+        if (r.enabled === false) return false;
+        if (hasExplicitTargets(r)) return (r.targetPages || []).includes(pageKey);
+        return !r.categoryFilter || r.categoryFilter === "All";
+    });
+}
+
+/** Enabled rules allowed on any non-blog page (no explicit targets, no category scope). */
 export function getSiteWideRules(rules: InternalLinkRule[]): InternalLinkRule[] {
     return rules.filter(r => r.enabled !== false && !isScopedRule(r));
 }
@@ -687,14 +721,105 @@ export function extractExistingLinks(content: string): ExistingLink[] {
     return links;
 }
 
+const PLACEHOLDER_RE = /___ESC_[A-Z_]+?_(\d+)___/g;
+
+/**
+ * Swaps everything that must never be linked (code, images, existing links, HTML, headings)
+ * for placeholder tokens. Shared by the injector and the occurrence scanner so that
+ * occurrence numbers always mean the same thing in both.
+ */
+function protectContent(content: string): { text: string; placeholders: string[] } {
+    const placeholders: string[] = [];
+    const protect = (kind: string) => (m: string) => {
+        placeholders.push(m);
+        return `___ESC_${kind}_${placeholders.length - 1}___`;
+    };
+    const text = content
+        .replace(/```[\s\S]*?```/g, protect("CODE_BLOCK"))
+        .replace(/`[^`\n]+`/g, protect("INLINE_CODE"))
+        .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, protect("IMAGE"))
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, protect("EXISTING_LINK"))
+        .replace(/<[^>]+>/g, protect("HTML_TAG"))
+        .replace(/^(#{1,6}\s+[^\n]+)$/gm, protect("HEADER"));
+    return { text, placeholders };
+}
+
+/** Restores placeholders; loops because a placeholder can contain other placeholders. */
+function restoreContent(text: string, placeholders: string[]): string {
+    let result = text;
+    for (let guard = 0; guard < 10 && PLACEHOLDER_RE.test(result); guard++) {
+        PLACEHOLDER_RE.lastIndex = 0;
+        result = result.replace(PLACEHOLDER_RE, (_, i) => placeholders[Number(i)]);
+    }
+    PLACEHOLDER_RE.lastIndex = 0;
+    return result;
+}
+
+function keywordRegex(keyword: string, caseSensitive?: boolean): RegExp {
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(?<![\\w-])${escaped}(?![\\w-])`, caseSensitive ? "g" : "gi");
+}
+
+/**
+ * Lists every linkable occurrence of a keyword in a piece of content, with surrounding context.
+ * Occurrences inside headings, code, images and existing links are not counted.
+ */
+export function findKeywordOccurrences(
+    content: string,
+    keyword: string,
+    caseSensitive = false,
+    contextChars = 60
+): KeywordOccurrence[] {
+    if (!content || !keyword?.trim()) return [];
+    const { text, placeholders } = protectContent(content);
+    const regex = keywordRegex(keyword.trim(), caseSensitive);
+    const MARK = "\u0000";
+    const results: KeywordOccurrence[] = [];
+    let m: RegExpExecArray | null;
+    while ((m = regex.exec(text)) !== null) {
+        const marked = text.slice(0, m.index) + MARK + text.slice(m.index + m[0].length);
+        const restored = restoreContent(marked, placeholders);
+        const at = restored.indexOf(MARK);
+        const clean = (t: string) => t.replace(/\s+/g, " ");
+        results.push({
+            occurrence: results.length + 1,
+            before: clean(restored.slice(Math.max(0, at - contextChars), at)),
+            match: m[0],
+            after: clean(restored.slice(at + 1, at + 1 + contextChars))
+        });
+    }
+    return results;
+}
+
+export const occurrenceContext = (o: KeywordOccurrence) => `${o.before}${o.match}${o.after}`.trim();
+
+/** Link limits shared across every section of one page, so limits apply per page, not per paragraph. */
+export interface LinkRunState {
+    totalLinks: number;
+    targetCounts: Record<string, number>;
+    ruleUsage: Record<string, number>;
+}
+
+export const createLinkRunState = (): LinkRunState => ({ totalLinks: 0, targetCounts: {}, ruleUsage: {} });
+
+export interface AutoLinkOptions {
+    target?: string;   // "post:<id>" or page key; enables placements
+    section?: string;  // section id inside the target (default "content")
+    state?: LinkRunState;
+}
+
 /**
  * Safely auto-injects internal links into markdown content.
  * Guarantees that headings, existing links, images, and code blocks are never corrupted.
+ *
+ * Rules pinned to this target (placements) are applied first and only on their chosen
+ * occurrences; every other occurrence of a pinned keyword on this target stays plain text.
  */
 export function autoLinkMarkdown(
     content: string,
     rules: InternalLinkRule[],
-    settings: Partial<InternalLinkSettings> = {}
+    settings: Partial<InternalLinkSettings> = {},
+    options: AutoLinkOptions = {}
 ): {
     updatedContent: string;
     linksAdded: number;
@@ -705,121 +830,107 @@ export function autoLinkMarkdown(
     const opts = { ...DEFAULT_INTERNAL_LINK_SETTINGS, ...settings };
     const maxLinksTotal = opts.maxLinksPerPost || 4;
     const preventDuplicateTargets = opts.preventDuplicateTargetsPerPost !== false;
+    const state = options.state || createLinkRunState();
+    const section = options.section || "content";
 
-    // Track existing target URLs to prevent duplicate links
-    const existingLinks = extractExistingLinks(content);
-    const targetCounts: Record<string, number> = {};
-    existingLinks.forEach(l => {
-        const cleanUrl = l.url.trim().toLowerCase();
-        targetCounts[cleanUrl] = (targetCounts[cleanUrl] || 0) + 1;
+    // Existing links count towards duplicate-target prevention
+    extractExistingLinks(content).forEach(l => {
+        const cleanUrl = normalizeInternalTarget(l.url).toLowerCase();
+        state.targetCounts[cleanUrl] = (state.targetCounts[cleanUrl] || 0) + 1;
     });
 
-    let totalLinksAdded = 0;
+    let linksAdded = 0;
     const addedLinks: { keyword: string; targetUrl: string }[] = [];
+    const { text: protectedText, placeholders } = protectContent(content);
+    let working = protectedText;
 
-    // ─── Step 1: Protect structural elements with unique tokens ───
-    const placeholders: string[] = [];
-    let protectedContent = content;
+    const recordLink = (rule: InternalLinkRule, matchedText: string) => {
+        const url = normalizeInternalTarget(rule.targetUrl);
+        const key = url.toLowerCase();
+        state.totalLinks++;
+        state.targetCounts[key] = (state.targetCounts[key] || 0) + 1;
+        state.ruleUsage[rule.id] = (state.ruleUsage[rule.id] || 0) + 1;
+        linksAdded++;
+        addedLinks.push({ keyword: matchedText, targetUrl: rule.targetUrl });
+        placeholders.push(`[${matchedText}](${url})`);
+        return `___ESC_NEW_LINK_${placeholders.length - 1}___`;
+    };
 
-    // 1. Code blocks ``` ... ```
-    protectedContent = protectedContent.replace(/```[\s\S]*?```/g, (m) => {
-        const idx = placeholders.length;
-        placeholders.push(m);
-        return `___ESC_CODE_BLOCK_${idx}___`;
-    });
-
-    // 2. Inline code ` ... `
-    protectedContent = protectedContent.replace(/`[^`\n]+`/g, (m) => {
-        const idx = placeholders.length;
-        placeholders.push(m);
-        return `___ESC_INLINE_CODE_${idx}___`;
-    });
-
-    // 3. Markdown images ![alt](url)
-    protectedContent = protectedContent.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (m) => {
-        const idx = placeholders.length;
-        placeholders.push(m);
-        return `___ESC_IMAGE_${idx}___`;
-    });
-
-    // 4. Existing markdown links [text](url)
-    protectedContent = protectedContent.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m) => {
-        const idx = placeholders.length;
-        placeholders.push(m);
-        return `___ESC_EXISTING_LINK_${idx}___`;
-    });
-
-    // 5. Existing HTML tags <...>
-    protectedContent = protectedContent.replace(/<[^>]+>/g, (m) => {
-        const idx = placeholders.length;
-        placeholders.push(m);
-        return `___ESC_HTML_TAG_${idx}___`;
-    });
-
-    // 6. Markdown headings #, ##, ###, ####
-    protectedContent = protectedContent.replace(/^(#{1,6}\s+[^\n]+)$/gm, (m) => {
-        const idx = placeholders.length;
-        placeholders.push(m);
-        return `___ESC_HEADER_${idx}___`;
-    });
-
-    // ─── Step 2: Sort rules by keyword length DESC so longer compound phrases match first ───
     const activeRules = rules
         .filter(r => r.enabled !== false && r.keyword && r.targetUrl)
         .sort((a, b) => (b.keyword.length - a.keyword.length) || ((b.priority || 0) - (a.priority || 0)));
 
-    const ruleUsageCount: Record<string, number> = {};
-
-    for (const rule of activeRules) {
-        if (totalLinksAdded >= maxLinksTotal) break;
-
-        const cleanTarget = normalizeInternalTarget(rule.targetUrl).toLowerCase();
-        if (preventDuplicateTargets && (targetCounts[cleanTarget] || 0) >= 1) {
-            continue;
+    // ─── Pass 1: pinned placements (explicit admin choice, always honoured) ───
+    const pinnedOnTarget = new Set<string>();
+    if (options.target) {
+        const hits: { start: number; end: number; rule: InternalLinkRule }[] = [];
+        for (const rule of activeRules) {
+            const mine = (rule.placements || []).filter(p => p.target === options.target);
+            if (mine.length === 0) continue;
+            pinnedOnTarget.add(rule.id);
+            const wanted = new Set(mine.filter(p => p.section === section).map(p => p.occurrence));
+            if (wanted.size === 0) continue;
+            const regex = keywordRegex(rule.keyword, rule.caseSensitive);
+            let m: RegExpExecArray | null;
+            let n = 0;
+            while ((m = regex.exec(protectedText)) !== null) {
+                n++;
+                if (wanted.has(n)) hits.push({ start: m.index, end: m.index + m[0].length, rule });
+            }
         }
-
-        const maxForThisRule = rule.maxPerPost || 1;
-        if ((ruleUsageCount[rule.id] || 0) >= maxForThisRule) {
-            continue;
+        // Longer keywords were sorted first; drop overlapping hits, then replace right-to-left
+        const accepted: typeof hits = [];
+        for (const h of hits) {
+            if (!accepted.some(a => h.start < a.end && a.start < h.end)) accepted.push(h);
         }
-
-        // Escape regex special chars
-        const escapedKw = rule.keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        const pattern = new RegExp(`(?<![\\w-])${escapedKw}(?![\\w-])`, rule.caseSensitive ? "g" : "gi");
-
-        protectedContent = protectedContent.replace(pattern, (matchedText) => {
-            if (totalLinksAdded >= maxLinksTotal) return matchedText;
-            if (preventDuplicateTargets && (targetCounts[cleanTarget] || 0) >= 1) return matchedText;
-            if ((ruleUsageCount[rule.id] || 0) >= maxForThisRule) return matchedText;
-
-            totalLinksAdded++;
-            targetCounts[cleanTarget] = (targetCounts[cleanTarget] || 0) + 1;
-            ruleUsageCount[rule.id] = (ruleUsageCount[rule.id] || 0) + 1;
-            addedLinks.push({ keyword: matchedText, targetUrl: rule.targetUrl });
-
-            const placeholderIdx = placeholders.length;
-            placeholders.push(`[${matchedText}](${normalizeInternalTarget(rule.targetUrl)})`);
-            return `___ESC_NEW_LINK_${placeholderIdx}___`;
-        });
+        accepted.sort((a, b) => b.start - a.start);
+        for (const h of accepted) {
+            const token = recordLink(h.rule, working.slice(h.start, h.end));
+            working = working.slice(0, h.start) + token + working.slice(h.end);
+        }
     }
 
-    // ─── Step 3: Restore placeholders in exact reverse order ───
-    let result = protectedContent;
-    for (let i = placeholders.length - 1; i >= 0; i--) {
-        result = result.replace(`___ESC_NEW_LINK_${i}___`, placeholders[i]);
-        result = result.replace(`___ESC_HEADER_${i}___`, placeholders[i]);
-        result = result.replace(`___ESC_HTML_TAG_${i}___`, placeholders[i]);
-        result = result.replace(`___ESC_EXISTING_LINK_${i}___`, placeholders[i]);
-        result = result.replace(`___ESC_IMAGE_${i}___`, placeholders[i]);
-        result = result.replace(`___ESC_INLINE_CODE_${i}___`, placeholders[i]);
-        result = result.replace(`___ESC_CODE_BLOCK_${i}___`, placeholders[i]);
+    // ─── Pass 2: automatic linking for everything that is not pinned on this target ───
+    for (const rule of activeRules) {
+        if (pinnedOnTarget.has(rule.id)) continue;
+        if (state.totalLinks >= maxLinksTotal) break;
+
+        const cleanTarget = normalizeInternalTarget(rule.targetUrl).toLowerCase();
+        const maxForThisRule = rule.maxPerPost || 1;
+        const canLink = () =>
+            state.totalLinks < maxLinksTotal &&
+            !(preventDuplicateTargets && (state.targetCounts[cleanTarget] || 0) >= 1) &&
+            (state.ruleUsage[rule.id] || 0) < maxForThisRule;
+
+        if (!canLink()) continue;
+        working = working.replace(keywordRegex(rule.keyword, rule.caseSensitive), matchedText =>
+            canLink() ? recordLink(rule, matchedText) : matchedText
+        );
     }
 
     return {
-        updatedContent: result,
-        linksAdded: totalLinksAdded,
+        updatedContent: restoreContent(working, placeholders),
+        linksAdded,
         addedLinks
     };
+}
+
+/**
+ * Links several sections of one page with shared limits.
+ * Returns the linked text of every section keyed by section id.
+ */
+export function autoLinkSections(
+    sections: { id: string; text: string }[],
+    rules: InternalLinkRule[],
+    settings: Partial<InternalLinkSettings>,
+    target: string
+): Record<string, string> {
+    const state = createLinkRunState();
+    const out: Record<string, string> = {};
+    for (const s of sections) {
+        out[s.id] = autoLinkMarkdown(s.text, rules, settings, { target, section: s.id, state }).updatedContent;
+    }
+    return out;
 }
 
 /**

@@ -14,8 +14,8 @@ import {
   Wrench,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
-import { getLocations, getLocationBySlug, getSEO, getPageSEO, getSettings, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
+import { getLocations, getLocationBySlug, getSEO, getPageSEO, getSettings } from "@/lib/db";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import PageJsonLd from "@/components/PageJsonLd";
 
@@ -60,12 +60,10 @@ export default async function LocationPage({ params }: PageProps) {
   const location = await getLocationBySlug(city);
   if (!location) return notFound();
 
-  const [settings, rules, linkSettings] = await Promise.all([
+  const [settings, linked] = await Promise.all([
     getSettings(),
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
+    getLinkedPageSections(`location:${location.slug}`),
   ]);
-  const activeRules = getSiteWideRules(rules);
 
   // Nearby locations: prioritize same state, then regional neighbors
   const allLocations = await getLocations();
@@ -84,25 +82,10 @@ export default async function LocationPage({ params }: PageProps) {
     "Nationwide Delivery",
   ];
 
-  const marketP1 = autoLinkMarkdown(
-    `The demand for high-quality, diverse street food and mobile catering in ${location.city}, ${location.state} has never been higher. However, breaking into this lucrative market requires more than just culinary skill; it demands a mobile kitchen that can handle relentless volume, extreme weather conditions, and strict municipal health codes.`,
-    activeRules,
-    linkSettings
-  ).updatedContent;
-
-  const marketP2 = autoLinkMarkdown(
-    `At Elite Steel Concepts, we specialize in engineering heavy-duty, high-throughput food trucks and concession trailers specifically tailored for the ${location.city} demographic. Unlike generic out-of-state manufacturers who deliver non-compliant boxes, our proximity allows us to guarantee that your build will pass local ${location.state} health and fire inspections with zero friction.`,
-    activeRules,
-    linkSettings
-  ).updatedContent;
-
-  const marketP3 = autoLinkMarkdown(
-    `Whether your strategy involves parking near bustling downtown office districts for the lunch rush, partnering with local breweries, or scaling a fleet for massive weekend festivals, your vehicle is the backbone of your revenue. We utilize premium, heavy-gauge stainless steel, NSF-certified equipment, and ergonomic layout designs to ensure your kitchen operates at peak efficiency during the busiest rushes ${location.city} has to offer.`,
-    activeRules,
-    linkSettings
-  ).updatedContent;
-
-  const whyEscLinked = autoLinkMarkdown(location.whyEsc || "", activeRules, linkSettings).updatedContent;
+  const marketP1 = linked["market-1"];
+  const marketP2 = linked["market-2"];
+  const marketP3 = linked["market-3"];
+  const whyEscLinked = linked["why-esc"];
 
   return (
     <>

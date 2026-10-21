@@ -25,10 +25,8 @@ import {
   getFAQs,
   getSettings,
   getMediaAsset,
-  getInternalLinkRules,
-  getInternalLinkSettings,
 } from "@/lib/db";
-import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
 
@@ -52,8 +50,7 @@ export default async function Home() {
     pageSeo,
     faqs,
     settings,
-    rules,
-    linkSettings,
+    linked,
     heroImage,
     homeTruckCard,
     homeTrailerCard,
@@ -61,8 +58,7 @@ export default async function Home() {
     getPageSEO("home"),
     getFAQs(),
     getSettings(),
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
+    getLinkedPageSections("home"),
     getMediaAsset(
       "home",
       "hero",
@@ -76,28 +72,12 @@ export default async function Home() {
     getMediaAsset("home", "trailer_card", "/concession-trailer.png"),
   ]);
 
-  const activeRules = getSiteWideRules(rules);
   const alts = pageSeo.imageAlts || {};
   const sections = pageSeo.sections || {};
 
-  // Auto-link section contents
-  const introRaw =
-    sections.intro?.content ||
-    "We are experienced custom food truck builders creating food trucks, food trailers, and mobile kitchens for businesses of all kinds. As a trusted food truck manufacturer, we build each unit around your menu, equipment, space, and workflow. From a custom food trailer to a complete mobile kitchen, we help turn your idea into a practical, professional setup ready for your food business.";
-  const introLinked = autoLinkMarkdown(
-    introRaw,
-    activeRules,
-    linkSettings,
-  ).updatedContent;
-
-  const localCoverageRaw =
-    sections.localcoverage?.content ||
-    "Based in Manassas, Virginia, Elite Steel Concepts serves the entire Washington DC metropolitan area including Northern Virginia, Maryland, and the greater Mid-Atlantic region. Our custom food trucks, concession trailers, and mobile kitchens have been delivered to entrepreneurs across 48 states.";
-  const localCoverageLinked = autoLinkMarkdown(
-    localCoverageRaw,
-    activeRules,
-    linkSettings,
-  ).updatedContent;
+  // Auto-linked section copy (text + link rules come from the linkable page registry)
+  const introLinked = linked.intro;
+  const localCoverageLinked = linked.localcoverage;
 
   // Used by the hidden "Why Choose Us" dark section below
   // const whyChooseUsLines = (sections.whychooseus?.content || "")

@@ -21,8 +21,96 @@ import {
     stripInternalLinks,
     normalizeInternalTarget,
     getRulesForPost,
+    postTargetKey,
+    findKeywordOccurrences,
+    LinkPlacement,
+    KeywordOccurrence,
 } from "@/lib/internalLinks";
+import { getPageSections, listLinkablePages } from "@/lib/linkablePages";
 import { revalidatePath } from "next/cache";
+
+/** Parses the JSON placements field, keeping only well-formed entries for the rule's selected targets. */
+function parsePlacements(raw: FormDataEntryValue | null, allowedTargets: string[]): LinkPlacement[] {
+    if (!raw) return [];
+    try {
+        const parsed = JSON.parse(String(raw));
+        if (!Array.isArray(parsed)) return [];
+        const allowed = new Set(allowedTargets);
+        const seen = new Set<string>();
+        return parsed.flatMap((p: Partial<Record<keyof LinkPlacement, unknown>>): LinkPlacement[] => {
+            const occurrence = Number(p?.occurrence);
+            if (typeof p?.target !== "string" || !allowed.has(p.target)) return [];
+            if (typeof p?.section !== "string" || !p.section) return [];
+            if (!Number.isInteger(occurrence) || occurrence < 1) return [];
+            const key = `${p.target}|${p.section}|${occurrence}`;
+            if (seen.has(key)) return [];
+            seen.add(key);
+            return [{
+                target: p.target,
+                section: p.section,
+                occurrence,
+                ...(typeof p.context === "string" ? { context: p.context.slice(0, 300) } : {})
+            }];
+        });
+    } catch {
+        return [];
+    }
+}
+
+export interface TargetOccurrences {
+    target: string;
+    name: string;
+    url: string;
+    sections: { id: string; label: string; occurrences: KeywordOccurrence[] }[];
+}
+
+/**
+ * Finds every linkable occurrence of a keyword on the given targets ("post:<id>" or page keys),
+ * grouped by section, so the admin can pin the link to exact spots.
+ */
+export async function scanKeywordOccurrencesAction(
+    keyword: string,
+    caseSensitive: boolean,
+    targets: string[]
+): Promise<{ success: boolean; results?: TargetOccurrences[]; error?: string }> {
+    try {
+        const kw = (keyword || "").trim();
+        if (kw.length < 2) return { success: true, results: [] };
+
+        const needsPosts = targets.some(t => t.startsWith("post:"));
+        const [posts, pages] = await Promise.all([needsPosts ? getPosts() : Promise.resolve([]), listLinkablePages()]);
+
+        const results = await Promise.all(targets.map(async (target): Promise<TargetOccurrences | null> => {
+            if (target.startsWith("post:")) {
+                const post = posts.find(p => p.id === target.slice(5));
+                if (!post) return null;
+                return {
+                    target,
+                    name: post.title,
+                    url: `/blog/${post.slug}`,
+                    sections: [{ id: "content", label: "Article Body", occurrences: findKeywordOccurrences(post.content || "", kw, caseSensitive) }]
+                };
+            }
+            const page = pages.find(p => p.key === target);
+            const sections = await getPageSections(target);
+            if (!page || !sections) return null;
+            return {
+                target,
+                name: page.name,
+                url: page.url,
+                sections: sections.map(s => ({
+                    id: s.id,
+                    label: s.label,
+                    occurrences: findKeywordOccurrences(s.text, kw, caseSensitive)
+                }))
+            };
+        }));
+
+        return { success: true, results: results.filter((r): r is TargetOccurrences => r !== null) };
+    } catch (err: any) {
+        return { success: false, error: err.message };
+    }
+}
 
 export async function getInternalLinkRulesAction() {
     return await getInternalLinkRules();
@@ -45,6 +133,13 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
     const targetPostIds = Array.from(new Set(
         formData.getAll("targetPostIds").map(v => String(v).trim()).filter(Boolean)
     ));
+    const targetPages = Array.from(new Set(
+        formData.getAll("targetPages").map(v => String(v).trim()).filter(Boolean)
+    ));
+    const placements = parsePlacements(formData.get("placements"), [
+        ...targetPostIds.map(postTargetKey),
+        ...targetPages
+    ]);
 
     if (!keyword || !targetUrl) {
         return { success: false, error: "Keyword and Target URL are required." };
@@ -61,7 +156,9 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
                 enabled,
                 caseSensitive,
                 notes,
-                targetPostIds
+                targetPostIds,
+                targetPages,
+                placements
             });
             revalidatePath("/admin/internal-links");
             revalidatePath("/blog", "layout");
@@ -77,7 +174,9 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
                 enabled,
                 caseSensitive,
                 notes,
-                targetPostIds
+                targetPostIds,
+                targetPages,
+                placements
             });
             revalidatePath("/admin/internal-links");
             revalidatePath("/blog", "layout");
@@ -171,7 +270,7 @@ export async function previewPostAutoLinksAction(postId: string) {
 
         const applicableRules = getRulesForPost(rules, post);
 
-        const result = autoLinkMarkdown(post.content || "", applicableRules, settings);
+        const result = autoLinkMarkdown(post.content || "", applicableRules, settings, { target: postTargetKey(post.id) });
 
         return {
             success: true,
@@ -197,7 +296,7 @@ export async function applyAutoLinksToSinglePostAction(postId: string) {
 
         const applicableRules = getRulesForPost(rules, post);
 
-        const result = autoLinkMarkdown(post.content || "", applicableRules, settings);
+        const result = autoLinkMarkdown(post.content || "", applicableRules, settings, { target: postTargetKey(post.id) });
 
         if (result.linksAdded > 0) {
             await updatePost(postId, { content: result.updatedContent });
@@ -241,7 +340,7 @@ export async function applyAutoLinksToBulkPostsAction(selectedPostIds?: string[]
         for (const post of targetPosts) {
             const applicableRules = getRulesForPost(rules, post);
 
-            const result = autoLinkMarkdown(post.content || "", applicableRules, settings);
+            const result = autoLinkMarkdown(post.content || "", applicableRules, settings, { target: postTargetKey(post.id) });
 
             if (result.linksAdded > 0) {
                 await updatePost(post.id, { content: result.updatedContent });
@@ -318,7 +417,12 @@ export async function testAutoLinkSandboxAction(
         const rules = context
             ? getRulesForPost(allRules, { id: context.postId || "", category: context.category })
             : allRules;
-        const result = autoLinkMarkdown(sampleText, rules, settings);
+        const result = autoLinkMarkdown(
+            sampleText,
+            rules,
+            settings,
+            context?.postId ? { target: postTargetKey(context.postId) } : {}
+        );
         return {
             success: true,
             updatedContent: result.updatedContent,

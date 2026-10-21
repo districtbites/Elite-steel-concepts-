@@ -32,9 +32,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Toast from "@/components/ui/Toast";
-import BlogPostMultiSelect from "@/components/admin/BlogPostMultiSelect";
+import SearchableMultiSelect from "@/components/admin/SearchableMultiSelect";
+import LinkPlacementPicker from "@/components/admin/LinkPlacementPicker";
 import type { InternalLinkRule, InternalLinkSettings } from "@/lib/db";
-import type { LinkAuditSummary, PostLinkAudit } from "@/lib/internalLinks";
+import type { LinkAuditSummary, PostLinkAudit, LinkPlacement } from "@/lib/internalLinks";
+import type { LinkablePage } from "@/lib/linkablePages";
 import {
     saveInternalLinkRuleAction,
     deleteInternalLinkRuleAction,
@@ -53,13 +55,15 @@ interface InternalLinksManagerProps {
     initialSettings: InternalLinkSettings;
     initialAudit: LinkAuditSummary;
     availableRoutes: { name: string; url: string; category: string }[];
+    linkablePages: LinkablePage[];
 }
 
 export default function InternalLinksManager({
     initialRules,
     initialSettings,
     initialAudit,
-    availableRoutes
+    availableRoutes,
+    linkablePages
 }: InternalLinksManagerProps) {
     const [rules, setRules] = useState<InternalLinkRule[]>(initialRules);
     const [settings, setSettings] = useState<InternalLinkSettings>(initialSettings);
@@ -79,12 +83,20 @@ export default function InternalLinksManager({
     const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
     const [ruleFormCategory, setRuleFormCategory] = useState("All");
     const [ruleFormPostIds, setRuleFormPostIds] = useState<string[]>([]);
+    const [ruleFormPages, setRuleFormPages] = useState<string[]>([]);
+    const [ruleFormPlacements, setRuleFormPlacements] = useState<LinkPlacement[]>([]);
+    const [ruleFormKeyword, setRuleFormKeyword] = useState("");
+    const [ruleFormCaseSensitive, setRuleFormCaseSensitive] = useState(false);
 
     // Sync the controlled scope fields whenever the rule modal opens
     useEffect(() => {
         if (!isRuleModalOpen) return;
         setRuleFormCategory(editingRule?.categoryFilter || "All");
         setRuleFormPostIds(editingRule?.targetPostIds || []);
+        setRuleFormPages(editingRule?.targetPages || []);
+        setRuleFormPlacements(editingRule?.placements || []);
+        setRuleFormKeyword(editingRule?.keyword || "");
+        setRuleFormCaseSensitive(editingRule?.caseSensitive === true);
     }, [isRuleModalOpen, editingRule]);
 
     // Sandbox state
@@ -318,6 +330,32 @@ export default function InternalLinksManager({
         () => new Map((audit.posts || []).map(p => [p.id, p.title])),
         [audit.posts]
     );
+    const pageNameByKey = useMemo(() => new Map(linkablePages.map(p => [p.key, p.name])), [linkablePages]);
+
+    // Rule form: picker items, selected targets and the placements that belong to them
+    const postPickerItems = useMemo(
+        () =>
+            (audit.posts || [])
+                .filter(p => ruleFormCategory === "All" || p.category === ruleFormCategory)
+                .map(p => ({
+                    id: p.id,
+                    label: p.title,
+                    sublabel: `/${p.slug}${ruleFormCategory === "All" && p.category ? ` · ${p.category}` : ""}${p.status === "Draft" ? " · Draft" : ""}`
+                })),
+        [audit.posts, ruleFormCategory]
+    );
+    const pagePickerItems = useMemo(
+        () => linkablePages.map(p => ({ id: p.key, label: p.name, sublabel: `${p.url} · ${p.group}` })),
+        [linkablePages]
+    );
+    const ruleFormTargets = useMemo(
+        () => [...ruleFormPages, ...ruleFormPostIds.map(id => `post:${id}`)],
+        [ruleFormPages, ruleFormPostIds]
+    );
+    const activeFormPlacements = useMemo(
+        () => ruleFormPlacements.filter(p => ruleFormTargets.includes(p.target)),
+        [ruleFormPlacements, ruleFormTargets]
+    );
 
     return (
         <div className="space-y-8 pb-24 text-admin-text">
@@ -535,6 +573,24 @@ export default function InternalLinksManager({
                                                             title={rule.targetPostIds.map(id => `• ${postTitleById.get(id) || `Deleted post (${id})`}`).join("\n")}
                                                         >
                                                             {rule.targetPostIds.length} selected post{rule.targetPostIds.length === 1 ? "" : "s"}
+                                                        </span>
+                                                    )}
+                                                    {rule.targetPages && rule.targetPages.length > 0 && (
+                                                        <span
+                                                            className="text-[9px] uppercase tracking-wider font-black bg-primary/10 px-2 py-0.5 border border-primary/40 text-primary cursor-help"
+                                                            title={rule.targetPages.map(key => `• ${pageNameByKey.get(key) || `Removed page (${key})`}`).join("\n")}
+                                                        >
+                                                            {rule.targetPages.length} selected page{rule.targetPages.length === 1 ? "" : "s"}
+                                                        </span>
+                                                    )}
+                                                    {rule.placements && rule.placements.length > 0 && (
+                                                        <span
+                                                            className="text-[9px] uppercase tracking-wider font-black px-2 py-0.5 border border-admin-border text-admin-muted cursor-help"
+                                                            title={rule.placements
+                                                                .map(p => `• ${p.target.startsWith("post:") ? postTitleById.get(p.target.slice(5)) || p.target : pageNameByKey.get(p.target) || p.target} · ${p.section} #${p.occurrence}`)
+                                                                .join("\n")}
+                                                        >
+                                                            {rule.placements.length} pinned spot{rule.placements.length === 1 ? "" : "s"}
                                                         </span>
                                                     )}
                                                 </div>
@@ -1134,10 +1190,28 @@ export default function InternalLinksManager({
                                     type="text"
                                     name="keyword"
                                     required
-                                    defaultValue={editingRule?.keyword || ""}
+                                    value={ruleFormKeyword}
+                                    onChange={e => {
+                                        setRuleFormKeyword(e.target.value);
+                                        // Occurrence numbers belong to the old keyword, so pinned spots no longer apply
+                                        setRuleFormPlacements([]);
+                                    }}
                                     placeholder="e.g. custom food truck builder"
                                     className="w-full bg-admin-bg border border-admin-border p-3 text-xs font-bold text-admin-text outline-none focus:border-primary"
                                 />
+                                <label className="mt-2 inline-flex items-center gap-2 text-[11px] font-bold text-admin-muted cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        name="caseSensitive"
+                                        checked={ruleFormCaseSensitive}
+                                        onChange={e => {
+                                            setRuleFormCaseSensitive(e.target.checked);
+                                            setRuleFormPlacements([]); // case changes which occurrences match
+                                        }}
+                                        className="accent-primary"
+                                    />
+                                    Case Sensitive
+                                </label>
                             </div>
 
                             <div>
@@ -1218,13 +1292,53 @@ export default function InternalLinksManager({
                                     Apply Only To These Blogs
                                     <span className="normal-case tracking-normal font-medium ml-1">(optional)</span>
                                 </label>
-                                <BlogPostMultiSelect
-                                    posts={audit.posts || []}
-                                    category={ruleFormCategory}
+                                <SearchableMultiSelect
+                                    name="targetPostIds"
+                                    items={postPickerItems}
                                     selectedIds={ruleFormPostIds}
                                     onChange={setRuleFormPostIds}
+                                    emptySummary={`No blogs selected (${postPickerItems.length} ${ruleFormCategory === "All" ? "" : `"${ruleFormCategory}" `}available)`}
+                                    noun={["blog", "blogs"]}
+                                    searchPlaceholder="Search blogs by title or slug..."
+                                    emptyText="No blog posts in this category."
+                                    chipIcon={<FileText size={10} className="shrink-0" />}
                                 />
                             </div>
+
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-admin-muted mb-1.5 block">
+                                    Apply Only To These Pages
+                                    <span className="normal-case tracking-normal font-medium ml-1">(optional)</span>
+                                </label>
+                                <SearchableMultiSelect
+                                    name="targetPages"
+                                    items={pagePickerItems}
+                                    selectedIds={ruleFormPages}
+                                    onChange={setRuleFormPages}
+                                    emptySummary={`No pages selected (${pagePickerItems.length} available)`}
+                                    noun={["page", "pages"]}
+                                    searchPlaceholder="Search pages by name or URL..."
+                                    emptyText="No linkable pages found."
+                                    chipIcon={<Layers size={10} className="shrink-0" />}
+                                />
+                            </div>
+
+                            <p className="text-[10px] leading-relaxed text-admin-muted border-l-2 border-primary pl-3">
+                                {ruleFormTargets.length > 0
+                                    ? `Scope: this keyword is linked ONLY on the ${ruleFormPostIds.length} selected blog(s) and ${ruleFormPages.length} selected page(s). Nothing else on the site is affected.`
+                                    : ruleFormCategory === "All"
+                                        ? "Scope: nothing selected, so the rule applies site-wide (all blogs and pages)."
+                                        : `Scope: nothing selected, so the rule applies to every "${ruleFormCategory}" blog only (no static pages).`}
+                            </p>
+
+                            <input type="hidden" name="placements" value={JSON.stringify(activeFormPlacements)} />
+                            <LinkPlacementPicker
+                                keyword={ruleFormKeyword}
+                                caseSensitive={ruleFormCaseSensitive}
+                                targets={ruleFormTargets}
+                                placements={activeFormPlacements}
+                                onChange={setRuleFormPlacements}
+                            />
 
                             <div>
                                 <label className="text-[10px] font-black uppercase tracking-widest text-admin-muted mb-1.5 block">
@@ -1248,16 +1362,6 @@ export default function InternalLinksManager({
                                         className="accent-primary"
                                     />
                                     Rule Enabled
-                                </label>
-
-                                <label className="flex items-center gap-2 text-xs font-bold cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        name="caseSensitive"
-                                        defaultChecked={editingRule?.caseSensitive === true}
-                                        className="accent-primary"
-                                    />
-                                    Case Sensitive
                                 </label>
                             </div>
 

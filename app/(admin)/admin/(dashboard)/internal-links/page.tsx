@@ -10,6 +10,7 @@ import {
 } from "@/lib/db";
 import { generateLinkAuditReport } from "@/lib/internalLinks";
 import InternalLinksManager from "@/components/admin/InternalLinksManager";
+import { listLinkablePages } from "@/lib/linkablePages";
 
 export default async function AdminInternalLinksPage() {
     const rules = await getInternalLinkRules();
@@ -17,6 +18,7 @@ export default async function AdminInternalLinksPage() {
     const posts = await getPosts();
     const locations = await getLocations();
     const projects = await getProjects();
+    const linkablePages = await listLinkablePages();
 
     const audit = generateLinkAuditReport(posts, rules, settings);
 
@@ -62,6 +64,7 @@ export default async function AdminInternalLinksPage() {
                 initialSettings={settings}
                 initialAudit={audit}
                 availableRoutes={availableRoutes}
+                linkablePages={linkablePages}
             />
         </div>
     );

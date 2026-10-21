@@ -1,6 +1,6 @@
 import React from "react";
 import { getPostBySlug, getPosts, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown, normalizeInternalTarget, getRulesForPost } from "@/lib/internalLinks";
+import { autoLinkMarkdown, normalizeInternalTarget, getRulesForPost, postTargetKey } from "@/lib/internalLinks";
 import { absoluteUrl, businessRef, toIsoDate, breadcrumbSchema, faqSchema } from "@/lib/schema";
 import JsonLd from "@/components/JsonLd";
 import Container from "@/components/ui/Container";
@@ -98,7 +98,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
 
   const applicableRules = getRulesForPost(rules, post);
 
-  const { updatedContent } = autoLinkMarkdown(post.content || "", applicableRules, settings);
+  const { updatedContent } = autoLinkMarkdown(post.content || "", applicableRules, settings, { target: postTargetKey(post.id) });
 
   const relatedPosts = allPosts
     .filter(p => p.id !== post.id && p.status === "Published")

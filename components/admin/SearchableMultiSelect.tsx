@@ -1,31 +1,38 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Search, ChevronDown, Check, X, FileText } from "lucide-react";
+import { Search, ChevronDown, Check, X } from "lucide-react";
 
-export interface PickablePost {
+export interface MultiSelectItem {
     id: string;
-    title: string;
-    slug: string;
-    category: string;
-    status: "Published" | "Draft";
+    label: string;
+    sublabel?: string;
 }
 
-interface BlogPostMultiSelectProps {
-    posts: PickablePost[];
-    category: string; // "All" shows every post
+interface SearchableMultiSelectProps {
+    items: MultiSelectItem[];
     selectedIds: string[];
     onChange: (ids: string[]) => void;
-    name?: string; // hidden input name submitted with the form
+    name?: string;            // submitted as repeated hidden inputs
+    emptySummary: string;     // button text when nothing is selected
+    noun?: [string, string];  // singular / plural, e.g. ["post", "posts"]
+    searchPlaceholder?: string;
+    emptyText?: string;       // shown when `items` is empty
+    chipIcon?: React.ReactNode;
 }
 
-export default function BlogPostMultiSelect({
-    posts,
-    category,
+/** Dropdown with search, multi-select checkboxes, select-all/clear and removable chips. */
+export default function SearchableMultiSelect({
+    items,
     selectedIds,
     onChange,
-    name = "targetPostIds"
-}: BlogPostMultiSelectProps) {
+    name,
+    emptySummary,
+    noun = ["item", "items"],
+    searchPlaceholder = "Search...",
+    emptyText = "Nothing to select.",
+    chipIcon
+}: SearchableMultiSelectProps) {
     const [open, setOpen] = useState(false);
     const [query, setQuery] = useState("");
     const rootRef = useRef<HTMLDivElement>(null);
@@ -52,49 +59,42 @@ export default function BlogPostMultiSelect({
         };
     }, [open]);
 
-    const categoryPosts = useMemo(
-        () => (category === "All" ? posts : posts.filter(p => p.category === category)),
-        [posts, category]
-    );
-
-    const visiblePosts = useMemo(() => {
+    const visibleItems = useMemo(() => {
         const q = query.trim().toLowerCase();
-        if (!q) return categoryPosts;
-        return categoryPosts.filter(
-            p => p.title.toLowerCase().includes(q) || p.slug.toLowerCase().includes(q)
+        if (!q) return items;
+        return items.filter(
+            i => i.label.toLowerCase().includes(q) || (i.sublabel || "").toLowerCase().includes(q)
         );
-    }, [categoryPosts, query]);
+    }, [items, query]);
 
     const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
-    const selectedPosts = useMemo(
-        () => selectedIds.map(id => posts.find(p => p.id === id)).filter(Boolean) as PickablePost[],
-        [selectedIds, posts]
+    const selectedItems = useMemo(
+        () => selectedIds.map(id => items.find(i => i.id === id)).filter(Boolean) as MultiSelectItem[],
+        [selectedIds, items]
     );
 
     const toggle = (id: string) => {
         onChange(selectedSet.has(id) ? selectedIds.filter(x => x !== id) : [...selectedIds, id]);
     };
 
-    const allVisibleSelected = visiblePosts.length > 0 && visiblePosts.every(p => selectedSet.has(p.id));
+    const allVisibleSelected = visibleItems.length > 0 && visibleItems.every(i => selectedSet.has(i.id));
     const toggleAllVisible = () => {
         if (allVisibleSelected) {
-            const visibleIds = new Set(visiblePosts.map(p => p.id));
+            const visibleIds = new Set(visibleItems.map(i => i.id));
             onChange(selectedIds.filter(id => !visibleIds.has(id)));
         } else {
-            onChange(Array.from(new Set([...selectedIds, ...visiblePosts.map(p => p.id)])));
+            onChange(Array.from(new Set([...selectedIds, ...visibleItems.map(i => i.id)])));
         }
     };
 
     const summary =
         selectedIds.length === 0
-            ? `All ${categoryPosts.length} ${category === "All" ? "blog posts" : `"${category}" posts`}`
-            : `${selectedIds.length} post${selectedIds.length === 1 ? "" : "s"} selected`;
+            ? emptySummary
+            : `${selectedIds.length} ${selectedIds.length === 1 ? noun[0] : noun[1]} selected`;
 
     return (
         <div ref={rootRef}>
-            {selectedIds.map(id => (
-                <input key={id} type="hidden" name={name} value={id} />
-            ))}
+            {name && selectedIds.map(id => <input key={id} type="hidden" name={name} value={id} />)}
 
             <button
                 type="button"
@@ -120,7 +120,7 @@ export default function BlogPostMultiSelect({
                             onKeyDown={e => {
                                 if (e.key === "Enter") e.preventDefault();
                             }}
-                            placeholder="Search blogs by title or slug..."
+                            placeholder={searchPlaceholder}
                             className="flex-1 bg-transparent text-xs text-admin-text outline-none placeholder:text-admin-muted"
                         />
                         {query && (
@@ -134,10 +134,10 @@ export default function BlogPostMultiSelect({
                         <button
                             type="button"
                             onClick={toggleAllVisible}
-                            disabled={visiblePosts.length === 0}
+                            disabled={visibleItems.length === 0}
                             className="text-primary hover:underline disabled:opacity-40 disabled:no-underline"
                         >
-                            {allVisibleSelected ? "Deselect" : "Select"} all ({visiblePosts.length})
+                            {allVisibleSelected ? "Deselect" : "Select"} all ({visibleItems.length})
                         </button>
                         {selectedIds.length > 0 && (
                             <button type="button" onClick={() => onChange([])} className="text-admin-muted hover:text-red-400">
@@ -147,15 +147,15 @@ export default function BlogPostMultiSelect({
                     </div>
 
                     <ul className="max-h-56 overflow-y-auto" role="listbox" aria-multiselectable="true">
-                        {visiblePosts.map(p => {
-                            const checked = selectedSet.has(p.id);
+                        {visibleItems.map(item => {
+                            const checked = selectedSet.has(item.id);
                             return (
-                                <li key={p.id}>
+                                <li key={item.id}>
                                     <button
                                         type="button"
                                         role="option"
                                         aria-selected={checked}
-                                        onClick={() => toggle(p.id)}
+                                        onClick={() => toggle(item.id)}
                                         className={`w-full flex items-start gap-3 px-3 py-2 text-left transition-colors ${
                                             checked ? "bg-primary/10" : "hover:bg-admin-surface"
                                         }`}
@@ -168,40 +168,38 @@ export default function BlogPostMultiSelect({
                                             {checked && <Check size={11} strokeWidth={3} />}
                                         </span>
                                         <span className="min-w-0 flex-1">
-                                            <span className="block text-xs font-bold text-admin-text truncate">{p.title}</span>
-                                            <span className="block text-[10px] font-mono text-admin-muted truncate">
-                                                /{p.slug}
-                                                {category === "All" && p.category ? ` · ${p.category}` : ""}
-                                                {p.status === "Draft" ? " · Draft" : ""}
-                                            </span>
+                                            <span className="block text-xs font-bold text-admin-text truncate">{item.label}</span>
+                                            {item.sublabel && (
+                                                <span className="block text-[10px] font-mono text-admin-muted truncate">{item.sublabel}</span>
+                                            )}
                                         </span>
                                     </button>
                                 </li>
                             );
                         })}
-                        {visiblePosts.length === 0 && (
+                        {visibleItems.length === 0 && (
                             <li className="px-3 py-6 text-center text-[11px] text-admin-muted">
-                                {categoryPosts.length === 0 ? "No blog posts in this category." : "No blogs match your search."}
+                                {items.length === 0 ? emptyText : "No results match your search."}
                             </li>
                         )}
                     </ul>
                 </div>
             )}
 
-            {selectedPosts.length > 0 && (
+            {selectedItems.length > 0 && (
                 <div className="mt-2 flex flex-wrap gap-1.5">
-                    {selectedPosts.map(p => (
+                    {selectedItems.map(item => (
                         <span
-                            key={p.id}
+                            key={item.id}
                             className="inline-flex items-center gap-1.5 max-w-full bg-primary/10 border border-primary/40 text-primary px-2 py-1 text-[10px] font-bold"
                         >
-                            <FileText size={10} className="shrink-0" />
-                            <span className="truncate max-w-[220px]">{p.title}</span>
+                            {chipIcon}
+                            <span className="truncate max-w-[220px]">{item.label}</span>
                             <button
                                 type="button"
-                                onClick={() => toggle(p.id)}
+                                onClick={() => toggle(item.id)}
                                 className="hover:text-admin-text shrink-0"
-                                aria-label={`Remove ${p.title}`}
+                                aria-label={`Remove ${item.label}`}
                             >
                                 <X size={10} />
                             </button>
@@ -209,14 +207,6 @@ export default function BlogPostMultiSelect({
                     ))}
                 </div>
             )}
-
-            <p className="mt-1.5 text-[10px] text-admin-muted leading-relaxed">
-                {selectedIds.length > 0
-                    ? "This keyword will be linked ONLY inside the selected posts. No other page on the site is affected."
-                    : category === "All"
-                        ? "No posts selected: the rule applies site-wide (all blog posts and static pages)."
-                        : `No posts selected: the rule applies to every "${category}" blog post only.`}
-            </p>
         </div>
     );
 }

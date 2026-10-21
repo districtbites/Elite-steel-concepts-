@@ -34,8 +34,8 @@ import {
   UtensilsCrossed,
   type LucideIcon,
 } from "lucide-react";
-import { getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
+import { getSEO, getPageSEO, getMediaAsset } from "@/lib/db";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
@@ -57,14 +57,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CustomFoodTrucksPage() {
-  const [rules, linkSettings] = await Promise.all([
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
-  ]);
-  const activeRules = getSiteWideRules(rules);
-
-  const introDescRaw = "A custom food truck from Elite Steel Concepts is a precision tool. We focus on commercial kitchen design, ergonomic safety, and health code compliance. Every weld and every corner is designed to withstand the rigors of 24/7 commercial operation. You can also explore our custom concession trailers or request a custom quote.";
-  const introDescLinked = autoLinkMarkdown(introDescRaw, activeRules, linkSettings).updatedContent;
+  const linked = await getLinkedPageSections("custom-food-trucks");
+  const introDescLinked = linked.intro;
 
   // Dynamic Assets from Media Manager
   const philosophyHero = await getMediaAsset("custom-food-trucks", "philosophy_hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=1200");

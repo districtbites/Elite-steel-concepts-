@@ -52,10 +52,9 @@ export default function AutoLinkedText({
       );
     } else {
       elements.push(
-        // All in-content internal links point to the homepage for now
         <Link
           key={`lnk-${match.index}`}
-          href="/"
+          href={targetUrl}
           className={linkClassName}
         >
           {anchorText}

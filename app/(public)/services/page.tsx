@@ -8,9 +8,9 @@ import Image from "next/image";
 import { Truck, Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X, Award, MapPin, Zap } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
-import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 
-import { getSEO, getPageSEO, getFAQs, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
+import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
 
@@ -30,22 +30,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ServicesPage() {
-  const [faqs, pageSeo, rules, linkSettings, servicesHero, truckImage, trailerImage] = await Promise.all([
+  const [faqs, pageSeo, linked, servicesHero, truckImage, trailerImage] = await Promise.all([
     getFAQs(),
     getPageSEO("services"),
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
+    getLinkedPageSections("services"),
     getMediaAsset("services", "hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_1", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_2", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800"),
   ]);
   const sections = pageSeo.sections || {};
 
-  const introRaw = typeof sections.intro?.content === 'string'
-    ? sections.intro.content
-    : "At Elite Steel Concepts, we don't just build boxes with kitchens. We engineer high-performance commercial environments designed to maximize flow, sanitation, and safety while projecting a premium brand image.";
-  const activeRules = getSiteWideRules(rules);
-  const introLinked = autoLinkMarkdown(introRaw, activeRules, linkSettings).updatedContent;
+  const introLinked = linked.intro;
 
   const services = [
     {

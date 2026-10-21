@@ -34,8 +34,8 @@ import {
   Fish,
   type LucideIcon
 } from "lucide-react";
-import { getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
+import { getSEO, getPageSEO, getMediaAsset } from "@/lib/db";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
@@ -57,14 +57,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CustomFoodTrailersPage() {
-  const [rules, linkSettings] = await Promise.all([
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
-  ]);
-  const activeRules = getSiteWideRules(rules);
-
-  const introDescRaw = "A custom concession trailer from Elite Steel Concepts offers the highest ROI in the mobile food industry. More square footage for equipment and staff, without the engine maintenance of a truck. Learn about our custom food truck conversions or request an itemized build quote.";
-  const introDescLinked = autoLinkMarkdown(introDescRaw, activeRules, linkSettings).updatedContent;
+  const linked = await getLinkedPageSections("custom-food-trailers");
+  const introDescLinked = linked.intro;
 
   // Dynamic Assets
   const trailerHero = await getMediaAsset("custom-food-trailers", "hero", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200");

@@ -4,8 +4,8 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import { Check } from "lucide-react";
-import { getSEO, getPageSEO, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
+import { getSEO, getPageSEO } from "@/lib/db";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
@@ -26,14 +26,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FleetExpansionPage() {
-  const [rules, linkSettings] = await Promise.all([
-    getInternalLinkRules(),
-    getInternalLinkSettings(),
-  ]);
-  const activeRules = getSiteWideRules(rules);
-
-  const fleetDescRaw = "Whether you need 5 custom food trucks or 50 concession trailers, Elite Steel Concepts delivers identical build quality, equipment layouts, and nationwide compliance. Streamline your multi-unit mobile kitchen operations with a standardized fleet program.";
-  const fleetDescLinked = autoLinkMarkdown(fleetDescRaw, activeRules, linkSettings).updatedContent;
+  const linked = await getLinkedPageSections("fleet-expansion");
+  const fleetDescLinked = linked.intro;
 
   return (
     <>
