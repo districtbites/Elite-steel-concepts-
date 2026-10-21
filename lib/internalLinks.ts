@@ -8,6 +8,7 @@ export interface InternalLinkRule {
     keyword: string;
     targetUrl: string;
     categoryFilter?: string; // "All" or specific category e.g. "Maintenance", "Business", "Guide"
+    targetPostIds?: string[]; // when set, the rule ONLY runs inside these blog posts (nowhere else on the site)
     maxPerPost?: number;     // max times this keyword links per post (default 1)
     priority?: number;       // higher priority rules get processed first (default 0)
     enabled: boolean;
@@ -616,6 +617,39 @@ export const DEFAULT_INTERNAL_LINK_RULES: InternalLinkRule[] = [
     }
 ];
 
+// ─── RULE SCOPING ───
+
+/**
+ * A rule is "scoped" when it is limited to specific blog posts or to a single blog category.
+ * Scoped rules only ever run inside matching blog posts — never on static site pages.
+ */
+export function isScopedRule(rule: InternalLinkRule): boolean {
+    return (rule.targetPostIds?.length ?? 0) > 0 || (!!rule.categoryFilter && rule.categoryFilter !== "All");
+}
+
+/**
+ * Enabled rules that apply to a specific blog post.
+ * Selected posts take precedence over the category scope.
+ */
+export function getRulesForPost(
+    rules: InternalLinkRule[],
+    post: { id: string; category?: string }
+): InternalLinkRule[] {
+    return rules.filter(r => {
+        if (r.enabled === false) return false;
+        if (r.targetPostIds && r.targetPostIds.length > 0) return r.targetPostIds.includes(post.id);
+        if (r.categoryFilter && r.categoryFilter !== "All") return r.categoryFilter === post.category;
+        return true;
+    });
+}
+
+/**
+ * Enabled rules allowed on non-blog pages (homepage, services, locations, ...).
+ */
+export function getSiteWideRules(rules: InternalLinkRule[]): InternalLinkRule[] {
+    return rules.filter(r => r.enabled !== false && !isScopedRule(r));
+}
+
 // ─── PARSER & LINK INJECTOR ENGINE ───
 
 /**
@@ -808,7 +842,7 @@ export function scanPostLinks(
 
     // Find what opportunities exist
     const matchedOpportunities: { keyword: string; targetUrl: string; ruleId: string }[] = [];
-    const activeRules = rules.filter(r => r.enabled !== false);
+    const activeRules = getRulesForPost(rules, post);
 
     for (const rule of activeRules) {
         if (!rule.keyword) continue;

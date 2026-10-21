@@ -35,7 +35,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
@@ -61,7 +61,7 @@ export default async function CustomFoodTrucksPage() {
     getInternalLinkRules(),
     getInternalLinkSettings(),
   ]);
-  const activeRules = rules.filter(r => r.enabled !== false);
+  const activeRules = getSiteWideRules(rules);
 
   const introDescRaw = "A custom food truck from Elite Steel Concepts is a precision tool. We focus on commercial kitchen design, ergonomic safety, and health code compliance. Every weld and every corner is designed to withstand the rigors of 24/7 commercial operation. You can also explore our custom concession trailers or request a custom quote.";
   const introDescLinked = autoLinkMarkdown(introDescRaw, activeRules, linkSettings).updatedContent;

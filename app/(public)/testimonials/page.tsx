@@ -5,7 +5,7 @@ import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import Button from "@/components/ui/Button";
 import { getTestimonials, getSEO, getPageSEO, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import { Star, Quote as QuoteIcon, Play, CheckCircle, ShieldCheck, Award, MessageSquare, Truck, CalendarCheck } from "lucide-react";
 import type { Metadata } from "next";
@@ -34,7 +34,7 @@ export default async function TestimonialsPage() {
     getInternalLinkSettings(),
     getMediaAsset("testimonials", "hero", "https://images.pexels.com/photos/1766686/pexels-photo-1766686.jpeg?auto=compress&cs=tinysrgb&w=1200"),
   ]);
-  const activeRules = rules.filter(r => r.enabled !== false);
+  const activeRules = getSiteWideRules(rules);
 
   return (
     <>

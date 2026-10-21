@@ -28,7 +28,7 @@ import {
   getInternalLinkRules,
   getInternalLinkSettings,
 } from "@/lib/db";
-import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
 
@@ -76,7 +76,7 @@ export default async function Home() {
     getMediaAsset("home", "trailer_card", "/concession-trailer.png"),
   ]);
 
-  const activeRules = rules.filter((r) => r.enabled !== false);
+  const activeRules = getSiteWideRules(rules);
   const alts = pageSeo.imageAlts || {};
   const sections = pageSeo.sections || {};
 

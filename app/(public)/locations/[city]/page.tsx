@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import Container from "@/components/ui/Container";
 import { getLocations, getLocationBySlug, getSEO, getPageSEO, getSettings, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import PageJsonLd from "@/components/PageJsonLd";
 
@@ -65,7 +65,7 @@ export default async function LocationPage({ params }: PageProps) {
     getInternalLinkRules(),
     getInternalLinkSettings(),
   ]);
-  const activeRules = rules.filter(r => r.enabled !== false);
+  const activeRules = getSiteWideRules(rules);
 
   // Nearby locations: prioritize same state, then regional neighbors
   const allLocations = await getLocations();

@@ -8,7 +8,7 @@ import Image from "next/image";
 import { Truck, Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X, Award, MapPin, Zap } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
-import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
 
 import { getSEO, getPageSEO, getFAQs, getMediaAsset, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import type { Metadata } from "next";
@@ -44,7 +44,7 @@ export default async function ServicesPage() {
   const introRaw = typeof sections.intro?.content === 'string'
     ? sections.intro.content
     : "At Elite Steel Concepts, we don't just build boxes with kitchens. We engineer high-performance commercial environments designed to maximize flow, sanitation, and safety while projecting a premium brand image.";
-  const activeRules = rules.filter(r => r.enabled !== false);
+  const activeRules = getSiteWideRules(rules);
   const introLinked = autoLinkMarkdown(introRaw, activeRules, linkSettings).updatedContent;
 
   const services = [

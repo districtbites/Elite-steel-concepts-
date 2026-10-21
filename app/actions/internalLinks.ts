@@ -20,6 +20,7 @@ import {
     scanPostLinks,
     stripInternalLinks,
     normalizeInternalTarget,
+    getRulesForPost,
 } from "@/lib/internalLinks";
 import { revalidatePath } from "next/cache";
 
@@ -41,6 +42,9 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
     const enabled = formData.get("enabled") === "true" || formData.get("enabled") === "on";
     const caseSensitive = formData.get("caseSensitive") === "true" || formData.get("caseSensitive") === "on";
     const notes = (formData.get("notes") as string) || "";
+    const targetPostIds = Array.from(new Set(
+        formData.getAll("targetPostIds").map(v => String(v).trim()).filter(Boolean)
+    ));
 
     if (!keyword || !targetUrl) {
         return { success: false, error: "Keyword and Target URL are required." };
@@ -56,7 +60,8 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
                 priority,
                 enabled,
                 caseSensitive,
-                notes
+                notes,
+                targetPostIds
             });
             revalidatePath("/admin/internal-links");
             revalidatePath("/blog", "layout");
@@ -71,7 +76,8 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
                 priority,
                 enabled,
                 caseSensitive,
-                notes
+                notes,
+                targetPostIds
             });
             revalidatePath("/admin/internal-links");
             revalidatePath("/blog", "layout");
@@ -163,12 +169,7 @@ export async function previewPostAutoLinksAction(postId: string) {
         const rules = await getInternalLinkRules();
         const settings = await getInternalLinkSettings();
 
-        const applicableRules = rules.filter(r => {
-            if (r.categoryFilter && r.categoryFilter !== "All" && r.categoryFilter !== post.category) {
-                return false;
-            }
-            return r.enabled !== false;
-        });
+        const applicableRules = getRulesForPost(rules, post);
 
         const result = autoLinkMarkdown(post.content || "", applicableRules, settings);
 
@@ -194,12 +195,7 @@ export async function applyAutoLinksToSinglePostAction(postId: string) {
         const rules = await getInternalLinkRules();
         const settings = await getInternalLinkSettings();
 
-        const applicableRules = rules.filter(r => {
-            if (r.categoryFilter && r.categoryFilter !== "All" && r.categoryFilter !== post.category) {
-                return false;
-            }
-            return r.enabled !== false;
-        });
+        const applicableRules = getRulesForPost(rules, post);
 
         const result = autoLinkMarkdown(post.content || "", applicableRules, settings);
 
@@ -243,12 +239,7 @@ export async function applyAutoLinksToBulkPostsAction(selectedPostIds?: string[]
         const details: { postId: string; title: string; linksAdded: number }[] = [];
 
         for (const post of targetPosts) {
-            const applicableRules = rules.filter(r => {
-                if (r.categoryFilter && r.categoryFilter !== "All" && r.categoryFilter !== post.category) {
-                    return false;
-                }
-                return r.enabled !== false;
-            });
+            const applicableRules = getRulesForPost(rules, post);
 
             const result = autoLinkMarkdown(post.content || "", applicableRules, settings);
 
@@ -306,7 +297,15 @@ export async function stripLinksFromPostAction(postId: string, targetUrlsToRemov
     }
 }
 
-export async function testAutoLinkSandboxAction(sampleText: string): Promise<{
+/**
+ * Runs the auto-linker over arbitrary text.
+ * Pass `context` (the post being edited) to only apply the rules scoped to that post;
+ * without it every enabled rule is used (sandbox tester).
+ */
+export async function testAutoLinkSandboxAction(
+    sampleText: string,
+    context?: { postId?: string; category?: string }
+): Promise<{
     success: boolean;
     updatedContent?: string;
     linksAdded?: number;
@@ -314,8 +313,11 @@ export async function testAutoLinkSandboxAction(sampleText: string): Promise<{
     error?: string;
 }> {
     try {
-        const rules = await getInternalLinkRules();
+        const allRules = await getInternalLinkRules();
         const settings = await getInternalLinkSettings();
+        const rules = context
+            ? getRulesForPost(allRules, { id: context.postId || "", category: context.category })
+            : allRules;
         const result = autoLinkMarkdown(sampleText, rules, settings);
         return {
             success: true,

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
     Link2,
     Plus,
@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Toast from "@/components/ui/Toast";
+import BlogPostMultiSelect from "@/components/admin/BlogPostMultiSelect";
 import type { InternalLinkRule, InternalLinkSettings } from "@/lib/db";
 import type { LinkAuditSummary, PostLinkAudit } from "@/lib/internalLinks";
 import {
@@ -76,6 +77,15 @@ export default function InternalLinksManager({
     // Modal / Rule editing
     const [editingRule, setEditingRule] = useState<Partial<InternalLinkRule> | null>(null);
     const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
+    const [ruleFormCategory, setRuleFormCategory] = useState("All");
+    const [ruleFormPostIds, setRuleFormPostIds] = useState<string[]>([]);
+
+    // Sync the controlled scope fields whenever the rule modal opens
+    useEffect(() => {
+        if (!isRuleModalOpen) return;
+        setRuleFormCategory(editingRule?.categoryFilter || "All");
+        setRuleFormPostIds(editingRule?.targetPostIds || []);
+    }, [isRuleModalOpen, editingRule]);
 
     // Sandbox state
     const [sandboxInput, setSandboxInput] = useState(
@@ -296,8 +306,18 @@ export default function InternalLinksManager({
         setLoading(false);
     };
 
-    // Categories for filter
-    const categories = ["All", "Maintenance", "Business", "Guide", "Design", "Regulation", "News"];
+    // Categories for filter: real blog categories + any category already used by a rule
+    const categories = useMemo(() => {
+        const set = new Set<string>();
+        (audit.posts || []).forEach(p => p.category?.trim() && set.add(p.category.trim()));
+        rules.forEach(r => r.categoryFilter && r.categoryFilter !== "All" && set.add(r.categoryFilter));
+        return ["All", ...Array.from(set).sort((a, b) => a.localeCompare(b))];
+    }, [audit.posts, rules]);
+
+    const postTitleById = useMemo(
+        () => new Map((audit.posts || []).map(p => [p.id, p.title])),
+        [audit.posts]
+    );
 
     return (
         <div className="space-y-8 pb-24 text-admin-text">
@@ -505,9 +525,19 @@ export default function InternalLinksManager({
                                                 </Link>
                                             </td>
                                             <td className="p-4">
-                                                <span className="text-[10px] uppercase tracking-wider font-bold bg-admin-bg px-2 py-1 border border-admin-border text-admin-muted">
-                                                    {rule.categoryFilter || "All"}
-                                                </span>
+                                                <div className="flex flex-col items-start gap-1">
+                                                    <span className="text-[10px] uppercase tracking-wider font-bold bg-admin-bg px-2 py-1 border border-admin-border text-admin-muted">
+                                                        {rule.categoryFilter || "All"}
+                                                    </span>
+                                                    {rule.targetPostIds && rule.targetPostIds.length > 0 && (
+                                                        <span
+                                                            className="text-[9px] uppercase tracking-wider font-black bg-primary/10 px-2 py-0.5 border border-primary/40 text-primary cursor-help"
+                                                            title={rule.targetPostIds.map(id => `• ${postTitleById.get(id) || `Deleted post (${id})`}`).join("\n")}
+                                                        >
+                                                            {rule.targetPostIds.length} selected post{rule.targetPostIds.length === 1 ? "" : "s"}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td className="p-4 text-center font-bold text-admin-muted font-mono">
                                                 {rule.maxPerPost || 1}
@@ -1076,7 +1106,7 @@ export default function InternalLinksManager({
             {/* ═══════ ADD / EDIT RULE MODAL ═══════ */}
             {isRuleModalOpen && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-                    <div className="bg-admin-surface border-2 border-primary max-w-xl w-full p-8 space-y-6 shadow-2xl animate-in zoom-in-95 duration-200">
+                    <div className="bg-admin-surface border-2 border-primary max-w-xl w-full max-h-[92vh] overflow-y-auto p-8 space-y-6 shadow-2xl animate-in zoom-in-95 duration-200">
                         <div className="flex items-center justify-between pb-4 border-b border-admin-border">
                             <h3 className="text-lg font-black uppercase tracking-tight text-admin-text">
                                 {editingRule?.id ? "Edit Keyword Rule" : "Create New Keyword Rule"}
@@ -1148,7 +1178,16 @@ export default function InternalLinksManager({
                                     </label>
                                     <select
                                         name="categoryFilter"
-                                        defaultValue={editingRule?.categoryFilter || "All"}
+                                        value={ruleFormCategory}
+                                        onChange={e => {
+                                            const next = e.target.value;
+                                            setRuleFormCategory(next);
+                                            // Drop selected posts that no longer belong to the chosen category
+                                            if (next !== "All") {
+                                                const inCategory = new Set((audit.posts || []).filter(p => p.category === next).map(p => p.id));
+                                                setRuleFormPostIds(prev => prev.filter(id => inCategory.has(id)));
+                                            }
+                                        }}
                                         className="w-full bg-admin-bg border border-admin-border p-3 text-xs font-bold text-admin-text outline-none focus:border-primary"
                                     >
                                         {categories.map(c => (
@@ -1172,6 +1211,19 @@ export default function InternalLinksManager({
                                         className="w-full bg-admin-bg border border-admin-border p-3 text-xs font-bold text-admin-text outline-none focus:border-primary"
                                     />
                                 </div>
+                            </div>
+
+                            <div>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-admin-muted mb-1.5 block">
+                                    Apply Only To These Blogs
+                                    <span className="normal-case tracking-normal font-medium ml-1">(optional)</span>
+                                </label>
+                                <BlogPostMultiSelect
+                                    posts={audit.posts || []}
+                                    category={ruleFormCategory}
+                                    selectedIds={ruleFormPostIds}
+                                    onChange={setRuleFormPostIds}
+                                />
                             </div>
 
                             <div>

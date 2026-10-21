@@ -19,7 +19,7 @@ import {
 import Container from "@/components/ui/Container";
 import CTASection from "@/components/ui/CTASection";
 import { getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown } from "@/lib/internalLinks";
+import { autoLinkMarkdown, getSiteWideRules } from "@/lib/internalLinks";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
@@ -36,7 +36,7 @@ export default async function ComplianceHub() {
     getInternalLinkRules(),
     getInternalLinkSettings(),
   ]);
-  const activeRules = rules.filter(r => r.enabled !== false);
+  const activeRules = getSiteWideRules(rules);
 
   const heroDescRaw = "Building a custom food truck or trailer requires more than installing kitchen equipment. Your mobile kitchen may need to meet applicable health, plumbing, electrical, sanitation, fire-safety, and local food-service requirements before it can operate.";
   const heroDescLinked = autoLinkMarkdown(heroDescRaw, activeRules, linkSettings).updatedContent;

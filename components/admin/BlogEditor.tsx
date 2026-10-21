@@ -44,7 +44,12 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
    setAutoLinking(true);
    setAutoLinkMessage(null);
    try {
-     const res = await testAutoLinkSandboxAction(content);
+     // Only apply rules scoped to this post (its id + currently selected category)
+     const categoryField = textareaRef.current?.form?.elements.namedItem("category") as HTMLSelectElement | null;
+     const res = await testAutoLinkSandboxAction(content, {
+       postId: initialData?.id,
+       category: categoryField?.value || initialData?.category,
+     });
      if (res.success && res.updatedContent !== undefined) {
        setContent(res.updatedContent);
        setAutoLinkMessage(`Injected ${res.linksAdded || 0} strategic internal link(s)!`);
