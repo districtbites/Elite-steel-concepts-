@@ -10,6 +10,8 @@ import { quickUploadImage } from "@/app/actions/blog";
 import { testAutoLinkSandboxAction } from "@/app/actions/internalLinks";
 import Link from "next/link";
 import Image from "next/image";
+import TableBuilderModal, { ADMIN_TABLE_CLASSES } from "@/components/admin/TableBuilderModal";
+import { findTableAt, renderTableHtml, replaceMarkdownTables, type MarkdownTable } from "@/lib/markdownTable";
 
 interface BlogEditorProps {
  action: (formData: FormData) => void;
@@ -18,7 +20,9 @@ interface BlogEditorProps {
 
 export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  const [viewMode, setViewMode] = useState<"edit" |"preview" |"split">("split");
- const [content, setContent] = useState(initialData?.content ||"");
+ // Normalise CRLF so textarea caret offsets match the string (browsers report offsets on "\n" text)
+ const [content, setContent] = useState((initialData?.content ||"").replace(/\r\n?/g,"\n"));
+ const [tableEditor, setTableEditor] = useState<{ initial: MarkdownTable | null; start: number; end: number } | null>(null);
  const [uploading, setUploading] = useState(false);
  const [title, setTitle] = useState(initialData?.title ||"");
  const [featuredImagePreview, setFeaturedImagePreview] = useState(initialData?.image ||"");
@@ -69,12 +73,16 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  if (textarea) selectionRef.current = { start: textarea.selectionStart, end: textarea.selectionEnd };
  };
 
- const handleInsert = (text: string) => {
+ const handleInsert = (text: string, range?: { start: number; end: number }) => {
  const textarea = textareaRef.current;
- if (!textarea) return;
+ if (!textarea) {
+ // Preview-only mode: no caret, so replace the given range or append
+ setContent((prev: string) => range ? prev.substring(0, range.start) + text + prev.substring(range.end) : prev + text);
+ return;
+ }
  const isFocused = document.activeElement === textarea;
- const start = Math.min(isFocused ? textarea.selectionStart : selectionRef.current.start, textarea.value.length);
- const end = Math.min(isFocused ? textarea.selectionEnd : selectionRef.current.end, textarea.value.length);
+ const start = Math.min(range?.start ?? (isFocused ? textarea.selectionStart : selectionRef.current.start), textarea.value.length);
+ const end = Math.min(range?.end ?? (isFocused ? textarea.selectionEnd : selectionRef.current.end), textarea.value.length);
  const caret = start + text.length;
  // Preserve scroll positions so the editor and page don't jump after re-render
  const scrollTop = textarea.scrollTop;
@@ -88,6 +96,24 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  textarea.scrollTop = scrollTop;
  window.scrollTo(winX, winY);
  });
+ };
+
+ // Open the table builder: edits the table under the caret, otherwise inserts a new one
+ const openTableBuilder = () => {
+ const textarea = textareaRef.current;
+ const isFocused = !!textarea && document.activeElement === textarea;
+ const start = isFocused ? textarea.selectionStart : selectionRef.current.start;
+ const end = isFocused ? textarea.selectionEnd : selectionRef.current.end;
+ const found = textarea ? findTableAt(content, start) : null;
+ setTableEditor(found ? { initial: found.table, start: found.start, end: found.end } : { initial: null, start, end });
+ };
+
+ const handleTableSubmit = (markdown: string) => {
+ if (!tableEditor) return;
+ const { initial, start, end } = tableEditor;
+ // A new table needs blank lines around it to render as its own block
+ handleInsert(initial ? markdown : `\n\n${markdown}\n\n`, textareaRef.current ? { start, end } : undefined);
+ setTableEditor(null);
  };
 
  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,11 +153,10 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  { icon: <Quote size={14} />, text: '\n>"Quote"\n', title:"Quote" },
  { icon: <Minus size={14} />, text:"\n---\n", title:"Divider" },
  { icon: <LinkIcon size={14} />, text:"[Link Text](url)", title:"Link" },
- { icon: <Table size={14} />, text:"\n| Col 1 | Col 2 |\n|---|---|\n| Val | Val |\n", title:"Table" },
  ];
 
  const renderPreview = (md: string) => {
- let html = md
+ let html = replaceMarkdownTables(md.replace(/\r\n?/g,"\n"), (t) => renderTableHtml(t, ADMIN_TABLE_CLASSES))
  .replace(/^### (.+)$/gm, '<h3 class="text-xl font-black uppercase text-admin-text mt-8 mb-4">$1</h3>')
  .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-black uppercase text-admin-text mt-12 mb-6 border-l-[3px] border-primary pl-4 leading-tight">$1</h2>')
  .replace(/\*\*(.+?)\*\*/g, '<strong class="font-black text-admin-text">$1</strong>')
@@ -202,6 +227,9 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  {t.icon}
  </button>
  ))}
+ <button type="button" onClick={openTableBuilder} className="p-2 text-admin-muted hover:text-admin-text hover:bg-gray-200 transition-colors" title="Insert / edit table (place the cursor inside a table to edit it)">
+ <Table size={14} />
+ </button>
  <div className="w-px h-6 bg-gray-300 mx-2 self-center" />
  <button type="button" onClick={() => fileInputRef.current?.click()} className={`p-2 transition-colors ${uploading ?"text-primary animate-pulse" :"text-admin-muted hover:text-admin-text hover:bg-gray-200"}`} title="Insert Image">
  <ImageIcon size={14} />
@@ -251,6 +279,9 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  )}
  </div>
  <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleContentImageUpload} />
+ {tableEditor && (
+ <TableBuilderModal initial={tableEditor.initial} onSubmit={handleTableSubmit} onClose={() => setTableEditor(null)} />
+ )}
  </div>
  </div>
 
