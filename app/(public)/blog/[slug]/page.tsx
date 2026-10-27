@@ -160,7 +160,8 @@ export default async function BlogDetailsPage({ params }: PageProps) {
 
       <article className="bg-white">
         {/* ═══ HERO ════════════════════════════════════════════ */}
-        <div className="relative h-[60vh] md:h-[70vh] bg-[#0a0a0a] overflow-hidden">
+        {/* min-height (not fixed height) so long titles grow the hero instead of sliding under the fixed header */}
+        <div className="relative min-h-[60vh] md:min-h-[70vh] bg-[#0a0a0a] overflow-hidden flex flex-col">
           {/* Background image & gradients */}
           <div className="absolute inset-0 z-0">
              <Image
@@ -177,7 +178,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
              <div className="absolute inset-0 pointer-events-none opacity-[0.05]" style={{ backgroundImage: "repeating-linear-gradient(0deg, #fff 0px, #fff 1px, transparent 1px, transparent 60px), repeating-linear-gradient(90deg, #fff 0px, #fff 1px, transparent 1px, transparent 60px)" }} />
           </div>
 
-          <Container className="relative z-10 h-full flex flex-col justify-end pb-16">
+          <Container className="relative z-10 flex-1 flex flex-col justify-end pt-32 md:pt-36 pb-16">
             <Link href="/blog" className="inline-flex items-center text-primary hover:text-white transition-colors mb-10 text-[10px] font-black uppercase tracking-[0.2em] group w-fit">
               <ArrowLeft size={14} className="mr-2 transform group-hover:-translate-x-1 transition-transform" /> Back to Intelligence
             </Link>
@@ -191,7 +192,14 @@ export default async function BlogDetailsPage({ params }: PageProps) {
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black uppercase text-white mb-6 tracking-tighter leading-[0.9] max-w-5xl">
+            <h1
+              className={`font-black uppercase text-white mb-6 tracking-tighter leading-[0.95] max-w-5xl ${
+                // Long titles step down a size so they don't run to five lines
+                post.title.length > 60
+                  ? "text-3xl md:text-4xl lg:text-6xl"
+                  : "text-4xl md:text-5xl lg:text-7xl"
+              }`}
+            >
               {post.title}
             </h1>
 
