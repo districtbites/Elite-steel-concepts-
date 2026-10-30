@@ -3,8 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import Container from "./ui/Container";
 import { ArrowRight } from "lucide-react";
+import { HOME_QUOTE_START } from "@/lib/pageContent/pages/home";
 
-const QuoteStartSection = () => {
+const QuoteStartSection = ({ content = HOME_QUOTE_START.defaults }: { content?: typeof HOME_QUOTE_START.defaults }) => {
   return (
     <section
       id="get-a-quote"
@@ -31,7 +32,7 @@ const QuoteStartSection = () => {
       <Container>
         <div className="relative z-10 flex flex-col items-center text-center">
           <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight leading-[1.05] mb-4">
-            Get A Quote
+            {content.title}
           </h2>
 
           <div className="relative w-full max-w-[280px] md:max-w-[320px] aspect-[1167/494] mb-10">
@@ -45,11 +46,11 @@ const QuoteStartSection = () => {
           </div>
 
           <Link
-            href="/quote"
+            href={content.ctaLink}
             id="quote-free-quote-btn"
             className="group inline-flex items-center gap-3 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-sm px-12 py-4 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-primary/25"
           >
-            Get a Free Quote
+            {content.ctaText}
             <ArrowRight
               size={16}
               className="group-hover:translate-x-1 transition-transform"

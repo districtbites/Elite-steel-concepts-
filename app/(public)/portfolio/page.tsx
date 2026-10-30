@@ -13,6 +13,10 @@ import { getProjects, getFAQs, getSEO, getPageSEO, getSettings } from "@/lib/db"
 import type { Metadata } from "next";
 import { projectImageAlt } from "@/lib/projectAlt";
 import PageJsonLd from "@/components/PageJsonLd";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getSection, getSections } from "@/lib/pageContent";
+import { SITE_FAQ } from "@/lib/pageContent/pages/site";
+import { PORTFOLIO_HEADER, PORTFOLIO_GALLERY } from "@/lib/pageContent/pages/portfolio";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -55,10 +59,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PortfolioPage() {
-  const [allProjects, faqs, settings] = await Promise.all([
+  const faqContent = await getSection(SITE_FAQ);
+  const [allProjects, faqs, settings, [header, gallery]] = await Promise.all([
     getProjects(),
     getFAQs(),
     getSettings(),
+    getSections([PORTFOLIO_HEADER, PORTFOLIO_GALLERY] as const),
   ]);
 
   const featuredProject = allProjects.find((p) => p.featured) || allProjects[0];
@@ -75,28 +81,17 @@ export default async function PortfolioPage() {
     <>
       <PageJsonLd pageId="portfolio" />
       <PageHeader
-        eyebrow="Portfolio of ECS"
+        eyebrow={header.eyebrow}
         className="!pb-10 md:!pb-12"
-        title="Elite Steel Concepts Work Portfolio"
+        title={header.title}
         normalCaseSubtitle
-        subtitle={
-          <>
-            Take a look at our completed custom food truck and trailer projects, built by an experienced{" "}
-            <Link
-              href="/"
-              className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
-            >
-              custom food truck builder
-            </Link>{" "}
-            and designed around each business’s unique needs.
-          </>
-        }
+        subtitle={header.subtitle ? <AutoLinkedText text={header.subtitle} /> : undefined}
       >
         <Link
-          href="/quote"
+          href={header.ctaLink}
           className="inline-flex items-center justify-center gap-3 mt-8 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shadow-[0_0_40px_rgba(247,147,30,0.25)]"
         >
-          Get a Free Quote <ArrowRight size={14} />
+          {header.ctaText} <ArrowRight size={14} />
         </Link>
       </PageHeader>
 
@@ -222,11 +217,10 @@ export default async function PortfolioPage() {
         <Container>
           <div className="text-center mb-8 md:mb-10">
             <h2 className="text-4xl md:text-6xl font-black uppercase text-black tracking-tighter mb-4 leading-none">
-              Our Diverse Fleet
+              {gallery.title}
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed text-sm md:text-base border-l-2 border-black pl-4 text-left">
-              Browse our completed builds. Each project showcases our
-              dedication to structural integrity and culinary innovation.
+              {gallery.body}
             </p>
           </div>
           <PortfolioGallery
@@ -275,7 +269,7 @@ export default async function PortfolioPage() {
       </Section>
 
       -- FAQ --
-      <FAQSection faqs={faqs.filter((f) => f.category === "Portfolio" || f.category === "General")} />
+      <FAQSection content={faqContent} faqs={faqs.filter((f) => f.category === "Portfolio" || f.category === "General")} />
 
       -- ═══════ FINAL CTA ═══════ --
       <Section className="bg-primary py-32 border-t border-black">

@@ -3,51 +3,21 @@ import Container from "./ui/Container";
 import Section from "./ui/Section";
 import ReelSlider, { type Reel } from "./ui/ReelSlider";
 import { getTestimonials } from "@/lib/db";
+import { HOME_TESTIMONIALS } from "@/lib/pageContent/pages/home";
 
-const sampleReels: Reel[] = [
-  {
-    id: "reel-1",
-    title: "Inside Taco Fiesta 24ft Custom Food Truck Build",
-    client: "Carlos & Maria R.",
-    location: "Washington, DC",
-    videoUrl: "/videos/reels/reel-1.mp4",
-    poster: "/videos/reels/reel-1-poster.webp",
-    durationSeconds: 39,
-    views: "14.2K",
-  },
-  {
-    id: "reel-2",
-    title: "Full Walkthrough: 20ft Smokehouse BBQ Concession Trailer",
-    client: "Chef Marcus Vance",
-    location: "Richmond, VA",
-    videoUrl: "/videos/reels/reel-2.mp4",
-    poster: "/videos/reels/reel-2-poster.webp",
-    durationSeconds: 20,
-    views: "28.9K",
-  },
-  {
-    id: "reel-3",
-    title: "Handover Day! Custom Mobile Espresso & Bakery Truck",
-    client: "Sarah's Artisan Coffee",
-    location: "Baltimore, MD",
-    videoUrl: "/videos/reels/reel-3.mp4",
-    poster: "/videos/reels/reel-3-poster.webp",
-    durationSeconds: 14,
-    views: "19.5K",
-  },
-  {
-    id: "reel-4",
-    title: "Client Testimonial: Custom Food Truck Build",
-    client: "ESC Client",
-    location: "Fairfax, VA",
-    videoUrl: "/videos/reels/reel-4.mp4",
-    poster: "/videos/reels/reel-4-poster.webp",
-    durationSeconds: 25,
-    views: "",
-  },
-];
-
-const Testimonials = async () => {
+const Testimonials = async ({ content = HOME_TESTIMONIALS.defaults }: { content?: typeof HOME_TESTIMONIALS.defaults }) => {
+  const reels: Reel[] = content.reels
+    .filter((r) => r.videoUrl)
+    .map((r, i) => ({
+      id: `reel-${i + 1}`,
+      title: r.title,
+      client: r.client,
+      location: r.location,
+      videoUrl: r.videoUrl,
+      poster: r.poster || undefined,
+      durationSeconds: Number(r.durationSeconds) || undefined,
+      views: r.views,
+    }));
   const testimonials = await getTestimonials();
   const recentTestimonials = testimonials.slice(0, 3);
 
@@ -61,7 +31,7 @@ const Testimonials = async () => {
           <div className="inline-flex items-center justify-center gap-3">
             <div className="h-px w-8 bg-primary" />
             <p className="text-primary text-base md:text-lg font-black uppercase tracking-[0.25em]">
-              Client Testimonials
+              {content.eyebrow}
             </p>
             <div className="h-px w-8 bg-primary" />
           </div>
@@ -69,7 +39,7 @@ const Testimonials = async () => {
 
         {/* ═══ VIDEO TESTIMONIALS & REELS SECTION ════════════════ */}
         <div>
-          <ReelSlider reels={sampleReels} />
+          <ReelSlider reels={reels} />
         </div>
 
         {/* ═══ TEXT WRITTEN TESTIMONIALS — hidden for now ═══════

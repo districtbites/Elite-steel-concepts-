@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Plus, Minus, HelpCircle } from "lucide-react";
 import Container from "./ui/Container";
+import { SITE_FAQ, type SiteFaqContent } from "@/lib/pageContent/pages/site";
 
 interface FAQ {
   id: string;
@@ -13,9 +14,11 @@ interface FAQ {
 interface FAQSectionProps {
   faqs: FAQ[];
   plainHeading?: boolean;
+  /** Surrounding copy from Admin → Page Content (site.faq) */
+  content?: SiteFaqContent;
 }
 
-const FAQSection = ({ faqs, plainHeading = false }: FAQSectionProps) => {
+const FAQSection = ({ faqs, plainHeading = false, content = SITE_FAQ.defaults }: FAQSectionProps) => {
   const [openId, setOpenId] = useState<string | null>(faqs[0]?.id || null);
 
   if (!faqs || faqs.length === 0) return null;
@@ -26,26 +29,26 @@ const FAQSection = ({ faqs, plainHeading = false }: FAQSectionProps) => {
         <div className="flex flex-col lg:flex-row gap-16">
           <div className="w-full lg:w-1/3">
             <div className="sticky top-24">
-              <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">Got Questions?</span>
+              <span className="text-primary font-bold tracking-widest uppercase text-sm mb-4 block">{content.eyebrow}</span>
               <h2 className="text-4xl font-black uppercase text-secondary tracking-tight mb-6 leading-tight">
-                Frequently Asked <span className={plainHeading ? "" : "text-primary"}>Questions</span>
+                {content.title}{content.highlight && <> <span className={plainHeading ? "" : "text-primary"}>{content.highlight}</span></>}
               </h2>
               <p className="text-gray-500 mb-8 leading-relaxed">
-                Everything you need to know about starting your custom build. If you don't find your answer here, feel free to contact us.
+                {content.intro}
               </p>
               <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="bg-white p-3 rounded-xl text-primary shadow-sm">
                     <HelpCircle size={24} />
                   </div>
-                  <p className="font-bold text-secondary">Need Help?</p>
+                  <p className="font-bold text-secondary">{content.helpTitle}</p>
                 </div>
-                <p className="text-sm text-gray-500 mb-4">Our fabrication consultants are ready to discuss your project specifics.</p>
+                <p className="text-sm text-gray-500 mb-4">{content.helpText}</p>
                 <a 
-                  href="/contact" 
+                  href={content.helpLink}
                   className="text-sm font-black uppercase text-primary hover:text-secondary transition-colors inline-flex items-center"
                 >
-                  Contact Support 
+                  {content.helpLinkText}
                 </a>
               </div>
             </div>

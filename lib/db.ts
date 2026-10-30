@@ -1,12 +1,13 @@
 import fs from 'fs/promises';
 import path from 'path';
 import {
-    InternalLinkRule,
-    InternalLinkSettings,
+    type InternalLinkRule,
+    type InternalLinkSettings,
     DEFAULT_INTERNAL_LINK_RULES,
     DEFAULT_INTERNAL_LINK_SETTINGS
 } from './internalLinks';
 import { isTursoConfigured, tursoGet, tursoSet, tursoGetAllKV, tursoBatchSet } from './turso';
+import type { PageContentEntry } from './pageContent/types';
 import { autoInitializeTursoIfEmpty } from './tursoSync';
 
 export type { InternalLinkRule, InternalLinkSettings };
@@ -267,6 +268,7 @@ interface DatabaseSchema {
     locations?: LocationEntry[];
     internalLinkRules?: InternalLinkRule[];
     internalLinkSettings?: InternalLinkSettings;
+    pageContent?: Record<string, PageContentEntry>;
 }
 
 const DEFAULT_SETTINGS: GlobalSettings = {
@@ -380,7 +382,8 @@ function toSchema(raw: Record<string, any>): DatabaseSchema {
         users: raw.users || [],
         locations: raw.locations || [],
         internalLinkRules: raw.internalLinkRules && raw.internalLinkRules.length > 0 ? raw.internalLinkRules : DEFAULT_INTERNAL_LINK_RULES,
-        internalLinkSettings: raw.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS
+        internalLinkSettings: raw.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS,
+        pageContent: raw.pageContent || {}
     };
 }
 
@@ -467,6 +470,7 @@ async function writeDb(data: DatabaseSchema): Promise<void> {
               { key: 'locations', value: data.locations || [] },
               { key: 'internalLinkRules', value: data.internalLinkRules || DEFAULT_INTERNAL_LINK_RULES },
               { key: 'internalLinkSettings', value: data.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS },
+              { key: 'pageContent', value: data.pageContent || {} },
           ]).catch((err) => console.error('[DB] Turso write error:', err))
         : Promise.resolve();
 
@@ -787,6 +791,27 @@ export async function deleteNewsletter(id: string): Promise<void> {
     const db = await readDb();
     db.newsletters = db.newsletters?.filter((n) => n.id !== id) || [];
     await writeDb(db);
+}
+
+// --- PAGE CONTENT (overrides only; defaults live in lib/pageContent) ---
+export async function getPageContentOverrides(): Promise<Record<string, PageContentEntry>> {
+    const db = await readDb();
+    return db.pageContent || {};
+}
+
+export async function setPageContentOverride(key: string, entry: PageContentEntry): Promise<void> {
+    const db = await readDb();
+    db.pageContent = { ...(db.pageContent || {}), [key]: entry };
+    await writeDb(db);
+}
+
+export async function deletePageContentOverride(key: string): Promise<boolean> {
+    const db = await readDb();
+    if (!db.pageContent || !(key in db.pageContent)) return false;
+    const { [key]: _removed, ...rest } = db.pageContent;
+    db.pageContent = rest;
+    await writeDb(db);
+    return true;
 }
 
 // --- ASSETS ---

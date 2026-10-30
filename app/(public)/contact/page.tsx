@@ -8,6 +8,8 @@ import { Phone, Mail, MapPin } from "lucide-react";
 import { getSettings, getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import { getSections } from "@/lib/pageContent";
+import { CONTACT_HEADER, CONTACT_DETAILS } from "@/lib/pageContent/pages/contact";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -25,24 +27,28 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const settings = await getSettings();
+  const [settings, [header, details]] = await Promise.all([
+    getSettings(),
+    getSections([CONTACT_HEADER, CONTACT_DETAILS] as const),
+  ]);
 
   const phoneDisplay = settings.phone?.startsWith("+") ? settings.phone : `+1 ${settings.phone}`;
   const mapEmbedUrl = settings.mapEmbedUrl
     || `https://maps.google.com/maps?q=${encodeURIComponent(settings.address)}&z=15&output=embed`;
 
   const contactCards = [
-    { title: "Our Address", icon: MapPin, value: settings.address, href: settings.googleMapsLink },
-    { title: "Phone Number", icon: Phone, value: phoneDisplay, href: `tel:${phoneDisplay.replace(/[^\d+]/g, "")}` },
-    { title: "Email", icon: Mail, value: settings.email, href: `mailto:${settings.email}` },
+    { title: details.addressTitle, icon: MapPin, value: settings.address, href: settings.googleMapsLink },
+    { title: details.phoneTitle, icon: Phone, value: phoneDisplay, href: `tel:${phoneDisplay.replace(/[^\d+]/g, "")}` },
+    { title: details.emailTitle, icon: Mail, value: settings.email, href: `mailto:${settings.email}` },
   ];
 
   return (
     <>
       <PageJsonLd pageId="contact" />
       <PageHeader
-        title="Contact Us"
-        subtitle="Discuss your custom food truck or trailer. Fill out the form below. Our team member will get back to you shortly."
+        eyebrow={header.eyebrow}
+        title={header.title}
+        subtitle={header.subtitle}
         normalCaseSubtitle
       />
 
@@ -51,7 +57,7 @@ export default async function ContactPage() {
           {/* Contact Info Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {contactCards.map((card) => (
-              <div key={card.title} className="bg-gray-50 border border-gray-200 p-8 flex flex-col items-center text-center">
+              <div key={card.href || card.title} className="bg-gray-50 border border-gray-200 p-8 flex flex-col items-center text-center">
                 <div className="w-16 h-16 rounded-full bg-primary text-black flex items-center justify-center mb-5">
                   <card.icon size={26} />
                 </div>
@@ -78,7 +84,7 @@ export default async function ContactPage() {
             />
             <div className="p-8 md:p-12">
               <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter text-black mb-8 leading-none">
-                Let&apos;s Discuss Your <span className="text-primary">Build</span>
+                {details.formTitle} <span className="text-primary">{details.formTitleHighlight}</span>
               </h2>
               <ContactForm />
             </div>

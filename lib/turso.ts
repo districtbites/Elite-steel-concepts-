@@ -1,4 +1,4 @@
-import { createClient, Client } from '@libsql/client';
+import { createClient, type Client } from '@libsql/client';
 import path from 'path';
 
 let cachedClient: Client | null = null;

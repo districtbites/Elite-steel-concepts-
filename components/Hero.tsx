@@ -5,26 +5,20 @@ import Container from "./ui/Container";
 import ReadMore from "./ui/ReadMore";
 import HeroSlider, { type HeroSlide } from "./ui/HeroSlider";
 import CyclingWord from "./ui/CyclingWord";
-import { PageSection } from "@/lib/db";
+import { HOME_HERO } from "@/lib/pageContent/pages/home";
 
 interface HeroProps {
   imageAlts?: { [key: string]: string };
-  content?: PageSection;
+  content?: typeof HOME_HERO.defaults;
   heroImage?: { url: string; alt: string };
   slides?: HeroSlide[];
 }
 
-const CYCLING_WORDS = ["Food Trucks", "Trailers", "Mobile Kitchens"];
-
-const STATS = [
-  { value: "14+", label: "Years Experience", icon: Star },
-  { value: "350+", label: "Custom Builds", icon: Truck },
-  { value: "100%", label: "Code Compliant", icon: Shield },
-  { value: "48", label: "States Served", icon: MapPin },
-];
+// Stat icons are assigned in order (and repeat if more stats are added in the admin)
+const STAT_ICONS = [Star, Truck, Shield, MapPin];
 
 // Server component — only the cycling word, Read More and the slider are client islands.
-const Hero = ({ content, slides = [] }: HeroProps) => {
+const Hero = ({ content = HOME_HERO.defaults, slides = [] }: HeroProps) => {
   return (
     <section className="relative flex flex-col bg-gradient-to-b from-[#1c1c1c] to-[#0a0a0a] overflow-hidden">
       {/* ── Main Content ── */}
@@ -37,7 +31,7 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
               <div className="flex items-center gap-2 bg-primary/10 border border-primary/30 px-4 py-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                  Based in Manassas, VA
+                  {content.badge}
                 </p>
               </div>
             </div>
@@ -46,16 +40,16 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
             <h1 className="text-[clamp(2.5rem,4.6vw,4.25rem)] font-black uppercase tracking-tighter leading-[0.92] mb-8">
               {/* The visible word rotates, so give crawlers and screen readers a stable description of the business */}
               <span className="sr-only">
-                Custom Food Trucks, Concession Trailers &amp; Mobile Kitchens Built in Manassas, VA
+                {content.headlineScreenReader}
               </span>
               <span aria-hidden="true">
-              <span className="hero-line-1 block text-white">Custom</span>
+              <span className="hero-line-1 block text-white">{content.headlineStart}</span>
               <CyclingWord
-                words={CYCLING_WORDS}
+                words={content.cyclingWords}
                 className="hero-line-2 text-primary text-[min(1em,7.8vw)]"
               />
               <span className="hero-line-3 block text-white">
-                Built to Perform.
+                {content.headlineEnd}
               </span>
               </span>
             </h1>
@@ -63,7 +57,7 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
             {/* Subheading */}
             <div className="hero-sub max-w-xl mb-8">
               <ReadMore
-                text={content?.content || "Design. Fabrication. Ready to Serve. We turn your culinary vision into a high-performance mobile business — 100% health code compliant, on time, on budget."}
+                text={content.subheading}
                 maxLength={180}
                 className="text-gray-300 text-lg leading-relaxed"
               />
@@ -72,11 +66,11 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
             {/* CTAs */}
             <div className="hero-cta flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3">
               <Link
-                href="/quote"
+                href={content.primaryCtaLink}
                 id="hero-get-quote-btn"
                 className="group inline-flex items-center gap-3 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-[13px] px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 shadow-lg shadow-primary/25 hero-orange-pulse"
               >
-                Get a Free Quote
+                {content.primaryCtaText}
                 <ArrowRight
                   size={16}
                   className="group-hover:translate-x-1 transition-transform"
@@ -84,20 +78,20 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
               </Link>
 
               <a
-                href="tel:+15716510337"
+                href={content.phoneLink}
                 id="hero-call-btn"
                 className="inline-flex items-center gap-3 border border-white/30 hover:border-primary text-white hover:text-primary font-black uppercase tracking-wider text-[13px] px-5 py-4 transition-all duration-200"
               >
                 <Phone size={16} />
-                (571) 651-0337
+                {content.phoneText}
               </a>
 
               <Link
-                href="/services"
+                href={content.secondaryCtaLink}
                 id="hero-services-btn"
                 className="group inline-flex items-center gap-3 bg-white hover:bg-primary text-black hover:text-white font-black uppercase tracking-wider text-[13px] px-5 py-4 transition-all duration-200 hover:-translate-y-0.5"
               >
-                Explore Our Services
+                {content.secondaryCtaText}
                 <ArrowRight
                   size={16}
                   className="group-hover:translate-x-1 transition-transform"
@@ -115,9 +109,11 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
         {/* Stats — full-width row under both columns */}
         <div className="hero-stats mt-14">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-white/10 border border-white/10 w-full">
-            {STATS.map(({ value, label, icon: Icon }) => (
+            {content.stats.map(({ value, label }, i) => {
+              const Icon = STAT_ICONS[i % STAT_ICONS.length];
+              return (
               <div
-                key={label}
+                key={i}
                 className="flex items-center gap-4 bg-[#141414] hover:bg-[#1a1a1a] px-6 py-4 transition-colors group"
               >
                 <Icon
@@ -133,7 +129,8 @@ const Hero = ({ content, slides = [] }: HeroProps) => {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </Container>

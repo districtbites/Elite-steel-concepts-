@@ -7,20 +7,13 @@ import { Workflow, FileCode, ShieldCheck, CookingPot, MessagesSquare, ClipboardL
 import { getSEO, getPageSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import CustomSections from "@/components/sections/CustomSections";
+import { getSections, getCustomSections } from "@/lib/pageContent";
+import { DESIGN_HEADER, DESIGN_SERVICES, DESIGN_PROCESS, DESIGN_CTA } from "@/lib/pageContent/pages/design-and-consultation";
 
-const designServices = [
-  { icon: Workflow, title: "Workflow & Kitchen Layout Planning" },
-  { icon: FileCode, title: "Professional 3D & CAD Layouts" },
-  { icon: ShieldCheck, title: "Health & Fire Code Planning" },
-  { icon: CookingPot, title: "Equipment Selection & Space Optimization" },
-];
-
-const consultationSteps = [
-  { icon: MessagesSquare, title: "Discuss Your Concept", text: "We learn about your food business idea, menu, target customers, and operational goals." },
-  { icon: ClipboardList, title: "Evaluate Your Requirements", text: "We review your space, equipment needs, workflow, utilities, and relevant compliance considerations." },
-  { icon: PencilRuler, title: "Develop Your Layout", text: "We plan a practical kitchen arrangement and, where appropriate, prepare CAD drawings for review." },
-  { icon: RefreshCw, title: "Review & Refine", text: "We work through design details with you to address concerns and finalize the proposed layout before the next stage." },
-];
+// Icons are assigned by position (cycled when more items are added in the admin)
+const serviceIcons = [Workflow, FileCode, ShieldCheck, CookingPot];
+const stepIcons = [MessagesSquare, ClipboardList, PencilRuler, RefreshCw];
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -38,12 +31,23 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DesignAndConsultationPage() {
+  const [[header, services, process, cta], customBlocks] = await Promise.all([
+    getSections([DESIGN_HEADER, DESIGN_SERVICES, DESIGN_PROCESS, DESIGN_CTA] as const),
+    getCustomSections("design_and_consultation"),
+  ]);
+  const designServices = services.items.map((title, i) => ({ icon: serviceIcons[i % serviceIcons.length], title }));
+  const consultationSteps = process.steps.map((step, i) => ({
+    icon: stepIcons[i % stepIcons.length],
+    title: String(step.title ?? ""),
+    text: String(step.text ?? ""),
+  }));
+
   return (
     <>
       <PageJsonLd pageId="design-and-consultation" />
       <PageHeader
-        title="Design & Consultation Service"
-        subtitle="Smart Custom Food Truck & Trailer Design Starts With the Right Plan Consultation"
+        title={header.title}
+        subtitle={header.subtitle}
         normalCaseSubtitle
       />
 
@@ -52,17 +56,17 @@ export default async function DesignAndConsultationPage() {
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-10 md:mb-12">
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-black leading-none mb-5">
-              Our Food Truck & Trailer Design & Consultation Services
+              {services.title}
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              Plan your mobile kitchen with expert guidance from our custom food builders and design team.
+              {services.intro}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {designServices.map(({ icon: Icon, title }) => (
+            {designServices.map(({ icon: Icon, title }, i) => (
               <div
-                key={title}
+                key={i}
                 className="group relative bg-white border border-gray-200 p-7 flex flex-col items-center text-center hover:border-primary hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="absolute top-0 left-0 h-1 w-full bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
@@ -81,7 +85,7 @@ export default async function DesignAndConsultationPage() {
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-10 md:mb-14">
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-black leading-none">
-              Our Design & Consultation Process
+              {process.title}
             </h2>
           </div>
 
@@ -100,7 +104,7 @@ export default async function DesignAndConsultationPage() {
             ))}
 
             {consultationSteps.map((step, i) => (
-              <li key={step.title} className="group relative text-center px-2">
+              <li key={i} className="group relative text-center px-2">
                 <div className="relative w-20 h-20 mx-auto mb-7 rounded-full bg-white">
                   <div className="w-full h-full flex items-center justify-center rounded-full bg-primary/10 border-2 border-primary text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                     <step.icon size={30} />
@@ -119,11 +123,13 @@ export default async function DesignAndConsultationPage() {
       </Section>
 
 
+      <CustomSections blocks={customBlocks} />
+
       <CTASection
-        title="Book a Design Consultation Today"
-        subtitle="Get expert design guidance and a free consultation to plan an efficient, functional food truck and trailer."
-        buttonText="Get a Free Quote"
-        buttonHref="/quote"
+        title={cta.title}
+        subtitle={cta.subtitle}
+        buttonText={cta.buttonText}
+        buttonHref={cta.buttonLink}
       />
     </>
   );

@@ -16,6 +16,7 @@ import {
   Compass,
 } from "lucide-react";
 import Image from "next/image";
+import { HOME_FLOOR_PLAN } from "@/lib/pageContent/pages/home";
 
 interface Hotspot {
   id: string;
@@ -179,10 +180,13 @@ const trailerData: VehicleLayout = {
   ],
 };
 
-export default function InteractiveFloorPlan() {
+export default function InteractiveFloorPlan({ content = HOME_FLOOR_PLAN.defaults }: { content?: typeof HOME_FLOOR_PLAN.defaults }) {
   const [activeSide, setActiveSide] = useState<"truck" | "trailer">("truck");
 
-  const activeVehicle = activeSide === "truck" ? truckData : trailerData;
+  // Editable copy/images (Admin → Page Content) layered over the built-in layout data
+  const truck = { ...truckData, name: content.truckImageAlt, image: content.truckImage || truckData.image };
+  const trailer = { ...trailerData, name: content.trailerImageAlt, image: content.trailerImage || trailerData.image };
+  const activeVehicle = activeSide === "truck" ? truck : trailer;
 
   const handleSideSwitch = (side: "truck" | "trailer") => setActiveSide(side);
 
@@ -205,7 +209,7 @@ export default function InteractiveFloorPlan() {
         <div className="flex items-center justify-center gap-3 mb-12 relative z-10">
           <div className="h-px w-12 bg-primary" />
           <p className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
-            Our Services
+            {content.eyebrow}
           </p>
           <div className="h-px w-12 bg-primary" />
         </div>
@@ -255,7 +259,7 @@ export default function InteractiveFloorPlan() {
                   <Truck size={24} />
                 </div>
                 <div className="text-lg font-black text-black uppercase tracking-tight">
-                  Custom Food Truck
+                  {content.truckTab}
                 </div>
               </div>
               <div
@@ -283,7 +287,7 @@ export default function InteractiveFloorPlan() {
                   <Truck size={24} />
                 </div>
                 <div className="text-lg font-black text-black uppercase tracking-tight">
-                  Custom Food Trailer
+                  {content.trailerTab}
                 </div>
               </div>
               <div
@@ -331,7 +335,7 @@ export default function InteractiveFloorPlan() {
         {/* Vehicle image — crossfades when switching Side 1 / Side 2 */}
         <div className="relative max-w-5xl mx-auto z-10">
           <div className="relative w-full aspect-[4/3] md:aspect-[16/9] bg-[#111] border border-gray-200 shadow-xl overflow-hidden rounded-xl">
-            {[truckData, trailerData].map((vehicle) => {
+            {[truck, trailer].map((vehicle) => {
               const isActive = vehicle === activeVehicle;
               return (
                 <Image
@@ -352,7 +356,7 @@ export default function InteractiveFloorPlan() {
             <div className="absolute top-4 left-4 z-20 bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2">
               <span className="size-2 rounded-full bg-primary animate-pulse" />
               <span>
-                {activeSide === "truck" ? "SIDE 1: FOOD TRUCK" : "SIDE 2: TRAILER"}
+                {activeSide === "truck" ? content.truckBadge : content.trailerBadge}
               </span>
             </div>
           </div>

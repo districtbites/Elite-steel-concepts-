@@ -10,6 +10,8 @@ import { Calendar, Clock, ArrowRight, ArrowLeft, TrendingUp, Sparkles, BookOpen,
 import { getPosts, getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import { getSections } from "@/lib/pageContent";
+import { BLOG_HEADER, BLOG_PROMO, BLOG_CTA } from "@/lib/pageContent/pages/blog";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -58,7 +60,10 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
   const categoryParam = typeof searchParams?.category === "string" ? searchParams.category : "";
   const postsPerPage = 6;
 
-  const blogPosts = await getPosts();
+  const [blogPosts, [header, promo, cta]] = await Promise.all([
+    getPosts(),
+    getSections([BLOG_HEADER, BLOG_PROMO, BLOG_CTA] as const),
+  ]);
   const publishedPosts = blogPosts.filter(p => p.status === "Published");
 
   publishedPosts.sort((a, b) => {
@@ -104,8 +109,9 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
     <>
       <PageJsonLd pageId="blog" />
       <PageHeader
-        title="Intelligence & Insights"
-        subtitle="Exclusive blueprints for success in the mobile kitchen industry. Expert analysis, maintenance guides, and entrepreneur success stories."
+        eyebrow={header.eyebrow}
+        title={header.title}
+        subtitle={header.subtitle}
         normalCaseSubtitle
       />
 
@@ -317,19 +323,19 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
                  )}
 
                  {/* Compliance promo */}
-                 <Link href="/compliance" className="block bg-primary text-black p-8 relative overflow-hidden group">
+                 <Link href={promo.link} className="block bg-primary text-black p-8 relative overflow-hidden group">
                     <div className="absolute inset-0 pointer-events-none opacity-[0.12]"
                          style={{ backgroundImage: "repeating-linear-gradient(45deg, #000 0px, #000 1px, transparent 1px, transparent 10px)" }} />
                     <div className="relative">
                        <ShieldCheck className="mb-5" size={32} />
                        <h3 className="text-2xl font-black uppercase tracking-tighter leading-none mb-3">
-                          Compliance Checklist
+                          {promo.title}
                        </h3>
                        <p className="text-sm font-semibold text-black/75 leading-relaxed mb-7">
-                          See what your truck or trailer needs to pass fire and health inspections in VA, MD &amp; DC.
+                          {promo.body}
                        </p>
                        <span className="w-full bg-black group-hover:bg-[#1a1a1a] text-white py-4 font-black uppercase text-[11px] tracking-[0.2em] transition-colors flex items-center justify-center gap-2">
-                          View Requirements <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                          {promo.ctaText} <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                        </span>
                     </div>
                  </Link>
@@ -371,21 +377,21 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
                <div className="flex items-center gap-3 mb-6">
                   <div className="h-px w-8 bg-primary" />
                   <p className="text-primary font-black tracking-[0.2em] uppercase text-[10px]">
-                     Got a Story?
+                     {cta.eyebrow}
                   </p>
                   <div className="h-px w-8 bg-primary" />
                </div>
                <h2 className="text-4xl md:text-5xl font-black uppercase text-white tracking-tighter leading-[0.9] mb-6">
-                  Join the <span className="text-primary block mt-2">Elite Community</span>
+                  {cta.title} <span className="text-primary block mt-2">{cta.titleHighlight}</span>
                </h2>
                <p className="text-gray-400 text-sm font-light leading-relaxed mb-10 max-w-lg">
-                  We are always looking for culinary pioneers to feature in our success stories. If we built your truck, we want to share your journey.
+                  {cta.body}
                </p>
                <Link 
-                 href="/contact" 
+                 href={cta.ctaLink}
                  className="inline-flex items-center gap-3 bg-primary hover:bg-orange-600 text-white px-8 py-4 font-black uppercase tracking-[0.15em] text-xs transition-all shadow-lg shadow-primary/20"
                >
-                  Connect With Our Team <ArrowRight size={16} />
+                  {cta.ctaText} <ArrowRight size={16} />
                </Link>
             </div>
          </Container>

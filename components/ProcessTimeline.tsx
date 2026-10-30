@@ -2,15 +2,12 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { FileText, PenTool, Handshake, Hammer, KeyRound, ArrowDown } from "lucide-react";
+import { PROCESS_TIMELINE } from "@/lib/pageContent/pages/process";
 
-const ICONS = { FileText, PenTool, Handshake, Hammer, KeyRound };
+/** Phase icons by position (cycled when more phases are added in the admin). */
+const ICONS = [FileText, PenTool, Handshake, Hammer, KeyRound];
 
-export interface ProcessPhase {
-  number: string;
-  title: string;
-  tagline: string;
-  icon: keyof typeof ICONS;
-}
+export type ProcessTimelineContent = typeof PROCESS_TIMELINE.defaults;
 
 const EASE_OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
 const EASE_POP = "cubic-bezier(0.34, 1.56, 0.64, 1)";
@@ -25,7 +22,14 @@ const SPEED = 0.8;
  * the screen: the connector line draws down, the arrow pops in, the card rises
  * into place and its content follows in a short stagger. All text is in the HTML.
  */
-export default function ProcessTimeline({ phases }: { phases: ProcessPhase[] }) {
+export default function ProcessTimeline({ content = PROCESS_TIMELINE.defaults }: { content?: ProcessTimelineContent }) {
+  const phases = content.phases.map((phase, i) => ({
+    number: String(i + 1).padStart(2, "0"),
+    title: String(phase.title ?? ""),
+    tagline: String(phase.tagline ?? ""),
+    Icon: ICONS[i % ICONS.length],
+  }));
+
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   // index → start delay (ms) of its opening sequence; absent = not opened yet.
   const [openDelay, setOpenDelay] = useState<Record<number, number>>({});
@@ -74,7 +78,7 @@ export default function ProcessTimeline({ phases }: { phases: ProcessPhase[] }) 
   return (
     <ol className="max-w-3xl mx-auto">
       {phases.map((phase, i) => {
-        const Icon = ICONS[phase.icon];
+        const Icon = phase.Icon;
         const isOpen = i in openDelay;
         const base = openDelay[i] ?? 0;
         const dark = i % 2 === 0;
@@ -147,7 +151,7 @@ export default function ProcessTimeline({ phases }: { phases: ProcessPhase[] }) 
                   className={`text-[10px] font-black uppercase tracking-[0.3em] mb-2 ${dark ? "text-gray-400" : "text-black/60"}`}
                   style={{ ...anim(isOpen, base, card + 300), ...hidden("translateY(12px)") }}
                 >
-                  Phase {phase.number} <span className="opacity-60">/ {String(phases.length).padStart(2, "0")}</span>
+                  {content.phaseLabel} {phase.number} <span className="opacity-60">/ {String(phases.length).padStart(2, "0")}</span>
                 </p>
                 <h3
                   className="text-xl md:text-2xl font-black uppercase tracking-tight leading-tight mb-2"

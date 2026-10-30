@@ -7,13 +7,16 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Phone } from "lucide-react";
 import Container from "./ui/Container";
 import Button from "./ui/Button";
+import { SITE_HEADER, type SiteHeaderContent } from "@/lib/pageContent/pages/site";
 
 interface HeaderProps {
   /** Only the public phone number — never pass the full settings object to this client component. */
   phone: string;
+  /** Menu + CTA copy from Admin → Page Content (site.header) */
+  content?: SiteHeaderContent;
 }
 
-const Header = ({ phone }: HeaderProps) => {
+const Header = ({ phone, content = SITE_HEADER.defaults }: HeaderProps) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -76,14 +79,7 @@ const Header = ({ phone }: HeaderProps) => {
     };
   }, []);
 
-  const navLinks = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Services", href: "/services" },
-    { name: "Compliance", href: "/compliance" },
-    { name: "Portfolio", href: "/portfolio" },
-    { name: "Blog", href: "/blog" },
-  ];
+  const navLinks = content.navLinks.map((l) => ({ name: l.label, href: l.href }));
 
   // Lock scroll when menu is open
   useEffect(() => {
@@ -145,11 +141,11 @@ const Header = ({ phone }: HeaderProps) => {
                 );
               })}
               <Link
-                href="/quote"
+                href={content.ctaLink}
                 id="header-quote-btn"
                 className="ml-2 inline-flex items-center bg-primary hover:bg-orange-600 text-white text-sm font-bold px-5 py-2.5 transition-colors"
               >
-                Get a Free Quote
+                {content.ctaText}
               </Link>
             </nav>
 
@@ -246,8 +242,8 @@ const Header = ({ phone }: HeaderProps) => {
                 isOpen ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
               }`}
             >
-              <Button href="/quote" variant="primary" size="lg" className="w-full" onClick={() => setIsOpen(false)}>
-                Get a Free Quote
+              <Button href={content.ctaLink} variant="primary" size="lg" className="w-full" onClick={() => setIsOpen(false)}>
+                {content.ctaText}
               </Button>
             </div>
 
@@ -263,7 +259,7 @@ const Header = ({ phone }: HeaderProps) => {
                 <Phone className="w-5 h-5 mr-3 text-primary" /> {phone}
               </a>
               <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] border border-primary px-3 py-1">
-                Manassas HQ | Nationwide Delivery
+                {content.mobileTagline}
               </span>
             </div>
           </div>

@@ -36,6 +36,10 @@ import {
 } from "lucide-react";
 import { getSEO, getPageSEO, getMediaAsset } from "@/lib/db";
 import { getLinkedPageSections } from "@/lib/linkablePages";
+import { getSection, getSections, getCustomSections } from "@/lib/pageContent";
+import { SITE_FAQ } from "@/lib/pageContent/pages/site";
+import { TRAILERS_HEADER, TRAILERS_TYPES, TRAILERS_WHY, TRAILERS_CTA } from "@/lib/pageContent/pages/custom-food-trailers";
+import CustomSections from "@/components/sections/CustomSections";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
@@ -57,7 +61,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CustomFoodTrailersPage() {
-  const linked = await getLinkedPageSections("custom-food-trailers");
+  const faqContent = await getSection(SITE_FAQ);
+  const [linked, [header, typesContent, why, cta], customBlocks] = await Promise.all([
+    getLinkedPageSections("custom-food-trailers"),
+    getSections([TRAILERS_HEADER, TRAILERS_TYPES, TRAILERS_WHY, TRAILERS_CTA] as const),
+    getCustomSections("custom_food_trailers"),
+  ]);
   const introDescLinked = linked.intro;
 
   // Dynamic Assets
@@ -115,36 +124,33 @@ export default async function CustomFoodTrailersPage() {
     }
   ];
 
-  const trailerTypes: {
-    title: string;
-    color: string;
-    accent: string;
-    icon: LucideIcon;
-  }[] = [
-    { title: "Coffee Trailer", color: "#4E342E", accent: "#EFEBE9", icon: Coffee },
-    { title: "Dessert Trailer", color: "#D81B60", accent: "#FCE4EC", icon: IceCream },
-    { title: "BBQ Trailer", color: "#5D4037", accent: "#EFEBE9", icon: Flame },
-    { title: "Pizza Trailer", color: "#E53935", accent: "#FFEBEE", icon: Pizza },
-    { title: "Halal Food Trailer", color: "#2E7D32", accent: "#E8F5E9", icon: UtensilsCrossed },
-    { title: "Seafood Trailer", color: "#00838F", accent: "#E0F7FA", icon: Fish },
+  // Card colors and icons follow the card order (cycled when more types are added)
+  const trailerTypeStyles: { color: string; accent: string; icon: LucideIcon }[] = [
+    { color: "#4E342E", accent: "#EFEBE9", icon: Coffee },
+    { color: "#D81B60", accent: "#FCE4EC", icon: IceCream },
+    { color: "#5D4037", accent: "#EFEBE9", icon: Flame },
+    { color: "#E53935", accent: "#FFEBEE", icon: Pizza },
+    { color: "#2E7D32", accent: "#E8F5E9", icon: UtensilsCrossed },
+    { color: "#00838F", accent: "#E0F7FA", icon: Fish },
   ];
+  const trailerTypes = typesContent.types.map((title, i) => ({
+    title,
+    ...trailerTypeStyles[i % trailerTypeStyles.length],
+  }));
 
-  const whyUs = [
-    { icon: PenTool, title: "Custom & Professional Designs" },
-    { icon: Hammer, title: "Quality Craftsmanship" },
-    { icon: BadgeCheck, title: "Built to Code" },
-    { icon: Clock, title: "8–12 Week Build Time" },
-    { icon: Award, title: "1-Year Limited Electrical & Plumbing Warranty" },
-    { icon: Truck, title: "Shipping Across 48 States" },
-  ];
+  const whyUsIcons = [PenTool, Hammer, BadgeCheck, Clock, Award, Truck];
+  const whyUs = why.points.map((title, i) => ({
+    title,
+    icon: whyUsIcons[i % whyUsIcons.length],
+  }));
 
   return (
     <>
       <PageJsonLd pageId="custom-food-trailers" />
       <PageHeader
-        eyebrow="Food Trailer Services"
-        title="Custom Food Trailer"
-        subtitle="Get a custom food trailer that fits your business"
+        eyebrow={header.eyebrow}
+        title={header.title}
+        subtitle={header.subtitle}
         className="!pb-10 md:!pb-12"
       />
 
@@ -153,14 +159,14 @@ export default async function CustomFoodTrailersPage() {
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight">
-              Custom Concession Trailer Types ESC Build
+              {typesContent.title}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 max-w-6xl mx-auto">
             {trailerTypes.map((type, index) => (
               <div
-                key={type.title}
+                key={`${type.title}-${index}`}
                 className="group relative flex flex-col items-center text-center border-2 border-dashed border-primary/40 hover:border-primary bg-white hover:bg-primary/[0.04] transition-all duration-300 px-5 py-8 md:px-6 md:py-10 hover:shadow-md overflow-hidden"
               >
                 {/* Trailer on road */}
@@ -241,20 +247,19 @@ export default async function CustomFoodTrailersPage() {
         <Container className="relative z-10">
           <div className="text-center max-w-4xl mx-auto space-y-4 mb-8 md:mb-10">
               <h2 className="text-2xl md:text-4xl font-black uppercase text-secondary tracking-tighter leading-tight">
-                Why Entrepreneurs Pick Elite Steel Concepts for Custom Food Trailer Builder
+                {why.title}
               </h2>
               <p className="text-gray-500 text-lg font-light leading-relaxed max-w-3xl mx-auto">
-                Elite Steel Concepts makes it simple to turn your idea into a real mobile kitchen. As{" "}
-                <Link href="/" className="text-primary font-semibold underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors">
-                  experienced concession trailer manufacturers
-                </Link>
-                , we create custom trailers customized to your menu, equipment, space, and brand, so your trailer works the way you need it to.
+                <AutoLinkedText
+                  text={why.body}
+                  linkClassName="text-primary font-semibold underline underline-offset-4 decoration-primary/40 hover:decoration-primary transition-colors"
+                />
               </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-200 border border-gray-200 max-w-6xl mx-auto">
               {whyUs.map((item, i) => (
-                <div key={item.title} className="relative bg-white p-8 group hover:bg-secondary transition-colors duration-500">
+                <div key={`${item.title}-${i}`} className="relative bg-white p-8 group hover:bg-secondary transition-colors duration-500">
                   <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
                   <div className="flex items-start justify-between mb-8">
                     <div className="w-12 h-12 bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-secondary transition-colors duration-500">
@@ -287,19 +292,18 @@ export default async function CustomFoodTrailersPage() {
 
         <Container className="relative z-10 text-center max-w-4xl">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase text-white tracking-tighter leading-[0.95] mb-5">
-            Ready to Build Your Custom Food Trailer?
+            {cta.title}
           </h2>
 
           <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mb-8">
-            Contact Elite Steel Concepts today to discuss your custom concession
-            trailer project or request a free quote.
+            {cta.body}
           </p>
 
           <Link
-            href="/quote"
+            href={cta.ctaLink}
             className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shadow-[0_0_40px_rgba(247,147,30,0.25)]"
           >
-            Get a Free Quote <ArrowRight size={14} />
+            {cta.ctaText} <ArrowRight size={14} />
           </Link>
         </Container>
       </section>
@@ -490,8 +494,11 @@ export default async function CustomFoodTrailersPage() {
       </Section>
       */}
 
+      {/* Custom sections (Admin → Page Content → page builder) */}
+      <CustomSections blocks={customBlocks} />
+
       {/* Trailer specific FAQs */}
-      <FAQSection faqs={TRAILER_FAQS} plainHeading />
+      <FAQSection content={faqContent} faqs={TRAILER_FAQS} plainHeading />
 
       {/* Hidden: CTA Section
       -- CTA Section --

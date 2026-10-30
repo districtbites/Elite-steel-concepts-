@@ -8,47 +8,17 @@ import {
   Flame,
   Truck,
 } from "lucide-react";
+import { HOME_WHY_CHOOSE } from "@/lib/pageContent/pages/home";
 
-const whyChooseFeatures = [
-  {
-    icon: PenTool,
-    title: "Custom Built Designs",
-    description:
-      "Every food truck and trailer is designed around your menu, equipment, and workflow, with detailed layouts you approve before fabrication starts.",
-  },
-  {
-    icon: Utensils,
-    title: "Quality Equipment Installation",
-    description:
-      "We install commercial-grade kitchen equipment built for heavy daily operations, meeting NSF standards and safety codes where required.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "1-Year Limited Electrical & Plumbing Warranty",
-    description:
-      "Equipment covered by applicable manufacturer warranties. Exclusions apply.",
-  },
-  {
-    icon: PlugZap,
-    title: "Electrical & Plumbing Installation",
-    description:
-      "Custom electrical systems with proper breaker distribution and clean wiring, plus plumbing and water systems built to health department code.",
-  },
-  {
-    icon: Flame,
-    title: "Fire Safety Installation",
-    description:
-      "Certified fire suppression systems installed with automatic heat sensors, micro-switches, and precision-placed nozzles.",
-  },
-  {
-    icon: Truck,
-    title: "Nationwide Service",
-    description:
-      "Based in Manassas, VA, we build and deliver custom food trucks and concession trailers to entrepreneurs across the country.",
-  },
-];
+// Card icons are assigned in order (and repeat if more cards are added in the admin)
+const FEATURE_ICONS = [PenTool, Utensils, ShieldCheck, PlugZap, Flame, Truck];
 
-const WhyChooseSection: React.FC = () => {
+const WhyChooseSection = ({ content = HOME_WHY_CHOOSE.defaults }: { content?: typeof HOME_WHY_CHOOSE.defaults }) => {
+  const whyChooseFeatures = content.features.map((title, i) => ({
+    title,
+    icon: FEATURE_ICONS[i % FEATURE_ICONS.length],
+  }));
+
   return (
     <section className="bg-gray-50/70 py-8 md:py-12 border-b border-gray-100">
       <Container>
@@ -57,22 +27,22 @@ const WhyChooseSection: React.FC = () => {
           <div className="inline-flex items-center justify-center gap-3 mb-4">
             <div className="h-px w-8 bg-primary" />
             <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-              The Elite Advantage
+              {content.eyebrow}
             </p>
             <div className="h-px w-8 bg-primary" />
           </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black uppercase tracking-tight leading-tight">
-            Why Choose Elite Steel Concepts?
+            {content.title}
           </h2>
         </div>
 
         {/* 3x2 Grid of Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {whyChooseFeatures.map((feature) => {
+          {whyChooseFeatures.map((feature, i) => {
             const Icon = feature.icon;
             return (
               <div
-                key={feature.title}
+                key={i}
                 className="group bg-white rounded-3xl p-8 md:p-10 border border-gray-100 shadow-sm hover:shadow-xl hover:border-gray-200 transition-all duration-300 flex flex-col items-center justify-center text-center"
               >
                 {/* Icon Box */}

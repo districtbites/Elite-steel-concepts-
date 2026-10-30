@@ -20,6 +20,25 @@ import Container from "@/components/ui/Container";
 import CTASection from "@/components/ui/CTASection";
 import { getLinkedPageSections } from "@/lib/linkablePages";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import CustomSections from "@/components/sections/CustomSections";
+import { getSections, getCustomSections } from "@/lib/pageContent";
+import {
+  COMPLIANCE_HERO,
+  COMPLIANCE_WHY,
+  COMPLIANCE_CONSIDERATIONS,
+  COMPLIANCE_LOCATION,
+  COMPLIANCE_CHECKS,
+  COMPLIANCE_CTA,
+} from "@/lib/pageContent/pages/compliance";
+
+// Icons/colours are assigned by position (cycled when more items are added in the admin)
+const considerationStyles = [
+  { icon: Droplets, bg: "bg-blue-50", fg: "text-blue-500" },
+  { icon: Zap, bg: "bg-yellow-50", fg: "text-yellow-600" },
+  { icon: Wind, bg: "bg-gray-100", fg: "text-gray-600" },
+  { icon: Flame, bg: "bg-orange-50", fg: "text-orange-500" },
+];
+const checkIcons = [ChefHat, Refrigerator, MapPin, Workflow, ClipboardCheck];
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -31,27 +50,35 @@ export const metadata: Metadata = {
 };
 
 export default async function ComplianceHub() {
-  const linked = await getLinkedPageSections("compliance");
+  const [linked, [hero, why, considerationsContent, location, checks, cta], customBlocks] = await Promise.all([
+    getLinkedPageSections("compliance"),
+    getSections([
+      COMPLIANCE_HERO,
+      COMPLIANCE_WHY,
+      COMPLIANCE_CONSIDERATIONS,
+      COMPLIANCE_LOCATION,
+      COMPLIANCE_CHECKS,
+      COMPLIANCE_CTA,
+    ] as const),
+    getCustomSections("compliance"),
+  ]);
   const heroDescLinked = linked.hero;
   const whyDescLinked = linked["why-1"];
   const whyDesc2Linked = linked["why-2"];
   const locationDescLinked = linked["location-1"];
   const locationDesc2Linked = linked["location-2"];
 
-  const considerations = [
-    { icon: Droplets, bg: "bg-blue-50", fg: "text-blue-500", title: "Plumbing & Water Systems", desc: "We plan water, sinks, wastewater, and related plumbing around the requirements of your mobile kitchen and intended food operation." },
-    { icon: Zap, bg: "bg-yellow-50", fg: "text-yellow-600", title: "Electrical Systems", desc: "We plan your electrical layout and power needs around the equipment used in your mobile kitchen." },
-    { icon: Wind, bg: "bg-gray-100", fg: "text-gray-600", title: "Ventilation & Exhaust", desc: "We consider your cooking equipment, menu, and kitchen layout when planning ventilation and exhaust." },
-    { icon: Flame, bg: "bg-orange-50", fg: "text-orange-500", title: "Gas & Fire Safety Considerations", desc: "We consider gas systems, equipment placement, and applicable fire-safety requirements throughout the build." },
-  ];
+  const considerations = considerationsContent.items.map((item, i) => ({
+    ...considerationStyles[i % considerationStyles.length],
+    title: String(item.title ?? ""),
+    desc: String(item.desc ?? ""),
+  }));
 
-  const buildChecks = [
-    { icon: ChefHat, title: "Your Menu", desc: "We review what you plan to cook and serve to understand the type of kitchen and food-preparation setup you need." },
-    { icon: Refrigerator, title: "Your Equipment", desc: "We consider your cooking equipment, refrigeration, sinks, storage, and other essential systems when planning the kitchen layout." },
-    { icon: MapPin, title: "Your Operating Location", desc: "We consider where you plan to operate because food truck regulations and health requirements can vary by state, county, and local authority." },
-    { icon: Workflow, title: "Your Kitchen Workflow", desc: "We plan the layout around how your team will prepare, cook, store, and serve food inside the truck or trailer." },
-    { icon: ClipboardCheck, title: "Applicable Requirements", desc: "We consider the relevant health, sanitation, plumbing, electrical, ventilation, and fire-safety requirements that may apply to your build." },
-  ];
+  const buildChecks = checks.items.map((item, i) => ({
+    icon: checkIcons[i % checkIcons.length],
+    title: String(item.title ?? ""),
+    desc: String(item.desc ?? ""),
+  }));
 
   return (
     <>
@@ -67,22 +94,21 @@ export default async function ComplianceHub() {
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-px w-12 bg-primary" />
               <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                Smart Compliance Planning
+                {hero.eyebrow}
               </p>
               <div className="h-px w-12 bg-primary" />
             </div>
             <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight leading-tight mb-6 max-w-5xl mx-auto">
-              Food Truck & Trailer Compliance &{" "}
-              Custom Build Requirements
+              {hero.title}
             </h1>
             <p className="text-gray-400 text-lg md:text-xl leading-relaxed mb-10 max-w-2xl mx-auto font-light">
               <AutoLinkedText text={heroDescLinked} />
             </p>
             <Link
-              href="/quote"
+              href={hero.ctaLink}
               className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shadow-[0_0_40px_rgba(247,147,30,0.25)]"
             >
-              Get a Free Quote <ArrowRight size={14} />
+              {hero.ctaText} <ArrowRight size={14} />
             </Link>
           </div>
         </Container>
@@ -93,7 +119,7 @@ export default async function ComplianceHub() {
         <Container>
           <div className="text-center max-w-4xl mx-auto space-y-4">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight">
-              Why Food Truck Compliance Matters
+              {why.title}
             </h2>
             <p className="text-gray-600 text-base leading-relaxed max-w-3xl mx-auto">
               <AutoLinkedText text={whyDescLinked} />
@@ -110,16 +136,16 @@ export default async function ComplianceHub() {
         <Container>
           <div className="text-center max-w-3xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
-              What ESC Considers in Mobile Kitchen Compliances
+              {considerationsContent.title}
             </h2>
             <p className="text-gray-500 text-base leading-relaxed">
-              We consider key health, safety, plumbing, electrical, and food-service requirements when designing your custom mobile kitchen.
+              {considerationsContent.intro}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {considerations.map((item) => (
-              <div key={item.title} className="flex items-start gap-4">
+            {considerations.map((item, i) => (
+              <div key={i} className="flex items-start gap-4">
                 <div className={`w-12 h-12 ${item.bg} ${item.fg} flex items-center justify-center shrink-0`}>
                   <item.icon size={24} />
                 </div>
@@ -138,10 +164,10 @@ export default async function ComplianceHub() {
         <Container>
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
-              Food Truck Compliance Starts With Your Location
+              {location.title}
             </h2>
             <p className="text-gray-500 text-base md:text-lg font-medium">
-              Different Locations, Different Requirements
+              {location.subtitle}
             </p>
           </div>
 
@@ -156,9 +182,9 @@ export default async function ComplianceHub() {
 
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {["Virginia", "Maryland", "Washington, DC"].map((region) => (
+              {location.regions.map((region, i) => (
                 <div
-                  key={region}
+                  key={i}
                   className="group flex items-center gap-4 bg-white border border-gray-200 hover:border-primary px-5 py-4 transition-colors duration-300"
                 >
                   <div className="w-11 h-11 bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-black transition-colors duration-300">
@@ -180,17 +206,17 @@ export default async function ComplianceHub() {
         <Container className="relative z-10">
           <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tighter leading-tight mb-3">
-              What Elite Steel Concepts Checks Before Building Your Trailer
+              {checks.title}
             </h2>
             <p className="text-gray-500 text-base md:text-lg font-medium">
-              Key Details We Consider for Your Mobile Kitchen Compliance
+              {checks.subtitle}
             </p>
           </div>
 
           <div className="flex flex-wrap justify-center gap-5 max-w-6xl mx-auto">
             {buildChecks.map((item, i) => (
               <div
-                key={item.title}
+                key={i}
                 className="group relative w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-14px)] bg-white border border-gray-200 hover:border-primary hover:shadow-lg p-7 transition-all duration-300 overflow-hidden"
               >
                 <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
@@ -394,12 +420,14 @@ export default async function ComplianceHub() {
       </section>
       */}
 
+      <CustomSections blocks={customBlocks} />
+
       {/* ─── CTA ───────────────────────────────────────────────── */}
-      <CTASection 
-        title="Ready to Plan Your Build With the Right Compliance?"
-        subtitle="Build With Confidence. Start With Right Compliance."
-        buttonText="Get a Free Quote"
-        buttonHref="/quote"
+      <CTASection
+        title={cta.title}
+        subtitle={cta.subtitle}
+        buttonText={cta.buttonText}
+        buttonHref={cta.buttonLink}
       />
     </>
   );

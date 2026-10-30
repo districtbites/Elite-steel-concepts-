@@ -5,8 +5,9 @@ import Container from "./ui/Container";
 import BlogCard from "./BlogCard";
 import { getPosts } from "@/lib/db";
 import { ArrowRight } from "lucide-react";
+import { HOME_BLOG } from "@/lib/pageContent/pages/home";
 
-const HomeBlogSection = async () => {
+const HomeBlogSection = async ({ content = HOME_BLOG.defaults }: { content?: typeof HOME_BLOG.defaults }) => {
   const posts = await getPosts();
   const publishedPosts = posts
     .filter((p) => p.status === "Published")
@@ -21,17 +22,17 @@ const HomeBlogSection = async () => {
         <div className="flex flex-col md:flex-row justify-between items-end mb-12">
           <div>
             <p className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">
-              News & Insights
+              {content.eyebrow}
             </p>
             <h2 className="text-3xl md:text-4xl font-black text-secondary uppercase tracking-tight">
-              Latest from the Blog
+              {content.title}
             </h2>
           </div>
           <Link 
-            href="/blog" 
+            href={content.linkHref} 
             className="hidden md:flex items-center text-sm font-bold uppercase tracking-wider text-secondary hover:text-primary transition-colors mt-4 md:mt-0"
           >
-            View All Articles <ArrowRight size={16} className="ml-2" />
+            {content.linkText} <ArrowRight size={16} className="ml-2" />
           </Link>
         </div>
 
@@ -43,10 +44,10 @@ const HomeBlogSection = async () => {
 
         <div className="mt-12 text-center md:hidden">
            <Link 
-            href="/blog" 
+            href={content.linkHref} 
             className="inline-flex items-center text-sm font-bold uppercase tracking-wider text-secondary hover:text-primary transition-colors"
           >
-            View All Articles <ArrowRight size={16} className="ml-2" />
+            {content.linkText} <ArrowRight size={16} className="ml-2" />
           </Link>
         </div>
       </Container>

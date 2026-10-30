@@ -9,6 +9,9 @@ import Link from "next/link";
 import { getSEO, getPageSEO, getFAQs, getLocations } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getSections } from "@/lib/pageContent";
+import { QUOTE_HEADER, QUOTE_SUPPORT } from "@/lib/pageContent/pages/quote";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -26,7 +29,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function QuotePage() {
-  const [faqs, locations] = await Promise.all([getFAQs(), getLocations()]);
+  const [faqs, locations, [header, support]] = await Promise.all([
+    getFAQs(),
+    getLocations(),
+    getSections([QUOTE_HEADER, QUOTE_SUPPORT] as const),
+  ]);
 
   // Cities we serve, grouped by state code — powers the City suggestions in the form
   const citiesByState: Record<string, string[]> = {};
@@ -43,12 +50,9 @@ export default async function QuotePage() {
     { title: "Custom CAD Planning", text: "Optimize your workflow with 3D floor plans designed for speed.", icon: Award },
   ];
 
-  const trustBadges = [
-    { label: "14+ Years Experience", icon: Calendar },
-    { label: "350+ Custom Builds", icon: Award },
-    { label: "Delivered to 48 States", icon: MapPin },
-    { label: "Health Code Focused", icon: ShieldCheck },
-  ];
+  // Badge icons are assigned in order; badge text is edited in Admin → Page Content
+  const badgeIcons = [Calendar, Award, MapPin, ShieldCheck];
+  const trustBadges = header.badges.map((label, i) => ({ label, icon: badgeIcons[i % badgeIcons.length] }));
 
   const processMetrics = [
     { label: "Engineering Quality", value: "A++" },
@@ -60,28 +64,17 @@ export default async function QuotePage() {
     <>
       <PageJsonLd pageId="quote" />
       <PageHeader
-        eyebrow="Elite Steel Concepts"
-        title="Get Your Free Food Truck & Trailer Quote"
-        subtitle={
-          <>
-            Start Your Build With{" "}
-            <Link
-              href="/"
-              className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
-            >
-              Trusted Custom Food Truck &amp; Trailer Builders
-            </Link>
-            !
-          </>
-        }
+        eyebrow={header.eyebrow}
+        title={header.title}
+        subtitle={header.subtitle ? <AutoLinkedText text={header.subtitle} /> : undefined}
         titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
         normalCaseSubtitle
         className="!pb-10 md:!pb-12"
       >
         <ul className="mt-8 flex flex-wrap items-center justify-center gap-3 max-w-4xl mx-auto">
-          {trustBadges.map(({ label, icon: Icon }) => (
+          {trustBadges.map(({ label, icon: Icon }, i) => (
             <li
-              key={label}
+              key={i}
               className="inline-flex items-center gap-2 border border-[#262626] bg-white/[0.03] px-4 py-2.5 text-[10px] md:text-[11px] font-black uppercase tracking-[0.15em] text-gray-300"
             >
               <Icon size={14} className="text-primary shrink-0" />
@@ -225,11 +218,11 @@ export default async function QuotePage() {
          <Container>
             <div className="flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
                <div>
-                  <h3 className="text-3xl md:text-5xl font-black uppercase text-black tracking-tighter mb-2 leading-none">Need Technical Assistance?</h3>
-                  <p className="text-xs text-black/80 font-black uppercase tracking-[0.2em]">Skip the form and talk to a master fabricator today.</p>
+                  <h3 className="text-3xl md:text-5xl font-black uppercase text-black tracking-tighter mb-2 leading-none">{support.title}</h3>
+                  <p className="text-xs text-black/80 font-black uppercase tracking-[0.2em]">{support.body}</p>
                </div>
-               <Link href="/contact" className="px-10 py-5 bg-black text-white border-2 border-black font-black uppercase text-[10px] tracking-[0.2em] hover:bg-white hover:text-black transition-colors shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none hover:translate-x-2 hover:translate-y-2 shrink-0 whitespace-nowrap">
-                  Schedule Consultation
+               <Link href={support.ctaLink} className="px-10 py-5 bg-black text-white border-2 border-black font-black uppercase text-[10px] tracking-[0.2em] hover:bg-white hover:text-black transition-colors shadow-[8px_8px_0px_0px_rgba(255,255,255,1)] hover:shadow-none hover:translate-x-2 hover:translate-y-2 shrink-0 whitespace-nowrap">
+                  {support.ctaText}
                </Link>
             </div>
          </Container>

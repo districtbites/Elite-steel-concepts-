@@ -1,4 +1,4 @@
-import { BlogPost } from "./db";
+import type { BlogPost } from "./db";
 import { normalizeInternalTarget } from "./linkTarget";
 
 export { normalizeInternalTarget };

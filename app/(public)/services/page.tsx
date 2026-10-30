@@ -5,10 +5,21 @@ import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import Button from "@/components/ui/Button";
 import Image from "next/image";
-import { Truck, Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X, Award, MapPin, Zap } from "lucide-react";
+import { Box, PenTool, Wrench, ShieldCheck, ArrowRight, Check, X, Award, MapPin, Zap } from "lucide-react";
 import FAQSection from "@/components/FAQSection";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import { getLinkedPageSections } from "@/lib/linkablePages";
+import { getSection, getSections, getCustomSections } from "@/lib/pageContent";
+import { SITE_FAQ } from "@/lib/pageContent/pages/site";
+import {
+  SERVICES_HEADER,
+  SERVICES_MANUFACTURE,
+  SERVICES_INTRO,
+  SERVICES_MAIN,
+  SERVICES_PROCESS,
+  SERVICES_CTA,
+} from "@/lib/pageContent/pages/services";
+import CustomSections from "@/components/sections/CustomSections";
 
 import { getSEO, getPageSEO, getFAQs, getMediaAsset } from "@/lib/db";
 import type { Metadata } from "next";
@@ -30,37 +41,41 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ServicesPage() {
-  const [faqs, pageSeo, linked, servicesHero, truckImage, trailerImage] = await Promise.all([
+  const faqContent = await getSection(SITE_FAQ);
+  const [
+    faqs,
+    linked,
+    servicesHero,
+    truckImage,
+    trailerImage,
+    [header, manufacture, intro, main, process, cta],
+    customBlocks,
+  ] = await Promise.all([
     getFAQs(),
-    getPageSEO("services"),
     getLinkedPageSections("services"),
     getMediaAsset("services", "hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_1", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_2", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800"),
+    getSections([SERVICES_HEADER, SERVICES_MANUFACTURE, SERVICES_INTRO, SERVICES_MAIN, SERVICES_PROCESS, SERVICES_CTA] as const),
+    getCustomSections("services"),
   ]);
-  const sections = pageSeo.sections || {};
 
   const introLinked = linked.intro;
 
-  const services = [
-    {
-      title: "Custom Food Trailers, Concession Trailers & Mobile\u00A0Kitchens Services", // non-breaking space keeps "Mobile Kitchens" on one line
-      icon: Truck,
-      image: truckImage.url,
-      description:
-        "At ESC, we build custom food trailers, concession trailers, and mobile kitchens designed around your menu, equipment, workflow, and business needs, with durable construction, practical layouts, quality materials, and compliance-focused designs.",
-      href: "/quote",
-      ctaText: "Get a Free Quote",
-    },
-  ];
+  // Service images come from the Media Library (alternating truck / trailer cards)
+  const serviceImages = [truckImage.url, trailerImage.url];
+  const services = main.services.map((service, i) => ({
+    ...service,
+    image: serviceImages[i % serviceImages.length],
+  }));
 
   return (
     <>
       <PageJsonLd pageId="services" />
       <PageHeader
-        eyebrow="ECS Services"
-        title="Expert Food Truck, Food Trailer & Mobile Kitchen Services Nationwide"
-        subtitle="We build custom food trucks and trailers designed around your menu, equipment, and business goals."
+        eyebrow={header.eyebrow}
+        title={header.title}
+        subtitle={header.subtitle}
         normalCaseSubtitle
         titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
         className="!pb-10 md:!pb-12"
@@ -73,53 +88,36 @@ export default async function ServicesPage() {
             <div className="inline-flex items-center justify-center gap-3">
               <div className="h-px w-10 bg-primary" />
               <p className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
-                What We Manufacture
+                {manufacture.eyebrow}
               </p>
               <div className="h-px w-10 bg-primary" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
-            <Link
-              href="/services/custom-food-trucks"
-              className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
-            >
-              <div className="px-6 pt-6 pb-2 text-center">
-                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
-                  Truck
-                </h2>
-              </div>
-              <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
-                <Image
-                  src="/uploads/about/about-manufacture-truck.jpg"
-                  alt="Custom white food truck built by Elite Steel Concepts"
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-            </Link>
-
-            <Link
-              href="/services/custom-food-trailers"
-              className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
-            >
-              <div className="px-6 pt-6 pb-2 text-center">
-                <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
-                  Trailer
-                </h2>
-              </div>
-              <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
-                <Image
-                  src="/uploads/about/about-manufacture-trailer.jpg"
-                  alt="Custom black and yellow concession trailer by Elite Steel Concepts"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-            </Link>
+            {manufacture.cards.map((card, i) => (
+              <Link
+                key={`${card.title}-${i}`}
+                href={card.link}
+                className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
+              >
+                <div className="px-6 pt-6 pb-2 text-center">
+                  <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
+                    {card.title}
+                  </h2>
+                </div>
+                <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
+                  <Image
+                    src={card.image}
+                    alt={card.imageAlt}
+                    fill
+                    priority={i === 0}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+              </Link>
+            ))}
           </div>
         </Container>
       </Section>
@@ -131,17 +129,12 @@ export default async function ServicesPage() {
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
               <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                {sections.intro?.subtitle || "Precision Builds"}
+                {intro.eyebrow}
               </p>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight">
-              {sections.intro?.title || (
-                <>
-                  Industry Leading{" "}
-                  <span className="text-primary">Mobile Kitchen</span>
-                </>
-              )}
+              {intro.title}
             </h2>
           </div>
 
@@ -155,10 +148,10 @@ export default async function ServicesPage() {
                   />
                 </div>
                 <Link
-                  href="/quote"
+                  href={intro.ctaLink}
                   className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"
                 >
-                  Get a Free Quote <ArrowRight size={14} />
+                  {intro.ctaText} <ArrowRight size={14} />
                 </Link>
               </div>
             </div>
@@ -186,8 +179,8 @@ export default async function ServicesPage() {
       <Section className="!py-10 md:!py-14 bg-gray-50 border-t border-gray-200">
         <Container>
           <div className="space-y-16 md:space-y-20">
-            {services.map((service) => (
-              <div key={service.title} className="space-y-8 md:space-y-10">
+            {services.map((service, i) => (
+              <div key={`${service.title}-${i}`} className="space-y-8 md:space-y-10">
                 <div className="text-center max-w-4xl mx-auto">
                   <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight">
                     {service.title}
@@ -217,7 +210,7 @@ export default async function ServicesPage() {
                         {service.description}
                       </p>
                       <Link
-                        href={service.href}
+                        href={service.ctaLink}
                         className="inline-flex items-center justify-center gap-3 bg-primary text-black px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors"
                       >
                         {service.ctaText} <ArrowRight size={14} />
@@ -306,29 +299,24 @@ export default async function ServicesPage() {
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 md:mb-10 gap-5 md:gap-8">
             <div className="max-w-3xl">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight mb-3 md:mb-4 leading-tight">
-                ECS Building Process
+                {process.title}
               </h2>
               <p className="text-gray-500 text-sm sm:text-base md:text-lg font-medium leading-relaxed border-l-2 border-primary pl-4 md:pl-6">
-                At ESC, we work with you from the first idea to the final handover, keeping every step clear and focused on your food business needs.
+                {process.body}
               </p>
             </div>
             <a
-              href="/contact"
+              href={process.ctaLink}
               className="inline-flex items-center justify-center gap-2 bg-primary text-black px-7 py-3.5 md:px-10 md:py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white transition-colors shrink-0"
             >
-              Talk to Our Team <ArrowRight size={14} />
+              {process.ctaText} <ArrowRight size={14} />
             </a>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
-            {[
-              { step: "01", title: "Consult" },
-              { step: "02", title: "Design" },
-              { step: "03", title: "Build" },
-              { step: "04", title: "Keys" },
-            ].map((item) => (
+            {process.steps.map((item, i) => (
               <div
-                key={item.step}
+                key={`${item.step}-${i}`}
                 className="group relative bg-gray-50/80 border border-gray-200 hover:border-primary/50 hover:bg-white hover:shadow-sm transition-all duration-300 p-4 sm:p-5 md:p-7 flex flex-col items-center text-center"
               >
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
@@ -348,8 +336,11 @@ export default async function ServicesPage() {
         </Container>
       </Section>
 
+      {/* Custom sections (Admin → Page Content → page builder) */}
+      <CustomSections blocks={customBlocks} />
+
       {/* FAQ integration */}
-      <FAQSection faqs={faqs} />
+      <FAQSection content={faqContent} faqs={faqs} />
 
       {/* Final CTA */}
       <section className="py-12 md:py-16 bg-[#0a0a0a] overflow-hidden relative border-t border-[#1a1a1a]">
@@ -357,20 +348,20 @@ export default async function ServicesPage() {
          
          <Container className="relative z-10 text-center">
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter mb-8 max-w-5xl mx-auto leading-[0.9]">
-               Ready to Build Your Custom Food Truck?
+               {cta.title}
             </h2>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-6">
                <a 
-                  href="/quote" 
+                  href={cta.primaryCtaLink} 
                   className="bg-primary text-black border border-primary px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors min-w-[240px] flex items-center justify-center gap-3"
                >
-                  Get a Free Quote <ArrowRight size={14} />
+                  {cta.primaryCtaText} <ArrowRight size={14} />
                </a>
                <a 
-                  href="/portfolio" 
+                  href={cta.secondaryCtaLink} 
                   className="bg-transparent text-white border border-white/20 px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] hover:bg-white hover:text-black transition-colors min-w-[240px]"
                >
-                  View Our Work
+                  {cta.secondaryCtaText}
                </a>
             </div>
          </Container>

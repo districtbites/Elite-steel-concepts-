@@ -7,117 +7,13 @@ import { Wrench, Zap, Droplets, Wind, Flame, CookingPot, Hammer, Paintbrush, Che
 import { getSEO, getPageSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import CustomSections from "@/components/sections/CustomSections";
+import { getSections, getCustomSections } from "@/lib/pageContent";
+import { REPAIRS_HEADER, REPAIRS_SERVICES, REPAIRS_PROCESS, REPAIRS_CTA } from "@/lib/pageContent/pages/repairs-and-upgrades";
 
-const repairServices = [
-  {
-    icon: Zap,
-    title: "Electrical Repairs & Upgrades",
-    intro: "We can diagnose and address electrical issues involving:",
-    points: [
-      "Outlets and electrical connections",
-      "Interior and exterior lighting",
-      "Shore-power connections",
-      "Electrical system upgrades",
-      "Generator-related electrical connections",
-    ],
-  },
-  {
-    icon: Droplets,
-    title: "Plumbing & Water Systems",
-    intro: "We can diagnose and address plumbing and water issues involving:",
-    points: [
-      "Sinks and plumbing lines",
-      "Water heaters",
-      "Water pumps",
-      "Freshwater tanks",
-      "Wastewater tanks",
-      "Plumbing repairs and modifications",
-    ],
-  },
-  {
-    icon: Flame,
-    title: "Propane System Repairs",
-    intro: "We can repair and upgrade components of your propane system, including:",
-    points: [
-      "Propane lines",
-      "Regulators",
-      "Shutoff valves",
-      "Tank cages",
-      "Related propane system modifications",
-    ],
-  },
-  {
-    icon: Wind,
-    title: "Hood & Ventilation Repairs",
-    intro: "Proper ventilation is essential for a functional commercial kitchen. Our services include:",
-    points: [
-      "Hood repairs and upgrades",
-      "Exhaust and ventilation improvements",
-      "Hood fan repairs",
-      "Ventilation modifications",
-      "Coordination of fire-suppression work when required",
-    ],
-  },
-  {
-    icon: CookingPot,
-    title: "Equipment Installation & Replacement",
-    intro: "Need to replace outdated or damaged kitchen equipment? We can help with:",
-    points: [
-      "Equipment installation",
-      "Equipment replacement",
-      "Equipment swaps",
-      "Kitchen equipment layout changes",
-      "Workflow-focused modifications",
-    ],
-  },
-  {
-    icon: Hammer,
-    title: "Interior Repairs & Rebuilds",
-    intro: "We can repair or modify key areas inside your mobile kitchen, including:",
-    points: [
-      "Walls and ceilings",
-      "Flooring",
-      "Insulation",
-      "Countertops",
-      "Interior finishes",
-      "Rebuilds required for specific inspection needs",
-    ],
-  },
-  {
-    icon: Paintbrush,
-    title: "Exterior Updates & Branding",
-    intro: "Your food truck or trailer is part of your brand. We can assist with modifications such as:",
-    points: [
-      "Exterior wrap and branding updates",
-      "Concession window improvements",
-      "Door replacements or modifications",
-      "Generator cabinet work",
-      "Exterior fabrication",
-    ],
-  },
-  {
-    icon: Wrench,
-    title: "Custom Fabrication & Welding",
-    intro: "Our fabrication and welding repair capabilities include:",
-    points: [
-      "Custom stainless-steel fabrication",
-      "Cabinets and shelving",
-      "Stainless-steel work surfaces",
-      "Welding and structural modifications",
-      "Concession windows",
-      "Doors and access points",
-      "Generator cabinets",
-      "Custom kitchen components",
-    ],
-  },
-];
-
-const processSteps = [
-  { icon: ClipboardCheck, title: "Assess", text: "We inspect your truck or trailer and review your existing setup." },
-  { icon: ScanSearch, title: "Identify", text: "We pinpoint what's failing, outdated or slowing down your workflow." },
-  { icon: Lightbulb, title: "Recommend", text: "We suggest the repairs and upgrades that fit your business needs." },
-  { icon: Wrench, title: "Upgrade", text: "Our team completes the work so your kitchen runs more efficiently." },
-];
+// Icons are assigned by position (cycled when more items are added in the admin)
+const serviceIcons = [Zap, Droplets, Flame, Wind, CookingPot, Hammer, Paintbrush, Wrench];
+const stepIcons = [ClipboardCheck, ScanSearch, Lightbulb, Wrench];
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -135,12 +31,28 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RepairsAndUpgradesPage() {
+  const [[header, services, process, cta], customBlocks] = await Promise.all([
+    getSections([REPAIRS_HEADER, REPAIRS_SERVICES, REPAIRS_PROCESS, REPAIRS_CTA] as const),
+    getCustomSections("repairs_and_upgrades"),
+  ]);
+  const repairServices = services.services.map((service, i) => ({
+    icon: serviceIcons[i % serviceIcons.length],
+    title: String(service.title ?? ""),
+    intro: String(service.intro ?? ""),
+    points: String(service.points ?? "").split("\n").map((p) => p.trim()).filter(Boolean),
+  }));
+  const processSteps = process.steps.map((step, i) => ({
+    icon: stepIcons[i % stepIcons.length],
+    title: String(step.title ?? ""),
+    text: String(step.text ?? ""),
+  }));
+
   return (
     <>
       <PageJsonLd pageId="repairs-and-upgrades" />
       <PageHeader
-        title="Repairs & Upgrades for Food Trucks & Trailers"
-        subtitle="Repair. Upgrade. We’ve Got You Covered."
+        title={header.title}
+        subtitle={header.subtitle}
         normalCaseSubtitle
       />
 
@@ -150,18 +62,18 @@ export default async function RepairsAndUpgradesPage() {
           <div className="text-center max-w-3xl mx-auto mb-10 md:mb-12">
             <div className="inline-flex items-center gap-3 mb-4">
               <div className="w-2 h-2 bg-primary" />
-              <p className="text-primary font-black uppercase tracking-[0.2em] text-xs">What ESC Fixes</p>
+              <p className="text-primary font-black uppercase tracking-[0.2em] text-xs">{services.eyebrow}</p>
               <div className="w-2 h-2 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-black leading-none">
-              ESC Food Truck & Trailer Repair Services
+              {services.title}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {repairServices.map((service) => (
+            {repairServices.map((service, i) => (
               <div
-                key={service.title}
+                key={i}
                 className="group relative bg-white border border-gray-200 p-7 flex flex-col hover:border-primary hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="absolute top-0 left-0 h-1 w-full bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
@@ -173,8 +85,8 @@ export default async function RepairsAndUpgradesPage() {
                 </h3>
                 <p className="text-sm text-gray-500 leading-relaxed mb-5">{service.intro}</p>
                 <ul className="space-y-3">
-                  {service.points.map((point) => (
-                    <li key={point} className="flex items-start gap-3 text-sm font-medium text-gray-800">
+                  {service.points.map((point, j) => (
+                    <li key={j} className="flex items-start gap-3 text-sm font-medium text-gray-800">
                       <span className="mt-0.5 w-5 h-5 shrink-0 rounded-full bg-primary/15 text-primary flex items-center justify-center">
                         <Check size={12} strokeWidth={3} />
                       </span>
@@ -193,10 +105,10 @@ export default async function RepairsAndUpgradesPage() {
         <Container className="relative z-10">
           <div className="text-center max-w-3xl mx-auto mb-10 md:mb-12">
             <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter text-black leading-none mb-6">
-              Repair & Upgrade Solutions Built Around Your Mobile Kitchen
+              {process.title}
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              We assess your existing setup, understand your business needs, and recommend repairs or upgrades that make your mobile kitchen more functional and efficient.
+              {process.intro}
             </p>
           </div>
 
@@ -215,7 +127,7 @@ export default async function RepairsAndUpgradesPage() {
             ))}
 
             {processSteps.map((step, i) => (
-              <li key={step.title} className="group relative text-center px-2">
+              <li key={i} className="group relative text-center px-2">
                 <div className="relative w-20 h-20 mx-auto mb-7 rounded-full bg-white">
                   <div className="w-full h-full flex items-center justify-center rounded-full bg-primary/10 border-2 border-primary text-primary group-hover:bg-primary group-hover:text-black transition-colors">
                     <step.icon size={30} />
@@ -232,11 +144,13 @@ export default async function RepairsAndUpgradesPage() {
         </Container>
       </Section>
 
+      <CustomSections blocks={customBlocks} />
+
       <CTASection
-        title="Ready to Upgrade Your Food Truck?"
-        subtitle="Tell us about your food truck or trailer, the problems you're experiencing, and the upgrades you're considering. Our expert team will assess the project and help determine the next steps."
-        buttonText="Get a Free Quote"
-        buttonHref="/quote"
+        title={cta.title}
+        subtitle={cta.subtitle}
+        buttonText={cta.buttonText}
+        buttonHref={cta.buttonLink}
       />
     </>
   );

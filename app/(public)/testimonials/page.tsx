@@ -5,7 +5,14 @@ import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
 import Button from "@/components/ui/Button";
 import { getTestimonials, getSEO, getPageSEO, getMediaAsset } from "@/lib/db";
-import { getLinkedPageSections, cleanTestimonialText, FEATURED_TESTIMONIAL_TEXT } from "@/lib/linkablePages";
+import { getLinkedPageSections, cleanTestimonialText } from "@/lib/linkablePages";
+import { getSections } from "@/lib/pageContent";
+import {
+  TESTIMONIALS_HEADER,
+  TESTIMONIALS_STATS,
+  TESTIMONIALS_GRID,
+  TESTIMONIALS_CTA,
+} from "@/lib/pageContent/pages/testimonials";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import { Star, Quote as QuoteIcon, Play, CheckCircle, ShieldCheck, Award, MessageSquare, Truck, CalendarCheck } from "lucide-react";
 import type { Metadata } from "next";
@@ -28,18 +35,21 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TestimonialsPage() {
-  const [testimonials, linked, testimonialsHero] = await Promise.all([
+  const [testimonials, linked, testimonialsHero, [header, stats, grid, cta]] = await Promise.all([
     getTestimonials(),
     getLinkedPageSections("testimonials"),
     getMediaAsset("testimonials", "hero", "https://images.pexels.com/photos/1766686/pexels-photo-1766686.jpeg?auto=compress&cs=tinysrgb&w=1200"),
+    getSections([TESTIMONIALS_HEADER, TESTIMONIALS_STATS, TESTIMONIALS_GRID, TESTIMONIALS_CTA] as const),
   ]);
+
+  const statIcons = [Truck, CalendarCheck, ShieldCheck, Star];
 
   return (
     <>
       <PageJsonLd pageId="testimonials" />
       <PageHeader
-        eyebrow="Elite Steel Concepts"
-        title="Customer Testimonials"
+        eyebrow={header.eyebrow}
+        title={header.title}
       />
 
       {/* Stats / Proof Section */}
@@ -47,19 +57,14 @@ export default async function TestimonialsPage() {
         <Container>
           <div className="text-center max-w-5xl mx-auto mb-8 md:mb-10">
             <h2 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tight leading-tight">
-              Why Businesses Trust Elite Steel Concepts For Custom Food Trucks &amp; Trailer Builds
+              {stats.title}
             </h2>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 max-w-6xl mx-auto">
-            {[
-              { value: "350+", label: "Trucks Built", icon: Truck },
-              { value: "14+", label: "Years Experience", icon: CalendarCheck },
-              { value: "100%", label: "Inspection Pass Rate", icon: ShieldCheck },
-              { value: "4.9/5", label: "Average Rating", icon: Star },
-            ].map((stat) => (
+            {stats.stats.map((stat, i) => ({ ...stat, icon: statIcons[i % statIcons.length] })).map((stat, i) => (
               <div
-                key={stat.label}
+                key={i}
                 className="group relative bg-white border border-gray-200 hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-300 px-4 py-8 md:px-6 md:py-10 flex flex-col items-center text-center overflow-hidden"
               >
                 <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
@@ -114,7 +119,7 @@ export default async function TestimonialsPage() {
                     "They didn't just build a truck, they built a <span className="text-primary italic">scalable business</span>."
                  </h2>
                  <p className="text-gray-600 text-lg leading-relaxed mb-8 font-light italic">
-                    &ldquo;<AutoLinkedText text={linked.featured ?? FEATURED_TESTIMONIAL_TEXT} />&rdquo;
+                    &ldquo;<AutoLinkedText text={linked.featured} /> (copy: Admin → Page Content → testimonials.featured)&rdquo;
                  </p>
                  <div className="flex flex-wrap gap-4">
                     <div className="flex items-center gap-2 text-secondary font-bold text-xs uppercase tracking-widest bg-gray-50 px-5 py-3 rounded-full border border-gray-100">
@@ -130,8 +135,8 @@ export default async function TestimonialsPage() {
 
            {/* Grid Layout for Others */}
            <div className="text-center mb-8 md:mb-10">
-              <h3 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tight leading-tight">Testimonials From Our Customers</h3>
-              <p className="text-gray-600 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mt-3">See why entrepreneurs choose ECS as the best food truck and trailer builder in USA for custom builds.</p>
+              <h3 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tight leading-tight">{grid.title}</h3>
+              <p className="text-gray-600 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mt-3">{grid.subtitle}</p>
            </div>
 
             {testimonials.length > 0 ? (
@@ -198,7 +203,7 @@ export default async function TestimonialsPage() {
             ) : (
                 <div className="text-center py-24 bg-gray-50 rounded-[3rem] border border-dashed border-gray-200">
                     <MessageSquare className="mx-auto text-gray-200 mb-6" size={64} />
-                    <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">Awaiting your success story.</p>
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">{grid.emptyText}</p>
                 </div>
             )}
         </Container>
@@ -219,11 +224,11 @@ export default async function TestimonialsPage() {
       */}
 
       <CTASection
-        title="Ready to Build Your Dream Food Truck & Trailer?"
-        subtitle="Tell us about your concept, and we’ll help you plan the right custom truck or trailer for your business."
-        buttonText="Get a Free Quote"
+        title={cta.title}
+        subtitle={cta.subtitle}
+        buttonText={cta.ctaText}
         titleClassName="text-2xl md:text-4xl tracking-tight leading-tight"
-        buttonHref="/quote"
+        buttonHref={cta.ctaLink}
       />
     </>
   );

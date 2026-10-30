@@ -2,43 +2,17 @@ import React from "react";
 import Container from "./ui/Container";
 import Section from "./ui/Section";
 import Image from "next/image";
+import { HOME_SIZES } from "@/lib/pageContent/pages/home";
 
-const sizes = [
-  {
-    letter: "S",
-    kitchen: "10-11FT KITCHEN",
-    truck: "18-21FT TRUCK",
-    label: "SMALL",
-    description: "SMALL ENTRY LEVEL TRUCK OR TRAILER SIZE.",
-    scale: "scale-[0.75]",
-  },
-  {
-    letter: "M",
-    kitchen: "14-16FT KITCHEN",
-    truck: "22-24FT TRUCK",
-    label: "MEDIUM",
-    description: "THIS IS THE MOST POPULAR FOOD TRUCK SIZE. VERY VERSATILE.",
-    scale: "scale-[0.85]",
-  },
-  {
-    letter: "L",
-    kitchen: "17-18FT KITCHEN",
-    truck: "25-27FT TRUCK",
-    label: "LARGE",
-    description: "GREAT SIZE IF YOU NEED SPACE OR HAVE A LARGE MENU.",
-    scale: "scale-100",
-  },
-  {
-    letter: "XL",
-    kitchen: "20-22FT KITCHEN",
-    truck: "29-30FT TRUCK",
-    label: "X-LARGE",
-    description: "IF YOU PLAN ON DOING A LOT OF VOLUME AT MAJOR EVENTS AND WANT ROOM TO GROW.",
-    scale: "scale-[1.15]",
-  },
-];
+// Truck image grows from small to extra-large; extra cards reuse the largest scale
+const SIZE_SCALES = ["scale-[0.75]", "scale-[0.85]", "scale-100", "scale-[1.15]"];
 
-const SizeSelection = () => {
+const SizeSelection = ({ content = HOME_SIZES.defaults }: { content?: typeof HOME_SIZES.defaults }) => {
+  const sizes = content.sizes.map((size, i) => ({
+    ...size,
+    scale: SIZE_SCALES[Math.min(i, SIZE_SCALES.length - 1)],
+  }));
+
   return (
     <Section className="!py-8 md:!py-12 bg-white border-b border-gray-100 relative overflow-hidden">
       {/* Background Grid Pattern */}
@@ -55,15 +29,15 @@ const SizeSelection = () => {
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="h-px w-12 bg-primary" />
             <p className="text-primary text-xs font-black uppercase tracking-[0.25em] text-center">
-              Which Food Truck Size Is Right for You?
+              {content.eyebrow}
             </p>
             <div className="h-px w-12 bg-primary" />
           </div>
           <h2 className="text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-tight text-black mb-5">
-            Choose Your Ideal Food <span className="whitespace-nowrap">Truck Size</span>
+            {content.title} <span className="whitespace-nowrap">{content.titleNoWrap}</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-            We&apos;ll help you choose the right size and layout for your menu, equipment, staff, storage, and operating needs.
+            {content.intro}
           </p>
         </div>
 

@@ -6,6 +6,7 @@ import { usePathname } from"next/navigation";
 import { logout } from"@/app/actions/auth";
 import {
  LayoutDashboard,
+ LayoutTemplate,
  FileText,
  Settings,
  Search,
@@ -50,6 +51,7 @@ const menuItems: MenuItem[] = [
  { name:"Contact Messages", href:"/admin/contacts", icon: Mail, group:"main", roles: ["super_admin", "admin", "manager"] },
 
  // Content
+ { name:"Page Content", href:"/admin/page-content", icon: LayoutTemplate, group:"content", roles: ["super_admin", "admin", "manager", "seo"] },
  { name:"Locations & Service Areas", href:"/admin/locations", icon: MapPin, group:"content", roles: ["super_admin", "admin", "manager", "seo"] },
  { name:"Portfolio", href:"/admin/portfolio", icon: Briefcase, group:"content", roles: ["super_admin", "admin", "manager"] },
  { name:"Blog Posts", href:"/admin/blog", icon: FileText, group:"content", roles: ["super_admin", "admin", "manager", "seo"] },

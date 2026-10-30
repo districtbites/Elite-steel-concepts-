@@ -10,7 +10,7 @@ import CTASection from "@/components/ui/CTASection";
 import FAQSection from "@/components/FAQSection";
 import InteractiveFloorPlan from "@/components/ui/InteractiveFloorPlan";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
-import ProcessSteps from "@/components/ProcessSteps";
+import ProcessSteps, { withStepIcons } from "@/components/ProcessSteps";
 import QuoteStartSection from "@/components/QuoteStartSection";
 import {
   // CheckCircle2, Shield, Zap, Award, Truck — used by the hidden "Why Choose Us" section
@@ -27,6 +27,21 @@ import {
   getMediaAsset,
 } from "@/lib/db";
 import { getLinkedPageSections } from "@/lib/linkablePages";
+import { getSection, getSections, getCustomSections } from "@/lib/pageContent";
+import { SITE_FAQ } from "@/lib/pageContent/pages/site";
+import {
+  HOME_HERO,
+  HOME_INTRO,
+  HOME_FLOOR_PLAN,
+  HOME_SIZES,
+  HOME_QUOTE_START,
+  HOME_PROCESS,
+  HOME_WHY_CHOOSE,
+  HOME_LOCAL_COVERAGE,
+  HOME_TESTIMONIALS,
+  HOME_BLOG,
+} from "@/lib/pageContent/pages/home";
+import CustomSections from "@/components/sections/CustomSections";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
 
@@ -46,6 +61,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
+  const faqContent = await getSection(SITE_FAQ);
   const [
     pageSeo,
     faqs,
@@ -54,6 +70,8 @@ export default async function Home() {
     heroImage,
     homeTruckCard,
     homeTrailerCard,
+    [hero, intro, floorPlan, sizes, quoteStart, process, whyChoose, coverage, testimonials, blog],
+    customBlocks,
   ] = await Promise.all([
     getPageSEO("home"),
     getFAQs(),
@@ -70,10 +88,22 @@ export default async function Home() {
       "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=1200",
     ),
     getMediaAsset("home", "trailer_card", "/concession-trailer.png"),
+    getSections([
+      HOME_HERO,
+      HOME_INTRO,
+      HOME_FLOOR_PLAN,
+      HOME_SIZES,
+      HOME_QUOTE_START,
+      HOME_PROCESS,
+      HOME_WHY_CHOOSE,
+      HOME_LOCAL_COVERAGE,
+      HOME_TESTIMONIALS,
+      HOME_BLOG,
+    ] as const),
+    getCustomSections("home"),
   ]);
 
   const alts = pageSeo.imageAlts || {};
-  const sections = pageSeo.sections || {};
 
   // Auto-linked section copy (text + link rules come from the linkable page registry)
   const introLinked = linked.intro;
@@ -115,12 +145,7 @@ export default async function Home() {
   //   },
   // ];
 
-  const coverageAreas = [
-    "Washington DC",
-    "Northern Virginia",
-    "Maryland",
-    "Pennsylvania",
-  ];
+  const coverageAreas = coverage.areas;
 
   return (
     <>
@@ -129,7 +154,7 @@ export default async function Home() {
       {/* ═══ HERO ════════════════════════════════════════════ */}
       <Hero
         imageAlts={alts}
-        content={sections.hero}
+        content={hero}
         heroImage={heroImage}
         slides={[
           {
@@ -160,13 +185,12 @@ export default async function Home() {
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
               <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                What We Build
+                {intro.eyebrow}
               </p>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black uppercase tracking-tight leading-tight">
-              {sections.intro?.title ||
-                "Custom Food Trucks & Concession Trailers For Entrepreneurs"}
+              {intro.title}
             </h2>
           </div>
 
@@ -180,22 +204,22 @@ export default async function Home() {
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/about"
+                href={intro.primaryCtaLink}
                 id="intro-about-btn"
                 className="group inline-flex items-center justify-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-xs px-7 py-4 transition-all shadow-sm"
               >
-                About ESC
+                {intro.primaryCtaText}
                 <ArrowRight
                   size={14}
                   className="group-hover:translate-x-1 transition-transform"
                 />
               </Link>
               <Link
-                href="/portfolio"
+                href={intro.secondaryCtaLink}
                 id="intro-portfolio-btn"
                 className="group inline-flex items-center justify-center gap-2 border-2 border-black hover:bg-black text-black hover:text-white font-black uppercase tracking-wider text-xs px-7 py-3.5 transition-all"
               >
-                See Our Work
+                {intro.secondaryCtaText}
                 <ArrowRight
                   size={14}
                   className="group-hover:translate-x-1 transition-transform"
@@ -207,10 +231,10 @@ export default async function Home() {
       </section>
 
       {/* ═══ SERVICES / FLOOR PLAN ═══════════════════════════ */}
-      <InteractiveFloorPlan />
+      <InteractiveFloorPlan content={floorPlan} />
 
       {/* ═══ SIZE GUIDE ══════════════════════════════════════ */}
-      <SizeSelection />
+      <SizeSelection content={sizes} />
 
       {/* ═══ SERVICES (Choose Your Custom Food Truck & Trailer) — hidden for now ═══
       <ServiceSelection
@@ -221,13 +245,27 @@ export default async function Home() {
       */}
 
       {/* ═══ GET A QUOTE ═════════════════════════════════════ */}
-      <QuoteStartSection />
+      <QuoteStartSection content={quoteStart} />
 
       {/* ═══ PROCESS ═════════════════════════════════════════ */}
-      <ProcessSteps />
+      <ProcessSteps
+        eyebrow={process.eyebrow}
+        title={
+          <>
+            {process.titleLine1}
+            <span className="block">{process.titleLine2}</span>
+          </>
+        }
+        steps={withStepIcons(process.steps)}
+        fullProcessText={process.fullProcessText}
+        fullProcessLink={process.fullProcessLink}
+        ctaText={process.ctaText}
+        ctaButtonText={process.ctaButtonText}
+        ctaButtonLink={process.ctaButtonLink}
+      />
 
       {/* ═══ WHY CHOOSE SECTION (CARDS) ══════════════════════ */}
-      <WhyChooseSection />
+      <WhyChooseSection content={whyChoose} />
 
       {/* ═══ WHY CHOOSE US (dark stats + checklist) — hidden for now ═══
       <section id="why-choose-us" className="bg-[#0a0a0a] py-20 md:py-28">
@@ -351,12 +389,12 @@ export default async function Home() {
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
               <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                {sections.localcoverage?.subtitle || "Service Area"}
+                {coverage.eyebrow}
               </p>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-tight mb-6">
-              {sections.localcoverage?.title || "Where We Build and Deliver"}
+              {coverage.title}
             </h2>
             <div className="text-gray-500 text-lg leading-relaxed text-center">
               <AutoLinkedText
@@ -389,7 +427,7 @@ export default async function Home() {
                   {area}
                 </div>
                 <div className="text-[10px] font-bold text-gray-500 group-hover:text-gray-700 uppercase tracking-widest mt-1 transition-colors">
-                  Full Coverage
+                  {coverage.areaCaption}
                 </div>
               </div>
             ))}
@@ -398,11 +436,11 @@ export default async function Home() {
           {/* Row 3: locations button */}
           <div className="mt-8 flex justify-center">
             <Link
-              href="/locations"
+              href={coverage.ctaLink}
               id="coverage-view-locations-btn"
               className="group inline-flex items-center gap-2 bg-primary hover:bg-orange-600 text-white font-black uppercase tracking-wider text-xs px-8 py-4 transition-all shadow-sm"
             >
-              View All Locations We Serve
+              {coverage.ctaText}
               <ArrowRight
                 size={14}
                 className="group-hover:translate-x-1 transition-transform"
@@ -413,16 +451,16 @@ export default async function Home() {
       </section>
 
       {/* ═══ TESTIMONIALS ════════════════════════════════════ */}
-      <Testimonials />
+      <Testimonials content={testimonials} />
 
       {/* ═══ BLOG ════════════════════════════════════════════ */}
-      <HomeBlogSection />
+      <HomeBlogSection content={blog} />
 
       {/* ═══ NEWSLETTER ══════════════════════════════════════ */}
       {/* <NewsletterSection /> */}
 
       {/* ═══ FAQ ═════════════════════════════════════════════ */}
-      {faqs.length > 0 && <FAQSection faqs={faqs.slice(0, 5)} />}
+      {faqs.length > 0 && <FAQSection content={faqContent} faqs={faqs.slice(0, 5)} />}
 
       {/* ═══ FINAL CTA — hidden for now ═══════════════════════
       <CTASection
@@ -435,6 +473,9 @@ export default async function Home() {
         buttonHref="/quote"
       />
       */}
+
+      {/* ═══ CUSTOM SECTIONS (Admin → Page Content → page builder) ═══ */}
+      <CustomSections blocks={customBlocks} />
 
       {/* ═══ APPLICATION MODAL (ONE-TIME PER SESSION) ═══════ */}
       <DeferredApplicationModal />

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "backup": "node scripts/backup-db.mjs",
-    "test:blog": "node scripts/test-blog-save.mjs"
+    "test:blog": "node scripts/test-blog-save.mjs",
+    "test:page-content": "node --no-warnings scripts/test-page-content.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.17.4",

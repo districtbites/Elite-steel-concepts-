@@ -4,12 +4,22 @@ import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import PageHeader from "@/components/ui/PageHeader";
 import CTASection from "@/components/ui/CTASection";
-import ProcessSteps, { aboutBuildingProcessSteps } from "@/components/ProcessSteps";
+import ProcessSteps, { ABOUT_STEP_ICONS, withStepIcons } from "@/components/ProcessSteps";
 import Image from "next/image";
 import { Award, Calendar, Package, PenTool, Shield, MapPin, Wrench, Handshake } from "lucide-react";
 import { getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import CustomSections from "@/components/sections/CustomSections";
+import { getSections, getCustomSections } from "@/lib/pageContent";
+import {
+  ABOUT_HEADER,
+  ABOUT_MISSION,
+  ABOUT_MANUFACTURE,
+  ABOUT_PROCESS,
+  ABOUT_WHY,
+  ABOUT_CTA,
+} from "@/lib/pageContent/pages/about";
 
 // Cached and regenerated every 5 minutes, or immediately when the admin saves changes (revalidatePath).
 export const revalidate = 300;
@@ -26,27 +36,26 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// Icons for the "Why Choose Us" cards, assigned in order (cycled when there are more reasons)
+const REASON_ICONS = [Calendar, Award, Package, PenTool, Shield, MapPin, Wrench, Handshake];
+
+// External image URLs skip the optimizer so any host entered in the admin works
+const isRemote = (src: string) => /^https?:\/\//i.test(src);
+
 export default async function AboutPage() {
-  const storyRaw =
-    "Our mission is to build high-quality custom food trailers and trucks using durable, commercial-grade materials, reliable equipment, expert construction, and practical kitchen layouts. Every build is carefully designed around the client's menu, workflow, and business needs, with a strong focus on durability, functionality, professional finishing, and applicable code requirements. We use quality materials and thoughtful designs to create dependable mobile kitchen solutions that support entrepreneurs from their first launch through long-term business growth.";
-  
-  const chooseReasons = [
-    { title: "14+ Years of Industry Experience", icon: Calendar },
-    { title: "350+ Custom Builds Completed", icon: Award },
-    { title: "Quality Materials & Reliable Equipment", icon: Package },
-    { title: "Custom Designs Built Around Your Business", icon: PenTool },
-    { title: "Compliance-Focused Construction", icon: Shield },
-    { title: "Nationwide Service — 48 States Served", icon: MapPin },
-    { title: "Built for Long-Term Business Use", icon: Wrench },
-    { title: "Start-to-Finish Project Support", icon: Handshake },
-  ];
+  const [[header, mission, manufacture, process, why, cta], customBlocks] = await Promise.all([
+    getSections([ABOUT_HEADER, ABOUT_MISSION, ABOUT_MANUFACTURE, ABOUT_PROCESS, ABOUT_WHY, ABOUT_CTA] as const),
+    getCustomSections("about"),
+  ]);
+
+  const chooseReasons = why.reasons.map((title, i) => ({ title, icon: REASON_ICONS[i % REASON_ICONS.length] }));
 
   return (
     <>
       <PageJsonLd pageId="about" />
       <PageHeader
-        title="About Us"
-        subtitle="With 14+ years of experience, Elite Steel Concepts builds custom food trucks, trailers & mobile kitchens designed for food businesses. Based in Manassas, Virginia, we proudly serve entrepreneurs nationwide."
+        title={header.title}
+        subtitle={header.subtitle}
         normalCaseSubtitle
         titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
       />
@@ -59,12 +68,12 @@ export default async function AboutPage() {
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
               <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                Our Mission
+                {mission.eyebrow}
               </p>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-black uppercase tracking-tight leading-tight">
-              Built Custom Food Trucks &amp; Trailers for Entrepreneurs With Big Ideas
+              {mission.title}
             </h2>
           </div>
 
@@ -77,8 +86,9 @@ export default async function AboutPage() {
               />
               <div className="relative h-full min-h-[280px] sm:min-h-[320px] border-2 border-black overflow-hidden bg-black z-10">
                 <Image
-                  src="/uploads/about/about-mission-worker.jpg"
-                  alt="Elite Steel Concepts fabricator building a custom food truck"
+                  src={mission.image}
+                  alt={mission.imageAlt}
+                  unoptimized={isRemote(mission.image)}
                   fill
                   className="object-cover opacity-95 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
                   sizes="(max-width: 1024px) 90vw, 420px"
@@ -90,7 +100,7 @@ export default async function AboutPage() {
             <div className="lg:col-span-7 flex items-center justify-center lg:justify-start">
               <div className="max-w-xl w-full">
                 <p className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed">
-                  {storyRaw}
+                  {mission.body}
                 </p>
               </div>
             </div>
@@ -105,68 +115,52 @@ export default async function AboutPage() {
             <div className="inline-flex items-center justify-center gap-3">
               <div className="h-px w-10 bg-primary" />
               <p className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
-                What We Manufacture
+                {manufacture.eyebrow}
               </p>
               <div className="h-px w-10 bg-primary" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-6xl mx-auto">
-            <Link
-              href="/services/custom-food-trucks"
-              className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
-            >
-              <div className="px-6 pt-6 pb-2 text-center">
-                <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
-                  Truck
-                </h3>
-              </div>
-              <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
-                <Image
-                  src="/uploads/about/about-manufacture-truck.jpg"
-                  alt="Custom white food truck built by Elite Steel Concepts"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-            </Link>
-
-            <Link
-              href="/services/custom-food-trailers"
-              className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
-            >
-              <div className="px-6 pt-6 pb-2 text-center">
-                <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
-                  Trailer
-                </h3>
-              </div>
-              <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
-                <Image
-                  src="/uploads/about/about-manufacture-trailer.jpg"
-                  alt="Custom black and yellow concession trailer by Elite Steel Concepts"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-            </Link>
+            {manufacture.cards.map((card, i) => (
+              <Link
+                key={i}
+                href={card.href}
+                className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
+              >
+                <div className="px-6 pt-6 pb-2 text-center">
+                  <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
+                    {card.title}
+                  </h3>
+                </div>
+                <div className="relative aspect-[16/10] mx-4 mb-6 md:mx-5 overflow-hidden bg-[#1a1a1a]">
+                  <Image
+                    src={card.image}
+                    alt={card.imageAlt}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    unoptimized={isRemote(card.image)}
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+              </Link>
+            ))}
           </div>
         </Container>
       </Section>
 
       {/* Our Building Process */}
       <ProcessSteps
-        eyebrow="How We Build"
+        eyebrow={process.eyebrow}
         title={
           <>
-            Our Building
-            <span className="block">Process</span>
+            {process.title}
+            <span className="block">{process.titleLine2}</span>
           </>
         }
-        steps={aboutBuildingProcessSteps}
+        steps={withStepIcons(process.steps, ABOUT_STEP_ICONS)}
         showFullProcessLink={false}
-        ctaText="Ready to share your idea? Start with a free quote."
+        ctaText={process.ctaText}
       />
 
       {/* Stats / Numbers — hidden for now
@@ -204,22 +198,22 @@ export default async function AboutPage() {
             <div className="inline-flex items-center justify-center gap-3 mb-4">
               <div className="h-px w-8 bg-primary" />
               <p className="text-primary text-xs font-black uppercase tracking-[0.25em]">
-                Why Choose Us
+                {why.eyebrow}
               </p>
               <div className="h-px w-8 bg-primary" />
             </div>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-black uppercase text-black tracking-tight leading-tight mb-5">
-              Why Entrepreneurs Choose Elite Steel Concepts
+              {why.title}
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed font-medium">
-              Entrepreneurs choose ECS as their trusted custom food truck builder for quality craftsmanship, durable builds, and mobile kitchens designed to support long-term business success.
+              {why.intro}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 max-w-6xl mx-auto">
-            {chooseReasons.map((reason) => (
+            {chooseReasons.map((reason, i) => (
               <div
-                key={reason.title}
+                key={i}
                 className="group relative bg-white border border-gray-200 hover:border-primary hover:-translate-y-1 hover:shadow-xl transition-all duration-300 px-6 py-8 flex flex-col items-center text-center overflow-hidden"
               >
                 <div className="absolute top-0 left-0 h-1 w-0 bg-primary group-hover:w-full transition-all duration-500" />
@@ -240,12 +234,15 @@ export default async function AboutPage() {
         </Container>
       </Section>
 
+      {/* Custom sections (Admin → Page Content → page builder) */}
+      <CustomSections blocks={customBlocks} />
+
       <CTASection
-        title="Ready to Build Your Custom Food Business?"
+        title={cta.title}
         titleClassName="text-2xl md:text-4xl tracking-tight leading-tight"
-        subtitle="Your food business starts with the right build. Elite Steel Concepts is ready to help bring your idea to reality. Contact us today!"
-        buttonText="Get a Free Quote"
-        buttonHref="/quote"
+        subtitle={cta.subtitle}
+        buttonText={cta.buttonText}
+        buttonHref={cta.buttonLink}
       />
     </>
   );

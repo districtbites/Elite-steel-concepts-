@@ -1,5 +1,4 @@
 import {
-    getPageSEO,
     getLocations,
     getLocationBySlug,
     getTestimonials,
@@ -7,6 +6,14 @@ import {
     getInternalLinkSettings
 } from "./db";
 import { autoLinkSections, getRulesForPage } from "./internalLinks";
+import { getSection, getSections } from "./pageContent";
+import { SERVICES_INTRO } from "./pageContent/pages/services";
+import { TRUCKS_INTRO } from "./pageContent/pages/custom-food-trucks";
+import { TRAILERS_INTRO } from "./pageContent/pages/custom-food-trailers";
+import { TESTIMONIALS_FEATURED } from "./pageContent/pages/testimonials";
+import { FLEET_INTRO } from "./pageContent/pages/fleet-expansion";
+import { COMPLIANCE_HERO, COMPLIANCE_WHY, COMPLIANCE_LOCATION } from "./pageContent/pages/compliance";
+import { HOME_INTRO, HOME_LOCAL_COVERAGE } from "./pageContent/pages/home";
 
 /**
  * Registry of static pages whose copy is auto-linked.
@@ -39,9 +46,6 @@ interface PageDefinition extends LinkablePage {
 // Strip quote marks some stored testimonials carry around their text
 export const cleanTestimonialText = (text: string) => text.trim().replace(/^["“”]+|["“”]+$/g, "");
 
-export const FEATURED_TESTIMONIAL_TEXT =
-    "When I first came to Elite Steel Concepts, I had a vision but no idea about technical specs or flow. They took my menu and designed a kitchen that allows our team to serve 200 portions an hour without breaking a sweat.";
-
 const STATIC_PAGES: PageDefinition[] = [
     {
         key: "home",
@@ -49,22 +53,11 @@ const STATIC_PAGES: PageDefinition[] = [
         url: "/",
         group: "Core",
         getSections: async () => {
-            const sections = (await getPageSEO("home"))?.sections || {};
+            // Copy is edited in Admin → Page Content (falls back to the defaults in lib/pageContent)
+            const [intro, coverage] = await getSections([HOME_INTRO, HOME_LOCAL_COVERAGE] as const);
             return [
-                {
-                    id: "intro",
-                    label: "Intro",
-                    text:
-                        sections.intro?.content ||
-                        "We are experienced custom food truck builders creating food trucks, food trailers, and mobile kitchens for businesses of all kinds. As a trusted food truck manufacturer, we build each unit around your menu, equipment, space, and workflow. From a custom food trailer to a complete mobile kitchen, we help turn your idea into a practical, professional setup ready for your food business."
-                },
-                {
-                    id: "localcoverage",
-                    label: "Local Coverage",
-                    text:
-                        sections.localcoverage?.content ||
-                        "Based in Manassas, Virginia, Elite Steel Concepts serves the entire Washington DC metropolitan area including Northern Virginia, Maryland, and the greater Mid-Atlantic region. Our custom food trucks, concession trailers, and mobile kitchens have been delivered to entrepreneurs across 48 states."
-                }
+                { id: "intro", label: "Intro", text: intro.body },
+                { id: "localcoverage", label: "Local Coverage", text: coverage.body }
             ];
         }
     },
@@ -74,17 +67,8 @@ const STATIC_PAGES: PageDefinition[] = [
         url: "/services",
         group: "Services",
         getSections: async () => {
-            const sections = (await getPageSEO("services"))?.sections || {};
-            return [
-                {
-                    id: "intro",
-                    label: "Intro",
-                    text:
-                        typeof sections.intro?.content === "string"
-                            ? sections.intro.content
-                            : "At Elite Steel Concepts, we don't just build boxes with kitchens. We engineer high-performance commercial environments designed to maximize flow, sanitation, and safety while projecting a premium brand image."
-                }
-            ];
+            const intro = await getSection(SERVICES_INTRO);
+            return [{ id: "intro", label: "Intro", text: intro.body }];
         }
     },
     {
@@ -92,72 +76,46 @@ const STATIC_PAGES: PageDefinition[] = [
         name: "Custom Food Trucks",
         url: "/services/custom-food-trucks",
         group: "Services",
-        getSections: async () => [
-            {
-                id: "intro",
-                label: "Intro",
-                text: "A custom food truck from Elite Steel Concepts is a precision tool. We focus on commercial kitchen design, ergonomic safety, and health code compliance. Every weld and every corner is designed to withstand the rigors of 24/7 commercial operation. You can also explore our custom concession trailers or request a custom quote."
-            }
-        ]
+        getSections: async () => {
+            const intro = await getSection(TRUCKS_INTRO);
+            return [{ id: "intro", label: "Intro", text: intro.body }];
+        }
     },
     {
         key: "custom-food-trailers",
         name: "Custom Food Trailers",
         url: "/services/custom-food-trailers",
         group: "Services",
-        getSections: async () => [
-            {
-                id: "intro",
-                label: "Intro",
-                text: "A custom concession trailer from Elite Steel Concepts offers the highest ROI in the mobile food industry. More square footage for equipment and staff, without the engine maintenance of a truck. Learn about our custom food truck conversions or request an itemized build quote."
-            }
-        ]
+        getSections: async () => {
+            const intro = await getSection(TRAILERS_INTRO);
+            return [{ id: "intro", label: "Intro", text: intro.body }];
+        }
     },
     {
         key: "fleet-expansion",
         name: "Fleet Expansion",
         url: "/services/fleet-expansion",
         group: "Services",
-        getSections: async () => [
-            {
-                id: "intro",
-                label: "Intro",
-                text: "Whether you need 5 custom food trucks or 50 concession trailers, Elite Steel Concepts delivers identical build quality, equipment layouts, and nationwide compliance. Streamline your multi-unit mobile kitchen operations with a standardized fleet program."
-            }
-        ]
+        getSections: async () => {
+            const intro = await getSection(FLEET_INTRO);
+            return [{ id: "intro", label: "Intro", text: intro.body }];
+        }
     },
     {
         key: "compliance",
         name: "Compliance Hub",
         url: "/compliance",
         group: "Authority",
-        getSections: async () => [
-            {
-                id: "hero",
-                label: "Hero Description",
-                text: "Building a custom food truck or trailer requires more than installing kitchen equipment. Your mobile kitchen may need to meet applicable health, plumbing, electrical, sanitation, fire-safety, and local food-service requirements before it can operate."
-            },
-            {
-                id: "why-1",
-                label: "Why It Matters (paragraph 1)",
-                text: "The right requirements start with the design compliance, which can affect almost every part of a mobile kitchen, from handwashing and dishwashing sinks to water systems, wastewater, equipment placement, food-preparation areas, and electrical systems."
-            },
-            {
-                id: "why-2",
-                label: "Why It Matters (paragraph 2)",
-                text: "Understanding these requirements before fabrication can help you plan the right layout and avoid unnecessary design changes later. As a custom food truck builder, Elite Steel Concepts considers the requirements that may apply to your project based on your planned operation and location."
-            },
-            {
-                id: "location-1",
-                label: "Location Requirements (paragraph 1)",
-                text: "Custom food truck starts with knowing where you plan to operate. Health, safety, plumbing, fire, and mobile food requirements can vary between states, counties, cities, and local authorities."
-            },
-            {
-                id: "location-2",
-                label: "Location Requirements (paragraph 2)",
-                text: "Your location, menu, equipment, and type of food operation can all affect the requirements that apply to your mobile kitchen. A food truck operating in Virginia may have different requirements from one operating in Maryland or Washington, DC. At Elite Steel Concepts, we build custom food trucks and trailers throughout the DMV region with applicable location-specific requirements in mind."
-            }
-        ]
+        getSections: async () => {
+            const [hero, why, location] = await getSections([COMPLIANCE_HERO, COMPLIANCE_WHY, COMPLIANCE_LOCATION] as const);
+            return [
+                { id: "hero", label: "Hero Description", text: hero.description },
+                { id: "why-1", label: "Why It Matters (paragraph 1)", text: why.paragraph1 },
+                { id: "why-2", label: "Why It Matters (paragraph 2)", text: why.paragraph2 },
+                { id: "location-1", label: "Location Requirements (paragraph 1)", text: location.paragraph1 },
+                { id: "location-2", label: "Location Requirements (paragraph 2)", text: location.paragraph2 }
+            ];
+        }
     },
     {
         key: "testimonials",
@@ -167,7 +125,7 @@ const STATIC_PAGES: PageDefinition[] = [
         getSections: async () => {
             const testimonials = await getTestimonials();
             return [
-                { id: "featured", label: "Featured Story", text: FEATURED_TESTIMONIAL_TEXT },
+                { id: "featured", label: "Featured Story", text: (await getSection(TESTIMONIALS_FEATURED)).text },
                 ...testimonials.map(t => ({
                     id: `t-${t.id}`,
                     label: `Testimonial: ${t.clientName}`,

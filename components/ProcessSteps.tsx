@@ -15,6 +15,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { HOME_PROCESS } from "@/lib/pageContent/pages/home";
 
 export type ProcessStep = {
   title: string;
@@ -22,58 +23,44 @@ export type ProcessStep = {
   icon: LucideIcon;
 };
 
-const defaultSteps: ProcessStep[] = [
-  {
-    title: "Quote Request",
-    description:
-      "Fill out our quote form with your build requirements. We respond within 24 hours.",
-    icon: FileText,
-  },
-  {
-    title: "Consultation",
-    description:
-      "We call you to deep-dive into your menu, workflow, and budget. No pressure, just precision.",
-    icon: Phone,
-  },
-  {
-    title: "Design & Schematics",
-    description:
-      "Our engineers develop a full floor plan with equipment placement, power layout, and material spec.",
-    icon: PenTool,
-  },
-  {
-    title: "Agreement",
-    description:
-      "Once details are locked, we sign a production agreement with a clear timeline and milestones.",
-    icon: CheckSquare,
-  },
-  {
-    title: "Production",
-    description:
-      "Our fabrication team builds your truck. You can visit the shop at any stage — walk-ins welcome.",
-    icon: Hammer,
-  },
-];
+/** Icons for the homepage steps, assigned in order. */
+export const DEFAULT_STEP_ICONS: LucideIcon[] = [FileText, Phone, PenTool, CheckSquare, Hammer];
+
+/** Turns editable step copy into steps with icons (icons repeat if more steps are added). */
+export const withStepIcons = (
+  items: { title: string; description: string }[],
+  icons: LucideIcon[] = DEFAULT_STEP_ICONS,
+): ProcessStep[] => items.map((s, i) => ({ ...s, icon: icons[i % icons.length] }));
+
+const defaultSteps = withStepIcons(HOME_PROCESS.defaults.steps);
 
 interface ProcessStepsProps {
   eyebrow?: string;
   title?: React.ReactNode;
   steps?: ProcessStep[];
   showFullProcessLink?: boolean;
+  fullProcessText?: string;
+  fullProcessLink?: string;
   ctaText?: React.ReactNode;
+  ctaButtonText?: string;
+  ctaButtonLink?: string;
 }
 
 const ProcessSteps = ({
-  eyebrow = "How We Work",
+  eyebrow = HOME_PROCESS.defaults.eyebrow,
   title = (
     <>
-      Our Build
-      <span className="block">Process</span>
+      {HOME_PROCESS.defaults.titleLine1}
+      <span className="block">{HOME_PROCESS.defaults.titleLine2}</span>
     </>
   ),
   steps = defaultSteps,
   showFullProcessLink = true,
-  ctaText = "Ready to start? Begin with a free quote.",
+  fullProcessText = HOME_PROCESS.defaults.fullProcessText,
+  fullProcessLink = HOME_PROCESS.defaults.fullProcessLink,
+  ctaText = HOME_PROCESS.defaults.ctaText,
+  ctaButtonText = HOME_PROCESS.defaults.ctaButtonText,
+  ctaButtonLink = HOME_PROCESS.defaults.ctaButtonLink,
 }: ProcessStepsProps) => {
   return (
     <section id="our-process" className="bg-white border-y border-gray-100 py-8 md:py-12">
@@ -94,10 +81,10 @@ const ProcessSteps = ({
           </div>
           {showFullProcessLink && (
             <Link
-              href="/process"
+              href={fullProcessLink}
               className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-primary hover:underline"
             >
-              See Full Process <ArrowRight size={12} />
+              {fullProcessText} <ArrowRight size={12} />
             </Link>
           )}
         </div>
@@ -113,7 +100,7 @@ const ProcessSteps = ({
           >
             {steps.map((step, i) => (
               <div
-                key={step.title}
+                key={i}
                 className="group relative bg-white hover:bg-gray-50 transition-colors p-8 flex flex-col"
               >
                 <div className="absolute top-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
@@ -151,11 +138,11 @@ const ProcessSteps = ({
         <div className="mt-6 bg-primary/5 border border-primary/20 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-gray-600">{ctaText}</p>
           <Link
-            href="/quote"
+            href={ctaButtonLink}
             id="process-start-quote-btn"
             className="group inline-flex items-center gap-4 bg-primary text-black pl-8 pr-3 py-3 font-black uppercase tracking-wider text-sm shadow-lg shadow-primary/25 hover:-translate-y-0.5 hover:shadow-xl transition-all whitespace-nowrap"
           >
-            Get a Free Quote
+            {ctaButtonText}
             <span className="w-10 h-10 rounded-full bg-black text-primary flex items-center justify-center group-hover:translate-x-1 transition-transform">
               <ArrowRight size={16} />
             </span>
@@ -166,37 +153,7 @@ const ProcessSteps = ({
   );
 };
 
-export const aboutBuildingProcessSteps: ProcessStep[] = [
-  {
-    title: "Share Your Business Idea",
-    description:
-      "Tell us about your food concept, menu, equipment needs, and business goals. We learn what you need before planning your custom build.",
-    icon: Lightbulb,
-  },
-  {
-    title: "Plan Your Custom Build",
-    description:
-      "We plan the kitchen layout, equipment placement, storage, serving areas, and workflow around your specific business needs.",
-    icon: Layout,
-  },
-  {
-    title: "Build Your Food Truck or Trailer",
-    description:
-      "Our team turns the approved design into a custom food truck or trailer using quality materials, reliable equipment, and professional construction.",
-    icon: Truck,
-  },
-  {
-    title: "Quality & Compliance Checks",
-    description:
-      "We review the completed build to ensure the important details, functionality, and applicable requirements are properly addressed.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Ready for Your Business",
-    description:
-      "Once your custom food truck or trailer is complete, it is ready to help you take your food business on the road and start serving your customers.",
-    icon: Rocket,
-  },
-];
+/** Icons for the About page steps, assigned in order. */
+export const ABOUT_STEP_ICONS: LucideIcon[] = [Lightbulb, Layout, Truck, ShieldCheck, Rocket];
 
 export default ProcessSteps;

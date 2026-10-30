@@ -3,13 +3,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, Youtube, Linkedin, Clock } from "lucide-react";
 import Container from "./ui/Container";
-import { GlobalSettings } from "@/lib/db";
+import type { GlobalSettings } from "@/lib/db";
+import { SITE_FOOTER, type SiteFooterContent } from "@/lib/pageContent/pages/site";
 
 interface FooterProps {
   settings: GlobalSettings;
+  /** Footer copy and links from Admin → Page Content (site.footer) */
+  content?: SiteFooterContent;
 }
 
-const Footer = ({ settings }: FooterProps) => {
+const Footer = ({ settings, content = SITE_FOOTER.defaults }: FooterProps) => {
   return (
     <footer className="bg-secondary text-white pt-0 pb-8">
       {/* Gradient separator */}
@@ -30,7 +33,7 @@ const Footer = ({ settings }: FooterProps) => {
               </div>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
-              Elite Steel Concepts designs & builds custom food trucks and trailers in Manassas, VA. Premium mobile kitchens crafted for performance. Get a free quote today!
+              {content.about}
             </p>
             <div className="flex space-x-4">
               {settings.facebook && (
@@ -63,22 +66,12 @@ const Footer = ({ settings }: FooterProps) => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">Explore</h3>
+            <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">{content.exploreHeading}</h3>
             <ul className="space-y-3">
-              {[
-                { name: "Home", href: "/" },
-                { name: "About Us", href: "/about" },
-                { name: "Services", href: "/services" },
-                { name: "Locations Directory", href: "/locations" },
-                { name: "Process", href: "/process" },
-                { name: "Portfolio", href: "/portfolio" },
-                { name: "Testimonials", href: "/testimonials" },
-                { name: "Compliance", href: "/compliance" },
-                { name: "Blog", href: "/blog" }
-              ].map((item) => (
-                <li key={item.name}>
+              {content.exploreLinks.map((item, i) => (
+                <li key={i}>
                   <Link href={item.href} className="text-gray-400 hover:text-white transition-colors text-sm">
-                    {item.name}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -87,18 +80,12 @@ const Footer = ({ settings }: FooterProps) => {
 
           {/* Services */}
           <div>
-            <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">Services</h3>
+            <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">{content.servicesHeading}</h3>
              <ul className="space-y-3">
-              {[
-                { name: "Custom Food Trucks", href: "/services/custom-food-trucks" },
-                { name: "Custom Food Trailers", href: "/services/custom-food-trailers" },
-                { name: "Repairs & Upgrades", href: "/services/repairs-and-upgrades" },
-                { name: "Design & Consultation", href: "/services/design-and-consultation" },
-                { name: "Fleet Expansion", href: "/services/fleet-expansion" }
-              ].map((item) => (
-                <li key={item.name}>
+              {content.serviceLinks.map((item, i) => (
+                <li key={i}>
                   <Link href={item.href} className="text-gray-400 hover:text-white transition-colors text-sm">
-                    {item.name}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -107,7 +94,7 @@ const Footer = ({ settings }: FooterProps) => {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">Contact Us</h3>
+            <h3 className="text-lg font-bold uppercase tracking-wider mb-6 text-primary">{content.contactHeading}</h3>
             <ul className="space-y-4">
               <li className="flex items-start">
                 <MapPin className="w-5 h-5 text-primary mr-3 mt-0.5 shrink-0" />
@@ -134,13 +121,18 @@ const Footer = ({ settings }: FooterProps) => {
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center bg-secondary">
           <p className="text-gray-500 text-xs mb-4 md:mb-0">
-            &copy; {new Date().getFullYear()} <a href="https://www.facebook.com/EliteSteelConcepts" className="text-white hover:text-primary transition-colors">Elite Steel Concepts</a>. All rights reserved.
+            &copy; {new Date().getFullYear()}{" "}
+            {content.copyrightLink ? (
+              <a href={content.copyrightLink} className="text-white hover:text-primary transition-colors">{content.copyrightName}</a>
+            ) : (
+              <span className="text-white">{content.copyrightName}</span>
+            )}
+            . All rights reserved.
           </p>
           <div className="flex space-x-6">
-            <Link href="/locations" className="text-gray-500 hover:text-white text-xs">Locations</Link>
-            <Link href="/privacy" className="text-gray-500 hover:text-white text-xs">Privacy Policy</Link>
-            <Link href="/terms" className="text-gray-500 hover:text-white text-xs">Terms of Service</Link>
-            <Link href="/sitemap.xml" className="text-gray-500 hover:text-white text-xs">Sitemap</Link>
+            {content.bottomLinks.map((item, i) => (
+              <Link key={i} href={item.href} className="text-gray-500 hover:text-white text-xs">{item.label}</Link>
+            ))}
           </div>
         </div>
       </Container>
