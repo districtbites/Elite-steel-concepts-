@@ -14,10 +14,11 @@ import {
   Wrench,
 } from "lucide-react";
 import Container from "@/components/ui/Container";
-import { getLocations, getLocationBySlug, getSEO, getPageSEO, getSettings } from "@/lib/db";
+import { getLocations, getLocationBySlug, getSEO, getPageSEO, getSettings, getPosts } from "@/lib/db";
 import { getLinkedPageSections } from "@/lib/linkablePages";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import PageJsonLd from "@/components/PageJsonLd";
+import SearchReferrerRedirect from "@/components/SearchReferrerRedirect";
 
 interface PageProps {
   params: Promise<{ city: string }>;
@@ -60,10 +61,16 @@ export default async function LocationPage({ params }: PageProps) {
   const location = await getLocationBySlug(city);
   if (!location) return notFound();
 
-  const [settings, linked] = await Promise.all([
+  const [settings, linked, posts] = await Promise.all([
     getSettings(),
     getLinkedPageSections(`location:${location.slug}`),
+    getPosts(),
   ]);
+
+  // Search-engine visitors are sent to this blog post (only if it is published)
+  const redirectPost = location.searchRedirectPostId
+    ? posts.find((p) => p.id === location.searchRedirectPostId && p.status === "Published")
+    : undefined;
 
   // Nearby locations: prioritize same state, then regional neighbors
   const allLocations = await getLocations();
@@ -90,6 +97,7 @@ export default async function LocationPage({ params }: PageProps) {
   return (
     <>
       <PageJsonLd pageId={`location-${location.slug}`} />
+      {redirectPost && <SearchReferrerRedirect to={`/blog/${redirectPost.slug}`} />}
 
       {/* ─── HERO ──────────────────────────────────────────────── */}
       <section className="relative bg-[#0a0a0a] text-white overflow-hidden">

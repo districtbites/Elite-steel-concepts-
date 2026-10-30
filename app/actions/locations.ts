@@ -57,6 +57,7 @@ export async function saveLocation(formData: FormData) {
         metaDescription: formData.get("metaDescription") as string,
         // Checkbox: only present in FormData when checked
         published: formData.get("published") === "true",
+        searchRedirectPostId: ((formData.get("searchRedirectPostId") as string) || "").trim() || undefined,
     };
 
     if (id) {

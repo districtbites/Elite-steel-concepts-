@@ -205,6 +205,8 @@ export interface LocationEntry {
     titleTag: string;
     metaDescription: string;
     published: boolean;
+    // Blog post (id) that visitors arriving from a search engine are sent to; empty = no redirect
+    searchRedirectPostId?: string;
 }
 
 export interface Project {

@@ -1,17 +1,97 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Button from "@/components/ui/Button";
-import { LocationEntry } from "@/lib/db";
-import { Save, Plus, X, Globe, MapPin, List, Shield, HelpCircle, ArrowLeft } from "lucide-react";
+import { LocationEntry, BlogPost } from "@/lib/db";
+import { Save, Plus, X, Globe, MapPin, List, Shield, HelpCircle, ArrowLeft, Search, ChevronDown, CornerUpRight } from "lucide-react";
 import Link from "next/link";
+
+type PostOption = Pick<BlogPost, "id" | "title" | "slug" | "status">;
 
 interface LocationEditorProps {
     action: (formData: FormData) => Promise<void>;
     initialData?: LocationEntry;
+    posts: PostOption[];
 }
 
-export default function LocationEditor({ action, initialData }: LocationEditorProps) {
+/** Searchable single-select of blog posts. Submits the chosen post id as `name`. */
+function BlogPostSelect({ name, posts, defaultValue }: { name: string; posts: PostOption[]; defaultValue?: string }) {
+    const [value, setValue] = useState(defaultValue || "");
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const rootRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!open) return;
+        const onMouseDown = (e: MouseEvent) => {
+            if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+        };
+        document.addEventListener("mousedown", onMouseDown);
+        return () => document.removeEventListener("mousedown", onMouseDown);
+    }, [open]);
+
+    const selected = posts.find(p => p.id === value);
+    const visible = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        return q ? posts.filter(p => p.title.toLowerCase().includes(q) || p.slug.includes(q)) : posts;
+    }, [posts, query]);
+
+    return (
+        <div ref={rootRef} className="relative">
+            <input type="hidden" name={name} value={value} />
+            <button
+                type="button"
+                onClick={() => setOpen(o => !o)}
+                className={`w-full flex items-center justify-between gap-2 bg-admin-bg border p-4 text-left text-xs font-bold outline-none transition-colors ${open ? "border-primary" : "border-admin-border"}`}
+            >
+                <span className={`truncate ${selected ? "text-admin-text" : "text-admin-muted"}`}>
+                    {selected ? selected.title : value ? "Selected post no longer exists" : "No redirect (stay on this page)"}
+                </span>
+                <ChevronDown size={14} className={`shrink-0 text-admin-muted transition-transform ${open ? "rotate-180" : ""}`} />
+            </button>
+
+            {open && (
+                <div className="absolute z-40 left-0 right-0 mt-1 border border-primary bg-admin-bg shadow-xl">
+                    <div className="flex items-center gap-2 p-2 border-b border-admin-border">
+                        <Search size={13} className="text-admin-muted shrink-0" />
+                        <input
+                            autoFocus
+                            value={query}
+                            onChange={e => setQuery(e.target.value)}
+                            onKeyDown={e => { if (e.key === "Enter") e.preventDefault(); if (e.key === "Escape") setOpen(false); }}
+                            placeholder="Search blog posts..."
+                            className="flex-1 bg-transparent text-xs text-admin-text outline-none placeholder:text-admin-muted"
+                        />
+                    </div>
+                    <ul className="max-h-64 overflow-y-auto">
+                        <li>
+                            <button type="button" onClick={() => { setValue(""); setOpen(false); }} className={`w-full px-3 py-2 text-left text-xs font-bold ${!value ? "bg-primary/10 text-primary" : "text-admin-muted hover:bg-admin-surface"}`}>
+                                No redirect (stay on this page)
+                            </button>
+                        </li>
+                        {visible.map(p => (
+                            <li key={p.id}>
+                                <button
+                                    type="button"
+                                    onClick={() => { setValue(p.id); setOpen(false); }}
+                                    className={`w-full px-3 py-2 text-left ${p.id === value ? "bg-primary/10" : "hover:bg-admin-surface"}`}
+                                >
+                                    <span className="block text-xs font-bold text-admin-text truncate">{p.title}</span>
+                                    <span className="block text-[10px] font-mono text-admin-muted truncate">
+                                        /blog/{p.slug}{p.status !== "Published" && " · DRAFT (redirect inactive)"}
+                                    </span>
+                                </button>
+                            </li>
+                        ))}
+                        {visible.length === 0 && <li className="px-3 py-6 text-center text-[11px] text-admin-muted">No posts match your search.</li>}
+                    </ul>
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default function LocationEditor({ action, initialData, posts }: LocationEditorProps) {
     const [isPending, startTransition] = useTransition();
     const [localDetails, setLocalDetails] = useState<string[]>(initialData?.localDetails || []);
     const [newDetail, setNewDetail] = useState("");
@@ -128,6 +208,17 @@ export default function LocationEditor({ action, initialData }: LocationEditorPr
                                 <span className="text-[10px] font-black uppercase tracking-widest text-admin-text block">Publish to Live Site</span>
                                 <span className="text-[9px] text-admin-muted">When checked, this page is visible at /locations/slug</span>
                             </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase text-admin-text tracking-widest ml-1 flex items-center gap-1.5">
+                                <CornerUpRight size={12} className="text-primary" /> Search Visitor Redirect (Blog)
+                            </label>
+                            <BlogPostSelect name="searchRedirectPostId" posts={posts} defaultValue={initialData?.searchRedirectPostId} />
+                            <p className="text-[10px] text-admin-muted ml-1 leading-relaxed">
+                                Visitors who land on this city page from Google/Bing are sent to the selected blog.
+                                Visitors who open it from the Locations page or anywhere else on the site stay here.
+                            </p>
                         </div>
                     </div>
 

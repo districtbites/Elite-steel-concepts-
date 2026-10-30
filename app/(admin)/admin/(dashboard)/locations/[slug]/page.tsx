@@ -1,13 +1,13 @@
 import LocationEditor from "@/components/admin/LocationEditor";
 import { saveLocation, deleteLocation } from "@/app/actions/locations";
-import { getLocationBySlug } from "@/lib/db";
+import { getLocationBySlug, getPosts } from "@/lib/db";
 import { notFound, redirect } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import Button from "@/components/ui/Button";
 
 export default async function EditLocationPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const location = await getLocationBySlug(slug);
+    const [location, posts] = await Promise.all([getLocationBySlug(slug), getPosts()]);
 
     if (!location) {
         notFound();
@@ -28,7 +28,7 @@ export default async function EditLocationPage({ params }: { params: Promise<{ s
                     </Button>
                 </form>
             </div>
-            <LocationEditor action={saveLocation} initialData={location} />
+            <LocationEditor action={saveLocation} initialData={location} posts={posts.map(({ id, title, slug, status }) => ({ id, title, slug, status }))} />
         </div>
     );
 }
