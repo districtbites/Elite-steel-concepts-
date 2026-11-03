@@ -2,6 +2,7 @@ import React from "react";
 import { getPostBySlug, getPosts, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown, normalizeInternalTarget, getRulesForPost, postTargetKey } from "@/lib/internalLinks";
 import { renderTableHtml, replaceMarkdownTables, type TableClasses } from "@/lib/markdownTable";
+import { findFaqBlocks, plainAnswer, renderFaqHtml, replaceFaqBlocks, type FaqBlock, type FaqClasses } from "@/lib/blogFaq";
 import { absoluteUrl, businessRef, toIsoDate, breadcrumbSchema, faqSchema } from "@/lib/schema";
 import JsonLd from "@/components/JsonLd";
 import Container from "@/components/ui/Container";
@@ -85,6 +86,29 @@ const ARTICLE_TABLE_CLASSES: TableClasses = {
   totalRow: "bg-primary/10! font-black text-secondary border-t-2 border-primary",
 };
 
+// Same look as the "FAQs" accordion at the end of the article
+const ARTICLE_FAQ_CLASSES: FaqClasses = {
+  wrapper: "my-14 border-t-[3px] border-black pt-10",
+  title: "text-3xl font-black uppercase text-black tracking-tighter mb-8",
+  list: "space-y-px bg-gray-200 border border-gray-200",
+  item: "group bg-white",
+  summary: "flex items-center justify-between p-6 cursor-pointer font-bold text-black hover:text-primary transition-colors list-none text-base border-l-2 border-transparent group-open:border-primary",
+  icon: "ml-4 shrink-0 text-primary font-black transition-transform group-open:rotate-45 text-xl leading-none",
+  answer: "px-6 pb-6 text-gray-600 leading-relaxed text-sm bg-gray-50/50",
+  link: "text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors",
+  strong: "font-black text-secondary",
+};
+
+// FAQ blocks are swapped for a token before the article is split and parsed, then rendered in place
+const FAQ_TOKEN = (i: number) => `@@FAQBLOCK${i}@@`;
+const PARAGRAPH_OPEN = '<p class="mb-6 leading-relaxed text-gray-600">';
+function injectFaqBlocks(html: string, blocks: FaqBlock[]) {
+  return html
+    .replace(/@@FAQBLOCK(\d+)@@/g, (_m, i: string) =>
+      blocks[Number(i)] ? `</p>${renderFaqHtml(blocks[Number(i)], ARTICLE_FAQ_CLASSES, normalizeInternalTarget)}${PARAGRAPH_OPEN}` : "")
+    .replace(/<p class="mb-6 leading-relaxed text-gray-600">\s*<\/p>/g, ""); // drop paragraphs left empty around a block
+}
+
 const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const renderTableCell = (cell: string) =>
   escapeHtml(cell).replace(/\*\*(.+?)\*\*/g, '<strong class="font-black text-secondary">$1</strong>');
@@ -123,10 +147,22 @@ export default async function BlogDetailsPage({ params }: PageProps) {
     .filter(p => p.id !== post.id && p.status === "Published")
     .slice(0, 3);
 
-  const faqs = extractFAQs(updatedContent);
-  const [firstHalf, secondHalf] = splitContentAtMidpoint(updatedContent);
-  const firstHalfHtml = parseContent(firstHalf, post.title);
-  const secondHalfHtml = parseContent(secondHalf, post.title);
+  // FAQ blocks added with the editor's FAQ builder (rendered in place)
+  const normalizedContent = updatedContent.replace(/\r\n?/g, "\n");
+  const faqBlocks = findFaqBlocks(normalizedContent).map((b) => b.block);
+  const contentWithTokens = replaceFaqBlocks(normalizedContent, (_b, i) => `\n\n${FAQ_TOKEN(i)}\n\n`);
+
+  // Older posts mark FAQs with "### Q:" headings (listed at the end of the article)
+  const faqs = extractFAQs(contentWithTokens);
+  const [firstHalf, secondHalf] = splitContentAtMidpoint(contentWithTokens);
+  const firstHalfHtml = injectFaqBlocks(parseContent(firstHalf, post.title), faqBlocks);
+  const secondHalfHtml = injectFaqBlocks(parseContent(secondHalf, post.title), faqBlocks);
+
+  // One FAQPage schema for every question on the page
+  const schemaFaqs = [
+    ...faqs,
+    ...faqBlocks.flatMap((b) => b.items.map((i) => ({ question: i.question, answer: plainAnswer(i.answer) }))),
+  ].filter((f, i, all) => f.answer && all.findIndex((x) => x.question === f.question) === i);
   const quickAnswer = post.metaDescription || post.excerpt || "";
 
   // Article + FAQ JSON-LD schema
@@ -151,7 +187,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
       { name: post.title, path: `/blog/${post.slug}` },
     ]),
     articleSchema,
-    ...(faqs.length > 0 ? [faqSchema(faqs)] : []),
+    ...(schemaFaqs.length > 0 ? [faqSchema(schemaFaqs)] : []),
   ];
 
   return (

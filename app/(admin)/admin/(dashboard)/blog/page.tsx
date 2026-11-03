@@ -27,16 +27,29 @@ const categoryKey = (cat?: string) => cat?.trim() || UNCATEGORIZED;
 export default async function AdminBlogPage({
  searchParams,
 }: {
- searchParams: Promise<{ category?: string }>;
+ searchParams: Promise<{ category?: string; status?: string }>;
 }) {
- const { category: activeCategory } = await searchParams;
+ const { category: activeCategory, status } = await searchParams;
+ const activeStatus = status === "live" || status === "draft" ? status : undefined;
  const allPosts = await getPosts();
  const publishedCount = allPosts.filter((p) => p.status ==="Published").length;
  const draftCount = allPosts.filter((p) => p.status ==="Draft").length;
- const categories = Array.from(new Set(allPosts.map((p) => categoryKey(p.category))));
- const posts = activeCategory
- ? allPosts.filter((p) => categoryKey(p.category) === activeCategory)
+
+ // Status tab first, then category tabs within it (counts follow the active status)
+ const statusPosts = activeStatus
+ ? allPosts.filter((p) => (activeStatus === "draft" ? p.status === "Draft" : p.status === "Published"))
  : allPosts;
+ const categories = Array.from(new Set(statusPosts.map((p) => categoryKey(p.category))));
+ const posts = activeCategory
+ ? statusPosts.filter((p) => categoryKey(p.category) === activeCategory)
+ : statusPosts;
+ const blogHref = (next: { category?: string; status?: string }) => {
+ const params = new URLSearchParams();
+ if (next.status) params.set("status", next.status);
+ if (next.category) params.set("category", next.category);
+ const qs = params.toString();
+ return qs ? `/admin/blog?${qs}` : "/admin/blog";
+ };
  const tabClass = (active: boolean) =>
  `px-5 py-2 text-[10px] font-black uppercase tracking-widest border transition-all ${
  active
@@ -111,28 +124,54 @@ export default async function AdminBlogPage({
  </div>
  </div>
 
+ {/* ═══════ STATUS TABS ═══════ */}
+ <div className="flex flex-wrap items-center gap-0 border-b-2 border-admin-border">
+ {[
+ { id: undefined, label: "All Articles", count: allPosts.length, dot: "bg-admin-muted" },
+ { id: "live", label: "Live", count: publishedCount, dot: "bg-green-500" },
+ { id: "draft", label: "Drafts", count: draftCount, dot: "bg-amber-400" },
+ ].map((tab) => {
+ const active = activeStatus === tab.id;
+ return (
+ <Link
+ key={tab.label}
+ href={blogHref({ status: tab.id })}
+ className={`-mb-0.5 flex items-center gap-2.5 px-6 py-3.5 text-[11px] font-black uppercase tracking-widest border-b-2 transition-colors ${
+ active ? "border-primary text-admin-text" : "border-transparent text-admin-muted hover:text-admin-text"
+ }`}
+ >
+ <span className={`size-2 ${tab.dot}`} />
+ {tab.label}
+ <span className={`px-1.5 py-0.5 text-[10px] ${active ? "bg-primary text-black" : "bg-admin-surface text-admin-muted"}`}>{tab.count}</span>
+ </Link>
+ );
+ })}
+ </div>
+
  {/* ═══════ CATEGORY TAGS ═══════ */}
  {categories.length > 0 && (
  <div className="flex flex-wrap gap-2">
- <Link href="/admin/blog" className={tabClass(!activeCategory)}>
- All ({allPosts.length})
+ <Link href={blogHref({ status: activeStatus })} className={tabClass(!activeCategory)}>
+ All ({statusPosts.length})
  </Link>
  {categories.map((cat) => (
  <Link
  key={cat}
- href={`/admin/blog?category=${encodeURIComponent(cat)}`}
+ href={blogHref({ status: activeStatus, category: cat })}
  className={tabClass(activeCategory === cat)}
  >
- {cat === UNCATEGORIZED ?"Uncategorized" : cat} ({allPosts.filter((p) => categoryKey(p.category) === cat).length})
+ {cat === UNCATEGORIZED ?"Uncategorized" : cat} ({statusPosts.filter((p) => categoryKey(p.category) === cat).length})
  </Link>
  ))}
  </div>
  )}
 
  {/* ═══════ POSTS LIST ═══════ */}
- {posts.length === 0 && activeCategory ? (
+ {posts.length === 0 && (activeCategory || activeStatus) ? (
  <div className="bg-admin-surface border border-admin-border shadow-sm p-16 text-center">
- <p className="text-admin-muted text-sm font-medium mb-6">No articles in this category.</p>
+ <p className="text-admin-muted text-sm font-medium mb-6">
+ {activeStatus === "draft" && !activeCategory ? "No draft articles. Set an article's status to Draft to keep it here until you publish it." : "No articles match this filter."}
+ </p>
  <Link href="/admin/blog" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
  View all articles
  </Link>

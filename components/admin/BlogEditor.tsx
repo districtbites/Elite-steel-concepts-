@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from"react";
 import {
   Save, Image as ImageIcon, Type, Layout, List, Link as LinkIcon, CheckCircle,
   Hash, Eye, Bold, Italic, Minus, Quote, Table, ArrowLeft, FileText, AlertCircle, Maximize2, SplitSquareHorizontal,
-  Link2, Sparkles, ExternalLink
+  Link2, Sparkles, ExternalLink, HelpCircle
 } from "lucide-react";
 import { quickUploadImage } from "@/app/actions/blog";
 import { testAutoLinkSandboxAction } from "@/app/actions/internalLinks";
@@ -12,6 +12,8 @@ import Link from "next/link";
 import Image from "next/image";
 import TableBuilderModal, { ADMIN_TABLE_CLASSES } from "@/components/admin/TableBuilderModal";
 import { findTableAt, renderTableHtml, replaceMarkdownTables, type MarkdownTable } from "@/lib/markdownTable";
+import FaqBuilderModal, { ADMIN_FAQ_CLASSES } from "@/components/admin/FaqBuilderModal";
+import { findFaqBlockAt, renderFaqHtml, replaceFaqBlocks, type FaqBlock } from "@/lib/blogFaq";
 
 interface BlogEditorProps {
  action: (formData: FormData) => void;
@@ -23,6 +25,7 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  // Normalise CRLF so textarea caret offsets match the string (browsers report offsets on "\n" text)
  const [content, setContent] = useState((initialData?.content ||"").replace(/\r\n?/g,"\n"));
  const [tableEditor, setTableEditor] = useState<{ initial: MarkdownTable | null; start: number; end: number } | null>(null);
+ const [faqEditor, setFaqEditor] = useState<{ initial: FaqBlock | null; start: number; end: number } | null>(null);
  const [uploading, setUploading] = useState(false);
  const [title, setTitle] = useState(initialData?.title ||"");
  const [featuredImagePreview, setFeaturedImagePreview] = useState(initialData?.image ||"");
@@ -116,6 +119,23 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  setTableEditor(null);
  };
 
+ // Open the FAQ builder: edits the FAQ block under the caret, otherwise inserts a new one
+ const openFaqBuilder = () => {
+ const textarea = textareaRef.current;
+ const isFocused = !!textarea && document.activeElement === textarea;
+ const start = isFocused ? textarea.selectionStart : selectionRef.current.start;
+ const end = isFocused ? textarea.selectionEnd : selectionRef.current.end;
+ const found = textarea ? findFaqBlockAt(content, start) : null;
+ setFaqEditor(found ? { initial: found.block, start: found.start, end: found.end } : { initial: null, start, end });
+ };
+
+ const handleFaqSubmit = (markdown: string) => {
+ if (!faqEditor) return;
+ const { initial, start, end } = faqEditor;
+ handleInsert(initial ? markdown : `\n\n${markdown}\n\n`, textareaRef.current ? { start, end } : undefined);
+ setFaqEditor(null);
+ };
+
  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
  const file = e.target.files?.[0];
  if (!file) return;
@@ -156,7 +176,8 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  ];
 
  const renderPreview = (md: string) => {
- let html = replaceMarkdownTables(md.replace(/\r\n?/g,"\n"), (t) => renderTableHtml(t, ADMIN_TABLE_CLASSES))
+ const normalized = replaceFaqBlocks(md.replace(/\r\n?/g,"\n"), (b) => `\n${renderFaqHtml(b, ADMIN_FAQ_CLASSES)}\n`);
+ let html = replaceMarkdownTables(normalized, (t) => renderTableHtml(t, ADMIN_TABLE_CLASSES))
  .replace(/^### (.+)$/gm, '<h3 class="text-xl font-black uppercase text-admin-text mt-8 mb-4">$1</h3>')
  .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-black uppercase text-admin-text mt-12 mb-6 border-l-[3px] border-primary pl-4 leading-tight">$1</h2>')
  .replace(/\*\*(.+?)\*\*/g, '<strong class="font-black text-admin-text">$1</strong>')
@@ -230,6 +251,9 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  <button type="button" onClick={openTableBuilder} className="p-2 text-admin-muted hover:text-admin-text hover:bg-gray-200 transition-colors" title="Insert / edit table (place the cursor inside a table to edit it)">
  <Table size={14} />
  </button>
+ <button type="button" onClick={openFaqBuilder} className="p-2 text-admin-muted hover:text-admin-text hover:bg-gray-200 transition-colors" title="Insert / edit FAQ (place the cursor inside a FAQ block to edit it)">
+ <HelpCircle size={14} />
+ </button>
  <div className="w-px h-6 bg-gray-300 mx-2 self-center" />
  <button type="button" onClick={() => fileInputRef.current?.click()} className={`p-2 transition-colors ${uploading ?"text-primary animate-pulse" :"text-admin-muted hover:text-admin-text hover:bg-gray-200"}`} title="Insert Image">
  <ImageIcon size={14} />
@@ -281,6 +305,9 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleContentImageUpload} />
  {tableEditor && (
  <TableBuilderModal initial={tableEditor.initial} onSubmit={handleTableSubmit} onClose={() => setTableEditor(null)} />
+ )}
+ {faqEditor && (
+ <FaqBuilderModal initial={faqEditor.initial} onSubmit={handleFaqSubmit} onClose={() => setFaqEditor(null)} />
  )}
  </div>
  </div>
