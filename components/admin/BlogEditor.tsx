@@ -11,10 +11,35 @@ import { testAutoLinkSandboxAction } from "@/app/actions/internalLinks";
 import Link from "next/link";
 import Image from "next/image";
 import TableBuilderModal, { ADMIN_TABLE_CLASSES } from "@/components/admin/TableBuilderModal";
-import { findTableAt, renderTableHtml, replaceMarkdownTables, type MarkdownTable } from "@/lib/markdownTable";
+import { findTableAt, type MarkdownTable } from "@/lib/markdownTable";
 import FaqBuilderModal, { ADMIN_FAQ_CLASSES } from "@/components/admin/FaqBuilderModal";
-import { findFaqBlockAt, renderFaqHtml, replaceFaqBlocks, type FaqBlock } from "@/lib/blogFaq";
+import { findFaqBlockAt, type FaqBlock } from "@/lib/blogFaq";
 import { slugify } from "@/lib/slug";
+import { renderBlogMarkdown, type BlogMarkdownClasses } from "@/lib/blogMarkdown";
+
+// Same renderer as the public article (admin colours), so the preview matches the live page
+const ADMIN_PREVIEW_CLASSES: BlogMarkdownClasses = {
+ h2:"text-2xl font-black uppercase text-admin-text mt-12 mb-6 border-l-[3px] border-primary pl-4 leading-tight",
+ h3:"text-xl font-black uppercase text-admin-text mt-8 mb-4",
+ h4:"text-lg font-black uppercase text-admin-text mt-6 mb-3",
+ p:"text-admin-muted leading-relaxed mb-6",
+ ul:"mb-6",
+ li:"flex items-start gap-3 mb-2",
+ bullet:"w-1 h-1 bg-primary mt-2.5 shrink-0",
+ liText:"text-admin-muted",
+ ol:"mb-6 pl-6 list-decimal space-y-2 marker:text-primary marker:font-black",
+ olLi:"pl-2 text-admin-muted",
+ blockquote:"border-l-4 border-primary pl-4 py-2 my-6 italic text-admin-muted bg-admin-bg",
+ hr:"my-10 border-admin-border",
+ link:"text-primary font-bold underline hover:text-orange-600",
+ strong:"font-black text-admin-text",
+ em:"italic",
+ figure:"block my-8 border border-admin-border overflow-hidden",
+ img:"w-full object-cover",
+ caption:"block text-[9px] font-black uppercase tracking-[0.2em] text-admin-muted p-3 text-center bg-admin-bg border-t border-admin-border",
+ table: ADMIN_TABLE_CLASSES,
+ faq: ADMIN_FAQ_CLASSES,
+};
 
 interface BlogEditorProps {
  action: (formData: FormData) => void;
@@ -181,23 +206,7 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  { icon: <LinkIcon size={14} />, text:"[Link Text](url)", title:"Link" },
  ];
 
- const renderPreview = (md: string) => {
- const normalized = replaceFaqBlocks(md.replace(/\r\n?/g,"\n"), (b) => `\n${renderFaqHtml(b, ADMIN_FAQ_CLASSES)}\n`);
- let html = replaceMarkdownTables(normalized, (t) => renderTableHtml(t, ADMIN_TABLE_CLASSES))
- .replace(/^### (.+)$/gm, '<h3 class="text-xl font-black uppercase text-admin-text mt-8 mb-4">$1</h3>')
- .replace(/^## (.+)$/gm, '<h2 class="text-2xl font-black uppercase text-admin-text mt-12 mb-6 border-l-[3px] border-primary pl-4 leading-tight">$1</h2>')
- .replace(/\*\*(.+?)\*\*/g, '<strong class="font-black text-admin-text">$1</strong>')
- .replace(/\*(.+?)\*/g, '<em class="italic">$1</em>')
- .replace(/!\[(.+?)\]\((.+?)\)/g, '<div class="my-8 border border-admin-border overflow-hidden"><img src="$2" alt="$1" class="w-full object-cover" /></div>')
- .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-primary font-bold underline hover:text-orange-600">$1</a>')
- .replace(/^> (.+)$/gm, '<blockquote class="border-l-4 border-primary pl-4 py-2 my-6 italic text-admin-muted bg-admin-bg">$1</blockquote>')
- .replace(/^---$/gm, '<hr class="my-10 border-admin-border" />')
- .replace(/^- (.+)$/gm, '<li class="flex items-start gap-3 mb-2"><div class="w-1 h-1 bg-primary mt-2 shrink-0"></div><span class="text-admin-muted">$1</span></li>')
- .replace(/^\d+\. (.+)$/gm, '<li class="ml-4 text-admin-muted mb-2 list-decimal">$1</li>')
- .replace(/\n\n/g, '</p><p class="text-admin-muted leading-relaxed mb-6">')
- .replace(/\n/g,"<br />");
- return `<p class="text-admin-muted leading-relaxed mb-6">${html}</p>`;
- };
+ const renderPreview = (md: string) => renderBlogMarkdown(md, ADMIN_PREVIEW_CLASSES);
 
  return (
  <div className="space-y-6">

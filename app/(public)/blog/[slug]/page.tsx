@@ -1,8 +1,9 @@
 import React from "react";
 import { getPostBySlug, getPosts, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown, normalizeInternalTarget, getRulesForPost, postTargetKey } from "@/lib/internalLinks";
-import { renderTableHtml, replaceMarkdownTables, type TableClasses } from "@/lib/markdownTable";
+import type { TableClasses } from "@/lib/markdownTable";
 import { findFaqBlocks, plainAnswer, renderFaqHtml, replaceFaqBlocks, type FaqBlock, type FaqClasses } from "@/lib/blogFaq";
+import { renderBlogMarkdown, type BlogMarkdownClasses } from "@/lib/blogMarkdown";
 import { absoluteUrl, businessRef, toIsoDate, breadcrumbSchema, faqSchema } from "@/lib/schema";
 import JsonLd from "@/components/JsonLd";
 import Container from "@/components/ui/Container";
@@ -99,35 +100,49 @@ const ARTICLE_FAQ_CLASSES: FaqClasses = {
   strong: "font-black text-secondary",
 };
 
-// FAQ blocks are swapped for a token before the article is split and parsed, then rendered in place
-const FAQ_TOKEN = (i: number) => `@@FAQBLOCK${i}@@`;
-const PARAGRAPH_OPEN = '<p class="mb-6 leading-relaxed text-gray-600">';
-function injectFaqBlocks(html: string, blocks: FaqBlock[]) {
-  return html
-    .replace(/@@FAQBLOCK(\d+)@@/g, (_m, i: string) =>
-      blocks[Number(i)] ? `</p>${renderFaqHtml(blocks[Number(i)], ARTICLE_FAQ_CLASSES, normalizeInternalTarget)}${PARAGRAPH_OPEN}` : "")
-    .replace(/<p class="mb-6 leading-relaxed text-gray-600">\s*<\/p>/g, ""); // drop paragraphs left empty around a block
-}
+// Same renderer as the admin editor preview, so the article matches what the editor shows
+const ARTICLE_CLASSES: BlogMarkdownClasses = {
+  h2: "text-2xl md:text-3xl font-black uppercase text-secondary mt-12 mb-6 border-l-[3px] border-primary pl-4 tracking-tighter leading-tight",
+  h3: "text-xl md:text-2xl font-black uppercase text-secondary mt-10 mb-4 tracking-tight",
+  h4: "text-lg font-black uppercase text-secondary mt-8 mb-3 tracking-tight",
+  p: "mb-6 leading-relaxed text-gray-600",
+  ul: "mb-6",
+  li: "flex items-start gap-3 mb-3",
+  bullet: "w-1 h-1 bg-primary mt-2.5 shrink-0",
+  liText: "text-gray-600",
+  ol: "mb-6 pl-6 list-decimal space-y-3 marker:text-primary marker:font-black",
+  olLi: "pl-2 text-gray-600",
+  blockquote: "border-l-4 border-primary pl-5 py-3 my-8 italic text-gray-700 bg-gray-50",
+  hr: "my-12 border-gray-200",
+  link: "text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors",
+  strong: "font-black text-secondary",
+  em: "italic",
+  figure: "block my-10 overflow-hidden border border-gray-200",
+  img: "w-full object-cover",
+  caption: "block text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 p-3 text-center bg-gray-50 border-t border-gray-200",
+  table: ARTICLE_TABLE_CLASSES,
+  faq: ARTICLE_FAQ_CLASSES,
+};
 
 const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const renderTableCell = (cell: string) =>
   escapeHtml(cell).replace(/\*\*(.+?)\*\*/g, '<strong class="font-black text-secondary">$1</strong>');
 
-function parseContent(content: string, fallbackAlt = "") {
-  if (!content) return "";
-  // Stored content often uses CRLF; normalise so paragraph and table detection work
-  const normalized = content.replace(/\r\n?/g, "\n");
-  return replaceMarkdownTables(normalized, (t) => renderTableHtml(t, ARTICLE_TABLE_CLASSES, renderTableCell))
-    .replace(/### (.*)/g, '<h3 class="text-xl md:text-2xl font-black uppercase text-secondary mt-10 mb-4 tracking-tight">$1</h3>')
-    .replace(/## (.*)/g, '<h2 class="text-2xl md:text-3xl font-black uppercase text-secondary mt-12 mb-6 border-l-[3px] border-primary pl-4 tracking-tighter leading-tight">$1</h2>')
-    .replace(/!\[(.*?)\]\((.*?)\)/g, (_m, alt: string, src: string) => `<div class="my-10 overflow-hidden border border-gray-200"><img src="${src}" alt="${(alt.trim() || fallbackAlt).replace(/"/g, "&quot;")}" class="w-full object-cover" /><p class="text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 p-3 text-center bg-gray-50 border-t border-gray-200">${alt}</p></div>`)
-    .replace(/\[(.*?)\]\((.*?)\)/g, (_m, text: string, href: string) => `<a href="${normalizeInternalTarget(href)}" class="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors">${text}</a>`)
-    .replace(/\n\n/g, '</p><p class="mb-6 leading-relaxed text-gray-600">')
-    .replace(/^- (.*)/gm, '<li class="flex items-start gap-3 mb-3"><span class="w-1 h-1 bg-primary mt-2.5 shrink-0"></span><span class="text-gray-600">$1</span></li>')
-    // Group consecutive bullet items into a real list
-    .replace(/(?:<li class="flex[^\n]*<\/li>\r?\n?)+/g, (items) => `<ul class="mb-6">${items}</ul>`)
-    // A table is a block element: don't leave it wrapped in a paragraph
-    .replace(/<p class="mb-6 leading-relaxed text-gray-600">\s*(<div class="md-table[\s\S]*?<\/table><\/div>)\s*<\/p>/g, "$1");
+// FAQ blocks are swapped for a token before the article is split in two, then rendered in place
+const FAQ_TOKEN = (i: number) => `@@FAQBLOCK${i}@@`;
+
+function parseContent(content: string, faqBlocks: FaqBlock[], fallbackAlt = "") {
+  return renderBlogMarkdown(content, ARTICLE_CLASSES, {
+    linkHref: normalizeInternalTarget,
+    fallbackAlt,
+    renderTableCell,
+    customBlock: (line) => {
+      const m = /^@@FAQBLOCK(\d+)@@$/.exec(line);
+      if (!m) return null;
+      const block = faqBlocks[Number(m[1])];
+      return block ? renderFaqHtml(block, ARTICLE_FAQ_CLASSES, normalizeInternalTarget) : "";
+    },
+  });
 }
 
 export default async function BlogDetailsPage({ params }: PageProps) {
@@ -160,8 +175,8 @@ export default async function BlogDetailsPage({ params }: PageProps) {
   // Older posts mark FAQs with "### Q:" headings (listed at the end of the article)
   const faqs = extractFAQs(contentWithTokens);
   const [firstHalf, secondHalf] = splitContentAtMidpoint(contentWithTokens);
-  const firstHalfHtml = injectFaqBlocks(parseContent(firstHalf, post.title), faqBlocks);
-  const secondHalfHtml = injectFaqBlocks(parseContent(secondHalf, post.title), faqBlocks);
+  const firstHalfHtml = parseContent(firstHalf, faqBlocks, post.title);
+  const secondHalfHtml = parseContent(secondHalf, faqBlocks, post.title);
 
   // One FAQPage schema for every question on the page
   const schemaFaqs = [
