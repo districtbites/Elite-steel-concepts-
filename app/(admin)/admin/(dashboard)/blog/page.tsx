@@ -17,19 +17,22 @@ import {
  ExternalLink,
  BookOpen,
  PenTool,
+ ChevronLeft,
+ ChevronRight,
 } from"lucide-react";
 import { getPosts } from"@/lib/db";
 import { deleteBlogPost } from"@/app/actions/blog";
 
 const UNCATEGORIZED ="uncategorized";
+const PAGE_SIZE = 10;
 const categoryKey = (cat?: string) => cat?.trim() || UNCATEGORIZED;
 
 export default async function AdminBlogPage({
  searchParams,
 }: {
- searchParams: Promise<{ category?: string; status?: string }>;
+ searchParams: Promise<{ category?: string; status?: string; page?: string }>;
 }) {
- const { category: activeCategory, status } = await searchParams;
+ const { category: activeCategory, status, page } = await searchParams;
  const activeStatus = status === "live" || status === "draft" ? status : undefined;
  const allPosts = await getPosts();
  const publishedCount = allPosts.filter((p) => p.status ==="Published").length;
@@ -40,13 +43,23 @@ export default async function AdminBlogPage({
  ? allPosts.filter((p) => (activeStatus === "draft" ? p.status === "Draft" : p.status === "Published"))
  : allPosts;
  const categories = Array.from(new Set(statusPosts.map((p) => categoryKey(p.category))));
- const posts = activeCategory
+ const filteredPosts = activeCategory
  ? statusPosts.filter((p) => categoryKey(p.category) === activeCategory)
  : statusPosts;
- const blogHref = (next: { category?: string; status?: string }) => {
+
+ // Pagination (10 per page)
+ const totalPages = Math.max(1, Math.ceil(filteredPosts.length / PAGE_SIZE));
+ const currentPage = Math.min(Math.max(1, parseInt(page || "1", 10) || 1), totalPages);
+ const posts = filteredPosts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+ const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1).filter(
+ (n) => n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1
+ );
+
+ const blogHref = (next: { category?: string; status?: string; page?: number }) => {
  const params = new URLSearchParams();
  if (next.status) params.set("status", next.status);
  if (next.category) params.set("category", next.category);
+ if (next.page && next.page > 1) params.set("page", String(next.page));
  const qs = params.toString();
  return qs ? `/admin/blog?${qs}` : "/admin/blog";
  };
@@ -209,6 +222,7 @@ export default async function AdminBlogPage({
  src={post.image}
  alt={post.imageAlt || post.title}
  fill
+ sizes="(min-width: 1024px) 288px, (min-width: 768px) 224px, 100vw"
  className="object-cover group-hover:scale-105 transition-transform duration-700"
  />
  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/20 hidden md:block" />
@@ -312,6 +326,45 @@ export default async function AdminBlogPage({
  </div>
  ))}
  </div>
+ )}
+
+ {/* ═══════ PAGINATION ═══════ */}
+ {totalPages > 1 && (
+ <nav className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-admin-surface border border-admin-border px-5 py-4" aria-label="Pagination">
+ <p className="text-[10px] font-black uppercase tracking-widest text-admin-muted">
+ Showing {(currentPage - 1) * PAGE_SIZE + 1}–{Math.min(currentPage * PAGE_SIZE, filteredPosts.length)} of {filteredPosts.length} articles
+ </p>
+ <div className="flex items-center gap-1">
+ {currentPage > 1 ? (
+ <Link href={blogHref({ status: activeStatus, category: activeCategory, page: currentPage - 1 })} className="flex items-center gap-1 px-3 h-9 border border-admin-border text-[10px] font-black uppercase tracking-widest text-admin-muted hover:border-primary hover:text-primary transition-colors">
+ <ChevronLeft size={14} /> Prev
+ </Link>
+ ) : (
+ <span className="flex items-center gap-1 px-3 h-9 border border-admin-border text-[10px] font-black uppercase tracking-widest text-admin-muted opacity-40"><ChevronLeft size={14} /> Prev</span>
+ )}
+ {pageNumbers.map((n, i) => (
+ <React.Fragment key={n}>
+ {i > 0 && n - pageNumbers[i - 1] > 1 && <span className="px-1 text-admin-muted">…</span>}
+ <Link
+ href={blogHref({ status: activeStatus, category: activeCategory, page: n })}
+ aria-current={n === currentPage ? "page" : undefined}
+ className={`min-w-9 h-9 px-2 flex items-center justify-center text-xs font-black border transition-colors ${
+ n === currentPage ? "bg-primary border-primary text-black" : "border-admin-border text-admin-muted hover:border-primary hover:text-primary"
+ }`}
+ >
+ {n}
+ </Link>
+ </React.Fragment>
+ ))}
+ {currentPage < totalPages ? (
+ <Link href={blogHref({ status: activeStatus, category: activeCategory, page: currentPage + 1 })} className="flex items-center gap-1 px-3 h-9 border border-admin-border text-[10px] font-black uppercase tracking-widest text-admin-muted hover:border-primary hover:text-primary transition-colors">
+ Next <ChevronRight size={14} />
+ </Link>
+ ) : (
+ <span className="flex items-center gap-1 px-3 h-9 border border-admin-border text-[10px] font-black uppercase tracking-widest text-admin-muted opacity-40">Next <ChevronRight size={14} /></span>
+ )}
+ </div>
+ </nav>
  )}
 
  {/* ═══════ CONTENT TIPS CARD ═══════ */}

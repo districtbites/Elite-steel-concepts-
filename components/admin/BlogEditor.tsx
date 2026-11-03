@@ -14,6 +14,7 @@ import TableBuilderModal, { ADMIN_TABLE_CLASSES } from "@/components/admin/Table
 import { findTableAt, renderTableHtml, replaceMarkdownTables, type MarkdownTable } from "@/lib/markdownTable";
 import FaqBuilderModal, { ADMIN_FAQ_CLASSES } from "@/components/admin/FaqBuilderModal";
 import { findFaqBlockAt, renderFaqHtml, replaceFaqBlocks, type FaqBlock } from "@/lib/blogFaq";
+import { slugify } from "@/lib/slug";
 
 interface BlogEditorProps {
  action: (formData: FormData) => void;
@@ -28,6 +29,11 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  const [faqEditor, setFaqEditor] = useState<{ initial: FaqBlock | null; start: number; end: number } | null>(null);
  const [uploading, setUploading] = useState(false);
  const [title, setTitle] = useState(initialData?.title ||"");
+ const [slug, setSlug] = useState<string>(initialData?.slug ||"");
+ const originalSlug: string = initialData?.slug ||"";
+ // What the URL will be after saving (empty field = title-based for new posts, unchanged for existing ones)
+ const effectiveSlug = slugify(slug) || originalSlug || slugify(title);
+ const slugChanged = !!originalSlug && !!slugify(slug) && slugify(slug) !== originalSlug;
  const [featuredImagePreview, setFeaturedImagePreview] = useState(initialData?.image ||"");
  const [imageInputMode, setImageInputMode] = useState<"upload" | "url">(initialData?.image?.startsWith("http") ?"url" :"upload");
  const [imageUrlInput, setImageUrlInput] = useState(initialData?.image?.startsWith("http") ? initialData?.image :"");
@@ -225,6 +231,45 @@ export default function BlogEditor({ action, initialData }: BlogEditorProps) {
  placeholder="ENTER HEADLINE..."
  className="w-full bg-transparent border-b-2 border-admin-border focus:border-primary px-0 py-4 outline-none transition-colors text-3xl font-black text-admin-text uppercase tracking-tighter placeholder:text-gray-200"
  />
+ </div>
+ <div>
+ <div className="flex items-center justify-between mb-2">
+ <label htmlFor="blog-slug" className="text-[10px] font-black uppercase tracking-[0.2em] text-admin-muted">URL Slug</label>
+ <button
+ type="button"
+ onClick={() => setSlug(slugify(title))}
+ disabled={!title.trim()}
+ className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline disabled:opacity-40 disabled:no-underline"
+ >
+ Generate from title
+ </button>
+ </div>
+ <div className="flex items-stretch border border-admin-border bg-admin-bg focus-within:border-primary transition-colors">
+ <span className="hidden sm:flex items-center px-4 text-xs font-mono text-admin-muted border-r border-admin-border bg-admin-surface select-none">/blog/</span>
+ <input
+ id="blog-slug"
+ type="text"
+ name="slug"
+ value={slug}
+ onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/\s+/g,"-"))}
+ onBlur={() => setSlug(slugify(slug))}
+ placeholder={slugify(title) ||"auto-generated-from-title"}
+ className="flex-1 min-w-0 bg-transparent px-4 py-3.5 outline-none font-mono text-sm text-admin-text placeholder:text-admin-muted/60"
+ />
+ </div>
+ <p className="mt-2 text-[10px] text-admin-muted">
+ {effectiveSlug ? (
+ <>Live URL: <span className="font-mono text-admin-text">esteelconcepts.com/blog/{effectiveSlug}</span></>
+ ) : (
+ "Leave empty to generate the URL from the title."
+ )}
+ {!slug.trim() && !originalSlug && title.trim() && <span> · generated from the title</span>}
+ </p>
+ {slugChanged && (
+ <p className="mt-2 text-[10px] font-bold text-amber-500">
+ URL will change. The old link /blog/{originalSlug} will permanently redirect to the new one.
+ </p>
+ )}
  </div>
  <div>
  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-admin-muted mb-2 block">Executive Summary / Subtitle</label>

@@ -8,7 +8,7 @@ import JsonLd from "@/components/JsonLd";
 import Container from "@/components/ui/Container";
 import Section from "@/components/ui/Section";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { ArrowLeft, Calendar, Clock, Phone, ArrowRight, ShieldAlert, FileText, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -133,7 +133,12 @@ function parseContent(content: string, fallbackAlt = "") {
 export default async function BlogDetailsPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-  if (!post) return notFound();
+  if (!post) {
+    // The post's slug was changed: send old links (and Google) to the new URL
+    const moved = (await getPosts()).find((p) => p.previousSlugs?.includes(slug));
+    if (moved) permanentRedirect(`/blog/${moved.slug}`);
+    return notFound();
+  }
 
   const allPosts = await getPosts();
   const rules = await getInternalLinkRules();

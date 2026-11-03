@@ -29,6 +29,8 @@ export interface BlogPost {
     status: "Published" | "Draft";
     content?: string;
     metaDescription?: string;
+    // Earlier slugs of this post; visiting /blog/<old-slug> permanently redirects to the current one
+    previousSlugs?: string[];
 }
 
 export interface Quote {

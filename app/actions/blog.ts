@@ -1,6 +1,7 @@
 "use server";
 
-import { createPost, deletePost, updatePost, getPostById } from "@/lib/db";
+import { createPost, deletePost, updatePost, getPostById, getPosts, type BlogPost } from "@/lib/db";
+import { slugify } from "@/lib/slug";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import fs from "fs/promises";
@@ -43,6 +44,16 @@ async function saveBlogImage(file: File): Promise<string> {
     return mediaPath;
 }
 
+/** `base`, or `base-2`, `base-3`… if another post already uses it (now or as an old URL). */
+function uniqueSlug(base: string, posts: BlogPost[], excludeId?: string): string {
+    const taken = new Set(
+        posts.filter(p => p.id !== excludeId).flatMap(p => [p.slug, ...(p.previousSlugs || [])])
+    );
+    let slug = base;
+    for (let n = 2; taken.has(slug); n++) slug = `${base}-${n}`;
+    return slug;
+}
+
 export async function createBlogPost(formData: FormData) {
     const title = formData.get("title") as string;
     const subtitle = formData.get("subtitle") as string;
@@ -65,7 +76,8 @@ export async function createBlogPost(formData: FormData) {
         imageUrl = await saveBlogImage(imageFile);
     }
 
-    const slug = title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
+    // Custom slug from the editor; without one the slug is built from the title
+    const slug = uniqueSlug(slugify((formData.get("slug") as string) || "") || slugify(title) || Date.now().toString(), await getPosts());
     const readTime = `${Math.ceil(content.length / 1000) || 1} Min Read`;
     const date = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
@@ -127,10 +139,20 @@ export async function updateBlogPost(id: string, formData: FormData) {
         excerpt: content.substring(0, 150).replace(/[#*`]/g, "") + "..."
     };
 
+    // A new custom slug replaces the URL; the old one keeps working as a permanent redirect.
+    // An empty slug field keeps the current URL.
+    const current = await getPostById(id);
+    const customSlug = slugify((formData.get("slug") as string) || "");
+    if (current && customSlug && customSlug !== current.slug) {
+        updates.slug = uniqueSlug(customSlug, await getPosts(), id);
+        updates.previousSlugs = Array.from(new Set([...(current.previousSlugs || []), current.slug])).filter(s => s !== updates.slug);
+    }
+
     await updatePost(id, updates);
 
     revalidatePath("/blog");
-    revalidatePath(`/blog/${formData.get("slug")}`);
+    if (current) revalidatePath(`/blog/${current.slug}`);
+    if (updates.slug) revalidatePath(`/blog/${updates.slug}`);
     revalidatePath("/admin/blog");
     revalidatePath("/sitemap.xml");
     revalidatePath("/", "layout");
