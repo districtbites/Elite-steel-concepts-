@@ -108,8 +108,9 @@ export interface FaqClasses {
 /**
  * Renders a block as single-line HTML (so later markdown passes leave it intact).
  * Questions/answers are escaped; answers keep **bold**, [links](/url) and line breaks.
+ * Items share `group` as their <details name>, so opening one closes the others.
  */
-export function renderFaqHtml(block: FaqBlock, cls: FaqClasses, linkHref: (href: string) => string = h => h): string {
+export function renderFaqHtml(block: FaqBlock, cls: FaqClasses, linkHref: (href: string) => string = h => h, group = "faq"): string {
     const inline = (s: string) =>
         escapeHtml(s)
             .replace(/\*\*(.+?)\*\*/g, `<strong class="${cls.strong}">$1</strong>`)
@@ -121,7 +122,7 @@ export function renderFaqHtml(block: FaqBlock, cls: FaqClasses, linkHref: (href:
     const items = block.items
         .map(
             i =>
-                `<details class="${cls.item}"><summary class="${cls.summary}"><span>${inline(i.question)}</span><span class="${cls.icon}">+</span></summary><div class="${cls.answer}">${inline(i.answer)}</div></details>`
+                `<details name="${escapeHtml(group)}" class="${cls.item}"><summary class="${cls.summary}"><span>${inline(i.question)}</span><span class="${cls.icon}">+</span></summary><div class="${cls.answer}">${inline(i.answer)}</div></details>`
         )
         .join("");
     const title = block.title ? `<h2 class="${cls.title}">${escapeHtml(block.title)}</h2>` : "";

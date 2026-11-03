@@ -140,7 +140,7 @@ function parseContent(content: string, faqBlocks: FaqBlock[], fallbackAlt = "") 
       const m = /^@@FAQBLOCK(\d+)@@$/.exec(line);
       if (!m) return null;
       const block = faqBlocks[Number(m[1])];
-      return block ? renderFaqHtml(block, ARTICLE_FAQ_CLASSES, normalizeInternalTarget) : "";
+      return block ? renderFaqHtml(block, ARTICLE_FAQ_CLASSES, normalizeInternalTarget, `faq-${m[1]}`) : "";
     },
   });
 }
@@ -349,7 +349,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
                     </h2>
                     <div className="space-y-px bg-gray-200 border border-gray-200">
                       {faqs.map((faq, i) => (
-                        <details key={i} className="group bg-white">
+                        <details key={i} name="article-faqs" className="group bg-white">
                           <summary className="flex items-center justify-between p-6 cursor-pointer font-bold text-black hover:text-primary transition-colors list-none text-base border-l-2 border-transparent group-open:border-primary">
                             <span>{faq.question}</span>
                             <span className="ml-4 shrink-0 text-primary font-black transition-transform group-open:rotate-45 text-xl leading-none">+</span>

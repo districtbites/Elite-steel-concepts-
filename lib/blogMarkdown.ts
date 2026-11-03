@@ -62,7 +62,7 @@ export function renderBlogMarkdown(markdown: string, cls: BlogMarkdownClasses, o
     const park = (html: string) => `\n\n${BLOCK_TOKEN(stored.push(html) - 1)}\n\n`;
 
     let text = markdown.replace(/\r\n?/g, "\n");
-    text = replaceFaqBlocks(text, (b) => park(renderFaqHtml(b, cls.faq, linkHref)));
+    text = replaceFaqBlocks(text, (b, i) => park(renderFaqHtml(b, cls.faq, linkHref, `faq-${i}`)));
     text = replaceMarkdownTables(text, (t: MarkdownTable) => park(renderTableHtml(t, cls.table, renderTableCell)));
 
     const image = (alt: string, src: string) => {
