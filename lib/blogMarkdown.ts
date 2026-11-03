@@ -8,7 +8,7 @@
  * [links](/url), **bold**, *italic*, tables and :::faq blocks.
  */
 import { renderTableHtml, replaceMarkdownTables, type MarkdownTable, type TableClasses } from "@/lib/markdownTable";
-import { renderFaqHtml, replaceFaqBlocks, type FaqClasses } from "@/lib/blogFaq";
+import { renderFaqHtml, replaceFaqBlocks, type FaqBlock, type FaqClasses } from "@/lib/blogFaq";
 
 export interface BlogMarkdownClasses {
     h2: string;
@@ -62,7 +62,7 @@ export function renderBlogMarkdown(markdown: string, cls: BlogMarkdownClasses, o
     const park = (html: string) => `\n\n${BLOCK_TOKEN(stored.push(html) - 1)}\n\n`;
 
     let text = markdown.replace(/\r\n?/g, "\n");
-    text = replaceFaqBlocks(text, (b, i) => park(renderFaqHtml(b, cls.faq, linkHref, `faq-${i}`)));
+    text = replaceFaqBlocks(text, (b, i) => park(renderFaqBlock(b, cls, linkHref, `faq-${i}`)));
     text = replaceMarkdownTables(text, (t: MarkdownTable) => park(renderTableHtml(t, cls.table, renderTableCell)));
 
     const image = (alt: string, src: string) => {
@@ -194,4 +194,21 @@ export function renderBlogMarkdown(markdown: string, cls: BlogMarkdownClasses, o
     }
     flushAll();
     return out.join("\n");
+}
+
+// Inside a FAQ answer the article's block spacing is tightened (mb-6 → mb-2)
+const tighten = (c: string) => `${c.replace(/\bmb-\d+(?:\.\d+)?\b/g, "mb-2")} last:mb-0`;
+
+/** A FAQ block whose answers use the article markdown (paragraphs, bullet and numbered lists…). */
+export function renderFaqBlock(block: FaqBlock, cls: BlogMarkdownClasses, linkHref: (href: string) => string = (h) => h, group = "faq"): string {
+    const answerCls: BlogMarkdownClasses = {
+        ...cls,
+        p: tighten(cls.p),
+        ul: tighten(cls.ul),
+        ol: tighten(cls.ol),
+        li: tighten(cls.li),
+        link: cls.faq.link,
+        strong: cls.faq.strong,
+    };
+    return renderFaqHtml(block, cls.faq, linkHref, group, (md) => renderBlogMarkdown(md, answerCls, { linkHref }));
 }

@@ -10,36 +10,13 @@ import { quickUploadImage } from "@/app/actions/blog";
 import { testAutoLinkSandboxAction } from "@/app/actions/internalLinks";
 import Link from "next/link";
 import Image from "next/image";
-import TableBuilderModal, { ADMIN_TABLE_CLASSES } from "@/components/admin/TableBuilderModal";
+import TableBuilderModal from "@/components/admin/TableBuilderModal";
 import { findTableAt, type MarkdownTable } from "@/lib/markdownTable";
-import FaqBuilderModal, { ADMIN_FAQ_CLASSES } from "@/components/admin/FaqBuilderModal";
+import FaqBuilderModal from "@/components/admin/FaqBuilderModal";
 import { findFaqBlockAt, type FaqBlock } from "@/lib/blogFaq";
 import { slugify } from "@/lib/slug";
-import { renderBlogMarkdown, type BlogMarkdownClasses } from "@/lib/blogMarkdown";
-
-// Same renderer as the public article (admin colours), so the preview matches the live page
-const ADMIN_PREVIEW_CLASSES: BlogMarkdownClasses = {
- h2:"text-2xl font-black uppercase text-admin-text mt-12 mb-6 border-l-[3px] border-primary pl-4 leading-tight",
- h3:"text-xl font-black uppercase text-admin-text mt-8 mb-4",
- h4:"text-lg font-black uppercase text-admin-text mt-6 mb-3",
- p:"text-admin-muted leading-relaxed mb-6",
- ul:"mb-6",
- li:"flex items-start gap-3 mb-2",
- bullet:"w-1 h-1 bg-primary mt-2.5 shrink-0",
- liText:"text-admin-muted",
- ol:"mb-6 pl-6 list-decimal space-y-2 marker:text-primary marker:font-black",
- olLi:"pl-2 text-admin-muted",
- blockquote:"border-l-4 border-primary pl-4 py-2 my-6 italic text-admin-muted bg-admin-bg",
- hr:"my-10 border-admin-border",
- link:"text-primary font-bold underline hover:text-orange-600",
- strong:"font-black text-admin-text",
- em:"italic",
- figure:"block my-8 border border-admin-border overflow-hidden",
- img:"w-full object-cover",
- caption:"block text-[9px] font-black uppercase tracking-[0.2em] text-admin-muted p-3 text-center bg-admin-bg border-t border-admin-border",
- table: ADMIN_TABLE_CLASSES,
- faq: ADMIN_FAQ_CLASSES,
-};
+import { renderBlogMarkdown } from "@/lib/blogMarkdown";
+import { ADMIN_PREVIEW_CLASSES } from "@/components/admin/blogPreviewClasses";
 
 interface BlogEditorProps {
  action: (formData: FormData) => void;

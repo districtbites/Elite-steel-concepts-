@@ -2,8 +2,8 @@ import React from "react";
 import { getPostBySlug, getPosts, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
 import { autoLinkMarkdown, normalizeInternalTarget, getRulesForPost, postTargetKey } from "@/lib/internalLinks";
 import type { TableClasses } from "@/lib/markdownTable";
-import { findFaqBlocks, plainAnswer, renderFaqHtml, replaceFaqBlocks, type FaqBlock, type FaqClasses } from "@/lib/blogFaq";
-import { renderBlogMarkdown, type BlogMarkdownClasses } from "@/lib/blogMarkdown";
+import { findFaqBlocks, plainAnswer, replaceFaqBlocks, type FaqBlock, type FaqClasses } from "@/lib/blogFaq";
+import { renderBlogMarkdown, renderFaqBlock, type BlogMarkdownClasses } from "@/lib/blogMarkdown";
 import { absoluteUrl, businessRef, toIsoDate, breadcrumbSchema, faqSchema } from "@/lib/schema";
 import JsonLd from "@/components/JsonLd";
 import Container from "@/components/ui/Container";
@@ -140,7 +140,7 @@ function parseContent(content: string, faqBlocks: FaqBlock[], fallbackAlt = "") 
       const m = /^@@FAQBLOCK(\d+)@@$/.exec(line);
       if (!m) return null;
       const block = faqBlocks[Number(m[1])];
-      return block ? renderFaqHtml(block, ARTICLE_FAQ_CLASSES, normalizeInternalTarget, `faq-${m[1]}`) : "";
+      return block ? renderFaqBlock(block, ARTICLE_CLASSES, normalizeInternalTarget, `faq-${m[1]}`) : "";
     },
   });
 }

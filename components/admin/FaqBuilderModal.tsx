@@ -1,22 +1,39 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowDown, ArrowUp, HelpCircle, Plus, Trash2, X } from "lucide-react";
-import { buildFaqBlock, renderFaqHtml, DEFAULT_FAQ_TITLE, type FaqBlock, type FaqClasses, type FaqItem } from "@/lib/blogFaq";
+import { ArrowDown, ArrowUp, Bold, HelpCircle, Link as LinkIcon, List, ListOrdered, Plus, Trash2, X } from "lucide-react";
+import { buildFaqBlock, DEFAULT_FAQ_TITLE, type FaqBlock, type FaqItem } from "@/lib/blogFaq";
+import { renderFaqBlock } from "@/lib/blogMarkdown";
+import { ADMIN_PREVIEW_CLASSES } from "@/components/admin/blogPreviewClasses";
 
-/** Admin preview styling of a FAQ block (mirrors the public "FAQ" accordion). */
-export const ADMIN_FAQ_CLASSES: FaqClasses = {
-    wrapper: "my-10 border-t-[3px] border-admin-text pt-8",
-    title: "text-2xl font-black uppercase text-admin-text tracking-tighter mb-6",
-    list: "space-y-px bg-admin-border border border-admin-border",
-    item: "group bg-admin-surface",
-    summary: "flex items-center justify-between p-5 cursor-pointer font-bold text-admin-text hover:text-primary transition-colors list-none border-l-2 border-transparent group-open:border-primary",
-    icon: "ml-4 shrink-0 text-primary font-black transition-transform group-open:rotate-45 text-xl leading-none",
-    answer: "px-5 pb-5 text-admin-muted leading-relaxed text-sm",
-    link: "text-primary font-bold underline",
-    strong: "font-black text-admin-text"
-};
+type AnswerFormat = "bullets" | "numbers" | "bold" | "link";
+
+const ANSWER_TOOLS: { format: AnswerFormat; icon: React.ReactNode; title: string }[] = [
+    { format: "bullets", icon: <List size={13} />, title: "Bullet list" },
+    { format: "numbers", icon: <ListOrdered size={13} />, title: "Numbered list" },
+    { format: "bold", icon: <Bold size={13} />, title: "Bold" },
+    { format: "link", icon: <LinkIcon size={13} />, title: "Link" }
+];
+
+/** Applies a format to the selected text (or the current line for lists); returns the new text and selection. */
+function formatAnswer(text: string, start: number, end: number, format: AnswerFormat) {
+    if (format === "bold" || format === "link") {
+        const selected = text.slice(start, end) || (format === "bold" ? "bold text" : "link text");
+        const insert = format === "bold" ? `**${selected}**` : `[${selected}](/quote)`;
+        const selStart = start + (format === "bold" ? 2 : 1);
+        return { text: text.slice(0, start) + insert + text.slice(end), selStart, selEnd: selStart + selected.length };
+    }
+    // Lists work on whole lines: every selected line becomes an item ("- " or "1. ", "2. "…)
+    const lineStart = text.lastIndexOf("\n", start - 1) + 1;
+    const nextBreak = text.indexOf("\n", end);
+    const lineEnd = nextBreak === -1 ? text.length : nextBreak;
+    const lines = text.slice(lineStart, lineEnd).split("\n").map(l => l.replace(/^\s*(?:[-*+]|\d{1,4}[.)])\s+/, ""));
+    const listed = lines.map((l, i) => (format === "bullets" ? `- ${l}` : `${i + 1}. ${l}`)).join("\n");
+    const caret = lineStart + listed.length;
+    return { text: text.slice(0, lineStart) + listed + text.slice(lineEnd), selStart: caret, selEnd: caret };
+}
+
 
 interface FaqBuilderModalProps {
     initial: FaqBlock | null; // null = insert a new block
@@ -52,7 +69,19 @@ export default function FaqBuilderModal({ initial, onSubmit, onClose }: FaqBuild
 
     const complete = items.filter(i => i.question.trim() && i.answer.trim());
     const incomplete = items.some(i => i.question.trim() !== "" !== (i.answer.trim() !== ""));
-    const previewHtml = useMemo(() => renderFaqHtml({ title, items: complete }, ADMIN_FAQ_CLASSES), [title, complete]);
+    const previewHtml = useMemo(() => renderFaqBlock({ title, items: complete }, ADMIN_PREVIEW_CLASSES, undefined, "faq-preview"), [title, complete]);
+
+    const answerRefs = useRef<(HTMLTextAreaElement | null)[]>([]);
+    const applyFormat = (i: number, format: AnswerFormat) => {
+        const el = answerRefs.current[i];
+        const value = items[i].answer;
+        const { text, selStart, selEnd } = formatAnswer(value, el?.selectionStart ?? value.length, el?.selectionEnd ?? value.length, format);
+        update(i, { answer: text });
+        requestAnimationFrame(() => {
+            el?.focus();
+            el?.setSelectionRange(selStart, selEnd);
+        });
+    };
 
     return createPortal(
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4" onMouseDown={onClose}>
@@ -74,7 +103,8 @@ export default function FaqBuilderModal({ initial, onSubmit, onClose }: FaqBuild
 
                 <p className="text-[11px] text-admin-muted leading-relaxed">
                     Shown as an accordion where you insert it and added to the page&apos;s FAQ schema for Google.
-                    Answers support <code className="text-primary">**bold**</code> and <code className="text-primary">[links](/quote)</code>.
+                    Answers support <code className="text-primary">**bold**</code>, <code className="text-primary">[links](/quote)</code>,
+                    <code className="text-primary">- bullets</code> and <code className="text-primary">1. numbered</code> lists (one item per line).
                 </p>
 
                 <div className="space-y-2">
@@ -94,7 +124,24 @@ export default function FaqBuilderModal({ initial, onSubmit, onClose }: FaqBuild
                                 </div>
                             </div>
                             <input value={item.question} onChange={e => update(i, { question: e.target.value })} placeholder="e.g. How long does a custom food truck build take?" className={`${inputCls} font-bold`} />
-                            <textarea value={item.answer} onChange={e => update(i, { answer: e.target.value })} rows={3} placeholder="Answer..." className={`${inputCls} resize-y leading-relaxed`} />
+                            <div>
+                                <div className="flex items-center gap-0.5 border border-b-0 border-admin-border bg-admin-surface px-1.5 py-1">
+                                    {ANSWER_TOOLS.map(tool => (
+                                        <button key={tool.format} type="button" title={tool.title} onMouseDown={e => e.preventDefault()} onClick={() => applyFormat(i, tool.format)} className={iconBtn}>
+                                            {tool.icon}
+                                        </button>
+                                    ))}
+                                    <span className="ml-auto pr-1 text-[9px] font-bold uppercase tracking-widest text-admin-muted">One item per line</span>
+                                </div>
+                                <textarea
+                                    ref={el => { answerRefs.current[i] = el; }}
+                                    value={item.answer}
+                                    onChange={e => update(i, { answer: e.target.value })}
+                                    rows={4}
+                                    placeholder={"Answer...\n- Bullet point\n1. Numbered point"}
+                                    className={`${inputCls} resize-y leading-relaxed`}
+                                />
+                            </div>
                         </div>
                     ))}
                     <button

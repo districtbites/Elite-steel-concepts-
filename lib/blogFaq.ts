@@ -9,7 +9,8 @@
  *   A: Yes — we deliver anywhere in the US.
  *   :::
  *
- * Answers may span several lines and contain **bold** and [links](/url).
+ * Answers may span several lines and use the article's markdown: **bold**, [links](/url),
+ * "- " bullet and "1. " numbered lists.
  * Shared by the public blog renderer, the admin preview and the FAQ builder.
  */
 
@@ -89,7 +90,7 @@ export function replaceFaqBlocks(text: string, toHtml: (block: FaqBlock, index: 
 
 /** Answer text without markdown (for FAQPage schema). */
 export const plainAnswer = (answer: string) =>
-    answer.replace(/\[(.*?)\]\((.*?)\)/g, "$1").replace(/\*\*(.+?)\*\*/g, "$1").replace(/\s*\n\s*/g, " ").trim();
+    answer.replace(/^\s*(?:[-*+]|\d{1,4}[.)])\s+/gm, "").replace(/\[(.*?)\]\((.*?)\)/g, "$1").replace(/\*\*(.+?)\*\*/g, "$1").replace(/\s*\n\s*/g, " ").trim();
 
 const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
@@ -109,8 +110,15 @@ export interface FaqClasses {
  * Renders a block as single-line HTML (so later markdown passes leave it intact).
  * Questions/answers are escaped; answers keep **bold**, [links](/url) and line breaks.
  * Items share `group` as their <details name>, so opening one closes the others.
+ * `renderAnswer` renders the answer markdown instead (lists etc.); it must return safe HTML.
  */
-export function renderFaqHtml(block: FaqBlock, cls: FaqClasses, linkHref: (href: string) => string = h => h, group = "faq"): string {
+export function renderFaqHtml(
+    block: FaqBlock,
+    cls: FaqClasses,
+    linkHref: (href: string) => string = h => h,
+    group = "faq",
+    renderAnswer?: (markdown: string) => string
+): string {
     const inline = (s: string) =>
         escapeHtml(s)
             .replace(/\*\*(.+?)\*\*/g, `<strong class="${cls.strong}">$1</strong>`)
@@ -122,7 +130,7 @@ export function renderFaqHtml(block: FaqBlock, cls: FaqClasses, linkHref: (href:
     const items = block.items
         .map(
             i =>
-                `<details name="${escapeHtml(group)}" class="${cls.item}"><summary class="${cls.summary}"><span>${inline(i.question)}</span><span class="${cls.icon}">+</span></summary><div class="${cls.answer}">${inline(i.answer)}</div></details>`
+                `<details name="${escapeHtml(group)}" class="${cls.item}"><summary class="${cls.summary}"><span>${inline(i.question)}</span><span class="${cls.icon}">+</span></summary><div class="${cls.answer}">${renderAnswer ? renderAnswer(i.answer) : inline(i.answer)}</div></details>`
         )
         .join("");
     const title = block.title ? `<h2 class="${cls.title}">${escapeHtml(block.title)}</h2>` : "";
