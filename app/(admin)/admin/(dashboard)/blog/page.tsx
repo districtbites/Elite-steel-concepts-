@@ -20,28 +20,37 @@ import {
  ChevronLeft,
  ChevronRight,
 } from"lucide-react";
-import { getPosts } from"@/lib/db";
+import { getPosts, type BlogPost } from"@/lib/db";
 import { deleteBlogPost } from"@/app/actions/blog";
+import BlogSearch from"@/components/admin/BlogSearch";
 
 const UNCATEGORIZED ="uncategorized";
 const PAGE_SIZE = 10;
 const categoryKey = (cat?: string) => cat?.trim() || UNCATEGORIZED;
 
+// Every word must appear somewhere in the post's title, subtitle, excerpt, slug, category or tags
+const matchesSearch = (post: BlogPost, query: string) => {
+ const haystack = [post.title, post.subtitle, post.excerpt, post.slug, post.category, ...(post.tags || [])].join(" ").toLowerCase();
+ return query.toLowerCase().split(/\s+/).filter(Boolean).every((word) => haystack.includes(word));
+};
+
 export default async function AdminBlogPage({
  searchParams,
 }: {
- searchParams: Promise<{ category?: string; status?: string; page?: string }>;
+ searchParams: Promise<{ category?: string; status?: string; page?: string; q?: string }>;
 }) {
- const { category: activeCategory, status, page } = await searchParams;
+ const { category: activeCategory, status, page, q } = await searchParams;
+ const query = (q || "").trim();
  const activeStatus = status === "live" || status === "draft" ? status : undefined;
  const allPosts = await getPosts();
  const publishedCount = allPosts.filter((p) => p.status ==="Published").length;
  const draftCount = allPosts.filter((p) => p.status ==="Draft").length;
 
- // Status tab first, then category tabs within it (counts follow the active status)
+ // Search first, then the status tab, then category tabs within it (tab counts follow the search and status)
+ const searchedPosts = query ? allPosts.filter((p) => matchesSearch(p, query)) : allPosts;
  const statusPosts = activeStatus
- ? allPosts.filter((p) => (activeStatus === "draft" ? p.status === "Draft" : p.status === "Published"))
- : allPosts;
+ ? searchedPosts.filter((p) => (activeStatus === "draft" ? p.status === "Draft" : p.status === "Published"))
+ : searchedPosts;
  const categories = Array.from(new Set(statusPosts.map((p) => categoryKey(p.category))));
  const filteredPosts = activeCategory
  ? statusPosts.filter((p) => categoryKey(p.category) === activeCategory)
@@ -57,6 +66,7 @@ export default async function AdminBlogPage({
 
  const blogHref = (next: { category?: string; status?: string; page?: number }) => {
  const params = new URLSearchParams();
+ if (query) params.set("q", query);
  if (next.status) params.set("status", next.status);
  if (next.category) params.set("category", next.category);
  if (next.page && next.page > 1) params.set("page", String(next.page));
@@ -140,9 +150,9 @@ export default async function AdminBlogPage({
  {/* ═══════ STATUS TABS ═══════ */}
  <div className="flex flex-wrap items-center gap-0 border-b-2 border-admin-border">
  {[
- { id: undefined, label: "All Articles", count: allPosts.length, dot: "bg-admin-muted" },
- { id: "live", label: "Live", count: publishedCount, dot: "bg-green-500" },
- { id: "draft", label: "Drafts", count: draftCount, dot: "bg-amber-400" },
+ { id: undefined, label: "All Articles", count: searchedPosts.length, dot: "bg-admin-muted" },
+ { id: "live", label: "Live", count: searchedPosts.filter((p) => p.status === "Published").length, dot: "bg-green-500" },
+ { id: "draft", label: "Drafts", count: searchedPosts.filter((p) => p.status === "Draft").length, dot: "bg-amber-400" },
  ].map((tab) => {
  const active = activeStatus === tab.id;
  return (
@@ -159,6 +169,9 @@ export default async function AdminBlogPage({
  </Link>
  );
  })}
+ <div className="w-full sm:w-72 sm:ml-auto py-2">
+ <BlogSearch query={query} />
+ </div>
  </div>
 
  {/* ═══════ CATEGORY TAGS ═══════ */}
@@ -179,11 +192,17 @@ export default async function AdminBlogPage({
  </div>
  )}
 
+ {query && (
+ <p className="text-[10px] font-black uppercase tracking-widest text-admin-muted">
+ {filteredPosts.length} {filteredPosts.length === 1 ? "article" : "articles"} found for &ldquo;{query}&rdquo;
+ </p>
+ )}
+
  {/* ═══════ POSTS LIST ═══════ */}
- {posts.length === 0 && (activeCategory || activeStatus) ? (
+ {posts.length === 0 && (activeCategory || activeStatus || query) ? (
  <div className="bg-admin-surface border border-admin-border shadow-sm p-16 text-center">
  <p className="text-admin-muted text-sm font-medium mb-6">
- {activeStatus === "draft" && !activeCategory ? "No draft articles. Set an article's status to Draft to keep it here until you publish it." : "No articles match this filter."}
+ {activeStatus === "draft" && !activeCategory && !query ? "No draft articles. Set an article's status to Draft to keep it here until you publish it." : "No articles match this filter."}
  </p>
  <Link href="/admin/blog" className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline">
  View all articles
