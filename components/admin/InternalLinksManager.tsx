@@ -33,13 +33,16 @@ import {
 import Link from "next/link";
 import Toast from "@/components/ui/Toast";
 import SearchableMultiSelect from "@/components/admin/SearchableMultiSelect";
+import SavedLinksPanel from "@/components/admin/SavedLinksPanel";
 import LinkPlacementPicker from "@/components/admin/LinkPlacementPicker";
 import type { InternalLinkRule, InternalLinkSettings } from "@/lib/db";
 import type { LinkAuditSummary, PostLinkAudit, LinkPlacement } from "@/lib/internalLinks";
 import type { LinkablePage } from "@/lib/linkablePages";
+import type { SavedLinkGroup } from "@/lib/internalLinks";
 import {
     saveInternalLinkRuleAction,
     deleteInternalLinkRuleAction,
+    removeSavedLinkAction,
     toggleInternalLinkRuleAction,
     resetDefaultRulesAction,
     saveInternalLinkSettingsAction,
@@ -56,6 +59,7 @@ interface InternalLinksManagerProps {
     initialAudit: LinkAuditSummary;
     availableRoutes: { name: string; url: string; category: string }[];
     linkablePages: LinkablePage[];
+    initialSavedLinks: SavedLinkGroup[];
 }
 
 export default function InternalLinksManager({
@@ -63,11 +67,14 @@ export default function InternalLinksManager({
     initialSettings,
     initialAudit,
     availableRoutes,
-    linkablePages
+    linkablePages,
+    initialSavedLinks
 }: InternalLinksManagerProps) {
     const [rules, setRules] = useState<InternalLinkRule[]>(initialRules);
     const [settings, setSettings] = useState<InternalLinkSettings>(initialSettings);
     const [audit, setAudit] = useState<LinkAuditSummary>(initialAudit);
+    const [savedLinks, setSavedLinks] = useState<SavedLinkGroup[]>(initialSavedLinks);
+    const [removingLink, setRemovingLink] = useState(false);
 
     const [activeTab, setActiveTab] = useState<"rules" | "automation" | "audit" | "sandbox" | "settings">("rules");
     const [loading, setLoading] = useState(false);
@@ -192,6 +199,7 @@ export default function InternalLinksManager({
         setRules(prev => prev.map(r => (r.id === id ? { ...r, enabled: nextState } : r)));
         const res = await toggleInternalLinkRuleAction(id, nextState);
         if (res.success) {
+            if (res.savedLinks) setSavedLinks(res.savedLinks);
             notify(res.message || "Rule updated.");
         } else {
             notify(`Error: ${res.error}`);
@@ -199,14 +207,28 @@ export default function InternalLinksManager({
     };
 
     const handleDeleteRule = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this internal link rule?")) return;
+        if (!confirm("Delete this internal link rule? Its links will also be removed from blog posts (the words stay).")) return;
         setRules(prev => prev.filter(r => r.id !== id));
         const res = await deleteInternalLinkRuleAction(id);
         if (res.success) {
-            notify("Rule deleted.");
+            if (res.savedLinks) setSavedLinks(res.savedLinks);
+            notify(res.message || "Rule deleted.");
         } else {
             notify(`Error: ${res.error}`);
         }
+    };
+
+    const handleRemoveSavedLink = async (link: SavedLinkGroup) => {
+        if (!confirm(`Remove the link on "${link.text}" from ${link.posts.length} blog post(s)? The words stay in the post.`)) return;
+        setRemovingLink(true);
+        const res = await removeSavedLinkAction(link.text, link.url);
+        if (res.success) {
+            if (res.savedLinks) setSavedLinks(res.savedLinks);
+            notify(res.message || "Link removed.");
+        } else {
+            notify(`Error: ${res.error}`);
+        }
+        setRemovingLink(false);
     };
 
     const handleResetDefaults = async () => {
@@ -830,6 +852,8 @@ export default function InternalLinksManager({
             {/* ═══════ TAB 3: LINK HEALTH & AUDIT ═══════ */}
             {activeTab === "audit" && (
                 <div className="space-y-6">
+                    <SavedLinksPanel links={savedLinks} busy={removingLink} onRemove={handleRemoveSavedLink} />
+
                     {/* Top Linked Targets Overview */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <div className="bg-admin-surface border border-admin-border p-6 space-y-4">

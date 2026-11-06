@@ -44,7 +44,7 @@ export default async function PageContentPage({ searchParams }: { searchParams: 
         icon: page.icon,
         path: page.path,
         sections: [
-            ...page.sections.map(s => ({ key: s.key, label: s.label, description: s.description, fields: s.fields })),
+            ...page.sections.map(s => ({ key: s.key, label: s.label, description: s.description, fields: s.fields, hiddenOnPage: s.hiddenOnPage })),
             ...(page.builder
                 ? [{ key: customSectionsKey(page.id), label: "Custom Sections", description: "Modular blocks added below the page's fixed sections.", fields: null }]
                 : [])

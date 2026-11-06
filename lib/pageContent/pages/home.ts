@@ -87,10 +87,12 @@ export const HOME_FLOOR_PLAN = defineSection({
         { name: "truckBadge", label: "Truck Image Badge", type: "text" },
         { name: "truckImage", label: "Truck Image", type: "image" },
         { name: "truckImageAlt", label: "Truck Image Alt Text", type: "text" },
+        { name: "truckLink", label: "Truck Image Link", type: "link" },
         { name: "trailerTab", label: "Trailer Tab Label", type: "text" },
         { name: "trailerBadge", label: "Trailer Image Badge", type: "text" },
         { name: "trailerImage", label: "Trailer Image", type: "image" },
-        { name: "trailerImageAlt", label: "Trailer Image Alt Text", type: "text" }
+        { name: "trailerImageAlt", label: "Trailer Image Alt Text", type: "text" },
+        { name: "trailerLink", label: "Trailer Image Link", type: "link" }
     ],
     defaults: {
         eyebrow: "Our Services",
@@ -98,10 +100,12 @@ export const HOME_FLOOR_PLAN = defineSection({
         truckBadge: "SIDE 1: FOOD TRUCK",
         truckImage: "/uploads/home/floorplan-truck.jpg",
         truckImageAlt: "Custom Food Truck Interior",
+        truckLink: "/services/custom-food-trucks",
         trailerTab: "Custom Food Trailer",
         trailerBadge: "SIDE 2: TRAILER",
         trailerImage: "/uploads/home/floorplan-trailer.jpg",
-        trailerImageAlt: "Concession Trailer Interior"
+        trailerImageAlt: "Concession Trailer Interior",
+        trailerLink: "/services/custom-food-trailers"
     }
 });
 
@@ -265,12 +269,12 @@ export const HOME_TESTIMONIALS = defineSection({
             titleField: "title",
             fields: [
                 { name: "title", label: "Title", type: "text" },
-                { name: "client", label: "Client", type: "text" },
+                { name: "client", label: "Client", type: "text", help: "Not shown on the website at the moment." },
                 { name: "location", label: "Location", type: "text" },
                 { name: "videoUrl", label: "Video URL (.mp4)", type: "link" },
                 { name: "poster", label: "Poster Image", type: "image" },
                 { name: "durationSeconds", label: "Duration (seconds)", type: "number" },
-                { name: "views", label: "Views Label", type: "text", placeholder: "14.2K" }
+                { name: "views", label: "Views Label", type: "text", placeholder: "14.2K", help: "Not shown on the website at the moment." }
             ]
         }
     ],

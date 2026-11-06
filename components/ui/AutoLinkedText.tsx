@@ -36,6 +36,12 @@ export default function AutoLinkedText({
     const anchorText = match[1];
     const targetUrl = normalizeInternalTarget(match[2]);
 
+    if (/^\s*(?:javascript|data|vbscript):/i.test(targetUrl)) {
+      elements.push(<React.Fragment key={`txt-${match.index}`}>{anchorText}</React.Fragment>);
+      lastIndex = regex.lastIndex;
+      continue;
+    }
+
     const isExternal = targetUrl.startsWith("http://") || targetUrl.startsWith("https://");
 
     if (isExternal) {

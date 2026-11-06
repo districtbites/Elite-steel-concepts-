@@ -76,6 +76,36 @@ export function resolveTokens<T>(value: T, tokens: Record<string, string>): T {
     return value;
 }
 
+// ─── Links inside paragraphs: [text](url) ─────────────────────────────────
+
+const TEXT_LINK = /\[([^\]\n]+)\]\(([^)\s]+)\)/g;
+
+export interface TextLink {
+    label: string;
+    url: string;
+    start: number;
+    end: number;
+}
+
+/** Every [text](url) link in a paragraph, in order. */
+export function parseTextLinks(text: string): TextLink[] {
+    return [...(text || "").matchAll(TEXT_LINK)].map(m => ({ label: m[1], url: m[2], start: m.index, end: m.index + m[0].length }));
+}
+
+/** Plain text of a paragraph, for places that cannot show links (metadata, structured data). */
+export const stripTextLinks = (text: string) => (text || "").replace(TEXT_LINK, "$1");
+
+/** Internal path, anchor, web address, email or phone link. */
+export const isValidLinkTarget = (url: string) => /^(?:\/|#|https?:\/\/|mailto:|tel:)[^\s()]*$/i.test(url.trim());
+
+/** Replaces text[start..end) with a link. Returns null if the words overlap an existing link. */
+export function insertTextLink(text: string, start: number, end: number, label: string, url: string): string | null {
+    const clean = label.replace(/[[\]\n]/g, " ").replace(/\s+/g, " ").trim();
+    if (!clean || !isValidLinkTarget(url)) return null;
+    if (parseTextLinks(text).some(l => start < l.end && l.start < end)) return null;
+    return `${text.slice(0, start)}[${clean}](${url.trim()})${text.slice(end)}`;
+}
+
 /** Splits a multi-paragraph textarea value into paragraphs (blank-line separated). */
 export const paragraphs = (text: ContentValue | undefined) =>
     String(text ?? "")

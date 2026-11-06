@@ -47,6 +47,7 @@ export const TESTIMONIALS_STATS = defineSection({
 export const TESTIMONIALS_FEATURED = defineSection({
     key: "testimonials.featured",
     label: "Featured Story",
+    hiddenOnPage: true,
     description: "Featured client quote (section currently hidden on the page; scanned for internal links).",
     fields: [
         { name: "text", label: "Story Quote", type: "textarea", rows: 4, help: "Internal-link keywords are linked automatically." }

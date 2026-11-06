@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { setPageContentOverride, deletePageContentOverride } from "@/lib/db";
 import { requireRole } from "@/lib/adminAuth";
-import { getPageDef } from "@/lib/pageContent/registry";
 import { CONTENT_WRITE_ROLES, prepareContentWrite, validateContentKey } from "@/lib/pageContent/write";
 import type { PageContentEntry } from "@/lib/pageContent/types";
 
@@ -13,11 +12,9 @@ export interface PageContentActionResult {
     entry?: PageContentEntry | null;
 }
 
-/** Revalidates the public page(s) showing this key, plus the admin screen. */
-function revalidateFor(key: string) {
-    const page = getPageDef(key.split(".")[0]);
-    if (page?.path) revalidatePath(page.path);
-    else revalidatePath("/", "layout"); // site-wide sections (header/footer) appear on every page
+/** Sections can appear on several pages (shared blocks, footer, FAQ), so every page is refreshed. */
+function revalidateContent() {
+    revalidatePath("/", "layout");
     revalidatePath("/admin/page-content");
 }
 
@@ -36,7 +33,7 @@ export async function savePageContentAction(key: string, content: unknown): Prom
         console.error(`[pageContent] save "${key}" failed:`, error);
         return { success: false, error: "Could not save. Please try again." };
     }
-    revalidateFor(key);
+    revalidateContent();
     return { success: true, entry };
 }
 
@@ -54,6 +51,6 @@ export async function resetPageContentAction(key: string): Promise<PageContentAc
         console.error(`[pageContent] reset "${key}" failed:`, error);
         return { success: false, error: "Could not reset. Please try again." };
     }
-    revalidateFor(key);
+    revalidateContent();
     return { success: true, entry: null };
 }

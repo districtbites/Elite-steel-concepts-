@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { HOME_PROCESS } from "@/lib/pageContent/pages/home";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 
 export type ProcessStep = {
   title: string;
@@ -121,7 +122,7 @@ const ProcessSteps = ({
                   {step.title}
                 </h3>
                 <p className="text-gray-600 text-sm leading-relaxed flex-1">
-                  {step.description}
+                  <AutoLinkedText text={step.description} />
                 </p>
 
                 {i < steps.length - 1 && (

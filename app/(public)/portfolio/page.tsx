@@ -14,6 +14,7 @@ import type { Metadata } from "next";
 import { projectImageAlt } from "@/lib/projectAlt";
 import PageJsonLd from "@/components/PageJsonLd";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSection, getSections } from "@/lib/pageContent";
 import { SITE_FAQ } from "@/lib/pageContent/pages/site";
 import { PORTFOLIO_HEADER, PORTFOLIO_GALLERY } from "@/lib/pageContent/pages/portfolio";
@@ -60,10 +61,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function PortfolioPage() {
   const faqContent = await getSection(SITE_FAQ);
-  const [allProjects, faqs, settings, [header, gallery]] = await Promise.all([
+  const [allProjects, faqs, settings, linked, [header, gallery]] = await Promise.all([
     getProjects(),
     getFAQs(),
     getSettings(),
+    getLinkedPageSections("portfolio"),
     getSections([PORTFOLIO_HEADER, PORTFOLIO_GALLERY] as const),
   ]);
 
@@ -85,7 +87,7 @@ export default async function PortfolioPage() {
         className="!pb-10 md:!pb-12"
         title={header.title}
         normalCaseSubtitle
-        subtitle={header.subtitle ? <AutoLinkedText text={header.subtitle} /> : undefined}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
       >
         <Link
           href={header.ctaLink}
@@ -220,7 +222,7 @@ export default async function PortfolioPage() {
               {gallery.title}
             </h2>
             <p className="text-gray-500 max-w-2xl mx-auto font-medium leading-relaxed text-sm md:text-base border-l-2 border-black pl-4 text-left">
-              {gallery.body}
+              <AutoLinkedText text={linked.gallery} />
             </p>
           </div>
           <PortfolioGallery

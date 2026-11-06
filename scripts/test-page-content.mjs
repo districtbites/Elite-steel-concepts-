@@ -27,8 +27,9 @@ process.chdir(tmp);
 const write = await import(lib("lib/pageContent/write.ts"));
 const schema = await import(lib("lib/pageContent/schema.ts"));
 const blocks = await import(lib("lib/pageContent/blocks.ts"));
-const { sanitizeHtml } = await import(lib("lib/sanitizeHtml.ts"));
+const { sanitizeHtml, richTextToHtml } = await import(lib("lib/sanitizeHtml.ts"));
 const db = await import(lib("lib/db.ts"));
+const links = await import(lib("lib/internalLinks.ts"));
 const { PAGES } = await import(lib("lib/pageContent/registry.ts"));
 const { HOME_INTRO } = await import(lib("lib/pageContent/pages/home.ts"));
 
@@ -157,6 +158,52 @@ await test("db: reset deletes the override (default comes back)", async () => {
 await test("sameContent: key order does not matter", () => {
     assert.equal(schema.sameContent({ a: 1, b: [1, { c: 2, d: 3 }] }, { b: [1, { d: 3, c: 2 }], a: 1 }), true);
     assert.equal(schema.sameContent({ a: 1 }, { a: 2 }), false);
+});
+
+await test("links: parse, strip and insert [text](url)", () => {
+    const text = "Build a [food truck](/services/custom-food-trucks) today.";
+    assert.deepEqual(schema.parseTextLinks(text).map(l => [l.label, l.url, text.slice(l.start, l.end)]), [
+        ["food truck", "/services/custom-food-trucks", "[food truck](/services/custom-food-trucks)"]
+    ]);
+    assert.equal(schema.stripTextLinks(text), "Build a food truck today.");
+    assert.equal(schema.insertTextLink("Call us now", 5, 7, "us", "/contact"), "Call [us](/contact) now");
+    assert.equal(schema.insertTextLink("Call", 4, 4, "our [team]", "https://x.com/a"), "Call[our team](https://x.com/a)");
+});
+
+await test("links: unsafe targets and overlapping selections are refused", () => {
+    assert.equal(schema.insertTextLink("Call us", 5, 7, "us", "javascript:alert(1)"), null);
+    assert.equal(schema.insertTextLink("Call us", 5, 7, "us", "/a b"), null);
+    assert.equal(schema.insertTextLink("Call us", 5, 7, "  ", "/contact"), null);
+    const linked = "Call [us](/contact) now";
+    assert.equal(schema.insertTextLink(linked, 6, 8, "us", "/about"), null);
+});
+
+await test("links: custom block body turns [text](url) into safe anchors", () => {
+    assert.equal(richTextToHtml("Go [home](/) now"), '<p>Go <a href="/">home</a> now</p>');
+    assert.equal(richTextToHtml("Go [x](javascript:alert(1)) now").includes("href"), false);
+    assert.equal(richTextToHtml("<p>Go [home](/)</p>"), '<p>Go <a href="/">home</a></p>');
+});
+
+await test("saved links: only the matching text + target is removed, words and images stay", () => {
+    const content = "A [food truck](/services) and [Food Truck](https://www.esteelconcepts.com/services/) and [food truck](/about) and ![food truck](/services).";
+    const { content: out, removed } = links.removeSavedLink(content, "food truck", "/services");
+    assert.equal(removed, 2);
+    assert.equal(out, "A food truck and Food Truck and [food truck](/about) and ![food truck](/services).");
+    assert.equal(links.removeSavedLink("[Trailer](/a) [trailer](/a)", "trailer", "/a", true).content, "[Trailer](/a) trailer");
+});
+
+await test("saved links: grouped with rule status, external links ignored", () => {
+    const posts = [
+        { id: "1", title: "One", content: "[a](/x) [b](/y) [c](/z) [out](https://example.com)" },
+        { id: "2", title: "Two", content: "[A](https://esteelconcepts.com/x/)" }
+    ];
+    const rules = [{ id: "r1", keyword: "a", targetUrl: "/x", enabled: true }, { id: "r2", keyword: "b", targetUrl: "/y", enabled: false }];
+    const groups = links.listSavedLinks(posts, rules);
+    assert.deepEqual(groups.map(g => [g.text, g.url, g.count, g.ruleStatus]), [
+        ["b", "/y", 1, "disabled"],
+        ["c", "/z", 1, "none"],
+        ["a", "/x", 2, "active"]
+    ]);
 });
 
 await fs.rm(tmp, { recursive: true, force: true });

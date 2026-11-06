@@ -11,6 +11,8 @@ import { getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
 import CustomSections from "@/components/sections/CustomSections";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSections, getCustomSections } from "@/lib/pageContent";
 import {
   ABOUT_HEADER,
@@ -43,7 +45,8 @@ const REASON_ICONS = [Calendar, Award, Package, PenTool, Shield, MapPin, Wrench,
 const isRemote = (src: string) => /^https?:\/\//i.test(src);
 
 export default async function AboutPage() {
-  const [[header, mission, manufacture, process, why, cta], customBlocks] = await Promise.all([
+  const [linked, [header, mission, manufacture, process, why, cta], customBlocks] = await Promise.all([
+    getLinkedPageSections("about"),
     getSections([ABOUT_HEADER, ABOUT_MISSION, ABOUT_MANUFACTURE, ABOUT_PROCESS, ABOUT_WHY, ABOUT_CTA] as const),
     getCustomSections("about"),
   ]);
@@ -55,7 +58,7 @@ export default async function AboutPage() {
       <PageJsonLd pageId="about" />
       <PageHeader
         title={header.title}
-        subtitle={header.subtitle}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
         normalCaseSubtitle
         titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
       />
@@ -100,7 +103,7 @@ export default async function AboutPage() {
             <div className="lg:col-span-7 flex items-center justify-center lg:justify-start">
               <div className="max-w-xl w-full">
                 <p className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed">
-                  {mission.body}
+                  <AutoLinkedText text={linked.mission} />
                 </p>
               </div>
             </div>
@@ -206,7 +209,7 @@ export default async function AboutPage() {
               {why.title}
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed font-medium">
-              {why.intro}
+              <AutoLinkedText text={linked.why} />
             </p>
           </div>
 

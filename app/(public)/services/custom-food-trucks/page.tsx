@@ -317,7 +317,7 @@ export default async function CustomFoodTrucksPage() {
           </h2>
 
           <p className="text-gray-400 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mb-8">
-            {cta.body}
+            <AutoLinkedText text={cta.body} />
           </p>
 
           <Link

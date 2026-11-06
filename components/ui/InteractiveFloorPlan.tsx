@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import Container from "@/components/ui/Container";
 import {
   Flame,
@@ -187,6 +188,9 @@ export default function InteractiveFloorPlan({ content = HOME_FLOOR_PLAN.default
   const truck = { ...truckData, name: content.truckImageAlt, image: content.truckImage || truckData.image };
   const trailer = { ...trailerData, name: content.trailerImageAlt, image: content.trailerImage || trailerData.image };
   const activeVehicle = activeSide === "truck" ? truck : trailer;
+  // A cleared link field falls back to the default page
+  const { truckLink, trailerLink } = HOME_FLOOR_PLAN.defaults;
+  const activeLink = activeSide === "truck" ? content.truckLink || truckLink : content.trailerLink || trailerLink;
 
   const handleSideSwitch = (side: "truck" | "trailer") => setActiveSide(side);
 
@@ -352,8 +356,15 @@ export default function InteractiveFloorPlan({ content = HOME_FLOOR_PLAN.default
               );
             })}
 
+            {/* The image opens the page of the side being shown */}
+            <Link
+              href={activeLink}
+              aria-label={activeVehicle.name}
+              className="absolute inset-0 z-10"
+            />
+
             {/* Label overlay */}
-            <div className="absolute top-4 left-4 z-20 bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2">
+            <div className="absolute top-4 left-4 z-20 pointer-events-none bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-lg text-xs font-bold text-white flex items-center gap-2">
               <span className="size-2 rounded-full bg-primary animate-pulse" />
               <span>
                 {activeSide === "truck" ? content.truckBadge : content.trailerBadge}

@@ -26,6 +26,7 @@ export interface CatalogSection {
     label: string;
     description: string;
     fields: FieldDef[] | null; // null = modular page builder
+    hiddenOnPage?: boolean;
 }
 
 export interface CatalogPage {
@@ -366,6 +367,12 @@ export default function PageContentEditor({
                                 )}
                             </div>
                         </div>
+
+                        {current.section.hiddenOnPage && (
+                            <p className="border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-xs font-bold text-amber-500">
+                                This section is hidden on the live page, so edits here will not appear on the website.
+                            </p>
+                        )}
 
                         <div className="bg-admin-surface border border-admin-border p-6 md:p-10">
                             {builder ? (

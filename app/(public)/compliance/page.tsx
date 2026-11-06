@@ -139,7 +139,7 @@ export default async function ComplianceHub() {
               {considerationsContent.title}
             </h2>
             <p className="text-gray-500 text-base leading-relaxed">
-              {considerationsContent.intro}
+              <AutoLinkedText text={considerationsContent.intro} />
             </p>
           </div>
 
@@ -151,7 +151,7 @@ export default async function ComplianceHub() {
                 </div>
                 <div>
                   <h3 className="font-black text-black uppercase tracking-tight mb-2">{item.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+                  <p className="text-gray-500 text-sm leading-relaxed"><AutoLinkedText text={item.desc} /></p>
                 </div>
               </div>
             ))}
@@ -232,7 +232,7 @@ export default async function ComplianceHub() {
                   {item.title}
                 </h3>
                 <p className="text-gray-500 text-sm leading-relaxed">
-                  {item.desc}
+                  <AutoLinkedText text={item.desc} />
                 </p>
               </div>
             ))}

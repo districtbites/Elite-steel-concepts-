@@ -5,6 +5,8 @@ import PageHeader from "@/components/ui/PageHeader";
 import { getPageSEO, getSEO, getSettings } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSections } from "@/lib/pageContent";
 import {
   PRIVACY_HEADER,
@@ -30,8 +32,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PrivacyPage() {
-  const [settings, [header, content, lists, policies, contact]] = await Promise.all([
+  const [settings, linked, [header, content, lists, policies, contact]] = await Promise.all([
     getSettings(),
+    getLinkedPageSections("privacy"),
     getSections([PRIVACY_HEADER, PRIVACY_CONTENT, PRIVACY_LISTS, PRIVACY_POLICIES, PRIVACY_CONTACT] as const),
   ]);
 
@@ -46,7 +49,7 @@ export default async function PrivacyPage() {
       <PageJsonLd pageId="privacy" />
       <PageHeader
         title={header.title}
-        subtitle={header.subtitle}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
       />
 
       <Section className="bg-white">
@@ -68,7 +71,7 @@ export default async function PrivacyPage() {
                   {content.title}
                </h2>
                <p className="text-lg leading-relaxed font-light">
-                  {content.body}
+                  <AutoLinkedText text={linked.content} />
                </p>
             </section>
 
@@ -105,7 +108,7 @@ export default async function PrivacyPage() {
                {policies.clauses.map((clause, i) => (
                   <div key={i}>
                      <h2 className="text-xl font-black text-secondary uppercase mb-4 tracking-tight">{clause.title}</h2>
-                     <p className="font-light">{clause.body}</p>
+                     <p className="font-light"><AutoLinkedText text={clause.body} /></p>
                   </div>
                ))}
             </section>

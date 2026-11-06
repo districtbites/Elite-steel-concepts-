@@ -8,6 +8,8 @@ import { getSEO, getPageSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
 import CustomSections from "@/components/sections/CustomSections";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSections, getCustomSections } from "@/lib/pageContent";
 import { DESIGN_HEADER, DESIGN_SERVICES, DESIGN_PROCESS, DESIGN_CTA } from "@/lib/pageContent/pages/design-and-consultation";
 
@@ -31,7 +33,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DesignAndConsultationPage() {
-  const [[header, services, process, cta], customBlocks] = await Promise.all([
+  const [linked, [header, services, process, cta], customBlocks] = await Promise.all([
+    getLinkedPageSections("design-and-consultation"),
     getSections([DESIGN_HEADER, DESIGN_SERVICES, DESIGN_PROCESS, DESIGN_CTA] as const),
     getCustomSections("design_and_consultation"),
   ]);
@@ -47,7 +50,7 @@ export default async function DesignAndConsultationPage() {
       <PageJsonLd pageId="design-and-consultation" />
       <PageHeader
         title={header.title}
-        subtitle={header.subtitle}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
         normalCaseSubtitle
       />
 
@@ -59,7 +62,7 @@ export default async function DesignAndConsultationPage() {
               {services.title}
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              {services.intro}
+              <AutoLinkedText text={linked.services} />
             </p>
           </div>
 
@@ -115,7 +118,7 @@ export default async function DesignAndConsultationPage() {
                 </div>
                 <p className="text-primary font-black uppercase tracking-[0.25em] text-[11px] mb-2">Step {i + 1}</p>
                 <h3 className="text-xl xl:text-base font-black uppercase tracking-tight text-black leading-tight mb-3 xl:whitespace-nowrap">{step.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed max-w-[260px] mx-auto">{step.text}</p>
+                <p className="text-sm text-gray-600 leading-relaxed max-w-[260px] mx-auto"><AutoLinkedText text={step.text} /></p>
               </li>
             ))}
           </ol>

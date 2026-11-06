@@ -1,6 +1,8 @@
 import {
     getLocations,
     getLocationBySlug,
+    getProjects,
+    getProjectBySlug,
     getTestimonials,
     getInternalLinkRules,
     getInternalLinkSettings
@@ -14,6 +16,17 @@ import { TESTIMONIALS_FEATURED } from "./pageContent/pages/testimonials";
 import { FLEET_INTRO } from "./pageContent/pages/fleet-expansion";
 import { COMPLIANCE_HERO, COMPLIANCE_WHY, COMPLIANCE_LOCATION } from "./pageContent/pages/compliance";
 import { HOME_INTRO, HOME_LOCAL_COVERAGE } from "./pageContent/pages/home";
+import { ABOUT_HEADER, ABOUT_MISSION, ABOUT_WHY } from "./pageContent/pages/about";
+import { BLOG_HEADER, BLOG_CTA } from "./pageContent/pages/blog";
+import { CONTACT_HEADER } from "./pageContent/pages/contact";
+import { DESIGN_HEADER, DESIGN_SERVICES } from "./pageContent/pages/design-and-consultation";
+import { LOCATIONS_HEADER, LOCATIONS_DIRECTORY, LOCATIONS_NATIONWIDE } from "./pageContent/pages/locations";
+import { PORTFOLIO_HEADER, PORTFOLIO_GALLERY } from "./pageContent/pages/portfolio";
+import { PRIVACY_HEADER, PRIVACY_CONTENT } from "./pageContent/pages/privacy";
+import { PROCESS_HEADER, PROCESS_INTRO } from "./pageContent/pages/process";
+import { QUOTE_HEADER } from "./pageContent/pages/quote";
+import { REPAIRS_HEADER, REPAIRS_PROCESS } from "./pageContent/pages/repairs-and-upgrades";
+import { TERMS_HEADER, TERMS_CONTENT, TERMS_STANDARDS, TERMS_INQUIRY } from "./pageContent/pages/terms";
 
 /**
  * Registry of static pages whose copy is auto-linked.
@@ -133,12 +146,155 @@ const STATIC_PAGES: PageDefinition[] = [
                 }))
             ];
         }
+    },
+    {
+        key: "about",
+        name: "About Us",
+        url: "/about",
+        group: "Authority",
+        getSections: async () => {
+            const [header, mission, why] = await getSections([ABOUT_HEADER, ABOUT_MISSION, ABOUT_WHY] as const);
+            return [
+                { id: "header", label: "Page Header", text: header.subtitle },
+                { id: "mission", label: "Mission", text: mission.body },
+                { id: "why", label: "Why Choose ECS", text: why.intro }
+            ];
+        }
+    },
+    {
+        key: "process",
+        name: "Build Process",
+        url: "/process",
+        group: "Authority",
+        getSections: async () => {
+            const [header, intro] = await getSections([PROCESS_HEADER, PROCESS_INTRO] as const);
+            return [
+                { id: "header", label: "Page Header", text: header.subtitle },
+                { id: "intro-before", label: "Intro (before link)", text: intro.textBefore },
+                { id: "intro-after", label: "Intro (after link)", text: intro.textAfter }
+            ];
+        }
+    },
+    {
+        key: "portfolio",
+        name: "Portfolio",
+        url: "/portfolio",
+        group: "Authority",
+        getSections: async () => {
+            const [header, gallery] = await getSections([PORTFOLIO_HEADER, PORTFOLIO_GALLERY] as const);
+            return [
+                { id: "header", label: "Page Header", text: header.subtitle },
+                { id: "gallery", label: "Gallery Intro", text: gallery.body }
+            ];
+        }
+    },
+    {
+        key: "design-and-consultation",
+        name: "Design & Consultation",
+        url: "/services/design-and-consultation",
+        group: "Services",
+        getSections: async () => {
+            const [header, services] = await getSections([DESIGN_HEADER, DESIGN_SERVICES] as const);
+            return [
+                { id: "header", label: "Page Header", text: header.subtitle },
+                { id: "services", label: "Services Intro", text: services.intro }
+            ];
+        }
+    },
+    {
+        key: "repairs-and-upgrades",
+        name: "Repairs & Upgrades",
+        url: "/services/repairs-and-upgrades",
+        group: "Services",
+        getSections: async () => {
+            const [header, process] = await getSections([REPAIRS_HEADER, REPAIRS_PROCESS] as const);
+            return [
+                { id: "header", label: "Page Header", text: header.subtitle },
+                { id: "process", label: "Repair Process Intro", text: process.intro }
+            ];
+        }
+    },
+    {
+        key: "locations",
+        name: "Locations Directory",
+        url: "/locations",
+        group: "Locations",
+        getSections: async () => {
+            const [header, directory, nationwide] = await getSections([LOCATIONS_HEADER, LOCATIONS_DIRECTORY, LOCATIONS_NATIONWIDE] as const);
+            return [
+                { id: "header", label: "Page Header", text: header.subtitle },
+                { id: "directory", label: "Directory Intro", text: directory.body },
+                { id: "nationwide", label: "Nationwide Coverage", text: nationwide.body }
+            ];
+        }
+    },
+    {
+        key: "blog",
+        name: "Blog",
+        url: "/blog",
+        group: "Core",
+        getSections: async () => {
+            const [header, cta] = await getSections([BLOG_HEADER, BLOG_CTA] as const);
+            return [
+                { id: "header", label: "Page Header", text: header.subtitle },
+                { id: "cta", label: "Final CTA", text: cta.body }
+            ];
+        }
+    },
+    {
+        key: "quote",
+        name: "Quote Request",
+        url: "/quote",
+        group: "Conversion",
+        getSections: async () => {
+            const header = await getSection(QUOTE_HEADER);
+            return [{ id: "header", label: "Page Header", text: header.subtitle }];
+        }
+    },
+    {
+        key: "contact",
+        name: "Contact Us",
+        url: "/contact",
+        group: "Conversion",
+        getSections: async () => {
+            const header = await getSection(CONTACT_HEADER);
+            return [{ id: "header", label: "Page Header", text: header.subtitle }];
+        }
+    },
+    {
+        key: "privacy",
+        name: "Privacy Policy",
+        url: "/privacy",
+        group: "Legal",
+        getSections: async () => {
+            const [header, content] = await getSections([PRIVACY_HEADER, PRIVACY_CONTENT] as const);
+            return [
+                { id: "header", label: "Page Header", text: header.subtitle },
+                { id: "content", label: "Introduction", text: content.body }
+            ];
+        }
+    },
+    {
+        key: "terms",
+        name: "Terms of Service",
+        url: "/terms",
+        group: "Legal",
+        getSections: async () => {
+            const [header, content, standards, inquiry] = await getSections([TERMS_HEADER, TERMS_CONTENT, TERMS_STANDARDS, TERMS_INQUIRY] as const);
+            return [
+                { id: "header", label: "Page Header", text: header.subtitle },
+                { id: "content", label: "Introduction", text: content.body },
+                { id: "standards", label: "Standards", text: standards.body },
+                { id: "inquiry", label: "Inquiry", text: inquiry.body }
+            ];
+        }
     }
 ];
 
 type LocationRecord = NonNullable<Awaited<ReturnType<typeof getLocationBySlug>>>;
 
 const locationKey = (slug: string) => `location:${slug}`;
+const projectKey = (slug: string) => `project:${slug}`;
 
 function locationSections(location: LocationRecord): LinkableSection[] {
     const { city, state } = location;
@@ -164,7 +320,7 @@ function locationSections(location: LocationRecord): LinkableSection[] {
 
 /** Every linkable static page (for the admin page picker). */
 export async function listLinkablePages(): Promise<LinkablePage[]> {
-    const locations = await getLocations();
+    const [locations, projects] = await Promise.all([getLocations(), getProjects()]);
     return [
         ...STATIC_PAGES.map(({ key, name, url, group }) => ({ key, name, url, group })),
         ...locations.map(l => ({
@@ -172,6 +328,12 @@ export async function listLinkablePages(): Promise<LinkablePage[]> {
             name: `${l.city}, ${l.state}`,
             url: `/locations/${l.slug}`,
             group: "Locations"
+        })),
+        ...projects.map(p => ({
+            key: projectKey(p.slug),
+            name: `Project: ${p.title}`,
+            url: `/portfolio/${p.slug}`,
+            group: "Portfolio"
         }))
     ];
 }
@@ -181,6 +343,10 @@ export async function getPageSections(key: string): Promise<LinkableSection[] | 
     if (key.startsWith("location:")) {
         const location = await getLocationBySlug(key.slice("location:".length));
         return location ? locationSections(location) : null;
+    }
+    if (key.startsWith("project:")) {
+        const project = await getProjectBySlug(key.slice("project:".length));
+        return project ? [{ id: "description", label: "About This Build", text: project.description || "" }] : null;
     }
     const page = STATIC_PAGES.find(p => p.key === key);
     return page ? page.getSections() : null;

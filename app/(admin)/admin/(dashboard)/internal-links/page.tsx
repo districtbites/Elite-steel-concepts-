@@ -8,7 +8,7 @@ import {
     getLocations,
     getProjects
 } from "@/lib/db";
-import { generateLinkAuditReport } from "@/lib/internalLinks";
+import { generateLinkAuditReport, listSavedLinks } from "@/lib/internalLinks";
 import InternalLinksManager from "@/components/admin/InternalLinksManager";
 import { listLinkablePages } from "@/lib/linkablePages";
 
@@ -65,6 +65,7 @@ export default async function AdminInternalLinksPage() {
                 initialAudit={audit}
                 availableRoutes={availableRoutes}
                 linkablePages={linkablePages}
+                initialSavedLinks={listSavedLinks(posts, rules)}
             />
         </div>
     );

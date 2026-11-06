@@ -74,6 +74,7 @@ export const TRAILERS_CTA = defineSection({
 export const TRAILERS_INTRO = defineSection({
     key: "custom_food_trailers.intro",
     label: "Intro (Volume & Precision)",
+    hiddenOnPage: true,
     description: "Intro paragraph used by internal linking (its section is currently hidden on the page).",
     fields: [
         { name: "body", label: "Intro Paragraph", type: "textarea", rows: 5, help: "Internal-link keywords are linked automatically." }

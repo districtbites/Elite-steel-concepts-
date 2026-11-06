@@ -136,7 +136,7 @@ export default async function TestimonialsPage() {
            {/* Grid Layout for Others */}
            <div className="text-center mb-8 md:mb-10">
               <h3 className="text-2xl md:text-4xl font-black uppercase text-black tracking-tight leading-tight">{grid.title}</h3>
-              <p className="text-gray-600 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mt-3">{grid.subtitle}</p>
+              <p className="text-gray-600 text-base md:text-lg font-medium leading-relaxed max-w-2xl mx-auto mt-3"><AutoLinkedText text={grid.subtitle} /></p>
            </div>
 
             {testimonials.length > 0 ? (

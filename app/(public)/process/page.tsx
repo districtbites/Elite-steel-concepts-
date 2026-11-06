@@ -10,6 +10,8 @@ import { getSEO, getPageSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
 import CustomSections from "@/components/sections/CustomSections";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSections, getCustomSections } from "@/lib/pageContent";
 import { PROCESS_HEADER, PROCESS_INTRO, PROCESS_TIMELINE, PROCESS_CTA } from "@/lib/pageContent/pages/process";
 
@@ -29,7 +31,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ProcessPage() {
-  const [[header, intro, timeline, cta], customBlocks] = await Promise.all([
+  const [linked, [header, intro, timeline, cta], customBlocks] = await Promise.all([
+    getLinkedPageSections("process"),
     getSections([PROCESS_HEADER, PROCESS_INTRO, PROCESS_TIMELINE, PROCESS_CTA] as const),
     getCustomSections("process"),
   ]);
@@ -39,7 +42,7 @@ export default async function ProcessPage() {
       <PageJsonLd pageId="process" />
       <PageHeader
         title={header.title}
-        subtitle={header.subtitle}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
         normalCaseSubtitle
       />
 
@@ -51,14 +54,14 @@ export default async function ProcessPage() {
               {intro.title}
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              {intro.textBefore}{" "}
+              <AutoLinkedText text={linked["intro-before"]} />{" "}
               <Link
                 href={intro.linkHref}
                 className="text-primary font-bold underline underline-offset-4 hover:text-orange-600 transition-colors"
               >
                 {intro.linkText}
               </Link>{" "}
-              {intro.textAfter}
+              <AutoLinkedText text={linked["intro-after"]} />
             </p>
           </div>
 

@@ -54,14 +54,20 @@ export function sanitizeHtml(input: string): string {
         .replace(/\u0000(\d+)\u0000/g, (_, i) => kept[Number(i)]);
 }
 
-/** Plain text (no tags) becomes paragraphs; HTML is sanitized as-is. */
+const MARKDOWN_LINK = /\[([^\]\n]+)\]\(([^)\s]+)\)/g;
+
+/** Plain text (no tags) becomes paragraphs; HTML is sanitized as-is. [text](url) links work in both. */
 export function richTextToHtml(body: string): string {
     const text = (body || "").replace(/\r\n/g, "\n").trim();
     if (!text) return "";
-    if (/<[a-z][\s\S]*>/i.test(text)) return sanitizeHtml(text);
+    const withLinks = (s: string) => s.replace(MARKDOWN_LINK, (_, label, url) => `<a href="${url}">${label}</a>`);
+    if (/<[a-z][\s\S]*>/i.test(text)) return sanitizeHtml(withLinks(text));
     const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     return text
         .split(/\n\s*\n/)
         .map(p => `<p>${esc(p.trim()).replace(/\n/g, "<br>")}</p>`)
-        .join("");
+        .join("")
+        .replace(MARKDOWN_LINK, (match, label, url) =>
+            SAFE_URL.test(url) ? `<a href="${url.replace(/"/g, "&quot;")}">${label}</a>` : label
+        );
 }

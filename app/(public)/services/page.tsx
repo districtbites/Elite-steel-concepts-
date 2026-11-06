@@ -207,7 +207,7 @@ export default async function ServicesPage() {
                   <div className="lg:col-span-6 flex items-center">
                     <div className="w-full max-w-xl">
                       <p className="text-gray-600 text-base md:text-[17px] font-normal leading-relaxed mb-7">
-                        {service.description}
+                        <AutoLinkedText text={service.description} />
                       </p>
                       <Link
                         href={service.ctaLink}
@@ -302,7 +302,7 @@ export default async function ServicesPage() {
                 {process.title}
               </h2>
               <p className="text-gray-500 text-sm sm:text-base md:text-lg font-medium leading-relaxed border-l-2 border-primary pl-4 md:pl-6">
-                {process.body}
+                <AutoLinkedText text={process.body} />
               </p>
             </div>
             <a

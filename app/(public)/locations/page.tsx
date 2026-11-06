@@ -8,6 +8,7 @@ import FAQSection from "@/components/FAQSection";
 import { getSEO, getPageSEO, getLocations, getSettings, getFAQs } from "@/lib/db";
 import LocationsDirectory from "@/components/locations/LocationsDirectory";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSection, getSections } from "@/lib/pageContent";
 import { SITE_FAQ } from "@/lib/pageContent/pages/site";
 import {
@@ -37,10 +38,11 @@ const promiseIcons = [Star, Shield, Truck, Clock];
 
 export default async function LocationsPage() {
   const faqContent = await getSection(SITE_FAQ);
-  const [locations, settings, faqs, [header, directory, nationwide, shop, cta]] = await Promise.all([
+  const [locations, settings, faqs, linked, [header, directory, nationwide, shop, cta]] = await Promise.all([
     getLocations(),
     getSettings(),
     getFAQs(),
+    getLinkedPageSections("locations"),
     getSections([LOCATIONS_HEADER, LOCATIONS_DIRECTORY, LOCATIONS_NATIONWIDE, LOCATIONS_SHOP, LOCATIONS_CTA] as const),
   ]);
   const nationwidePromises = nationwide.cards.map((card, i) => ({
@@ -60,7 +62,7 @@ export default async function LocationsPage() {
         eyebrow={header.eyebrow}
         title={header.title}
         titleClassName="text-3xl md:text-5xl lg:text-6xl"
-        subtitle={header.subtitle}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
         normalCaseSubtitle
       >
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -96,7 +98,7 @@ export default async function LocationsPage() {
               {directory.title}
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              {directory.body}
+              <AutoLinkedText text={linked.directory} />
             </p>
           </div>
 
@@ -117,7 +119,7 @@ export default async function LocationsPage() {
               {nationwide.title}
             </h2>
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              <AutoLinkedText text={nationwide.body} />
+              <AutoLinkedText text={linked.nationwide} />
             </p>
           </div>
 
@@ -132,7 +134,7 @@ export default async function LocationsPage() {
                   <Icon size={24} />
                 </div>
                 <h3 className="text-lg font-black uppercase tracking-tight text-black leading-tight mb-3">{title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
+                <p className="text-sm text-gray-600 leading-relaxed"><AutoLinkedText text={desc} /></p>
               </div>
             ))}
           </div>

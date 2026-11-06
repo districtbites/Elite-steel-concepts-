@@ -5,6 +5,8 @@ import PageHeader from "@/components/ui/PageHeader";
 import { getPageSEO, getSEO, getSettings } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSections } from "@/lib/pageContent";
 import {
   TERMS_HEADER,
@@ -30,8 +32,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TermsPage() {
-  const [settings, [header, content, pillars, standards, inquiry]] = await Promise.all([
+  const [settings, linked, [header, content, pillars, standards, inquiry]] = await Promise.all([
     getSettings(),
+    getLinkedPageSections("terms"),
     getSections([TERMS_HEADER, TERMS_CONTENT, TERMS_PILLARS, TERMS_STANDARDS, TERMS_INQUIRY] as const),
   ]);
 
@@ -46,7 +49,7 @@ export default async function TermsPage() {
       <PageJsonLd pageId="terms" />
       <PageHeader
         title={header.title}
-        subtitle={header.subtitle}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
       />
 
       <Section className="bg-white">
@@ -68,7 +71,7 @@ export default async function TermsPage() {
                   {content.title}
                </h2>
                <p className="text-lg leading-relaxed font-light italic border-l-4 border-primary pl-6 py-2 bg-gray-50 rounded-r-xl">
-                  {content.body}
+                  <AutoLinkedText text={linked.content} />
                </p>
             </section>
 
@@ -76,7 +79,7 @@ export default async function TermsPage() {
                {pillars.pillars.map((pillar, i) => (
                   <div key={i} className="p-8 rounded-[2rem] border border-gray-100 hover:border-primary/20 hover:bg-gray-50 transition-all group">
                      <h3 className="text-sm font-black uppercase text-secondary mb-3 tracking-widest group-hover:text-primary transition-colors">{pillar.title}</h3>
-                     <p className="text-sm font-light leading-relaxed">{pillar.description}</p>
+                     <p className="text-sm font-light leading-relaxed"><AutoLinkedText text={pillar.description} /></p>
                   </div>
                ))}
             </div>
@@ -84,14 +87,14 @@ export default async function TermsPage() {
             <section className="mb-16 space-y-8">
                <div className="bg-secondary p-8 rounded-3xl text-white">
                   <h3 className="text-lg font-black uppercase mb-4 tracking-tight text-primary underline decoration-2 underline-offset-8">{standards.title}</h3>
-                  <p className="text-sm font-light text-gray-300">{standards.body}</p>
+                  <p className="text-sm font-light text-gray-300"><AutoLinkedText text={linked.standards} /></p>
                </div>
             </section>
 
             <section className="text-center pt-8 border-t border-gray-100 group">
                <p className="text-[10px] font-black text-gray-400 mb-4 uppercase tracking-[0.4em]">{inquiry.eyebrow}</p>
                <h3 className="text-2xl font-black text-secondary uppercase mb-4 tracking-tighter">{inquiry.title}</h3>
-               <p className="text-gray-500 font-light mb-8">{inquiry.body}</p>
+               <p className="text-gray-500 font-light mb-8"><AutoLinkedText text={linked.inquiry} /></p>
                <a 
                   href={`mailto:${settings.email}`} 
                   className="inline-block bg-primary text-secondary px-10 py-4 rounded-full font-black uppercase tracking-widest text-xs hover:bg-secondary hover:text-white transition-all shadow-xl shadow-primary/20"

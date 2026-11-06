@@ -3,6 +3,7 @@ import Container from "./ui/Container";
 import Section from "./ui/Section";
 import Image from "next/image";
 import { HOME_SIZES } from "@/lib/pageContent/pages/home";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 
 // Truck image grows from small to extra-large; extra cards reuse the largest scale
 const SIZE_SCALES = ["scale-[0.75]", "scale-[0.85]", "scale-100", "scale-[1.15]"];
@@ -37,7 +38,7 @@ const SizeSelection = ({ content = HOME_SIZES.defaults }: { content?: typeof HOM
             {content.title} <span className="whitespace-nowrap">{content.titleNoWrap}</span>
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-            {content.intro}
+            <AutoLinkedText text={content.intro} />
           </p>
         </div>
 

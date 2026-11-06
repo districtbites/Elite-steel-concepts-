@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, ImageIcon, Link2, Plus, Search, Trash2, X } from "lucide-react";
 import type { FieldDef, ListFieldDef, ScalarFieldDef, StringListFieldDef } from "@/lib/pageContent/types";
+import { insertTextLink, isValidLinkTarget, parseTextLinks } from "@/lib/pageContent/schema";
 
 // ─── Shared option types (built on the server, passed down) ───────────────
 
@@ -49,8 +50,8 @@ export function TextField({ value, onChange, placeholder, disabled, mono }: { va
     return <input type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} disabled={disabled} className={`${inputCls} ${mono ? "font-mono text-xs" : "font-bold"}`} />;
 }
 
-export function TextAreaField({ value, onChange, rows = 4, placeholder, disabled }: { value: string; onChange: (v: string) => void; rows?: number; placeholder?: string; disabled?: boolean }) {
-    return <textarea value={value} onChange={e => onChange(e.target.value)} rows={rows} placeholder={placeholder} disabled={disabled} className={`${inputCls} font-medium leading-relaxed resize-y`} />;
+export function TextAreaField({ value, onChange, rows = 4, placeholder, disabled, textareaRef }: { value: string; onChange: (v: string) => void; rows?: number; placeholder?: string; disabled?: boolean; textareaRef?: React.Ref<HTMLTextAreaElement> }) {
+    return <textarea ref={textareaRef} value={value} onChange={e => onChange(e.target.value)} rows={rows} placeholder={placeholder} disabled={disabled} className={`${inputCls} font-medium leading-relaxed resize-y`} />;
 }
 
 export function NumberField({ value, onChange, disabled }: { value: number; onChange: (v: number) => void; disabled?: boolean }) {
@@ -134,6 +135,94 @@ export function LinkField({ value, onChange, links, disabled, placeholder }: { v
     );
 }
 
+/** Paragraph editor with an "Add Link" tool. Links are stored as [text](url) and rendered as real links. */
+export function ParagraphField({ value, onChange, rows, placeholder, disabled, links }: { value: string; onChange: (v: string) => void; rows?: number; placeholder?: string; disabled?: boolean; links: LinkOption[] }) {
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const [draft, setDraft] = useState<{ start: number; end: number; label: string; url: string } | null>(null);
+    const [error, setError] = useState("");
+    const existing = useMemo(() => parseTextLinks(value), [value]);
+
+    const openDraft = () => {
+        const el = textareaRef.current;
+        const start = el?.selectionStart ?? value.length;
+        const end = el?.selectionEnd ?? value.length;
+        setError("");
+        setDraft({ start, end, label: value.slice(start, end).trim(), url: "" });
+    };
+
+    const insert = () => {
+        if (!draft) return;
+        if (!draft.label.trim()) return setError("Enter the words to link, or select them in the paragraph first.");
+        if (!isValidLinkTarget(draft.url)) return setError("Choose a page, or enter a link starting with / or https://");
+        const next = insertTextLink(value, draft.start, draft.end, draft.label, draft.url);
+        if (next === null) return setError("Those words overlap an existing link. Remove that link first.");
+        onChange(next);
+        setDraft(null);
+        setError("");
+    };
+
+    return (
+        <div className="space-y-2">
+            <TextAreaField textareaRef={textareaRef} value={value} onChange={onChange} rows={rows} placeholder={placeholder} disabled={disabled} />
+
+            {!draft && (
+                <button
+                    type="button"
+                    onClick={openDraft}
+                    disabled={disabled}
+                    className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary hover:underline disabled:opacity-40"
+                >
+                    <Link2 size={12} /> Add Link
+                    <span className="normal-case tracking-normal font-medium text-admin-muted">(select the words first)</span>
+                </button>
+            )}
+
+            {draft && (
+                <div className="border border-primary/50 bg-admin-bg p-3 space-y-3">
+                    <div className="space-y-1.5">
+                        <label className={labelCls}>Link Text</label>
+                        <TextField value={draft.label} onChange={label => setDraft({ ...draft, label })} placeholder="Words shown on the page" disabled={disabled} />
+                    </div>
+                    <div className="space-y-1.5">
+                        <label className={labelCls}>Link To</label>
+                        <LinkField value={draft.url} onChange={url => setDraft({ ...draft, url })} links={links} disabled={disabled} />
+                    </div>
+                    {error && <p className="text-[11px] font-bold text-red-500 ml-1">{error}</p>}
+                    <div className="flex items-center gap-2">
+                        <button type="button" onClick={insert} disabled={disabled} className="px-4 py-2 bg-primary text-black text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 hover:text-white disabled:opacity-40 transition-colors">
+                            Insert Link
+                        </button>
+                        <button type="button" onClick={() => { setDraft(null); setError(""); }} className="px-4 py-2 border border-admin-border text-admin-muted text-[10px] font-black uppercase tracking-widest hover:text-admin-text transition-colors">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {existing.length > 0 && (
+                <ul className="flex flex-wrap gap-1.5">
+                    {existing.map(link => (
+                        <li key={link.start} className="inline-flex items-center gap-1.5 max-w-full bg-primary/10 border border-primary/40 text-primary px-2 py-1 text-[10px] font-bold">
+                            <Link2 size={10} className="shrink-0" />
+                            <span className="truncate max-w-[280px]">{link.label} → {link.url}</span>
+                            <button
+                                type="button"
+                                onClick={() => onChange(value.slice(0, link.start) + link.label + value.slice(link.end))}
+                                disabled={disabled}
+                                className="shrink-0 hover:text-admin-text disabled:opacity-40"
+                                aria-label={`Remove link from ${link.label}`}
+                                title="Remove link (keeps the words)"
+                            >
+                                <X size={10} />
+                            </button>
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+}
+
 /** Image URL with thumbnail preview and a Media Library picker. */
 export function ImageField({ value, onChange, media, disabled }: { value: string; onChange: (v: string) => void; media: MediaOption[]; disabled?: boolean }) {
     const [open, setOpen] = useState(false);
@@ -197,7 +286,10 @@ export function ImageField({ value, onChange, media, disabled }: { value: string
 function ScalarInput({ field, value, onChange, ctx }: { field: ScalarFieldDef; value: unknown; onChange: (v: string | number) => void; ctx: FieldContext }) {
     const text = typeof value === "string" ? value : value == null ? "" : String(value);
     switch (field.type) {
-        case "textarea": return <TextAreaField value={text} onChange={onChange} rows={field.rows} placeholder={field.placeholder} disabled={ctx.disabled} />;
+        case "textarea":
+            return field.noLinks
+                ? <TextAreaField value={text} onChange={onChange} rows={field.rows} placeholder={field.placeholder} disabled={ctx.disabled} />
+                : <ParagraphField value={text} onChange={onChange} rows={field.rows} placeholder={field.placeholder} disabled={ctx.disabled} links={ctx.links} />;
         case "number": return <NumberField value={Number(value) || 0} onChange={onChange} disabled={ctx.disabled} />;
         case "link": return <LinkField value={text} onChange={onChange} links={ctx.links} disabled={ctx.disabled} placeholder={field.placeholder} />;
         case "image": return <ImageField value={text} onChange={onChange} media={ctx.media} disabled={ctx.disabled} />;

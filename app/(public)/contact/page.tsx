@@ -8,6 +8,8 @@ import { Phone, Mail, MapPin } from "lucide-react";
 import { getSettings, getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSections } from "@/lib/pageContent";
 import { CONTACT_HEADER, CONTACT_DETAILS } from "@/lib/pageContent/pages/contact";
 
@@ -27,8 +29,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
-  const [settings, [header, details]] = await Promise.all([
+  const [settings, linked, [header, details]] = await Promise.all([
     getSettings(),
+    getLinkedPageSections("contact"),
     getSections([CONTACT_HEADER, CONTACT_DETAILS] as const),
   ]);
 
@@ -48,7 +51,7 @@ export default async function ContactPage() {
       <PageHeader
         eyebrow={header.eyebrow}
         title={header.title}
-        subtitle={header.subtitle}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
         normalCaseSubtitle
       />
 

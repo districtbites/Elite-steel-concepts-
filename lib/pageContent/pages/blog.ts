@@ -22,7 +22,7 @@ export const BLOG_PROMO = defineSection({
     description: "Orange promo card in the blog sidebar (Compliance Checklist).",
     fields: [
         { name: "title", label: "Heading", type: "text" },
-        { name: "body", label: "Text", type: "textarea", rows: 2 },
+        { name: "body", label: "Text", type: "textarea", rows: 2, noLinks: true }, // the whole card is one link
         { name: "ctaText", label: "Button Text", type: "text" },
         { name: "link", label: "Card Link", type: "link" }
     ],

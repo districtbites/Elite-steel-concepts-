@@ -4,8 +4,10 @@ import {
     getPosts,
     getPostById,
     updatePost,
+    updatePostContents,
     getInternalLinkRules,
     createInternalLinkRule,
+    getInternalLinkRuleById,
     updateInternalLinkRule,
     deleteInternalLinkRule,
     resetInternalLinkRules,
@@ -19,6 +21,8 @@ import {
     generateLinkAuditReport,
     scanPostLinks,
     stripInternalLinks,
+    listSavedLinks,
+    removeSavedLink,
     normalizeInternalTarget,
     getRulesForPost,
     postTargetKey,
@@ -27,7 +31,32 @@ import {
     KeywordOccurrence,
 } from "@/lib/internalLinks";
 import { getPageSections, listLinkablePages } from "@/lib/linkablePages";
+import { requireRole } from "@/lib/adminAuth";
+import type { AdminRole } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+
+/** Roles that can open the Internal Linking screen. */
+const LINK_ADMIN_ROLES: readonly AdminRole[] = ["super_admin", "admin", "seo"];
+
+/** Removes a link from every post. Returns the number of links and posts changed. */
+async function removeLinkFromPosts(text: string, url: string, caseSensitive?: boolean) {
+    const contents = new Map<string, string>();
+    let links = 0;
+    for (const post of await getPosts()) {
+        const result = removeSavedLink(post.content || "", text, url, caseSensitive);
+        if (result.removed > 0) {
+            contents.set(post.id, result.content);
+            links += result.removed;
+        }
+    }
+    await updatePostContents(contents);
+    return { links, posts: contents.size };
+}
+
+const removedNote = ({ links, posts }: { links: number; posts: number }) =>
+    links > 0 ? ` Removed ${links} saved link${links === 1 ? "" : "s"} from ${posts} blog post${posts === 1 ? "" : "s"}.` : "";
+
+const currentSavedLinks = async () => listSavedLinks(await getPosts(), await getInternalLinkRules());
 
 /** Parses the JSON placements field, keeping only well-formed entries for the rule's selected targets. */
 function parsePlacements(raw: FormDataEntryValue | null, allowedTargets: string[]): LinkPlacement[] {
@@ -121,6 +150,9 @@ export async function getInternalLinkSettingsAction() {
 }
 
 export async function saveInternalLinkRuleAction(formData: FormData) {
+    const auth = await requireRole(LINK_ADMIN_ROLES);
+    if (!auth.ok) return { success: false, error: auth.error };
+
     const id = formData.get("id") as string;
     const keyword = (formData.get("keyword") as string)?.trim();
     const targetUrl = normalizeInternalTarget((formData.get("targetUrl") as string) || "");
@@ -147,6 +179,7 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
 
     try {
         if (id && id.trim().length > 0) {
+            const previous = await getInternalLinkRuleById(id);
             await updateInternalLinkRule(id, {
                 keyword,
                 targetUrl,
@@ -160,10 +193,13 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
                 targetPages,
                 placements
             });
+            // Links saved in posts follow the old keyword/target until they are removed
+            const replaced = previous && (!enabled || previous.keyword !== keyword || normalizeInternalTarget(previous.targetUrl) !== targetUrl);
+            const removed = replaced ? await removeLinkFromPosts(previous.keyword, previous.targetUrl, previous.caseSensitive) : { links: 0, posts: 0 };
             revalidatePath("/admin/internal-links");
             revalidatePath("/blog", "layout");
             revalidatePath("/", "layout");
-            return { success: true, message: `Rule for "${keyword}" updated.` };
+            return { success: true, message: `Rule for "${keyword}" updated.${removedNote(removed)}`, savedLinks: await currentSavedLinks() };
         } else {
             await createInternalLinkRule({
                 keyword,
@@ -189,24 +225,50 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
 }
 
 export async function toggleInternalLinkRuleAction(id: string, enabled: boolean) {
+    const auth = await requireRole(LINK_ADMIN_ROLES);
+    if (!auth.ok) return { success: false, error: auth.error };
+
     try {
-        await updateInternalLinkRule(id, { enabled });
+        const rule = await updateInternalLinkRule(id, { enabled });
+        // Nothing to restore on re-enable: active rules are applied at render, within the per-post link limits
+        const removed = !enabled && rule ? await removeLinkFromPosts(rule.keyword, rule.targetUrl, rule.caseSensitive) : { links: 0, posts: 0 };
         revalidatePath("/admin/internal-links");
         revalidatePath("/blog", "layout");
         revalidatePath("/", "layout");
-        return { success: true, message: `Rule ${enabled ? "enabled" : "disabled"}.` };
+        return { success: true, message: `Rule ${enabled ? "enabled" : "disabled"}.${removedNote(removed)}`, savedLinks: await currentSavedLinks() };
     } catch (err: any) {
         return { success: false, error: err.message };
     }
 }
 
 export async function deleteInternalLinkRuleAction(id: string) {
+    const auth = await requireRole(LINK_ADMIN_ROLES);
+    if (!auth.ok) return { success: false, error: auth.error };
+
     try {
+        const rule = await getInternalLinkRuleById(id);
         await deleteInternalLinkRule(id);
+        const removed = rule ? await removeLinkFromPosts(rule.keyword, rule.targetUrl, rule.caseSensitive) : { links: 0, posts: 0 };
         revalidatePath("/admin/internal-links");
         revalidatePath("/blog", "layout");
         revalidatePath("/", "layout");
-        return { success: true, message: "Rule deleted successfully." };
+        return { success: true, message: `Rule deleted.${removedNote(removed)}`, savedLinks: await currentSavedLinks() };
+    } catch (err: any) {
+        return { success: false, error: err.message };
+    }
+}
+
+/** Removes one saved link (text + target) from every post, whether or not a rule ever created it. */
+export async function removeSavedLinkAction(text: string, url: string) {
+    const auth = await requireRole(LINK_ADMIN_ROLES);
+    if (!auth.ok) return { success: false, error: auth.error };
+
+    try {
+        const removed = await removeLinkFromPosts(text, url);
+        revalidatePath("/admin/internal-links");
+        revalidatePath("/blog", "layout");
+        revalidatePath("/", "layout");
+        return { success: true, message: removedNote(removed).trim() || "No saved links found.", savedLinks: await currentSavedLinks() };
     } catch (err: any) {
         return { success: false, error: err.message };
     }

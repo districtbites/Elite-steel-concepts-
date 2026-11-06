@@ -5,6 +5,7 @@ import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, Youtube, Linkedin, C
 import Container from "./ui/Container";
 import type { GlobalSettings } from "@/lib/db";
 import { SITE_FOOTER, type SiteFooterContent } from "@/lib/pageContent/pages/site";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 
 interface FooterProps {
   settings: GlobalSettings;
@@ -33,7 +34,7 @@ const Footer = ({ settings, content = SITE_FOOTER.defaults }: FooterProps) => {
               </div>
             </Link>
             <p className="text-gray-400 text-sm leading-relaxed">
-              {content.about}
+              <AutoLinkedText text={content.about} />
             </p>
             <div className="flex space-x-4">
               {settings.facebook && (

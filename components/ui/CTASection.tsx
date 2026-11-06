@@ -1,6 +1,7 @@
 import React from "react";
 import Container from "./Container";
 import Button from "./Button";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 import { ArrowRight } from "lucide-react";
 
 interface CTASectionProps {
@@ -37,7 +38,7 @@ const CTASection: React.FC<CTASectionProps> = ({
         </h2>
         {subtitle && (
           <p className="text-white/80 text-sm md:text-base font-medium tracking-normal max-w-2xl mx-auto mb-8 leading-relaxed normal-case">
-            {subtitle}
+            <AutoLinkedText text={subtitle} />
           </p>
         )}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

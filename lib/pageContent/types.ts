@@ -20,6 +20,8 @@ interface FieldBase {
 export interface ScalarFieldDef extends FieldBase {
     type: "text" | "textarea" | "number" | "link" | "image";
     rows?: number; // textarea height
+    /** Textarea rendered inside a clickable element, where a nested link would be invalid HTML */
+    noLinks?: boolean;
 }
 
 /** A list of plain strings (bullet points, area names...). */
@@ -57,6 +59,8 @@ export interface SectionDef<T extends SectionContent = SectionContent> {
     description: string;
     fields: FieldDef[];
     defaults: T;
+    /** The page does not render this section right now, so edits stay invisible until it is re-enabled. */
+    hiddenOnPage?: boolean;
     /** Earlier copy saved in the SEO Manager wins over `defaults` until this section is saved here. */
     legacy?: LegacySource;
 }

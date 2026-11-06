@@ -9,6 +9,8 @@ import {
 import Container from "@/components/ui/Container";
 import type { CustomBlock, BlockTheme } from "@/lib/pageContent/blocks";
 import { richTextToHtml } from "@/lib/sanitizeHtml";
+import { stripTextLinks } from "@/lib/pageContent/schema";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 
 /**
  * Renders the modular blocks an admin added in Page Content → page builder.
@@ -87,7 +89,7 @@ function Heading({ block, center = true }: { block: CustomBlock; center?: boolea
             {block.title && (
                 <h2 className={`text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight leading-tight ${t.title}`}>{block.title}</h2>
             )}
-            {block.subtitle && <p className={`mt-5 text-base md:text-lg leading-relaxed ${t.text}`}>{block.subtitle}</p>}
+            {block.subtitle && <p className={`mt-5 text-base md:text-lg leading-relaxed ${t.text}`}><AutoLinkedText text={block.subtitle} /></p>}
         </div>
     );
 }
@@ -107,7 +109,7 @@ function Features({ block }: { block: CustomBlock }) {
                                 <Icon size={22} className="text-primary group-hover:text-white transition-colors" />
                             </div>
                             {item.title && <h3 className={`text-lg font-black uppercase tracking-tight mb-3 ${t.title}`}>{item.title}</h3>}
-                            {item.description && <p className={`text-sm leading-relaxed ${t.text}`}>{item.description}</p>}
+                            {item.description && <p className={`text-sm leading-relaxed ${t.text}`}><AutoLinkedText text={item.description} /></p>}
                         </div>
                     );
                 })}
@@ -151,7 +153,7 @@ function Split({ block }: { block: CustomBlock }) {
             <div className={block.imageUrl ? "" : "lg:col-span-2 max-w-3xl"}>
                 <Heading block={{ ...block, subtitle: "" }} center={false} />
                 {block.body && (
-                    <div className={`-mt-6 text-base md:text-lg leading-relaxed space-y-4 ${t.text}`} dangerouslySetInnerHTML={{ __html: richTextToHtml(block.body) }} />
+                    <div className={`-mt-6 text-base md:text-lg leading-relaxed space-y-4 [&_a]:text-primary [&_a]:font-bold [&_a]:underline [&_a]:underline-offset-4 ${t.text}`} dangerouslySetInnerHTML={{ __html: richTextToHtml(block.body) }} />
                 )}
                 {bullets.length > 0 && (
                     <ul className="mt-6 space-y-3">
@@ -175,7 +177,7 @@ function Cta({ block }: { block: CustomBlock }) {
         <div className="relative text-center max-w-4xl mx-auto">
             {block.eyebrow && <span className="text-primary text-xs font-black uppercase tracking-[0.25em] block mb-4">{block.eyebrow}</span>}
             {block.title && <h2 className={`text-3xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-4 ${t.title}`}>{block.title}</h2>}
-            {block.subtitle && <p className={`text-sm md:text-base max-w-2xl mx-auto leading-relaxed ${t.text}`}>{block.subtitle}</p>}
+            {block.subtitle && <p className={`text-sm md:text-base max-w-2xl mx-auto leading-relaxed ${t.text}`}><AutoLinkedText text={block.subtitle} /></p>}
             <Ctas block={block} dark={block.theme === "dark"} center />
         </div>
     );
@@ -187,7 +189,7 @@ function Faqs({ block }: { block: CustomBlock }) {
     const jsonLd = {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        mainEntity: faqs.map(f => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: f.answer || "" } }))
+        mainEntity: faqs.map(f => ({ "@type": "Question", name: f.question, acceptedAnswer: { "@type": "Answer", text: stripTextLinks(f.answer || "") } }))
     };
     return (
         <>
@@ -201,7 +203,7 @@ function Faqs({ block }: { block: CustomBlock }) {
                                 <Plus size={18} />
                             </span>
                         </summary>
-                        <div className={`px-5 md:px-6 pb-6 leading-relaxed whitespace-pre-line ${t.text}`}>{f.answer}</div>
+                        <div className={`px-5 md:px-6 pb-6 leading-relaxed whitespace-pre-line ${t.text}`}><AutoLinkedText text={f.answer || ""} /></div>
                     </details>
                 ))}
             </div>
@@ -228,7 +230,7 @@ function Testimonials({ block }: { block: CustomBlock }) {
                                 ))}
                             </div>
                         ) : null}
-                        <blockquote className={`flex-1 text-base leading-relaxed italic ${t.text}`}>&ldquo;{item.quote}&rdquo;</blockquote>
+                        <blockquote className={`flex-1 text-base leading-relaxed italic ${t.text}`}>&ldquo;<AutoLinkedText text={item.quote || ""} />&rdquo;</blockquote>
                         <figcaption className="mt-6 pt-6 border-t border-current/10">
                             <div className={`text-sm font-black uppercase tracking-wider ${t.title}`}>{item.author}</div>
                             {item.role && <div className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">{item.role}</div>}
@@ -250,7 +252,7 @@ function HeroBanner({ block }: { block: CustomBlock }) {
                 </div>
             )}
             {block.title && <h2 className="text-4xl md:text-6xl font-black uppercase text-white tracking-tighter leading-[0.95]">{block.title}</h2>}
-            {block.subtitle && <p className="mt-6 text-base md:text-lg text-gray-300 leading-relaxed max-w-2xl">{block.subtitle}</p>}
+            {block.subtitle && <p className="mt-6 text-base md:text-lg text-gray-300 leading-relaxed max-w-2xl"><AutoLinkedText text={block.subtitle} /></p>}
             <Ctas block={block} dark />
         </div>
     );

@@ -22,6 +22,8 @@ import {
 import Link from "next/link";
 import type { Metadata } from "next";
 import JsonLd from "@/components/JsonLd";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { projectImageAlt } from "@/lib/projectAlt";
 import { breadcrumbSchema } from "@/lib/schema";
 
@@ -54,9 +56,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProjectDetailsPage({ params }: PageProps) {
   const { slug } = await params;
-  const [project, allProjects] = await Promise.all([
+  const [project, allProjects, linked] = await Promise.all([
     getProjectBySlug(slug),
     getProjects(),
+    getLinkedPageSections(`project:${slug}`),
   ]);
 
   if (!project) {
@@ -135,7 +138,7 @@ export default async function ProjectDetailsPage({ params }: PageProps) {
                   About This Build
                 </h2>
                 <div className="text-gray-600 text-lg leading-loose whitespace-pre-wrap font-light">
-                  {project.description}
+                  <AutoLinkedText text={linked.description} />
                 </div>
               </div>
 

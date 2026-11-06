@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Plus, Minus, HelpCircle } from "lucide-react";
 import Container from "./ui/Container";
 import { SITE_FAQ, type SiteFaqContent } from "@/lib/pageContent/pages/site";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 
 interface FAQ {
   id: string;
@@ -34,7 +35,7 @@ const FAQSection = ({ faqs, plainHeading = false, content = SITE_FAQ.defaults }:
                 {content.title}{content.highlight && <> <span className={plainHeading ? "" : "text-primary"}>{content.highlight}</span></>}
               </h2>
               <p className="text-gray-500 mb-8 leading-relaxed">
-                {content.intro}
+                <AutoLinkedText text={content.intro} />
               </p>
               <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                 <div className="flex items-center gap-4 mb-4">
@@ -43,7 +44,7 @@ const FAQSection = ({ faqs, plainHeading = false, content = SITE_FAQ.defaults }:
                   </div>
                   <p className="font-bold text-secondary">{content.helpTitle}</p>
                 </div>
-                <p className="text-sm text-gray-500 mb-4">{content.helpText}</p>
+                <p className="text-sm text-gray-500 mb-4"><AutoLinkedText text={content.helpText} /></p>
                 <a 
                   href={content.helpLink}
                   className="text-sm font-black uppercase text-primary hover:text-secondary transition-colors inline-flex items-center"

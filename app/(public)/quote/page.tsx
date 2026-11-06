@@ -10,6 +10,7 @@ import { getSEO, getPageSEO, getFAQs, getLocations } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
 import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSections } from "@/lib/pageContent";
 import { QUOTE_HEADER, QUOTE_SUPPORT } from "@/lib/pageContent/pages/quote";
 
@@ -29,9 +30,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function QuotePage() {
-  const [faqs, locations, [header, support]] = await Promise.all([
+  const [faqs, locations, linked, [header, support]] = await Promise.all([
     getFAQs(),
     getLocations(),
+    getLinkedPageSections("quote"),
     getSections([QUOTE_HEADER, QUOTE_SUPPORT] as const),
   ]);
 
@@ -66,7 +68,7 @@ export default async function QuotePage() {
       <PageHeader
         eyebrow={header.eyebrow}
         title={header.title}
-        subtitle={header.subtitle ? <AutoLinkedText text={header.subtitle} /> : undefined}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
         titleClassName="text-3xl md:text-5xl max-w-5xl mx-auto !leading-tight"
         normalCaseSubtitle
         className="!pb-10 md:!pb-12"

@@ -1,5 +1,6 @@
 import React from "react";
 import Container from "./Container";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
 
 interface PageHeaderProps {
   title: string;
@@ -39,7 +40,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         </h1>
         {subtitle && (
           <p className={`text-gray-400 max-w-2xl mx-auto leading-relaxed ${normalCaseSubtitle ? "text-base md:text-lg font-medium" : "text-sm md:text-base font-bold uppercase tracking-widest"}`}>
-            {subtitle}
+            {typeof subtitle === "string" ? <AutoLinkedText text={subtitle} /> : subtitle}
           </p>
         )}
         {children}

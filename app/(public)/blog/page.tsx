@@ -10,6 +10,8 @@ import { Calendar, Clock, ArrowRight, ArrowLeft, TrendingUp, Sparkles, BookOpen,
 import { getPosts, getPageSEO, getSEO } from "@/lib/db";
 import type { Metadata } from "next";
 import PageJsonLd from "@/components/PageJsonLd";
+import AutoLinkedText from "@/components/ui/AutoLinkedText";
+import { getLinkedPageSections } from "@/lib/linkablePages";
 import { getSections } from "@/lib/pageContent";
 import { BLOG_HEADER, BLOG_PROMO, BLOG_CTA } from "@/lib/pageContent/pages/blog";
 
@@ -60,8 +62,9 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
   const categoryParam = typeof searchParams?.category === "string" ? searchParams.category : "";
   const postsPerPage = 6;
 
-  const [blogPosts, [header, promo, cta]] = await Promise.all([
+  const [blogPosts, linked, [header, promo, cta]] = await Promise.all([
     getPosts(),
+    getLinkedPageSections("blog"),
     getSections([BLOG_HEADER, BLOG_PROMO, BLOG_CTA] as const),
   ]);
   const publishedPosts = blogPosts.filter(p => p.status === "Published");
@@ -111,7 +114,7 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
       <PageHeader
         eyebrow={header.eyebrow}
         title={header.title}
-        subtitle={header.subtitle}
+        subtitle={linked.header ? <AutoLinkedText text={linked.header} /> : undefined}
         normalCaseSubtitle
       />
 
@@ -385,7 +388,7 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
                   {cta.title} <span className="text-primary block mt-2">{cta.titleHighlight}</span>
                </h2>
                <p className="text-gray-400 text-sm font-light leading-relaxed mb-10 max-w-lg">
-                  {cta.body}
+                  <AutoLinkedText text={linked.cta} />
                </p>
                <Link 
                  href={cta.ctaLink}
