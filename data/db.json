@@ -852,7 +852,7 @@
     "salesEmail": "esteelquotes@gmail.com",
     "supportEmail": "esteelquotes@gmail.com",
     "whatsappPhone": "+15716510337",
-    "linkedin": "",
+    "linkedin": "https://www.linkedin.com/company/elite-steel-concepts/posts/?feedView=all&viewAsMember=true",
     "youtube": "",
     "taxId": "EIN: 47-1234567",
     "certifications": "NSF · METRO DC HEALTH · NFPA · Virginia DPOR Licensed",
@@ -19504,6 +19504,23 @@
   ],
   "internalLinkRules": [
     {
+      "keyword": "custom food truck and trailer Manufacturer",
+      "targetUrl": "/",
+      "categoryFilter": "All",
+      "maxPerPost": 1,
+      "priority": 80,
+      "enabled": true,
+      "caseSensitive": false,
+      "notes": "",
+      "targetPostIds": [],
+      "targetPages": [
+        "design-and-consultation"
+      ],
+      "placements": [],
+      "id": "rule-1793993772909",
+      "createdAt": "2026-11-06T19:36:12.909Z"
+    },
+    {
       "keyword": "trusted custom food truck builder",
       "targetUrl": "/",
       "categoryFilter": "All",
@@ -22135,7 +22152,7 @@
     "repairs_and_upgrades.process": {
       "content": {
         "title": "Repair & Upgrade Solutions Built Around Your Mobile Kitchen",
-        "intro": "Elite Steel Concepts, as experienced food truck and trailer builder, assesses your existing setup, understand your business needs, and recommend repairs or upgrades that make your mobile kitchen more functional and efficient.",
+        "intro": "Elite Steel Concepts, as [experienced food truck and trailer builder](https://www.esteelconcepts.com/), assesses your existing setup, understand your business needs, and recommend repairs or upgrades that make your mobile kitchen more functional and efficient.",
         "steps": [
           {
             "title": "Assess",
@@ -22155,13 +22172,13 @@
           }
         ]
       },
-      "updatedAt": "2026-11-06T17:28:43.862Z",
+      "updatedAt": "2026-11-06T19:40:41.714Z",
       "updatedBy": "rabiamumtaz828@gmail.com"
     },
     "design_and_consultation.services": {
       "content": {
         "title": "Our Food Truck & Trailer Design & Consultation Services",
-        "intro": "Plan your mobile kitchen with expert guidance from our custom food truck and trailer\nManufacturer and design team.",
+        "intro": "Plan your mobile kitchen with expert guidance from our \n[custom food truck and trailer manufacturer](https://www.esteelconcepts.com/) and design team.",
         "items": [
           "Workflow & Kitchen Layout Planning",
           "Professional 3D & CAD Layouts",
@@ -22169,7 +22186,33 @@
           "Equipment Selection & Space Optimization"
         ]
       },
-      "updatedAt": "2026-11-06T17:38:51.583Z",
+      "updatedAt": "2026-11-06T19:39:23.166Z",
+      "updatedBy": "rabiamumtaz828@gmail.com"
+    },
+    "compliance.location": {
+      "content": {
+        "title": "Food Truck Compliance Starts With Your Location",
+        "subtitle": "Different Locations, Different Requirements",
+        "paragraph1": "Custom food truck starts with knowing where you plan to operate. Health, safety, plumbing, fire, and mobile food requirements can vary between states, counties, cities, and local authorities.",
+        "paragraph2": "Your location, menu, equipment, and type of food operation can all affect the requirements that apply to your mobile kitchen. A food truck operating in Virginia may have different requirements from one operating in Maryland or Washington, DC. At Elite Steel Concepts, we build [custom food trucks and trailers](https://www.esteelconcepts.com/) throughout the DMV region with applicable location-specific requirements in mind.",
+        "regions": [
+          "Virginia",
+          "Maryland",
+          "Washington, DC"
+        ]
+      },
+      "updatedAt": "2026-11-06T19:47:35.920Z",
+      "updatedBy": "rabiamumtaz828@gmail.com"
+    },
+    "about.mission": {
+      "content": {
+        "eyebrow": "Our Mission",
+        "title": "Built Custom Food Trucks & Trailers for Entrepreneurs With Big Ideas",
+        "body": "Our mission is to build high-quality[ custom food trucks and trailers](https://www.esteelconcepts.com/) using durable, commercial-grade materials, reliable equipment, expert construction, and practical kitchen layouts. Every build is carefully designed around the client's menu, workflow, and business needs, with a strong focus on durability, functionality, professional finishing, and applicable code requirements. We use quality materials and thoughtful designs to create dependable mobile kitchen solutions that support entrepreneurs from their first launch through long-term business growth.",
+        "image": "/uploads/about/about-mission-worker.jpg",
+        "imageAlt": "Elite Steel Concepts fabricator building a custom food truck"
+      },
+      "updatedAt": "2026-11-06T19:46:19.720Z",
       "updatedBy": "rabiamumtaz828@gmail.com"
     }
   }

@@ -13,7 +13,24 @@ interface FooterProps {
   content?: SiteFooterContent;
 }
 
+/** lucide-react has no Google mark. */
+const GoogleIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+    <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
+  </svg>
+);
+
 const Footer = ({ settings, content = SITE_FOOTER.defaults }: FooterProps) => {
+  // Only profiles with a URL in Admin → Settings are shown
+  const socialLinks = [
+    { name: "Facebook", url: settings.facebook, icon: Facebook },
+    { name: "Instagram", url: settings.instagram, icon: Instagram },
+    { name: "Twitter", url: settings.twitter, icon: Twitter },
+    { name: "LinkedIn", url: settings.linkedin, icon: Linkedin },
+    { name: "YouTube", url: settings.youtube, icon: Youtube },
+    { name: "Google", url: settings.googleBusiness, icon: GoogleIcon },
+  ].filter(link => link.url?.trim());
+
   return (
     <footer className="bg-secondary text-white pt-0 pb-8">
       {/* Gradient separator */}
@@ -36,33 +53,22 @@ const Footer = ({ settings, content = SITE_FOOTER.defaults }: FooterProps) => {
             <p className="text-gray-400 text-sm leading-relaxed">
               <AutoLinkedText text={content.about} />
             </p>
-            <div className="flex space-x-4">
-              {settings.facebook && (
-                <a href={settings.facebook} target="_blank" rel="noopener noreferrer" aria-label="Elite Steel Concepts on Facebook" className="text-gray-400 hover:text-primary transition-colors">
-                  <Facebook className="w-5 h-5" />
-                </a>
-              )}
-              {settings.instagram && (
-                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" aria-label="Elite Steel Concepts on Instagram" className="text-gray-400 hover:text-primary transition-colors">
-                  <Instagram className="w-5 h-5" />
-                </a>
-              )}
-              {settings.twitter && (
-                <a href={settings.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
-                  <Twitter className="w-5 h-5" />
-                </a>
-              )}
-              {settings.linkedin && (
-                <a href={settings.linkedin} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
-                  <Linkedin className="w-5 h-5" />
-                </a>
-              )}
-              {settings.youtube && (
-                <a href={settings.youtube} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary transition-colors">
-                  <Youtube className="w-5 h-5" />
-                </a>
-              )}
-            </div>
+            {socialLinks.length > 0 && (
+              <div className="flex space-x-4">
+                {socialLinks.map(({ name, url, icon: Icon }) => (
+                  <a
+                    key={name}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Elite Steel Concepts on ${name}`}
+                    className="text-gray-400 hover:text-primary transition-colors"
+                  >
+                    <Icon className="w-5 h-5" />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Quick Links */}

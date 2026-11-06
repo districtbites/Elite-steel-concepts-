@@ -810,6 +810,32 @@ const SettingsForm = ({ settings }: SettingsFormProps) => {
  )}
  </div>
  </div>
+
+ <div className="mt-5">
+ <FieldLabel label="Google Business Profile" />
+ <div className="relative group">
+ <span className="absolute left-4 top-1/2 -translate-y-1/2 text-base">
+ 📍
+ </span>
+ <input
+ type="text"
+ name="googleBusiness"
+ defaultValue={settings.googleBusiness ||""}
+ placeholder="https://share.google/..."
+ className="w-full bg-admin-bg border border-admin-border pl-12 pr-10 py-3.5 outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-bold text-admin-text text-sm placeholder:text-gray-300"
+ />
+ {settings.googleBusiness && (
+ <a
+ href={settings.googleBusiness}
+ target="_blank"
+ rel="noopener noreferrer"
+ className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
+ >
+ <ExternalLink size={14} />
+ </a>
+ )}
+ </div>
+ </div>
  </div>
  </div>
  )}

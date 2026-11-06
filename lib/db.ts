@@ -90,6 +90,7 @@ export interface GlobalSettings {
     twitter: string;
     linkedin?: string;
     youtube?: string;
+    googleBusiness?: string; // Google Business Profile share link
 
     // Identity & Compliance
     taxId?: string;
@@ -282,6 +283,7 @@ const DEFAULT_SETTINGS: GlobalSettings = {
     twitter: "https://twitter.com/elitesteelcncpt",
     linkedin: "https://www.linkedin.com/company/elite-steel-concepts",
     youtube: "",
+    googleBusiness: "https://share.google/IFLLxHDWkARBWYDdB",
     salesEmail: "esteelquotes@gmail.com",
     supportEmail: "esteelquotes@gmail.com",
     whatsappPhone: "+15716510337",
@@ -659,7 +661,8 @@ export async function deleteContact(id: string): Promise<void> {
 // --- SETTINGS ---
 export async function getSettings(): Promise<GlobalSettings> {
     const db = await readDb();
-    return db.settings || DEFAULT_SETTINGS;
+    // Settings saved before a field existed fall back to its default; a saved blank value stays blank
+    return { googleBusiness: DEFAULT_SETTINGS.googleBusiness, ...(db.settings || DEFAULT_SETTINGS) };
 }
 
 export async function updateSettings(updates: Partial<GlobalSettings>): Promise<GlobalSettings> {

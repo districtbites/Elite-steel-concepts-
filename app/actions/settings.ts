@@ -40,7 +40,7 @@ export async function saveSettings(formData: FormData) {
     const stringFields = [
         "email", "phone", "address", "businessHours", "logoUrl",
         "salesEmail", "supportEmail", "whatsappPhone",
-        "instagram", "facebook", "twitter", "linkedin", "youtube",
+        "instagram", "facebook", "twitter", "linkedin", "youtube", "googleBusiness",
         "taxId", "certifications",
         "primaryColor", "secondaryColor", "accentColor",
         "googleMapsLink", "mapEmbedUrl",
