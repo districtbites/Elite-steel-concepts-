@@ -192,6 +192,16 @@ await test("saved links: only the matching text + target is removed, words and i
     assert.equal(links.removeSavedLink("[Trailer](/a) [trailer](/a)", "trailer", "/a", true).content, "[Trailer](/a) trailer");
 });
 
+await test("saved links: a switched-off rule hides its keyword on any internal target", () => {
+    const rules = [
+        { id: "1", keyword: "food truck", targetUrl: "/", enabled: false },
+        { id: "2", keyword: "trailer", targetUrl: "/a", enabled: false },
+        { id: "3", keyword: "trailer", targetUrl: "/b", enabled: true }
+    ];
+    const content = "[Food Truck](/services) [food truck](https://example.com) [trailer](/b)";
+    assert.equal(links.hideDisabledRuleLinks(content, rules), "Food Truck [food truck](https://example.com) [trailer](/b)");
+});
+
 await test("saved links: grouped with rule status, external links ignored", () => {
     const posts = [
         { id: "1", title: "One", content: "[a](/x) [b](/y) [c](/z) [out](https://example.com)" },

@@ -366,10 +366,10 @@ const serviceLinks = [
 ```
 
 ### B. Dynamic Related Intel Siloing
-In `app/(public)/blog/[slug]/page.tsx`, update the `relatedPosts` selector to prioritize posts within the **same category / cluster tag** rather than fetching random posts:
+In `app/blog/[slug]/page.tsx`, update the `relatedPosts` selector to prioritize posts within the **same category / cluster tag** rather than fetching random posts:
 
 ```tsx
-// app/(public)/blog/[slug]/page.tsx
+// app/blog/[slug]/page.tsx
 const relatedPosts = allPosts
   .filter(p => p.id !== post.id && p.status === "Published" && p.category === post.category)
   .slice(0, 3);
@@ -387,7 +387,7 @@ const relatedPosts = allPosts
    - Link Virginia, Maryland, and DC blog posts directly to their corresponding `/locations/[city]` pages.
 4. **Sprint 4 (Reverse Linking & Template Code Updates):**
    - Update `components/Footer.tsx` service links.
-   - Update `app/(public)/blog/[slug]/page.tsx` related post filter.
+   - Update `app/blog/[slug]/page.tsx` related post filter.
    - Add contextual blog callouts on `/services/*` and `/compliance`.
 5. **Sprint 5 (Verification & Performance Tracking):**
    - Verify all links return HTTP 200.

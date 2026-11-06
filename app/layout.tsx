@@ -9,8 +9,18 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
-import { getSEO } from "@/lib/db";
+import { getSEO, getSettings } from "@/lib/db";
+import { getSections } from "@/lib/pageContent";
+import { SITE_HEADER, SITE_FOOTER } from "@/lib/pageContent/pages/site";
 import Analytics from "@/components/Analytics";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import SiteChrome from "@/components/layout/SiteChrome";
+
+// Admin changes must show on the next page load, including saves made from another server
+// (local dev and production share one database), so pages are never served from a page cache.
+// Rendering stays fast because lib/db.ts serves the data from memory.
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = await getSEO();
@@ -38,11 +48,16 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [settings, [header, footer]] = await Promise.all([
+    getSettings(),
+    getSections([SITE_HEADER, SITE_FOOTER] as const),
+  ]);
+
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body
@@ -50,7 +65,12 @@ export default function RootLayout({
         className={`${montserrat.variable} antialiased font-sans text-foreground bg-background flex flex-col min-h-screen`}
       >
         <Analytics />
-        {children}
+        <SiteChrome
+          header={<Header phone={settings.phone} content={header} />}
+          footer={<Footer settings={settings} content={footer} />}
+        >
+          {children}
+        </SiteChrome>
       </body>
     </html>
   );

@@ -58,42 +58,38 @@ Rather than relying on generic website builders, slow third-party plugins, or bl
 ```text
 esc-new-website/
 ├── app/                                    # Next.js App Router Architecture
-│   ├── (admin)/                            # Isolated Admin Route Group (Private)
-│   │   └── admin/                          # Administrative Dashboard & Auth
-│   │       ├── (dashboard)/                # Protected Control Panels
-│   │       │   ├── blog/                   # Blog Post Creator & Markdown Editor
-│   │       │   ├── contacts/               # Contact Form Submissions Viewer
-│   │       │   ├── faqs/                   # Dynamic FAQ Management
-│   │       │   ├── internal-links/         # Programmatic Internal Linking Rules
-│   │       │   ├── locations/              # Regional Location Landing Page Editor
-│   │       │   ├── media/                  # Media Library & Asset Cloud Storage
-│   │       │   ├── newsletter/             # Email Subscriber Lists & Broadcasts
-│   │       │   ├── portfolio/              # Custom Project Portfolio Showcase Editor
-│   │       │   ├── quotes/                 # Client Blueprint & Quote Lead Management
-│   │       │   ├── seo/                    # Global Metadata, Schema & Canonical Control
-│   │       │   ├── settings/               # Global Branding, Phone, Address & SMTP
-│   │       │   ├── testimonials/           # Client Reviews & Rating Manager
-│   │       │   ├── users/                  # Staff Access & Credential Settings
-│   │       │   ├── layout.tsx              # Admin Shell, Sidebar & Navigation
-│   │       │   └── page.tsx                # Admin Metrics, Lead KPIs & Activity Feed
-│   │       ├── forgot-password/            # Secure Credential Recovery Flow
-│   │       ├── login/                      # Staff Authentication Gateway
-│   │       └── ThemeProvider.tsx           # High-Contrast Admin Theme Context
-│   ├── (public)/                           # Public-Facing Website Route Group
-│   │   ├── about/                          # Company Story, Facility, 14+ Year Heritage
-│   │   ├── blog/                           # Master Blog Index & Dynamic [slug] Articles
-│   │   ├── compliance/                     # Health Codes, DMV Regulations & Fire Safety
-│   │   ├── contact/                        # Direct Consultation & Workshop Contact Form
-│   │   ├── locations/                      # Multi-State Location Directory & Target Pages
-│   │   ├── portfolio/                      # Completed Builds & Interactive Gallery
-│   │   ├── privacy/                        # Enterprise Privacy Policy Documentation
-│   │   ├── process/                        # 5-Stage Custom Fabrication Blueprint
-│   │   ├── quote/                          # Multi-Step Interactive Quote Calculator
-│   │   ├── services/                       # Custom Trucks, Trailers, Repairs & Upgrades
-│   │   ├── terms/                          # Commercial Terms & Conditions
-│   │   ├── testimonials/                   # Verified Client Case Studies & Reviews
-│   │   ├── layout.tsx                      # Public Header, Footer, and Tracking Shell
-│   │   └── page.tsx                        # High-Conversion Primary Homepage
+│   ├── admin/                          # Administrative Dashboard & Auth
+│   │   ├── blog/                   # Blog Post Creator & Markdown Editor
+│   │   ├── contacts/               # Contact Form Submissions Viewer
+│   │   ├── faqs/                   # Dynamic FAQ Management
+│   │   ├── internal-links/         # Programmatic Internal Linking Rules
+│   │   ├── locations/              # Regional Location Landing Page Editor
+│   │   ├── media/                  # Media Library & Asset Cloud Storage
+│   │   ├── newsletter/             # Email Subscriber Lists & Broadcasts
+│   │   ├── portfolio/              # Custom Project Portfolio Showcase Editor
+│   │   ├── quotes/                 # Client Blueprint & Quote Lead Management
+│   │   ├── seo/                    # Global Metadata, Schema & Canonical Control
+│   │   ├── settings/               # Global Branding, Phone, Address & SMTP
+│   │   ├── testimonials/           # Client Reviews & Rating Manager
+│   │   ├── users/                  # Staff Access & Credential Settings
+│   │   ├── layout.tsx              # Admin Shell, Sidebar & Navigation
+│   │   └── page.tsx                # Admin Metrics, Lead KPIs & Activity Feed
+│   │   ├── forgot-password/            # Secure Credential Recovery Flow
+│   │   ├── login/                      # Staff Authentication Gateway
+│   │   └── ThemeProvider.tsx           # High-Contrast Admin Theme Context
+│   ├── about/                          # Company Story, Facility, 14+ Year Heritage
+│   ├── blog/                           # Master Blog Index & Dynamic [slug] Articles
+│   ├── compliance/                     # Health Codes, DMV Regulations & Fire Safety
+│   ├── contact/                        # Direct Consultation & Workshop Contact Form
+│   ├── locations/                      # Multi-State Location Directory & Target Pages
+│   ├── portfolio/                      # Completed Builds & Interactive Gallery
+│   ├── privacy/                        # Enterprise Privacy Policy Documentation
+│   ├── process/                        # 5-Stage Custom Fabrication Blueprint
+│   ├── quote/                          # Multi-Step Interactive Quote Calculator
+│   ├── services/                       # Custom Trucks, Trailers, Repairs & Upgrades
+│   ├── terms/                          # Commercial Terms & Conditions
+│   ├── testimonials/                   # Verified Client Case Studies & Reviews
+│   └── page.tsx                        # High-Conversion Primary Homepage
 │   ├── actions/                            # Server Actions (Type-Safe RPC Layer)
 │   │   ├── auth.ts                         # Session Verification & Credential Handling
 │   │   ├── blog.ts                         # Blog Post CRUD & Auto-Slug Generation

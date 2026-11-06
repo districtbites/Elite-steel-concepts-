@@ -77,42 +77,38 @@ Rather than relying on generic website builders, slow third-party plugins, or bl
 ```text
 esc-new-website/
 ├── app/                                    # Next.js App Router Architecture
-│   ├── (admin)/                            # Isolated Admin Route Group (Private)
-│   │   └── admin/                          # Administrative Dashboard & Auth
-│   │       ├── (dashboard)/                # Protected Control Panels
-│   │       │   ├── blog/                   # Blog Post Creator & Markdown Editor
-│   │       │   ├── contacts/               # Contact Form Submissions Viewer
-│   │       │   ├── faqs/                   # Dynamic FAQ Management
-│   │       │   ├── internal-links/         # Programmatic Internal Linking Rules
-│   │       │   ├── locations/              # Regional Location Landing Page Editor
-│   │       │   ├── media/                  # Media Library & Asset Cloud Storage
-│   │       │   ├── newsletter/             # Email Subscriber Lists & Broadcasts
-│   │       │   ├── portfolio/              # Custom Project Portfolio Showcase Editor
-│   │       │   ├── quotes/                 # Client Blueprint & Quote Lead Management
-│   │       │   ├── seo/                    # Global Metadata, Schema & Canonical Control
-│   │       │   ├── settings/               # Global Branding, Phone, Address & SMTP
-│   │       │   ├── testimonials/           # Client Reviews & Rating Manager
-│   │       │   ├── users/                  # Staff Access & Credential Settings
-│   │       │   ├── layout.tsx              # Admin Shell, Sidebar & Navigation
-│   │       │   └── page.tsx                # Admin Metrics, Lead KPIs & Activity Feed
-│   │       ├── forgot-password/            # Secure Credential Recovery Flow
-│   │       ├── login/                      # Staff Authentication Gateway
-│   │       └── ThemeProvider.tsx           # High-Contrast Admin Theme Context
-│   ├── (public)/                           # Public-Facing Website Route Group
-│   │   ├── about/                          # Company Story, Facility, 14+ Year Heritage
-│   │   ├── blog/                           # Master Blog Index & Dynamic [slug] Articles
-│   │   ├── compliance/                     # Health Codes, DMV Regulations & Fire Safety
-│   │   ├── contact/                        # Direct Consultation & Workshop Contact Form
-│   │   ├── locations/                      # Multi-State Location Directory & Target Pages
-│   │   ├── portfolio/                      # Completed Builds & Interactive Gallery
-│   │   ├── privacy/                        # Enterprise Privacy Policy Documentation
-│   │   ├── process/                        # 5-Stage Custom Fabrication Blueprint
-│   │   ├── quote/                          # Multi-Step Interactive Quote Calculator
-│   │   ├── services/                       # Custom Trucks, Trailers, Repairs & Upgrades
-│   │   ├── terms/                          # Commercial Terms & Conditions
-│   │   ├── testimonials/                   # Verified Client Case Studies & Reviews
-│   │   ├── layout.tsx                      # Public Header, Footer, and Tracking Shell
-│   │   └── page.tsx                        # High-Conversion Primary Homepage
+│   ├── admin/                          # Administrative Dashboard & Auth
+│   │   ├── blog/                   # Blog Post Creator & Markdown Editor
+│   │   ├── contacts/               # Contact Form Submissions Viewer
+│   │   ├── faqs/                   # Dynamic FAQ Management
+│   │   ├── internal-links/         # Programmatic Internal Linking Rules
+│   │   ├── locations/              # Regional Location Landing Page Editor
+│   │   ├── media/                  # Media Library & Asset Cloud Storage
+│   │   ├── newsletter/             # Email Subscriber Lists & Broadcasts
+│   │   ├── portfolio/              # Custom Project Portfolio Showcase Editor
+│   │   ├── quotes/                 # Client Blueprint & Quote Lead Management
+│   │   ├── seo/                    # Global Metadata, Schema & Canonical Control
+│   │   ├── settings/               # Global Branding, Phone, Address & SMTP
+│   │   ├── testimonials/           # Client Reviews & Rating Manager
+│   │   ├── users/                  # Staff Access & Credential Settings
+│   │   ├── layout.tsx              # Admin Shell, Sidebar & Navigation
+│   │   └── page.tsx                # Admin Metrics, Lead KPIs & Activity Feed
+│   │   ├── forgot-password/            # Secure Credential Recovery Flow
+│   │   ├── login/                      # Staff Authentication Gateway
+│   │   └── ThemeProvider.tsx           # High-Contrast Admin Theme Context
+│   ├── about/                          # Company Story, Facility, 14+ Year Heritage
+│   ├── blog/                           # Master Blog Index & Dynamic [slug] Articles
+│   ├── compliance/                     # Health Codes, DMV Regulations & Fire Safety
+│   ├── contact/                        # Direct Consultation & Workshop Contact Form
+│   ├── locations/                      # Multi-State Location Directory & Target Pages
+│   ├── portfolio/                      # Completed Builds & Interactive Gallery
+│   ├── privacy/                        # Enterprise Privacy Policy Documentation
+│   ├── process/                        # 5-Stage Custom Fabrication Blueprint
+│   ├── quote/                          # Multi-Step Interactive Quote Calculator
+│   ├── services/                       # Custom Trucks, Trailers, Repairs & Upgrades
+│   ├── terms/                          # Commercial Terms & Conditions
+│   ├── testimonials/                   # Verified Client Case Studies & Reviews
+│   └── page.tsx                        # High-Conversion Primary Homepage
 │   ├── actions/                            # Server Actions (Type-Safe RPC Layer)
 │   │   ├── auth.ts                         # Session Verification & Credential Handling
 │   │   ├── blog.ts                         # Blog Post CRUD & Auto-Slug Generation
@@ -751,7 +747,7 @@ All 30 published blog posts in `data/db.json` were audited and upgraded with cus
 * **Site Description:** `14+ years, 350+ builds, 48 states. Expert food truck builders in Manassas, VA. 100% health code compliant. Custom trucks, trailers & repairs. Free quote: (571) 651-0337.`
 * **LocalBusiness JSON-LD Schema:** Injected structured data containing official business name, telephone (`+15716510337`), physical address (11200 Bertalice Ct, Manassas, VA 20110), operating hours, service catalog, and geo-served areas.
 
-### 11.3 Blog Post Template Upgrades (`app/(public)/blog/[slug]/page.tsx`)
+### 11.3 Blog Post Template Upgrades (`app/blog/[slug]/page.tsx`)
 * **Quick Answer Box:** Displays the post's `metaDescription` in a high-visibility callout box directly below the header to target Google Position 0 (Featured Snippets).
 * **Article JSON-LD Schema:** Embeds headline, author, publisher, datePublished, and featured image metadata.
 * **Dynamic FAQPage Schema:** Scans markdown content for `### Q:` and `### FAQ:` patterns and outputs expandable accordion structured data for search engine result pages.
@@ -759,7 +755,7 @@ All 30 published blog posts in `data/db.json` were audited and upgraded with cus
 * **Removal of Raw Hashtags:** Cleaned up public hashtag pills that caused layout clutter.
 
 ### 11.4 Regional Location Pages Strategy
-Created dynamic routing and data models at `app/(public)/locations/`:
+Created dynamic routing and data models at `app/locations/`:
 * **Tier 1 Regional Pages (Live at `/locations/[slug]`):**
   1. Washington DC (`washington-dc`)
   2. Arlington, VA (`arlington-va`)

@@ -137,7 +137,7 @@ A full `LocalBusiness` structured data block was added to the homepage. This fee
 
 ## 3. Blog Post Page Template
 
-**File:** `app/(public)/blog/[slug]/page.tsx`
+**File:** `app/blog/[slug]/page.tsx`
 
 The entire blog post template was updated to implement the audit recommendations. Changes:
 
@@ -190,9 +190,9 @@ The `#` double-prefix rendering bug (stored tags already contained `#`, template
 ## 4. Location Pages (New)
 
 **Files created:**
-- `app/(public)/locations/data.ts`
-- `app/(public)/locations/page.tsx`
-- `app/(public)/locations/[city]/page.tsx`
+- `app/locations/data.ts`
+- `app/locations/page.tsx`
+- `app/locations/[city]/page.tsx`
 
 ### 4.1 Strategy
 
@@ -377,24 +377,24 @@ The `/portfolio/[slug]` page also had `generateMetadata` added from scratch — 
 | `data/db.json` | Meta descriptions (×30), placeholder text fixes, readTime fix, CTA fixes, tag fixes, homepage SEO title/description, LocalBusiness schema |
 | `lib/db.ts` | Added `metaDescription?: string` to `BlogPost` interface |
 | `app/layout.tsx` | Fixed global canonical from homepage URL to `'/'` |
-| `app/(public)/page.tsx` | Added `canonical: '/'` |
-| `app/(public)/about/page.tsx` | Added `canonical: '/about'` |
-| `app/(public)/blog/page.tsx` | Added `canonical: '/blog'` |
-| `app/(public)/blog/[slug]/page.tsx` | Full rewrite: Quick Answer box, Article schema, FAQ schema, inline CTA, phone numbers, sidebar CTA, removed hashtag tags, added `canonical: '/blog/${slug}'` |
-| `app/(public)/contact/page.tsx` | Added `canonical: '/contact'` |
-| `app/(public)/portfolio/page.tsx` | Added `canonical: '/portfolio'` |
-| `app/(public)/portfolio/[slug]/page.tsx` | Added `generateMetadata` + `canonical: '/portfolio/${slug}'` |
-| `app/(public)/testimonials/page.tsx` | Added `canonical: '/testimonials'` |
-| `app/(public)/process/page.tsx` | Added `canonical: '/process'` |
-| `app/(public)/quote/page.tsx` | Added `canonical: '/quote'` |
-| `app/(public)/privacy/page.tsx` | Added `canonical: '/privacy'` |
-| `app/(public)/terms/page.tsx` | Added `canonical: '/terms'` |
-| `app/(public)/services/page.tsx` | Added `canonical: '/services'` |
-| `app/(public)/services/custom-food-trucks/page.tsx` | Added `canonical: '/services/custom-food-trucks'` |
-| `app/(public)/services/custom-food-trailers/page.tsx` | Added `canonical: '/services/custom-food-trailers'` |
-| `app/(public)/services/design-and-consultation/page.tsx` | Added `canonical: '/services/design-and-consultation'` |
-| `app/(public)/services/fleet-expansion/page.tsx` | Added `canonical: '/services/fleet-expansion'` |
-| `app/(public)/services/repairs-and-upgrades/page.tsx` | Added `canonical: '/services/repairs-and-upgrades'` |
+| `app/page.tsx` | Added `canonical: '/'` |
+| `app/about/page.tsx` | Added `canonical: '/about'` |
+| `app/blog/page.tsx` | Added `canonical: '/blog'` |
+| `app/blog/[slug]/page.tsx` | Full rewrite: Quick Answer box, Article schema, FAQ schema, inline CTA, phone numbers, sidebar CTA, removed hashtag tags, added `canonical: '/blog/${slug}'` |
+| `app/contact/page.tsx` | Added `canonical: '/contact'` |
+| `app/portfolio/page.tsx` | Added `canonical: '/portfolio'` |
+| `app/portfolio/[slug]/page.tsx` | Added `generateMetadata` + `canonical: '/portfolio/${slug}'` |
+| `app/testimonials/page.tsx` | Added `canonical: '/testimonials'` |
+| `app/process/page.tsx` | Added `canonical: '/process'` |
+| `app/quote/page.tsx` | Added `canonical: '/quote'` |
+| `app/privacy/page.tsx` | Added `canonical: '/privacy'` |
+| `app/terms/page.tsx` | Added `canonical: '/terms'` |
+| `app/services/page.tsx` | Added `canonical: '/services'` |
+| `app/services/custom-food-trucks/page.tsx` | Added `canonical: '/services/custom-food-trucks'` |
+| `app/services/custom-food-trailers/page.tsx` | Added `canonical: '/services/custom-food-trailers'` |
+| `app/services/design-and-consultation/page.tsx` | Added `canonical: '/services/design-and-consultation'` |
+| `app/services/fleet-expansion/page.tsx` | Added `canonical: '/services/fleet-expansion'` |
+| `app/services/repairs-and-upgrades/page.tsx` | Added `canonical: '/services/repairs-and-upgrades'` |
 | `app/sitemap.ts` | Added location pages, deduplicated blog slugs |
 | `next.config.ts` | Added 19 PHP legacy redirects + non-www → www redirect |
 | `middleware.ts` | Added www enforcement at edge, updated matcher to all public routes |
@@ -404,9 +404,9 @@ The `/portfolio/[slug]` page also had `generateMetadata` added from scratch — 
 
 | File | Purpose |
 |---|---|
-| `app/(public)/locations/data.ts` | Location page data store — all 8 Tier 1 cities with exact copy from strategy doc |
-| `app/(public)/locations/page.tsx` | Locations hub/index page |
-| `app/(public)/locations/[city]/page.tsx` | Dynamic location page template with schema, FAQ, CTAs |
+| `app/locations/data.ts` | Location page data store — all 8 Tier 1 cities with exact copy from strategy doc |
+| `app/locations/page.tsx` | Locations hub/index page |
+| `app/locations/[city]/page.tsx` | Dynamic location page template with schema, FAQ, CTAs |
 | `docs/SEO_UPDATES.md` | This document |
 
 ---

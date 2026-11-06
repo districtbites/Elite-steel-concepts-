@@ -367,10 +367,19 @@ interface DbCacheState {
     // Bumped on every write; a background refresh that started before a write is discarded
     // so it can never overwrite newer data with an older snapshot.
     writeVersion: number;
+    // Version stored in Turso by the last write, from any server. Comparing it is a one-row read,
+    // so changes made elsewhere are picked up within seconds without fetching the whole database.
+    remoteVersion: string | null;
+    versionCheckedAt: number;
+    versionCheck: Promise<void> | null;
+    // While a write is on its way to Turso, a reload could bring back the older data
+    writesInFlight: number;
 }
 const globalForDb = globalThis as typeof globalThis & { __escDbCache?: DbCacheState };
-const dbCache: DbCacheState = (globalForDb.__escDbCache ??= { db: null, loadedAt: 0, inflight: null, writeVersion: 0 });
+const dbCache: DbCacheState = (globalForDb.__escDbCache ??= { db: null, loadedAt: 0, inflight: null, writeVersion: 0, remoteVersion: null, versionCheckedAt: 0, versionCheck: null, writesInFlight: 0 });
 const CACHE_TTL_MS = 60 * 1000;
+const VERSION_KEY = 'dbVersion';
+const VERSION_CHECK_MS = 2000;
 
 export function invalidateDbCache() {
     dbCache.db = null;
@@ -412,6 +421,8 @@ async function loadDb(): Promise<DatabaseSchema | null> {
             if (dbCache.writeVersion === startedAtVersion) {
                 dbCache.db = schema;
                 dbCache.loadedAt = Date.now();
+                dbCache.remoteVersion = typeof kvMap[VERSION_KEY] === 'string' ? kvMap[VERSION_KEY] : null;
+                dbCache.versionCheckedAt = Date.now();
             }
             return dbCache.db ?? schema;
         }
@@ -443,9 +454,27 @@ function loadDbOnce(): Promise<DatabaseSchema | null> {
     return dbCache.inflight;
 }
 
+/** Reloads the database if another server has written since it was last loaded. */
+function checkRemoteVersion(): Promise<void> {
+    if (!dbCache.versionCheck) {
+        dbCache.versionCheckedAt = Date.now();
+        dbCache.versionCheck = (async () => {
+            const startedAtVersion = dbCache.writeVersion;
+            const version = await tursoGet<string>(VERSION_KEY);
+            // null: no version yet or Turso unreachable, so keep serving the cached copy
+            if (version && version !== dbCache.remoteVersion && dbCache.writeVersion === startedAtVersion) await loadDbOnce();
+        })()
+            .catch((err) => console.error("[DB] Version check failed:", err))
+            .finally(() => { dbCache.versionCheck = null; });
+    }
+    return dbCache.versionCheck;
+}
+
 // Helper to read DB
 async function readDb(): Promise<DatabaseSchema> {
     if (dbCache.db) {
+        if (dbCache.writesInFlight > 0) return dbCache.db;
+        if (isTursoConfigured() && Date.now() - dbCache.versionCheckedAt >= VERSION_CHECK_MS) await checkRemoteVersion();
         if (Date.now() - dbCache.loadedAt >= CACHE_TTL_MS) {
             // Stale: serve the cached copy now, refresh in the background.
             loadDbOnce().catch((err) => console.error("[DB] Background refresh failed:", err));
@@ -463,6 +492,7 @@ async function writeDb(data: DatabaseSchema): Promise<void> {
     dbCache.writeVersion++;
     dbCache.db = data;
     dbCache.loadedAt = Date.now();
+    dbCache.remoteVersion = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
     const tursoWrite = isTursoConfigured()
         ? tursoBatchSet([
@@ -481,6 +511,7 @@ async function writeDb(data: DatabaseSchema): Promise<void> {
               { key: 'internalLinkRules', value: data.internalLinkRules || DEFAULT_INTERNAL_LINK_RULES },
               { key: 'internalLinkSettings', value: data.internalLinkSettings || DEFAULT_INTERNAL_LINK_SETTINGS },
               { key: 'pageContent', value: data.pageContent || {} },
+              { key: VERSION_KEY, value: dbCache.remoteVersion },
           ]).catch((err) => console.error('[DB] Turso write error:', err))
         : Promise.resolve();
 
@@ -495,7 +526,12 @@ async function writeDb(data: DatabaseSchema): Promise<void> {
     })();
 
     // Run both in parallel — neither blocks the other
-    await Promise.all([tursoWrite, fileWrite]);
+    dbCache.writesInFlight++;
+    try {
+        await Promise.all([tursoWrite, fileWrite]);
+    } finally {
+        dbCache.writesInFlight--;
+    }
 }
 
 // --- BLOG POSTS ---

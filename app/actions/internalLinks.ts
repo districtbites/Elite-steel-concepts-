@@ -38,8 +38,15 @@ import { revalidatePath } from "next/cache";
 /** Roles that can open the Internal Linking screen. */
 const LINK_ADMIN_ROLES: readonly AdminRole[] = ["super_admin", "admin", "seo"];
 
+/** Removes a rule's keyword links from every post, unless an active rule still uses that keyword. */
+async function removeRuleLinks(rule: InternalLinkRule) {
+    const keyword = rule.keyword.trim().toLowerCase();
+    const stillActive = (await getInternalLinkRules()).some(r => r.id !== rule.id && r.enabled !== false && r.keyword.trim().toLowerCase() === keyword);
+    return removeLinkFromPosts(rule.keyword, stillActive ? rule.targetUrl : null, rule.caseSensitive);
+}
+
 /** Removes a link from every post. Returns the number of links and posts changed. */
-async function removeLinkFromPosts(text: string, url: string, caseSensitive?: boolean) {
+async function removeLinkFromPosts(text: string, url: string | null, caseSensitive?: boolean) {
     const contents = new Map<string, string>();
     let links = 0;
     for (const post of await getPosts()) {
@@ -195,7 +202,7 @@ export async function saveInternalLinkRuleAction(formData: FormData) {
             });
             // Links saved in posts follow the old keyword/target until they are removed
             const replaced = previous && (!enabled || previous.keyword !== keyword || normalizeInternalTarget(previous.targetUrl) !== targetUrl);
-            const removed = replaced ? await removeLinkFromPosts(previous.keyword, previous.targetUrl, previous.caseSensitive) : { links: 0, posts: 0 };
+            const removed = replaced ? await removeRuleLinks(previous) : { links: 0, posts: 0 };
             revalidatePath("/admin/internal-links");
             revalidatePath("/blog", "layout");
             revalidatePath("/", "layout");
@@ -231,7 +238,7 @@ export async function toggleInternalLinkRuleAction(id: string, enabled: boolean)
     try {
         const rule = await updateInternalLinkRule(id, { enabled });
         // Nothing to restore on re-enable: active rules are applied at render, within the per-post link limits
-        const removed = !enabled && rule ? await removeLinkFromPosts(rule.keyword, rule.targetUrl, rule.caseSensitive) : { links: 0, posts: 0 };
+        const removed = !enabled && rule ? await removeRuleLinks(rule) : { links: 0, posts: 0 };
         revalidatePath("/admin/internal-links");
         revalidatePath("/blog", "layout");
         revalidatePath("/", "layout");
@@ -248,7 +255,7 @@ export async function deleteInternalLinkRuleAction(id: string) {
     try {
         const rule = await getInternalLinkRuleById(id);
         await deleteInternalLinkRule(id);
-        const removed = rule ? await removeLinkFromPosts(rule.keyword, rule.targetUrl, rule.caseSensitive) : { links: 0, posts: 0 };
+        const removed = rule ? await removeRuleLinks(rule) : { links: 0, posts: 0 };
         revalidatePath("/admin/internal-links");
         revalidatePath("/blog", "layout");
         revalidatePath("/", "layout");

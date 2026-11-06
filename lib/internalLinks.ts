@@ -1060,21 +1060,34 @@ export interface SavedLinkGroup {
  * Removes links with this anchor text and target from content, keeping the words.
  * Links written into a post do not depend on any rule, so deleting a rule alone leaves them live.
  */
-export function removeSavedLink(content: string, text: string, url: string, caseSensitive = false): { content: string; removed: number } {
+export function removeSavedLink(content: string, text: string, url?: string | null, caseSensitive = false): { content: string; removed: number } {
     const same = (a: string, b: string) => (caseSensitive ? a.trim() === b.trim() : a.trim().toLowerCase() === b.trim().toLowerCase());
-    const target = linkTargetKey(url);
+    const target = url ? linkTargetKey(url) : null; // no url: any internal target
     let removed = 0;
     const cleaned = (content || "").replace(SAVED_LINK, (full, anchor: string, href: string) => {
-        if (!same(anchor, text) || linkTargetKey(href) !== target) return full;
+        const key = linkTargetKey(href);
+        if (!same(anchor, text) || (target ? key !== target : !key.startsWith("/"))) return full;
         removed++;
         return anchor;
     });
     return { content: cleaned, removed };
 }
 
+/** Keywords of switched-off rules that no active rule still uses. */
+export function disabledRuleKeywords(rules: InternalLinkRule[]): InternalLinkRule[] {
+    const active = new Set(rules.filter(r => r.enabled !== false).map(r => r.keyword.trim().toLowerCase()));
+    return rules.filter(r => r.enabled === false && !active.has(r.keyword.trim().toLowerCase()));
+}
+
+/** Post content without saved links on the keywords of switched-off rules (the post itself is not changed). */
+export function hideDisabledRuleLinks(content: string, rules: InternalLinkRule[]): string {
+    return disabledRuleKeywords(rules).reduce((text, r) => removeSavedLink(text, r.keyword, null, r.caseSensitive).content, content);
+}
+
 /** Internal links saved in post content, grouped by text + target. Links with no active rule come first. */
 export function listSavedLinks(posts: Pick<BlogPost, "id" | "title" | "content">[], rules: InternalLinkRule[]): SavedLinkGroup[] {
     const ruleOf = new Map(rules.map(r => [`${r.keyword.trim().toLowerCase()}|${linkTargetKey(r.targetUrl)}`, r]));
+    const switchedOff = new Set(disabledRuleKeywords(rules).map(r => r.keyword.trim().toLowerCase()));
     const groups = new Map<string, SavedLinkGroup>();
     for (const post of posts) {
         for (const [, anchor, href] of (post.content || "").matchAll(SAVED_LINK)) {
@@ -1087,7 +1100,7 @@ export function listSavedLinks(posts: Pick<BlogPost, "id" | "title" | "content">
                 url,
                 count: 0,
                 posts: [],
-                ruleStatus: !rule ? "none" : rule.enabled === false ? "disabled" : "active"
+                ruleStatus: switchedOff.has(anchor.trim().toLowerCase()) ? "disabled" : rule && rule.enabled !== false ? "active" : "none"
             };
             group.count++;
             if (!group.posts.some(p => p.id === post.id)) group.posts.push({ id: post.id, title: post.title });

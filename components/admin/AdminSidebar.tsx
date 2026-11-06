@@ -31,7 +31,7 @@ import {
  Link2,
  Database
 } from"lucide-react";
-import { useAdminTheme } from"@/app/(admin)/admin/ThemeProvider";
+import { useAdminTheme } from"@/app/admin/ThemeProvider";
 import type { AdminRole } from "@/lib/db";
 
 // ─── Menu Config ────────────────────────────────────────────────────────────
