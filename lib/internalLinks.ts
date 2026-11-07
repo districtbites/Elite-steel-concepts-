@@ -1079,11 +1079,6 @@ export function disabledRuleKeywords(rules: InternalLinkRule[]): InternalLinkRul
     return rules.filter(r => r.enabled === false && !active.has(r.keyword.trim().toLowerCase()));
 }
 
-/** Post content without saved links on the keywords of switched-off rules (the post itself is not changed). */
-export function hideDisabledRuleLinks(content: string, rules: InternalLinkRule[]): string {
-    return disabledRuleKeywords(rules).reduce((text, r) => removeSavedLink(text, r.keyword, null, r.caseSensitive).content, content);
-}
-
 /** Internal links saved in post content, grouped by text + target. Links with no active rule come first. */
 export function listSavedLinks(posts: Pick<BlogPost, "id" | "title" | "content">[], rules: InternalLinkRule[]): SavedLinkGroup[] {
     const ruleOf = new Map(rules.map(r => [`${r.keyword.trim().toLowerCase()}|${linkTargetKey(r.targetUrl)}`, r]));

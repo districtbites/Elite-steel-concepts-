@@ -1,6 +1,6 @@
 import React from "react";
 import { getPostBySlug, getPosts, getInternalLinkRules, getInternalLinkSettings } from "@/lib/db";
-import { autoLinkMarkdown, normalizeInternalTarget, getRulesForPost, postTargetKey, hideDisabledRuleLinks } from "@/lib/internalLinks";
+import { autoLinkMarkdown, normalizeInternalTarget, getRulesForPost, postTargetKey } from "@/lib/internalLinks";
 import type { TableClasses } from "@/lib/markdownTable";
 import { findFaqBlocks, plainAnswer, replaceFaqBlocks, type FaqBlock, type FaqClasses } from "@/lib/blogFaq";
 import { renderBlogMarkdown, renderFaqBlock, type BlogMarkdownClasses } from "@/lib/blogMarkdown";
@@ -161,7 +161,7 @@ export default async function BlogDetailsPage({ params }: PageProps) {
 
   const applicableRules = getRulesForPost(rules, post);
 
-  const { updatedContent } = autoLinkMarkdown(hideDisabledRuleLinks(post.content || "", rules), applicableRules, settings, { target: postTargetKey(post.id) });
+  const { updatedContent } = autoLinkMarkdown(post.content || "", applicableRules, settings, { target: postTargetKey(post.id) });
 
   const relatedPosts = allPosts
     .filter(p => p.id !== post.id && p.status === "Published")
