@@ -50,9 +50,18 @@ export function parseMarkdownTable(lines: string[]): MarkdownTable | null {
     return {
         headers,
         aligns: fit(aligns as string[]).map(a => (a || "left") as TableAlign),
-        rows: lines.slice(2).map(l => fit(splitRow(l)))
+        rows: lines.slice(2).map(l => fit(splitRow(l)).map(cellFromMarkdown))
     };
 }
+
+// A cell can hold several lines: stored as "<br>" in the markdown row, edited and rendered as line breaks
+const CELL_BREAK = /<br\s*\/?>/gi;
+const cellFromMarkdown = (cell: string) => cell.replace(CELL_BREAK, "\n");
+
+/** A cell line that is a bullet point: "- item" (also "* item" or "• item"). */
+const BULLET_LINE = /^\s*(?:[-*•])\s+/;
+export const isBulletLine = (line: string) => BULLET_LINE.test(line);
+export const stripBullet = (line: string) => line.replace(BULLET_LINE, "");
 
 /** Location of every table block in the text, by line index (end exclusive). */
 export function findTableBlocks(text: string): { startLine: number; endLine: number }[] {
@@ -94,7 +103,13 @@ export function findTableAt(text: string, offset: number): { start: number; end:
 
 /** Generates a neatly padded markdown table. */
 export function buildMarkdownTable({ headers, aligns, rows }: MarkdownTable): string {
-    const esc = (c: string) => (c || "").replace(/\r?\n/g, " ").replace(/\|/g, "\\|").trim();
+    const esc = (c: string) =>
+        (c || "")
+            .split(/\r?\n/)
+            .map(line => line.trim())
+            .filter(Boolean)
+            .join("<br>")
+            .replace(/\|/g, "\\|");
     const head = headers.map(esc);
     const body = rows.map(r => headers.map((_, i) => esc(r[i] ?? "")));
     const widths = head.map((h, i) => Math.max(3, h.length, ...body.map(r => r[i].length)));
@@ -125,18 +140,41 @@ export interface TableClasses {
     tr: string;
     td: string;
     totalRow: string; // applied to a last row whose first cell starts with "Total"
+    cellList?: string; // bullet list inside a cell
+    cellListItem?: string;
 }
+
+const DEFAULT_CELL_LIST = "list-disc pl-5 space-y-1 text-left marker:text-primary";
 
 const escapeHtml = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 /** Renders a parsed table to single-line HTML (so later paragraph/line-break passes leave it intact). */
 export function renderTableHtml(table: MarkdownTable, cls: TableClasses, renderCell: (text: string) => string = escapeHtml): string {
+    // Lines starting with "- " become a bullet list; other lines are separated by line breaks
+    const renderCellLines = (text: string) => {
+        const parts: string[] = [];
+        let bullets: string[] = [];
+        const flush = () => {
+            if (bullets.length) parts.push(`<ul class="${cls.cellList ?? DEFAULT_CELL_LIST}">${bullets.join("")}</ul>`);
+            bullets = [];
+        };
+        for (const line of text.split("\n").map(l => l.trim()).filter(Boolean)) {
+            if (isBulletLine(line)) {
+                bullets.push(`<li${cls.cellListItem ? ` class="${cls.cellListItem}"` : ""}>${renderCell(stripBullet(line))}</li>`);
+            } else {
+                flush();
+                parts.push(renderCell(line));
+            }
+        }
+        flush();
+        return parts.join("<br>").replace(/<br><ul/g, "<ul").replace(/<\/ul><br>/g, "</ul>");
+    };
     const alignCls = (i: number) => (table.aligns[i] === "right" ? " text-right" : table.aligns[i] === "center" ? " text-center" : " text-left");
     const head = table.headers.map((h, i) => `<th scope="col" class="${cls.th}${alignCls(i)}">${renderCell(h)}</th>`).join("");
     const body = table.rows
         .map((r, ri) => {
             const isTotal = ri === table.rows.length - 1 && table.rows.length > 1 && /^\**total\b/i.test(r[0] || "");
-            const cells = r.map((c, i) => `<td class="${cls.td}${alignCls(i)}">${renderCell(c)}</td>`).join("");
+            const cells = r.map((c, i) => `<td class="${cls.td}${alignCls(i)}">${renderCellLines(c)}</td>`).join("");
             return `<tr class="${cls.tr}${isTotal ? ` ${cls.totalRow}` : ""}">${cells}</tr>`;
         })
         .join("");

@@ -2,10 +2,12 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { X, Plus, Trash2, AlignLeft, AlignCenter, AlignRight, ClipboardPaste, Table as TableIcon } from "lucide-react";
+import { X, Plus, Trash2, AlignLeft, AlignCenter, AlignRight, ClipboardPaste, List, Table as TableIcon } from "lucide-react";
 import {
     buildMarkdownTable,
+    isBulletLine,
     parseMarkdownTable,
+    stripBullet,
     renderTableHtml,
     type MarkdownTable,
     type TableAlign,
@@ -77,6 +79,37 @@ export default function TableBuilderModal({ initial, onSubmit, onClose }: TableB
         setTable(t => ({ ...t, rows: t.rows.map((row, ri) => (ri === r ? row.map((x, ci) => (ci === c ? v : x)) : row)) }));
     const setAlign = (c: number, a: TableAlign) =>
         setTable(t => ({ ...t, aligns: t.aligns.map((x, i) => (i === c ? a : x)) }));
+
+    // Bullets for a whole column: add "- " to every line, or remove it when the column is already bulleted
+    const columnHasBullets = (c: number) => {
+        const lines = table.rows.flatMap(r => (r[c] || "").split("\n")).filter(l => l.trim());
+        return lines.length > 0 && lines.every(isBulletLine);
+    };
+    const toggleColumnBullets = (c: number) =>
+        setTable(t => {
+            const lines = t.rows.flatMap(r => (r[c] || "").split("\n")).filter(l => l.trim());
+            const remove = lines.length > 0 && lines.every(isBulletLine);
+            const convert = (cell: string) =>
+                cell
+                    .split("\n")
+                    .map(l => (!l.trim() ? l : remove ? stripBullet(l) : isBulletLine(l) ? l : `- ${l.trim()}`))
+                    .join("\n");
+            return { ...t, rows: t.rows.map(r => r.map((cell, ci) => (ci === c ? convert(cell) : cell))) };
+        });
+
+    // Enter on a bullet line starts the next bullet
+    const onCellKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>, r: number, c: number) => {
+        if (e.key !== "Enter" || e.shiftKey) return;
+        const el = e.currentTarget;
+        const value = el.value;
+        const lineStart = value.lastIndexOf("\n", el.selectionStart - 1) + 1;
+        if (!isBulletLine(value.slice(lineStart, el.selectionStart) + " ")) return;
+        e.preventDefault();
+        const next = `${value.slice(0, el.selectionStart)}\n- ${value.slice(el.selectionEnd)}`;
+        const caret = el.selectionStart + 3;
+        setCell(r, c, next);
+        requestAnimationFrame(() => el.setSelectionRange(caret, caret));
+    };
 
     const addRow = (after = table.rows.length - 1) =>
         setTable(t => {
@@ -206,6 +239,12 @@ export default function TableBuilderModal({ initial, onSubmit, onClose }: TableB
                                                         {b.icon}
                                                     </button>
                                                 ))}
+                                                <button type="button" title="Bullet list (one item per line)" aria-label={`Bullet list for column ${c + 1}`}
+                                                    aria-pressed={columnHasBullets(c)}
+                                                    onClick={() => toggleColumnBullets(c)}
+                                                    className={`ml-1 p-1 border ${columnHasBullets(c) ? "bg-primary text-black border-primary" : "border-admin-border text-admin-muted hover:text-admin-text"}`}>
+                                                    <List size={11} />
+                                                </button>
                                             </div>
                                             <button type="button" onClick={() => removeColumn(c)} disabled={cols <= 1}
                                                 title="Delete column" aria-label={`Delete column ${c + 1}`}
@@ -226,10 +265,12 @@ export default function TableBuilderModal({ initial, onSubmit, onClose }: TableB
                                 <tr key={r} className="border-b border-admin-border last:border-0">
                                     {row.map((cell, c) => (
                                         <td key={c} className="p-2">
-                                            <input value={cell} onChange={e => setCell(r, c, e.target.value)}
+                                            <textarea value={cell} onChange={e => setCell(r, c, e.target.value)}
+                                                onKeyDown={e => onCellKeyDown(e, r, c)}
+                                                rows={Math.max(1, cell.split("\n").length)}
                                                 aria-label={`Row ${r + 1}, ${table.headers[c] || `column ${c + 1}`}`}
                                                 style={{ textAlign: table.aligns[c] }}
-                                                className={cellInput} />
+                                                className={`${cellInput} resize-none leading-relaxed block`} />
                                         </td>
                                     ))}
                                     <td className="p-2 whitespace-nowrap">
@@ -245,7 +286,7 @@ export default function TableBuilderModal({ initial, onSubmit, onClose }: TableB
                 </div>
                 <p className="text-[10px] text-admin-muted">
                     Tip: use right alignment for numbers and prices. A last row starting with &quot;Total&quot; is highlighted automatically.
-                    Use **text** for bold.
+                    Use **text** for bold. Press Enter for a new line in a cell; start a line with &quot;- &quot; (or use the list button above a column) for bullet points.
                 </p>
 
                 {/* Live preview */}

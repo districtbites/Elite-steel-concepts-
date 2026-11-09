@@ -18,7 +18,7 @@ export const SERVICES_HEADER = defineSection({
 
 export const SERVICES_MANUFACTURE = defineSection({
     key: "services.manufacture",
-    label: "What We Manufacture",
+    label: "Our Services",
     description: "Truck / Trailer image cards linking to the service pages.",
     fields: [
         { name: "eyebrow", label: "Eyebrow", type: "text" },
@@ -37,7 +37,7 @@ export const SERVICES_MANUFACTURE = defineSection({
         }
     ],
     defaults: {
-        eyebrow: "What We Manufacture",
+        eyebrow: "Our Services",
         cards: [
             {
                 title: "Truck",
@@ -50,6 +50,51 @@ export const SERVICES_MANUFACTURE = defineSection({
                 link: "/services/custom-food-trailers",
                 image: "/uploads/about/about-manufacture-trailer.jpg",
                 imageAlt: "Custom black and yellow concession trailer by Elite Steel Concepts"
+            }
+        ]
+    }
+});
+
+export const SERVICES_MORE = defineSection({
+    key: "services.more",
+    label: "More Services",
+    description: "Repairs, design and fleet cards below \"Our Services\", each linking to its service page.",
+    fields: [
+        { name: "eyebrow", label: "Eyebrow", type: "text" },
+        {
+            name: "cards",
+            label: "Cards",
+            type: "list",
+            itemLabel: "Card",
+            titleField: "title",
+            fields: [
+                { name: "title", label: "Title", type: "text" },
+                { name: "link", label: "Link", type: "link" },
+                { name: "image", label: "Image", type: "image" },
+                { name: "imageAlt", label: "Image Alt Text", type: "text" }
+            ]
+        }
+    ],
+    defaults: {
+        eyebrow: "More Services",
+        cards: [
+            {
+                title: "Repairs & Upgrades",
+                link: "/services/repairs-and-upgrades",
+                image: "/uploads/services/services-repairs-and-upgrades.webp",
+                imageAlt: "Elite Steel Concepts fabricator repairing and upgrading a food truck"
+            },
+            {
+                title: "Design & Consultation",
+                link: "/services/design-and-consultation",
+                image: "/uploads/services/services-design-and-consultation.webp",
+                imageAlt: "3D food truck kitchen layout from a design consultation"
+            },
+            {
+                title: "Fleet Expansion",
+                link: "/services/fleet-expansion",
+                image: "/uploads/services/services-fleet-expansion.webp",
+                imageAlt: "Branded food trucks built for a growing food truck fleet"
             }
         ]
     }
@@ -170,5 +215,5 @@ export const servicesPage: PageDef = {
     icon: "Wrench",
     path: "/services",
     builder: true,
-    sections: [SERVICES_HEADER, SERVICES_MANUFACTURE, SERVICES_INTRO, SERVICES_MAIN, SERVICES_PROCESS, SERVICES_CTA]
+    sections: [SERVICES_HEADER, SERVICES_MANUFACTURE, SERVICES_MORE, SERVICES_INTRO, SERVICES_MAIN, SERVICES_PROCESS, SERVICES_CTA]
 };

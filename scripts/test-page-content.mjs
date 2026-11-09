@@ -211,6 +211,20 @@ await test("saved links: grouped with rule status, external links ignored", () =
     ]);
 });
 
+await test("tables: multi-line cells and bullet points survive save and render as a list", async () => {
+    const tbl = await import(lib("lib/markdownTable.ts"));
+    const table = { headers: ["Type", "Menu"], aligns: ["left", "left"], rows: [["Hot beverage trucks", "- Hot chocolate\n- Spiced cider"], ["Note", "Line one\nLine two"]] };
+    const md = tbl.buildMarkdownTable(table);
+    assert.ok(md.includes("- Hot chocolate<br>- Spiced cider"));
+    const parsed = tbl.parseMarkdownTable(md.split("\n"));
+    assert.deepEqual(parsed.rows, table.rows);
+    const html = tbl.renderTableHtml(parsed, { wrapper: "", table: "", thead: "", th: "", tr: "", td: "", totalRow: "" });
+    assert.ok(html.includes('<ul class="list-disc pl-5 space-y-1 text-left marker:text-primary"><li>Hot chocolate</li><li>Spiced cider</li></ul>'));
+    assert.ok(html.includes("Line one<br>Line two"));
+    // older single-line tables are unchanged
+    assert.deepEqual(tbl.parseMarkdownTable(["| a | b |", "| --- | --- |", "| 1 | 2 \\| 3 |"]).rows, [["1", "2 | 3"]]);
+});
+
 await fs.rm(tmp, { recursive: true, force: true });
 console.log(`\n${passed} passed, ${failures.length} failed\n`);
 process.exit(failures.length ? 1 : 0);

@@ -14,6 +14,7 @@ import { SITE_FAQ } from "@/lib/pageContent/pages/site";
 import {
   SERVICES_HEADER,
   SERVICES_MANUFACTURE,
+  SERVICES_MORE,
   SERVICES_INTRO,
   SERVICES_MAIN,
   SERVICES_PROCESS,
@@ -46,7 +47,7 @@ export default async function ServicesPage() {
     servicesHero,
     truckImage,
     trailerImage,
-    [header, manufacture, intro, main, process, cta],
+    [header, manufacture, more, intro, main, process, cta],
     customBlocks,
   ] = await Promise.all([
     getFAQs(),
@@ -54,7 +55,7 @@ export default async function ServicesPage() {
     getMediaAsset("services", "hero", "https://images.pexels.com/photos/1855214/pexels-photo-1855214.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_1", "https://images.pexels.com/photos/2577274/pexels-photo-2577274.jpeg?auto=compress&cs=tinysrgb&w=800"),
     getMediaAsset("services", "service_card_2", "https://images.pexels.com/photos/4393021/pexels-photo-4393021.jpeg?auto=compress&cs=tinysrgb&w=800"),
-    getSections([SERVICES_HEADER, SERVICES_MANUFACTURE, SERVICES_INTRO, SERVICES_MAIN, SERVICES_PROCESS, SERVICES_CTA] as const),
+    getSections([SERVICES_HEADER, SERVICES_MANUFACTURE, SERVICES_MORE, SERVICES_INTRO, SERVICES_MAIN, SERVICES_PROCESS, SERVICES_CTA] as const),
     getCustomSections("services"),
   ]);
 
@@ -111,6 +112,46 @@ export default async function ServicesPage() {
                     fill
                     priority={i === 0}
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </Container>
+      </Section>
+
+      {/* More Services: repairs, design and fleet */}
+      <Section className="!py-10 md:!py-14 bg-white border-b border-gray-100">
+        <Container>
+          <div className="text-center max-w-4xl mx-auto mb-8 md:mb-10">
+            <div className="inline-flex items-center justify-center gap-3">
+              <div className="h-px w-10 bg-primary" />
+              <p className="text-primary text-sm md:text-base font-black uppercase tracking-[0.25em]">
+                {more.eyebrow}
+              </p>
+              <div className="h-px w-10 bg-primary" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+            {more.cards.map((card, i) => (
+              <Link
+                key={`${card.title}-${i}`}
+                href={card.link}
+                className="group border border-gray-200 hover:border-primary bg-white transition-colors overflow-hidden"
+              >
+                <div className="px-5 pt-6 pb-2 text-center">
+                  <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-primary group-hover:text-black transition-colors">
+                    {card.title}
+                  </h2>
+                </div>
+                <div className="relative aspect-[16/10] mx-4 mb-5 overflow-hidden bg-[#1a1a1a]">
+                  <Image
+                    src={card.image}
+                    alt={card.imageAlt}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
